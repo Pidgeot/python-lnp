@@ -5,14 +5,16 @@ from __future__ import print_function, unicode_literals
 import sys, os
 import errorlog
 
-import six
-if six.PY3:
+if sys.version_info[0] == 3: #Alternate import names
     from tkinter import *
+    from tkinter.ttk import *
+    import tkinter.messagebox as messagebox
+    import tkinter.simpledialog as simpledialog
 else:
     from Tkinter import *
-from six.moves.tkinter_ttk import *
-import six.moves.tkinter_messagebox as messagebox
-import six.moves.tkinter_simpledialog as simpledialog
+    from ttk import *
+    import tkMessageBox as messagebox
+    import tkSimpleDialog as simpledialog
 
 import pkg_resources #Workaround to use Pillow in PyInstaller
 
@@ -678,7 +680,7 @@ class TkGui():
     def update_autorun_list(self):
         map(self.proglist.delete, self.proglist.get_children())
         for p in self.progs:
-            i=self.proglist.insert('', 'end', text=p, values=(os.path.join(os.path.basename(os.path.dirname(p)),os.path.basename(p)), 'Yes' if p in self.lnp.autorun else 'No'))
+            self.proglist.insert('', 'end', text=p, values=(os.path.join(os.path.basename(os.path.dirname(p)),os.path.basename(p)), 'Yes' if p in self.lnp.autorun else 'No'))
 
     def update_displays(self):
         for key, value in self.lnp.settings:

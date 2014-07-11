@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import lnp
-import os
 
 #Use this script to run PyLNP from a different directory than it's normally located in. Useful for development, so you can work on a copy located elsewhere.
 

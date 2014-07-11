@@ -12,8 +12,8 @@ Differences
 There are a few user-visible differences and enhancements compared to v16:
 
 - Any folder starting with "df" is considered a valid name for the Dwarf Fortress folder. This allows a freshly extracted copy to be recognized immediately.
-- If multiple valid DF folders are detected, you will be asked to select the desired instance. This allows you to manage multiple installs separately.
-- A new menu item, File > Output log has been added. This opens a window containing various messages captured while executing the program. If errors occur, they will show up here, and are also written to a file.
+- If multiple valid DF folders are detected, you will be asked to select the desired instance. This allows you to manage multiple installs separately. (Similar feature exists in v17.2 by daveralph1234)
+- A new menu item, File > Output log has been added. This opens a window containing various messages captured while executing the launcher. If errors occur, they will show up here, and are also written to a file.
 - In addition to excluding specific file names from utilities, you can also *include* specific file names, if they're found. Simply create a file include.txt in the Utilities folder and fill it in with the same syntax as exclude.txt.
 - Multiple utilities can be selected and launched simultaneously.
 - Utilities may be automatically started at the same time as Dwarf Fortress. (Also seen in v16.1 by daveralph1234, although with a different interface)
@@ -118,9 +118,9 @@ If you want to make your own executable, you can do that. This is particularly u
 
 The code is prepared for different executable generators on each platforms: pyinstaller on Windows and Linux, and py2app on OS X. If you want to use a different one, you'll need to do the appropriate modifications yourself.
 
-Note:
-  **For Windows builds**: py2exe only works with Python 2.x, so make sure you use Python 2.7 for this.
+These instructions are tested with Python 2.7, but should work with 3.x as well.
 
+Note:
   **On Windows and Linux**, the resulting executable and *everything else* in the same directory must be placed in the same folder as the LNP.py script is currently placed. This is because it relies on a specific directory structure in order to find the Dwarf Fortress folder, as well as utilities, graphics packs, etc.
 
   **On OS X**, the bundle is completely self-contained; it just needs to be placed in the right directory.

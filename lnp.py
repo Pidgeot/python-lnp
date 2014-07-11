@@ -3,7 +3,6 @@
 from __future__ import print_function, unicode_literals
 
 import sys
-import errorlog
 from tkgui import TkGui
 
 import fnmatch, glob, os, re, shutil, subprocess, tempfile, webbrowser
@@ -45,7 +44,7 @@ class PyLNP():
     def load_params(self):
         try:
             self.settings.read_settings()
-        except IOError as e:
+        except IOError:
             sys.excepthook(*sys.exc_info())
             msg="Failed to read settings, {0} not really a DF dir?".format(self.df_dir)
             raise IOError(msg)
@@ -77,7 +76,7 @@ class PyLNP():
             else:
                 subprocess.Popen(path, cwd=os.path.dirname(path))
             return True
-        except OSError as e:
+        except OSError:
             sys.excepthook(*sys.exc_info())
             return False
 
@@ -210,7 +209,7 @@ class PyLNP():
     def save_keybinds(self, filename):
         if not filename.endswith('.txt'):
             filename = filename + '.txt'
-        shutil.copyfile(os.path.join(self.init_dir,'interface.txt'), target)
+        shutil.copyfile(os.path.join(self.init_dir,'interface.txt'), filename)
         self.read_keybinds()
 
     def delete_keybinds(self, filename):
