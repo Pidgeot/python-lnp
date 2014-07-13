@@ -106,7 +106,7 @@ OS X:
 
 Modifying the source code
 =========================
-PyLNP is licensed under the ISC license (see COPYING.txt), which allows you to modify and distribute changes as you see fit.
+PyLNP is licensed under the ISC license (see COPYING.txt), which essentially allows you to modify and distribute changes as you see fit.
 
 If you're going to modify the source code, it can be very useful to keep your code in a different directory than normal; unfortunately, this also prevents you from executing lnp.pyw directly, since it expects to find the files in the same directory.
 
@@ -118,12 +118,10 @@ If you want to make your own executable, you can do that. This is particularly u
 
 The code is prepared for different executable generators on each platforms: pyinstaller on Windows and Linux, and py2app on OS X. If you want to use a different one, you'll need to do the appropriate modifications yourself.
 
-These instructions are tested with Python 2.7, but should work with 3.x as well.
+These instructions are tested with Python 2.7, but should work with 3.x as well. You may be able to substitute "easy_install" with "pip install".
 
 Note:
-  **On Windows and Linux**, the resulting executable and *everything else* in the same directory must be placed in the same folder as the LNP.py script is currently placed. This is because it relies on a specific directory structure in order to find the Dwarf Fortress folder, as well as utilities, graphics packs, etc.
-
-  **On OS X**, the bundle is completely self-contained; it just needs to be placed in the right directory.
+  The resulting executable must be placed in the same directory as the LNP.py script is currently placed. This is because it relies on a specific directory structure in order to find the Dwarf Fortress folder, as well as utilities, graphics packs, etc.
 
 Windows
 -------
@@ -140,7 +138,7 @@ Building:
 Linux
 -----
 Installing prerequisites:
-  You'll need PyInstaller, preferably version 2.0 or later: http://www.pyinstallser.org/
+  You'll need PyInstaller, preferably version 2.0 or later: http://www.pyinstaller.org/
 
   The easiest way to install it is to use your package manager to install it directly (if available), or first install python-pip from your package manager and then run "sudo pip install pyinstaller" in a terminal.
 
@@ -168,7 +166,8 @@ Please be as specific as possible when reporting an error - tell exactly what yo
 TODO/Ideas
 ==========
 * Better (more) error handling
-* General code cleanup
+* Probably some general code cleanup
 * Probably need to fix some bugs
 * Color scheme selector (similar to keybindings)
+* Explicit patches for installing graphics packs
 * Other things?
