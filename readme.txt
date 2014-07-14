@@ -106,7 +106,7 @@ OS X:
 
 Modifying the source code
 =========================
-PyLNP is licensed under the ISC license (see COPYING.txt), which essentially allows you to modify and distribute changes as you see fit.
+PyLNP is licensed under the ISC license (see COPYING.txt), which essentially allows you to modify and distribute changes as you see fit. (This only applies to the launcher. Any bundled utilities, graphics packs, etc. have their own licenses; refer to those projects separately.)
 
 If you're going to modify the source code, it can be very useful to keep your code in a different directory than normal; unfortunately, this also prevents you from executing lnp.pyw directly, since it expects to find the files in the same directory.
 
