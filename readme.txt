@@ -140,7 +140,7 @@ Linux
 Installing prerequisites:
   You'll need PyInstaller, preferably version 2.0 or later: http://www.pyinstaller.org/
 
-  The easiest way to install it is to use your package manager to install it directly (if available), or first install python-pip from your package manager and then run "sudo pip install pyinstaller" in a terminal.
+  The easiest way to install it is to use your package manager to install it directly (if available), or first install python-pip from your package manager and then run "sudo easy_install pyinstaller" in a terminal.
 
 Building:
   Open the LNP directory in a Terminal and type "pyinstaller lnp.spec". Wait for the build to finish, and you will find a new folder named dist. Inside that folder is the stand-alone executable, named lnp.
