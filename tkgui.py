@@ -681,7 +681,7 @@ class TkGui(object):
         proglist.grid(column=0, row=0, sticky="nsew")
         proglist.bind("<Double-1>", lambda e: self.run_selected_utilities())
         if sys.platform == 'darwin':
-            proglist.bind("<3>", self.toggle_autorun)
+            proglist.bind("<2>", self.toggle_autorun)
         else:
             proglist.bind("<3>", self.toggle_autorun)
         s = Scrollbar(listframe, orient=VERTICAL, command=proglist.yview)
