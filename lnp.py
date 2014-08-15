@@ -245,6 +245,7 @@ class PyLNP(object):
         patterns = ['*.jar'] # Java applications
         if sys.platform in ['windows', 'win32']:
             patterns.append('*.exe') # Windows executables
+            patterns.append('*.bat') # Batch files
         else:
             patterns.append('*.sh') # Shell scripts for Linux and OS X
         for root, dirnames, filenames in os.walk(self.utils_dir):
