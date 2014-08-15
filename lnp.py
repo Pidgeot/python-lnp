@@ -6,7 +6,7 @@ from __future__ import print_function, unicode_literals
 import sys
 from tkgui import TkGui
 
-import fnmatch, glob, os, re, shutil, subprocess, tempfile, webbrowser
+import fnmatch, glob, json, os, re, shutil, subprocess, tempfile, webbrowser
 import distutils.dir_util as dir_util
 from datetime import datetime
 
@@ -54,6 +54,8 @@ class PyLNP(object):
 
         self.load_autorun()
         self.find_df_folder()
+
+        self.config = json.load(open('PyLNP.json'), 'utf-8')
 
         TkGui(self)
 
@@ -116,6 +118,11 @@ class PyLNP(object):
             sys.excepthook(*sys.exc_info())
             return False
 
+    def open_folder_idx(self, i):
+        """Opens the folder specified by index i, as listed in PyLNP.json."""
+        open_folder(os.path.join(BASEDIR,
+            self.config['folders'][i][1].replace('<df>', self.df_dir)))
+
     def open_savegames(self):
         """Opens the save game folder."""
         open_folder(self.save_dir)
@@ -144,6 +151,10 @@ class PyLNP(object):
     def open_init_folder(self):
         """Opens the init folder in the selected Dwarf Fortress instance."""
         open_folder(self.init_dir)
+
+    def open_link_idx(self, i):
+        """Opens the link specified by index i, as listed in PyLNP.json."""
+        webbrowser.open(self.config['links'][i][1])
 
     @staticmethod
     def open_df_web():
@@ -612,6 +623,7 @@ def open_folder(path):
             The folder path to open.
     """
 #http://stackoverflow.com/q/6631299
+    path = os.path.normpath(path)
     try:
         if sys.platform == 'darwin':
             subprocess.check_call(['open', '--', path])

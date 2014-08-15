@@ -877,26 +877,19 @@ class TkGui(object):
         root.bind_all('<Control-r>', lambda e: self.lnp.run_df())
         root.bind_all('<Control-i>', lambda e: self.run_init())
 
-        menu_folders.add_command(
-            label='Savegame Folder', command=self.lnp.open_savegames)
-        menu_folders.add_command(
-            label='Utilities Folder', command=self.lnp.open_utils)
-        menu_folders.add_command(
-            label='Graphics Folder', command=self.lnp.open_graphics)
-        menu_folders.add_separator()
-        menu_folders.add_command(
-            label='Main Folder', command=self.lnp.open_main_folder)
-        menu_folders.add_command(
-            label='LNP Folder', command=self.lnp.open_lnp_folder)
-        menu_folders.add_command(
-            label='Dwarf Fortress Folder', command=self.lnp.open_df_folder)
-        menu_folders.add_command(
-            label='Init Folder', command=self.lnp.open_init_folder)
+        for i, f in enumerate(self.lnp.config['folders']):
+            if f[0] == '-':
+                menu_folders.add_separator()
+            else:
+                menu_folders.add_command(label=f[0], command=lambda i=i:
+                        self.lnp.open_folder_idx(i))
 
-        menu_links.add_command(
-            label="DF Homepage", command=self.lnp.open_df_web)
-        menu_links.add_command(label="DF Wiki", command=self.lnp.open_wiki)
-        menu_links.add_command(label="DF Forums", command=self.lnp.open_forums)
+        for i, f in enumerate(self.lnp.config['links']):
+            if f[0] == '-':
+                menu_links.add_separator()
+            else:
+                menu_links.add_command(label=f[0], command=lambda i=i:
+                        self.lnp.open_link_idx(i))
 
         menu_help.add_command(
             label="Help", command=self.show_help, accelerator='F1')
