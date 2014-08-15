@@ -192,7 +192,7 @@ class DFConfiguration(object):
         Params:
           filename
             The file to read from.
-          fields:
+          fields
             An iterable containing the field names to read.
           auto_add
             Whether to automatically register all unknown fields for changes by
@@ -223,6 +223,25 @@ class DFConfiguration(object):
                     self.settings[field] = "YES"
                 else:
                     self.settings[field] = match.group(1)
+
+    @staticmethod
+    def read_value(filename, field):
+        """
+        Reads a single field <field> from the file <filename> and returns the
+        associated value. If multiple fields with this name exists, returns the
+        first one. If no such field exists, returns None.
+
+        Params:
+          filename
+            The file to read from.
+          field
+            The field to read.
+        """
+        settings_file = open(filename)
+        match = re.search(r'\['+field+r':(.+?)\]', settings_file.read())
+        if match is None:
+            return None
+        return match.group(1)
 
     def write_settings(self):
         """Write all settings to their respective files."""

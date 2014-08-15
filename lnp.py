@@ -194,11 +194,26 @@ class PyLNP(object):
 
     def read_graphics(self):
         """Returns a list of graphics directories."""
-        return tuple([
-            os.path.basename(o) for o in
+        packs = [os.path.basename(o) for o in
             glob.glob(os.path.join(self.graphics_dir, '*')) if
-            os.path.isdir(o)
-            ])
+            os.path.isdir(o)]
+        result = []
+        for p in packs:
+            font = self.settings.read_value(os.path.join(
+                self.graphics_dir, p, 'data', 'init', 'init.txt'), 'FONT')
+            graphics = self.settings.read_value(
+                os.path.join(self.graphics_dir, p, 'data', 'init', 'init.txt'),
+                'GRAPHICS_FONT')
+            result.append((p,font,graphics))
+        return tuple(result)
+
+    def current_pack(self):
+        packs = self.read_graphics()
+        for p in packs:
+            if (self.settings.FONT == p[1] and
+                self.settings.GRAPHICS_FONT == p[2]):
+                    return p[0]
+        return self.settings.FONT+'/'+self.settings.GRAPHICS_FONT
 
     @staticmethod
     def read_utility_lists(path):

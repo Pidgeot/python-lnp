@@ -589,29 +589,33 @@ class TkGui(object):
         Grid.columnconfigure(change_graphics, 0, weight=1)
         Grid.columnconfigure(change_graphics, 1, weight=1)
 
+        curr_pack = Label(change_graphics, text='Current Graphics')
+        curr_pack.grid(column=0, row=0, columnspan=2, sticky="nsew")
+        self.controls['FONT'] = (curr_pack, lambda x: self.lnp.current_pack())
+
         graphicpacks = Listbox(
             change_graphics, height=10, listvariable=self.graphics,
             activestyle='dotbox')
-        graphicpacks.grid(column=0, row=0, columnspan=2, sticky="nsew", pady=4)
+        graphicpacks.grid(column=0, row=1, columnspan=2, sticky="nsew", pady=4)
 
         install = Button(
             change_graphics, text='Install Graphics',
             command=lambda: self.install_graphics(graphicpacks))
         create_tooltip(install, 'Install selected graphics pack')
-        install.grid(column=0, row=1, sticky="nsew")
+        install.grid(column=0, row=2, sticky="nsew")
         update_saves = Button(
             change_graphics, text='Update Savegames',
             command=self.update_savegames)
         create_tooltip(
             update_saves, 'Install current graphics pack in all savegames')
-        update_saves.grid(column=1, row=1, sticky="nsew")
+        update_saves.grid(column=1, row=2, sticky="nsew")
         truetype = Button(
             change_graphics, text='TrueType Fonts',
             command=lambda: self.cycle_option('truetype'))
         create_tooltip(
             truetype,
             'Toggles whether to use TrueType fonts or tileset for text')
-        truetype.grid(column=0, row=2, columnspan=2, sticky="nsew")
+        truetype.grid(column=0, row=3, columnspan=2, sticky="nsew")
         self.controls['truetype'] = truetype
 
         advanced = Labelframe(f, text='Advanced')
@@ -967,7 +971,7 @@ class TkGui(object):
 
     def read_graphics(self):
         """Reads list of graphics packs."""
-        self.graphics.set(self.lnp.read_graphics())
+        self.graphics.set(tuple([p[0] for p in self.lnp.read_graphics()]))
 
     def read_utilities(self):
         """Reads list of utilities."""
@@ -1000,12 +1004,18 @@ class TkGui(object):
         """Updates configuration displays (buttons, etc.)."""
         for key, value in self.lnp.settings:
             if key in list(self.controls.keys()):
-                if isinstance(self.controls[key], Entry):
-                    self.controls[key].delete(0, END)
-                    self.controls[key].insert(0, value)
+                if hasattr(self.controls[key], '__iter__'):
+                    #Allow (control, func) tuples, etc. to customize value
+                    control = self.controls[key][0]
+                    value = self.controls[key][1](value)
                 else:
-                    self.controls[key]["text"] = (
-                        self.controls[key]["text"].split(':')[0] + ': ' +
+                    control = self.controls[key]
+                if isinstance(control, Entry):
+                    control.delete(0, END)
+                    control.insert(0, value)
+                else:
+                    control["text"] = (
+                        control["text"].split(':')[0] + ': ' +
                         value)
 
     def set_pop_cap(self):
