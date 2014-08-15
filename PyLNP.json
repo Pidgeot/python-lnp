@@ -14,6 +14,7 @@
     ["DF Wiki","http://dwarffortresswiki.org/"],
     ["DF Forums","http://www.bay12forums.com/smf/"]
   ],
+	"hideUtilityPath": false,
 	"updates": {
 		"checkURL": "",
 		"versionRegex": "",

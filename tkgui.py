@@ -1053,10 +1053,12 @@ class TkGui(object):
         #pylint:disable=bad-builtin
         map(self.proglist.delete, self.proglist.get_children())
         for p in self.progs:
+            exe = os.path.join(
+                os.path.basename(os.path.dirname(p)), os.path.basename(p))
+            if self.lnp.config["hideUtilityPath"]:
+                exe = os.path.splitext(os.path.basename(p))[0]
             self.proglist.insert('', 'end', text=p, values=(
-                os.path.join(
-                    os.path.basename(os.path.dirname(p)), os.path.basename(p)),
-                'Yes' if p in self.lnp.autorun else 'No'))
+                exe, 'Yes' if p in self.lnp.autorun else 'No'))
 
     def update_displays(self):
         """Updates configuration displays (buttons, etc.)."""
