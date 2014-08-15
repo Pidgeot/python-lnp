@@ -9,8 +9,17 @@ from tkgui import TkGui
 import fnmatch, glob, json, os, re, shutil, subprocess, tempfile, webbrowser
 import distutils.dir_util as dir_util
 from datetime import datetime
+import time
 
 from settings import DFConfiguration
+
+try: #Python 2
+    #pylint:disable=import-error
+    from urllib2 import urlopen, URLError
+except ImportError: # Python 3
+    #pylint:disable=import-error, no-name-in-module
+    from urllib.request import urlopen
+    from urllib.error import URLError
 
 BASEDIR = '.'
 VERSION = '0.1'
@@ -55,7 +64,14 @@ class PyLNP(object):
         self.load_autorun()
         self.find_df_folder()
 
-        self.config = json.load(open('PyLNP.json'), 'utf-8')
+        self.config = json.load(open('PyLNP.json'), encoding='utf-8')
+        try:
+            self.userconfig = json.load(open('PyLNP.user'), encoding='utf-8')
+        except:
+            self.userconfig = {'nextUpdate': 0}
+        self.new_version = None
+
+        self.check_update()
 
         TkGui(self)
 
@@ -73,6 +89,10 @@ class PyLNP(object):
     def save_params(self):
         """Saves settings to the selected Dwarf Fortress instance."""
         self.settings.write_settings()
+
+    def save_config(self):
+        """Saves LNP configuration."""
+        json.dump(self.userconfig, open('PyLNP.user','w'))
 
     def restore_defaults(self):
         """Copy default settings into the selected Dwarf Fortress instance."""
@@ -120,8 +140,9 @@ class PyLNP(object):
 
     def open_folder_idx(self, i):
         """Opens the folder specified by index i, as listed in PyLNP.json."""
-        open_folder(os.path.join(BASEDIR,
-            self.config['folders'][i][1].replace('<df>', self.df_dir)))
+        open_folder(os.path.join(
+            BASEDIR, self.config['folders'][i][1].replace(
+                '<df>', self.df_dir)))
 
     def open_savegames(self):
         """Opens the save game folder."""
@@ -205,7 +226,8 @@ class PyLNP(object):
 
     def read_graphics(self):
         """Returns a list of graphics directories."""
-        packs = [os.path.basename(o) for o in
+        packs = [
+            os.path.basename(o) for o in
             glob.glob(os.path.join(self.graphics_dir, '*')) if
             os.path.isdir(o)]
         result = []
@@ -215,15 +237,15 @@ class PyLNP(object):
             graphics = self.settings.read_value(
                 os.path.join(self.graphics_dir, p, 'data', 'init', 'init.txt'),
                 'GRAPHICS_FONT')
-            result.append((p,font,graphics))
+            result.append((p, font, graphics))
         return tuple(result)
 
     def current_pack(self):
         packs = self.read_graphics()
         for p in packs:
             if (self.settings.FONT == p[1] and
-                self.settings.GRAPHICS_FONT == p[2]):
-                    return p[0]
+                    self.settings.GRAPHICS_FONT == p[2]):
+                return p[0]
         return self.settings.FONT+'/'+self.settings.GRAPHICS_FONT
 
     @staticmethod
@@ -613,6 +635,35 @@ class PyLNP(object):
                 'PyLNP V{0} extras installed!\nTime: {1}'.format(
                     VERSION, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
             textfile.close()
+
+    def check_update(self):
+        """Checks for updates using the URL specified in PyLNP.json."""
+        if self.config['updates']['checkURL'] == '':
+            return
+        if self.userconfig['nextUpdate'] < time.time():
+            try:
+                version_text = urlopen(
+                    self.config['updates']['checkURL']).read()
+                # Note: versionRegex must capture the version number in a group.
+                new_version = re.search(
+                    self.config['updates']['versionRegex'],
+                    version_text).group(1)
+                if new_version != self.config['updates']['packVersion']:
+                    self.new_version = new_version
+            except URLError as ex:
+                print("Error checking for updates: " + ex.reason, file=sys.stderr)
+                pass
+            except:
+                pass
+
+    def next_update(self, days):
+        """Sets the next update check to occur in <days> days."""
+        self.userconfig['nextUpdate'] = (time.time() + days * 24 * 60 * 60)
+        self.save_config()
+
+    def start_update(self):
+        """Launches a webbrowser to the specified update URL."""
+        webbrowser.open(self.config['updates']['downloadURL'])
 
 def open_folder(path):
     """

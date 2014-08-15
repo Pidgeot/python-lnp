@@ -335,6 +335,66 @@ class SelectDF(object):
         """Called when the Cancel button is clicked."""
         self.top.destroy()
 
+class UpdateWindow(object):
+    """Notification of a new update."""
+    def __init__(self, parent, lnp):
+        """
+        Constructor for UpdateWindow.
+
+        Params:
+            parent
+                Parent widget for the window.
+            lnp
+                Reference to the PyLNP object.
+        """
+        self.parent = parent
+        self.lnp = lnp
+        top = self.top = Toplevel(parent)
+        top.title('Select DF instance')
+
+        f = Frame(top)
+        Grid.rowconfigure(f, 1, weight=1)
+        Grid.columnconfigure(f, 0, weight=1)
+        Label(
+            f, text='Update is available (version '+self.lnp.new_version+
+            '). Update now?').grid(column=0, row=0, columnspan=2)
+        Label(f, text='Check again in').grid(column=0, row=1)
+
+        self.options = [
+            "next launch", "1 day", "3 days", "7 days", "14 days", "30 days"]
+        self.var = StringVar(top)
+        self.var.set(self.options[0])
+        OptionMenu(f, self.var, self.options[0], *self.options).grid(
+            column=1, row=1)
+        f.pack(fill=BOTH, expand=Y)
+
+        buttons = Frame(top)
+        Button(
+            buttons, text='Yes', command=self.yes
+            ).pack(side=LEFT)
+        Button(
+            buttons, text='No', command=self.close
+            ).pack(side=LEFT)
+        buttons.pack(side=BOTTOM, anchor="e")
+
+        top.transient(parent)
+        top.wait_visibility()
+        top.grab_set()
+        top.focus_set()
+        top.protocol("WM_DELETE_WINDOW", self.close)
+        top.wait_window(top)
+
+    def yes(self):
+        """Called when the Yes button is clicked."""
+        self.lnp.start_update()
+        self.close()
+
+    def close(self):
+        """Called when the window is closed."""
+        days = [0, 1, 3, 7, 14, 30][self.options.index(self.var.get())]
+        self.lnp.next_update(days)
+        self.top.destroy()
+
 class TkGui(object):
     """Main GUI window."""
     def __init__(self, lnp):
@@ -447,6 +507,9 @@ class TkGui(object):
         self.read_graphics()
         self.read_utilities()
         self.update_displays()
+
+        if self.lnp.new_version is not None:
+            UpdateWindow(self.root, self.lnp)
 
         root.mainloop()
 
@@ -881,15 +944,17 @@ class TkGui(object):
             if f[0] == '-':
                 menu_folders.add_separator()
             else:
-                menu_folders.add_command(label=f[0], command=lambda i=i:
-                        self.lnp.open_folder_idx(i))
+                menu_folders.add_command(
+                    label=f[0],
+                    command=lambda i=i: self.lnp.open_folder_idx(i))
 
         for i, f in enumerate(self.lnp.config['links']):
             if f[0] == '-':
                 menu_links.add_separator()
             else:
-                menu_links.add_command(label=f[0], command=lambda i=i:
-                        self.lnp.open_link_idx(i))
+                menu_links.add_command(
+                    label=f[0],
+                    command=lambda i=i: self.lnp.open_link_idx(i))
 
         menu_help.add_command(
             label="Help", command=self.show_help, accelerator='F1')

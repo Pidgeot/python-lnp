@@ -13,5 +13,11 @@
     ["DF Homepage","http://www.bay12games.com/dwarves/"],
     ["DF Wiki","http://dwarffortresswiki.org/"],
     ["DF Forums","http://www.bay12forums.com/smf/"]
-  ]
+  ],
+	"updates": {
+		"checkURL": "",
+		"versionRegex": "",
+		"downloadURL": "",
+		"packVersion": ""
+	}
 }
