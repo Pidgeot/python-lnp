@@ -1,46 +1,49 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#pylint:disable=unused-wildcard-import,wildcard-import,too-many-lines
+# pylint:disable=unused-wildcard-import,wildcard-import,too-many-lines
 """TKinter-based GUI for PyLNP."""
 from __future__ import print_function, unicode_literals
 
-import sys, os
+import os
+import sys
 import errorlog
 
-if sys.version_info[0] == 3: #Alternate import names
-    #pylint:disable=import-error
+if sys.version_info[0] == 3:  # Alternate import names
+    # pylint:disable=import-error
     from tkinter import *
     from tkinter.ttk import *
     import tkinter.messagebox as messagebox
     import tkinter.simpledialog as simpledialog
 else:
-    #pylint:disable=import-error
+    # pylint:disable=import-error
     from Tkinter import *
     from ttk import *
     import tkMessageBox as messagebox
     import tkSimpleDialog as simpledialog
 
-#Workaround to use Pillow in PyInstaller
-import pkg_resources #pylint:disable=unused-import
+# Workaround to use Pillow in PyInstaller
+import pkg_resources  # pylint:disable=unused-import
 
-try: #PIL-compatible library (e.g. Pillow); used to load PNG images (optional)
-    #pylint:disable=import-error,no-name-in-module
+try:  # PIL-compatible library (e.g. Pillow); used to load PNG images (optional)
+    # pylint:disable=import-error,no-name-in-module
     from PIL import Image, ImageTk
     has_PIL = True
-except ImportError: #Some PIL installations live outside of the PIL package
-    #pylint:disable=import-error,no-name-in-module
+except ImportError:  # Some PIL installations live outside of the PIL package
+    # pylint:disable=import-error,no-name-in-module
     try:
-        import Image, ImageTk
+        import Image
+        import ImageTk
         has_PIL = True
-    except ImportError: #No PIL compatible library
+    except ImportError:  # No PIL compatible library
         has_PIL = False
 
-force_PNG = (TkVersion >= 8.6) # Tk 8.6 supports PNG natively
+force_PNG = (TkVersion >= 8.6)  # Tk 8.6 supports PNG natively
 
 if not (has_PIL or force_PNG):
     print(
         'Note: PIL not found and Tk version too old for PNG support ({0}).'
         'Falling back to GIF images.'.format(TkVersion), file=sys.stderr)
+
 
 def get_image(filename):
     """
@@ -58,25 +61,27 @@ def get_image(filename):
     else:
         filename = filename + '.gif'
     if has_PIL:
-        #pylint:disable=maybe-no-member
+        # pylint:disable=maybe-no-member
         return ImageTk.PhotoImage(Image.open(filename))
     else:
         return PhotoImage(file=filename)
 
-#Make Enter on button with focus activate it
+
+# Make Enter on button with focus activate it
 TtkButton = Button
-class Button(TtkButton): #pylint:disable=function-redefined,missing-docstring
+class Button(TtkButton):  # pylint:disable=function-redefined,missing-docstring
     def __init__(self, master=None, **kw):
         TtkButton.__init__(self, master, **kw)
         if 'command' in kw:
             self.bind('<Return>', lambda e: kw['command']())
 
-#Monkeypatch simpledialog to use themed dialogs from ttk
-if sys.platform != 'darwin': #OS X looks better without patch
+# Monkeypatch simpledialog to use themed dialogs from ttk
+if sys.platform != 'darwin':  # OS X looks better without patch
     simpledialog.Toplevel = Toplevel
     simpledialog.Entry = Entry
     simpledialog.Frame = Frame
     simpledialog.Button = Button
+
 
 def validate_number(value_if_allowed):
     """
@@ -98,7 +103,8 @@ def validate_number(value_if_allowed):
     except ValueError:
         return False
 
-#http://www.voidspace.org.uk/python/weblog/arch_d7_2006_07_01.shtml#e387
+
+# http://www.voidspace.org.uk/python/weblog/arch_d7_2006_07_01.shtml#e387
 class ToolTip(object):
     """Tooltip widget."""
     def __init__(self, widget):
@@ -116,7 +122,7 @@ class ToolTip(object):
             return
         x, y, _, cy = self.widget.bbox("insert")
         x = x + self.widget.winfo_rootx() + 27
-        y = y + cy + self.widget.winfo_rooty() +27
+        y = y + cy + self.widget.winfo_rooty() + 27
         self.tipwindow = tw = Toplevel(self.widget)
         tw.wm_overrideredirect(1)
         tw.wm_geometry("+%d+%d" % (x, y))
@@ -141,6 +147,7 @@ class ToolTip(object):
 
 _TOOLTIP_DELAY = 500
 
+
 def create_tooltip(widget, text):
     """
     Creates a tooltip for a widget.
@@ -151,8 +158,9 @@ def create_tooltip(widget, text):
         text
             The tooltip text.
     """
-    #pylint:disable=unused-argument
+    # pylint:disable=unused-argument
     tooltip = ToolTip(widget)
+
     def enter(event):
         """
         Event handler on mouse enter.
@@ -163,6 +171,7 @@ def create_tooltip(widget, text):
         if tooltip.event:
             widget.after_cancel(tooltip.event)
         tooltip.event = widget.after(_TOOLTIP_DELAY, tooltip.showtip, text)
+
     def leave(event):
         """
         Event handler on mouse exit.
@@ -177,6 +186,7 @@ def create_tooltip(widget, text):
         tooltip.hidetip()
     widget.bind('<Enter>', enter)
     widget.bind('<Leave>', leave)
+
 
 class LogWindow(object):
     """Window used for displaying an error log."""
@@ -218,6 +228,7 @@ class LogWindow(object):
         self.err.delete('1.0', END)
         self.out.insert('1.0', '\n'.join(errorlog.out.lines))
         self.err.insert('1.0', '\n'.join(errorlog.err.lines))
+
 
 class InitEditor(object):
     """Basic editor for d_init.txt and init.txt."""
@@ -279,6 +290,7 @@ class InitEditor(object):
         f.close()
         self.gui.load_params()
 
+
 class SelectDF(object):
     """Window to select an instance of Dwarf Fortress to operate on."""
     def __init__(self, parent, folders):
@@ -331,9 +343,11 @@ class SelectDF(object):
             self.result = self.folderlist.get(self.folderlist.curselection()[0])
             self.top.protocol('WM_DELETE_WINDOW', None)
             self.top.destroy()
+
     def cancel(self):
         """Called when the Cancel button is clicked."""
         self.top.destroy()
+
 
 class UpdateWindow(object):
     """Notification of a new update."""
@@ -356,7 +370,7 @@ class UpdateWindow(object):
         Grid.rowconfigure(f, 1, weight=1)
         Grid.columnconfigure(f, 0, weight=1)
         Label(
-            f, text='Update is available (version '+self.lnp.new_version+
+            f, text='Update is available (version '+self.lnp.new_version +
             '). Update now?').grid(column=0, row=0, columnspan=2)
         Label(f, text='Check again in').grid(column=0, row=1)
 
@@ -395,6 +409,7 @@ class UpdateWindow(object):
         self.lnp.next_update(days)
         self.top.destroy()
 
+
 class TkGui(object):
     """Main GUI window."""
     def __init__(self, lnp):
@@ -412,19 +427,19 @@ class TkGui(object):
         windowing = root.tk.call('tk', 'windowingsystem')
         if windowing == "win32":
             if self.lnp.bundle == "win":
-                #pylint: disable=protected-access, no-member
+                # pylint: disable=protected-access, no-member
                 img = os.path.join(sys._MEIPASS, 'LNP.ico')
             else:
                 img = 'LNP.ico'
             root.tk.call('wm', 'iconbitmap', root, "-default", img)
         elif windowing == "x11":
-            if self.lnp.bundle == 'linux': #Image is inside executable on Linux
-                #pylint: disable=protected-access, no-member
+            if self.lnp.bundle == 'linux':
+                # pylint: disable=protected-access, no-member
                 img = get_image(os.path.join(sys._MEIPASS, 'LNP'))
             else:
                 img = get_image('LNP')
             root.tk.call('wm', 'iconphoto', root, "-default", img)
-        elif windowing == "aqua": #OS X has no window icons
+        elif windowing == "aqua":  # OS X has no window icons
             pass
 
         root.resizable(0, 0)
@@ -433,18 +448,21 @@ class TkGui(object):
         self.keybinds = Variable(root)
         self.graphics = Variable(root)
         self.progs = Variable(root)
+        self.colors = Variable(root)
 
         self.controls = dict()
         self.proglist = None
+        self.color_files = None
+        self.color_preview = None
 
         main = Frame(root)
         if self.lnp.bundle == 'osx':
-            #Image is inside application bundle on OS X
+            # Image is inside application bundle on OS X
             image = os.path.join(
                 os.path.dirname(sys.executable), '..', 'Resources', 'LNPSMALL')
         elif self.lnp.bundle in ['win', 'linux']:
-            #Image is inside executable on Linux and Windows
-            #pylint: disable=protected-access, no-member
+            # Image is inside executable on Linux and Windows
+            # pylint: disable=protected-access, no-member
             image = os.path.join(sys._MEIPASS, 'LNPSMALL')
         else:
             image = 'LNPSMALL'
@@ -507,6 +525,7 @@ class TkGui(object):
         self.read_graphics()
         self.read_utilities()
         self.update_displays()
+        self.read_colors()
 
         if self.lnp.new_version is not None:
             UpdateWindow(self.root, self.lnp)
@@ -609,31 +628,35 @@ class TkGui(object):
         keybindings = Labelframe(f, text='Key Bindings')
         keybindings.pack(side=BOTTOM, fill=BOTH, expand=Y, anchor="s")
         Grid.columnconfigure(keybindings, 0, weight=2)
-        Grid.columnconfigure(keybindings, 1, weight=1)
         Grid.columnconfigure(keybindings, 2, weight=1)
+        Grid.columnconfigure(keybindings, 3, weight=1)
 
         keybinding_files = Listbox(
             keybindings, height=4, listvariable=self.keybinds,
             activestyle='dotbox')
         keybinding_files.grid(column=0, row=0, rowspan=2, sticky="nsew")
+        s = Scrollbar(
+            keybindings, orient=VERTICAL, command=keybinding_files.yview)
+        keybinding_files['yscrollcommand'] = s.set
+        s.grid(column=1, row=0, rowspan=2, sticky="ns")
 
         load_keyb = Button(
             keybindings, text='Load',
             command=lambda: self.load_keybinds(keybinding_files))
-        load_keyb.grid(column=1, row=0)
+        load_keyb.grid(column=2, row=0)
         create_tooltip(load_keyb, 'Load selected keybindings')
         refresh_keyb = Button(
             keybindings, text='Refresh', command=self.read_keybinds)
         create_tooltip(refresh_keyb, 'Refresh keybinding list')
-        refresh_keyb.grid(column=2, row=0)
+        refresh_keyb.grid(column=3, row=0)
         save_keyb = Button(keybindings, text='Save', command=self.save_keybinds)
         create_tooltip(save_keyb, 'Save your current keybindings')
-        save_keyb.grid(column=1, row=1)
+        save_keyb.grid(column=2, row=1)
         delete_keyb = Button(
             keybindings, text='Delete',
             command=lambda: self.delete_keybinds(keybinding_files))
         create_tooltip(delete_keyb, 'Delete selected keybinding')
-        delete_keyb.grid(column=2, row=1)
+        delete_keyb.grid(column=3, row=1)
         return f
 
     def create_graphics(self, n):
@@ -702,6 +725,47 @@ class TkGui(object):
             simplify, 'Deletes unnecessary files from graphics packs '
             '(saves space, useful for re-packaging)')
         simplify.grid(column=1, row=1, sticky="nsew")
+
+        colors = Labelframe(f, text='Color schemes')
+        colors.pack(side=BOTTOM, fill=BOTH, expand=Y, anchor="s")
+        Grid.columnconfigure(colors, 0, weight=3)
+        Grid.columnconfigure(colors, 2, weight=1)
+
+        self.color_files = color_files = Listbox(
+            colors, height=4, listvariable=self.colors,
+            activestyle='dotbox')
+        color_files.grid(column=0, row=0, rowspan=2, sticky="nsew")
+        color_files.bind(
+            '<<ListboxSelect>>',
+            lambda e: self.paint_color_preview(color_files))
+        s = Scrollbar(colors, orient=VERTICAL, command=self.color_files.yview)
+        self.color_files['yscrollcommand'] = s.set
+        s.grid(column=1, row=0, rowspan=2, sticky="ns")
+
+        buttons = Frame(colors)
+        load_color = Button(
+            buttons, text='Load',
+            command=lambda: self.load_colors(color_files))
+        load_color.pack(side=TOP)
+        create_tooltip(load_color, 'Load selected color scheme')
+        refresh_color = Button(
+            buttons, text='Refresh', command=self.read_colors)
+        create_tooltip(refresh_color, 'Refresh color scheme list')
+        refresh_color.pack(side=TOP)
+        save_color = Button(buttons, text='Save', command=self.save_colors)
+        create_tooltip(save_color, 'Save your current color scheme')
+        save_color.pack(side=TOP)
+        delete_color = Button(
+            buttons, text='Delete',
+            command=lambda: self.delete_colors(color_files))
+        create_tooltip(delete_color, 'Delete selected color scheme')
+        delete_color.pack(side=TOP)
+        buttons.grid(column=2, row=0, rowspan=3)
+
+        self.color_preview = Canvas(
+            colors, width=128, height=32, highlightthickness=0, takefocus=False)
+        self.color_preview.grid(column=0, row=2)
+
         return f
 
     def create_utilities(self, n):
@@ -1036,6 +1100,11 @@ class TkGui(object):
         self.progs = self.lnp.read_utilities()
         self.update_autorun_list()
 
+    def read_colors(self):
+        """Reads list of color schemes."""
+        self.colors.set(self.lnp.read_colors())
+        self.paint_color_preview(self.color_files)
+
     def toggle_autorun(self, event):
         """
         Toggles autorun for a utility.
@@ -1050,7 +1119,7 @@ class TkGui(object):
 
     def update_autorun_list(self):
         """Updates the autorun list."""
-        #pylint:disable=bad-builtin
+        # pylint:disable=bad-builtin
         map(self.proglist.delete, self.proglist.get_children())
         for p in self.progs:
             exe = os.path.join(
@@ -1065,7 +1134,7 @@ class TkGui(object):
         for key, value in self.lnp.settings:
             if key in list(self.controls.keys()):
                 if hasattr(self.controls[key], '__iter__'):
-                    #Allow (control, func) tuples, etc. to customize value
+                    # Allow (control, func) tuples, etc. to customize value
                     control = self.controls[key][0]
                     value = self.controls[key][1](value)
                 else:
@@ -1090,7 +1159,7 @@ class TkGui(object):
     def set_child_cap(self):
         """Resquests new child cap from the user."""
         child_split = list(self.lnp.settings.childcap.split(':'))
-        child_split.append('0') # In case syntax is invalid
+        child_split.append('0')  # In case syntax is invalid
         v = simpledialog.askinteger(
             "Settings", "Absolute cap on babies + children:",
             initialvalue=child_split[0], parent=self.root)
@@ -1166,6 +1235,67 @@ class TkGui(object):
                     'Are you sure you want to delete {0}?'.format(filename)):
                 self.lnp.delete_keybinds(filename)
             self.read_keybinds()
+
+    def load_colors(self, listbox):
+        """
+        Replaces color scheme  with selected file.
+
+        Params:
+            listbox
+                Listbox containing the list of color schemes.
+        """
+        if len(listbox.curselection()) != 0:
+            self.lnp.load_colors(listbox.get(listbox.curselection()[0]))
+
+    def save_colors(self):
+        """Saves color scheme to a file."""
+        v = simpledialog.askstring(
+            "Save Color scheme", "Save current color scheme as:",
+            parent=self.root)
+        if v is not None:
+            if (not self.lnp.color_exists(v) or messagebox.askyesno(
+                    message='Overwrite {0}?'.format(v),
+                    icon='question', title='Overwrite file?')):
+                self.lnp.save_colors(v)
+                self.read_colors()
+
+    def delete_colors(self, listbox):
+        """
+        Deletes a color scheme.
+
+        Params:
+            listbox
+                Listbox containing the list of color schemes.
+        """
+        if len(listbox.curselection()) != 0:
+            filename = listbox.get(listbox.curselection()[0])
+            if messagebox.askyesno(
+                    'Delete file?',
+                    'Are you sure you want to delete {0}?'.format(filename)):
+                self.lnp.delete_colors(filename)
+            self.read_colors()
+
+    def paint_color_preview(self, listbox):
+        """
+        Draws a preview of the selected color scheme. If no scheme is selected,
+        draws the currently installed color scheme.
+
+        Params:
+            listbox
+                Listbox containing the list of color schemes.
+        """
+        colorscheme = None
+        if len(listbox.curselection()) != 0:
+            colorscheme = listbox.get(listbox.curselection()[0])
+        colors = self.lnp.get_colors(colorscheme)
+
+        self.color_preview.delete(ALL)
+        for i, c in enumerate(colors):
+            row = i / 8
+            col = i % 8
+            self.color_preview.create_rectangle(
+                col*16, row*16, (col+1)*16, (row+1)*16,
+                fill="#%02x%02x%02x" % c, width=0)
 
     def install_graphics(self, listbox):
         """

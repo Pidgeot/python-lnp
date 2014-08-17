@@ -6,23 +6,32 @@ from __future__ import print_function, unicode_literals
 import sys
 from tkgui import TkGui
 
-import fnmatch, glob, json, os, re, shutil, subprocess, tempfile, webbrowser
 import distutils.dir_util as dir_util
-from datetime import datetime
+import fnmatch
+import glob
+import json
+import os
+import re
+import shutil
+import subprocess
+import tempfile
 import time
+import webbrowser
+from datetime import datetime
 
 from settings import DFConfiguration
 
-try: #Python 2
-    #pylint:disable=import-error
+try:  # Python 2
+    # pylint:disable=import-error
     from urllib2 import urlopen, URLError
-except ImportError: # Python 3
-    #pylint:disable=import-error, no-name-in-module
+except ImportError:  # Python 3
+    # pylint:disable=import-error, no-name-in-module
     from urllib.request import urlopen
     from urllib.error import URLError
 
 BASEDIR = '.'
 VERSION = '0.1'
+
 
 class PyLNP(object):
     """
@@ -42,7 +51,7 @@ class PyLNP(object):
                 self.bundle = 'linux'
             elif sys.platform == 'darwin':
                 self.bundle = 'osx'
-                #OS X bundles start in different directory
+                # OS X bundles start in different directory
                 os.chdir('../../..')
         else:
             os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -53,6 +62,7 @@ class PyLNP(object):
         self.keybinds_dir = os.path.join(self.lnp_dir, 'Keybinds')
         self.graphics_dir = os.path.join(self.lnp_dir, 'Graphics')
         self.utils_dir = os.path.join(self.lnp_dir, 'Utilities')
+        self.colors_dir = os.path.join(self.lnp_dir, 'Colors')
 
         self.folders = []
         self.df_dir = ''
@@ -82,8 +92,7 @@ class PyLNP(object):
         except IOError:
             sys.excepthook(*sys.exc_info())
             msg = ("Failed to read settings, "
-                   "{0} not really a DF dir?"
-                  ).format(self.df_dir)
+                   "{0} not really a DF dir?").format(self.df_dir)
             raise IOError(msg)
 
     def save_params(self):
@@ -92,7 +101,7 @@ class PyLNP(object):
 
     def save_config(self):
         """Saves LNP configuration."""
-        json.dump(self.userconfig, open('PyLNP.user','w'))
+        json.dump(self.userconfig, open('PyLNP.user', 'w'))
 
     def restore_defaults(self):
         """Copy default settings into the selected Dwarf Fortress instance."""
@@ -125,11 +134,11 @@ class PyLNP(object):
         """
         try:
             path = os.path.abspath(path)
-            if path.endswith('.jar'): #Explicitly launch JAR files with Java
+            if path.endswith('.jar'):  # Explicitly launch JAR files with Java
                 subprocess.Popen(
                     ['java', '-jar', os.path.basename(path)],
                     cwd=os.path.dirname(path))
-            elif path.endswith('.app'): #OS X application bundle
+            elif path.endswith('.app'):  # OS X application bundle
                 subprocess.Popen(['open', path], cwd=path)
             else:
                 subprocess.Popen(path, cwd=os.path.dirname(path))
@@ -197,7 +206,7 @@ class PyLNP(object):
         with "Dwarf Fortress" or "df")"""
         self.folders = folders = tuple([
             o for o in
-            glob.glob(os.path.join(BASEDIR, 'Dwarf Fortress*'))+
+            glob.glob(os.path.join(BASEDIR, 'Dwarf Fortress*')) +
             glob.glob(os.path.join(BASEDIR, 'df*')) if os.path.isdir(o)
             ])
         self.df_dir = ''
@@ -269,23 +278,23 @@ class PyLNP(object):
         """Returns a list of utility programs."""
         exclusions = self.read_utility_lists(os.path.join(
             self.utils_dir, 'exclude.txt'))
-        #Allow for an include list of filenames that will be treated as valid
-        #utilities. Useful for e.g. Linux, where executables rarely have
-        #extensions.
+        # Allow for an include list of filenames that will be treated as valid
+        # utilities. Useful for e.g. Linux, where executables rarely have
+        # extensions.
         inclusions = self.read_utility_lists(os.path.join(
             self.utils_dir, 'include.txt'))
         progs = []
-        patterns = ['*.jar'] # Java applications
+        patterns = ['*.jar']  # Java applications
         if sys.platform in ['windows', 'win32']:
-            patterns.append('*.exe') # Windows executables
-            patterns.append('*.bat') # Batch files
+            patterns.append('*.exe')  # Windows executables
+            patterns.append('*.bat')  # Batch files
         else:
-            patterns.append('*.sh') # Shell scripts for Linux and OS X
+            patterns.append('*.sh')  # Shell scripts for Linux and OS X
         for root, dirnames, filenames in os.walk(self.utils_dir):
             if sys.platform == 'darwin':
                 for dirname in dirnames:
                     if fnmatch.fnmatch(dirname, '*.app'):
-                        #OS X application bundles are really directories
+                        # OS X application bundles are really directories
                         progs.append(os.path.relpath(
                             os.path.join(root, dirname),
                             os.path.join(self.utils_dir)))
@@ -387,6 +396,7 @@ class PyLNP(object):
         """
         if not filename.endswith('.txt'):
             filename = filename + '.txt'
+        filename = os.path.join(self.keybinds_dir, filename)
         shutil.copyfile(os.path.join(self.init_dir, 'interface.txt'), filename)
         self.read_keybinds()
 
@@ -422,11 +432,11 @@ class PyLNP(object):
                 os.path.isdir(os.path.join(gfx_dir, 'raw', 'graphics')) and
                 os.path.isdir(os.path.join(gfx_dir, 'data', 'init'))):
             try:
-                #Delete old graphics
+                # Delete old graphics
                 if os.path.isdir(os.path.join(self.df_dir, 'raw', 'graphics')):
                     dir_util.remove_tree(
                         os.path.join(self.df_dir, 'raw', 'graphics'))
-                #Copy new raws
+                # Copy new raws
                 dir_util.copy_tree(
                     os.path.join(gfx_dir, 'raw'),
                     os.path.join(self.df_dir, 'raw'))
@@ -474,7 +484,7 @@ class PyLNP(object):
             'WOUND_COLOR_INHIBITED', 'WOUND_COLOR_FUNCTION_LOSS',
             'WOUND_COLOR_BROKEN', 'WOUND_COLOR_MISSING', 'SKY', 'CHASM',
             'PILLAR_TILE',
-            #Tracks
+            # Tracks
             'TRACK_N', 'TRACK_S', 'TRACK_E', 'TRACK_W', 'TRACK_NS',
             'TRACK_NE', 'TRACK_NW', 'TRACK_SE', 'TRACK_SW', 'TRACK_EW',
             'TRACK_NSE', 'TRACK_NSW', 'TRACK_NEW', 'TRACK_SEW',
@@ -483,7 +493,7 @@ class PyLNP(object):
             'TRACK_RAMP_NW', 'TRACK_RAMP_SE', 'TRACK_RAMP_SW',
             'TRACK_RAMP_EW', 'TRACK_RAMP_NSE', 'TRACK_RAMP_NSW',
             'TRACK_RAMP_NEW', 'TRACK_RAMP_SEW', 'TRACK_RAMP_NSEW',
-            #Trees
+            # Trees
             'TREE_ROOT_SLOPING', 'TREE_TRUNK_SLOPING',
             'TREE_ROOT_SLOPING_DEAD', 'TREE_TRUNK_SLOPING_DEAD',
             'TREE_ROOTS', 'TREE_ROOTS_DEAD', 'TREE_BRANCHES',
@@ -548,10 +558,10 @@ class PyLNP(object):
         if saves:
             for save in saves:
                 count = count + 1
-                #Delete old graphics
+                # Delete old graphics
                 if os.path.isdir(os.path.join(save, 'raw', 'graphics')):
                     dir_util.remove_tree(os.path.join(save, 'raw', 'graphics'))
-                #Copy new raws
+                # Copy new raws
                 dir_util.copy_tree(
                     os.path.join(self.df_dir, 'raw'),
                     os.path.join(save, 'raw'))
@@ -644,14 +654,16 @@ class PyLNP(object):
             try:
                 version_text = urlopen(
                     self.config['updates']['checkURL']).read()
-                # Note: versionRegex must capture the version number in a group.
+                # Note: versionRegex must capture the version number in a group
                 new_version = re.search(
                     self.config['updates']['versionRegex'],
                     version_text).group(1)
                 if new_version != self.config['updates']['packVersion']:
                     self.new_version = new_version
             except URLError as ex:
-                print("Error checking for updates: " + ex.reason, file=sys.stderr)
+                print(
+                    "Error checking for updates: " + ex.reason,
+                    file=sys.stderr)
                 pass
             except:
                 pass
@@ -665,6 +677,84 @@ class PyLNP(object):
         """Launches a webbrowser to the specified update URL."""
         webbrowser.open(self.config['updates']['downloadURL'])
 
+    def read_colors(self):
+        """Returns a list of color schemes."""
+        return tuple([
+            os.path.splitext(os.path.basename(p))[0] for p in
+            glob.glob(os.path.join(self.lnp_dir, 'colors', '*.txt'))])
+
+    def get_colors(self, colorscheme=None):
+        """
+        Returns RGB tuples for all 16 colors in <colorscheme>.txt, or
+        data/init/colors.txt if no scheme is provided."""
+        result = []
+        f = os.path.join(self.df_dir, 'data', 'init', 'colors.txt')
+        if colorscheme is not None:
+            f = os.path.join(self.lnp_dir, 'colors', colorscheme+'.txt')
+        for c in [
+                'BLACK', 'BLUE', 'GREEN', 'CYAN', 'RED', 'MAGENTA', 'BROWN',
+                'LGRAY', 'DGRAY', 'LBLUE', 'LGREEN', 'LCYAN', 'LRED',
+                'LMAGENTA', 'YELLOW', 'WHITE']:
+            result.append((
+                int(self.settings.read_value(f, c+'_R')),
+                int(self.settings.read_value(f, c+'_G')),
+                int(self.settings.read_value(f, c+'_B'))))
+        return result
+
+    def load_colors(self, filename):
+        """
+        Replaces the current DF color scheme.
+
+        Params:
+          filename
+            The name of the new colorscheme to install (filename without
+            extension).
+        """
+        if not filename.endswith('.txt'):
+            filename = filename + '.txt'
+        shutil.copyfile(
+            os.path.join(self.lnp_dir, 'colors', filename),
+            os.path.join(self.init_dir, 'colors.txt'))
+
+    def save_colors(self, filename):
+        """
+        Save current keybindings to a file.
+
+        Params:
+            filename
+                The name of the new keybindings file.
+        """
+        if not filename.endswith('.txt'):
+            filename = filename + '.txt'
+        filename = os.path.join(self.colors_dir, filename)
+        shutil.copyfile(os.path.join(self.init_dir, 'colors.txt'), filename)
+        self.read_colors()
+
+    def color_exists(self, filename):
+        """
+        Returns whether or not a color scheme already exists.
+
+        Params:
+            filename
+                The filename to check.
+        """
+        if not filename.endswith('.txt'):
+            filename = filename + '.txt'
+        return os.access(os.path.join(self.colors_dir, filename), os.F_OK)
+
+    def delete_colors(self, filename):
+        """
+        Deletes a color scheme file.
+
+        Params:
+            filename
+                The filename to delete.
+        """
+        if not filename.endswith('.txt'):
+            filename = filename + '.txt'
+        os.remove(os.path.join(self.colors_dir, filename))
+
+
 def open_folder(path):
     """
     Opens a folder in the system file manager.
@@ -673,7 +763,7 @@ def open_folder(path):
         path
             The folder path to open.
     """
-#http://stackoverflow.com/q/6631299
+# http://stackoverflow.com/q/6631299
     path = os.path.normpath(path)
     try:
         if sys.platform == 'darwin':
