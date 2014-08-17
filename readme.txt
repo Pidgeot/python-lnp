@@ -17,6 +17,7 @@ There are a few user-visible differences and enhancements compared to v16:
 - In addition to excluding specific file names from utilities, you can also *include* specific file names, if they're found. Simply create a file include.txt in the Utilities folder and fill it in with the same syntax as exclude.txt.
 - Multiple utilities can be selected and launched simultaneously.
 - Utilities may be automatically started at the same time as Dwarf Fortress. (Also seen in v16.1 by daveralph1234, although with a different interface)
+- Color scheme installation and preview
 - **EXPERIMENTAL:** Installing graphics sets by patching instead of replacing init.txt and d_init.txt. This preserves all options not strictly related to graphics sets. Can be enabled (and disabled) from the Experimental menu. *Note: Patching must currently be re-activated when the program is started - the setting is not saved, and it is disabled by default.*
 
 Platform-specific notes
@@ -24,7 +25,7 @@ Platform-specific notes
 Each platform will detect different file types in the Utilities pane.
 
 Windows:
-  \*.exe, \*.jar
+  \*.exe, \*.jar, \*.bat
 Linux:
   \*.jar, \*.sh
 OS X:
@@ -168,6 +169,5 @@ TODO/Ideas
 * Better (more) error handling
 * Probably some general code cleanup
 * Probably need to fix some bugs
-* Color scheme selector (similar to keybindings)
 * Explicit patches for installing graphics packs
 * Other things?
