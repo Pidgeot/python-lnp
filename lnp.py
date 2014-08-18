@@ -125,6 +125,8 @@ class PyLNP(object):
         for prog in self.autorun:
             if os.access(os.path.join(self.utils_dir, prog), os.F_OK):
                 self.run_program(os.path.join(self.utils_dir, prog))
+        if self.userconfig.get_bool('autoClose'):
+            sys.exit()
 
     @staticmethod
     def run_program(path):
@@ -313,6 +315,10 @@ class PyLNP(object):
                         os.path.join(self.utils_dir)))
 
         return progs
+
+    def toggle_autoclose(self):
+        self.userconfig['autoClose'] = not self.userconfig.get_bool('autoClose')
+        self.userconfig.save_data()
 
     def toggle_autorun(self, item):
         """

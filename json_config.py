@@ -66,6 +66,18 @@ class JSONConfiguration(object):
         """
         return self.get_value(path, 0)
 
+    def get_bool(self, path):
+        """
+        Retrieves a number from the configuration.
+        Returns False if the path does not exist.
+
+        Params:
+            path
+                /-delimited path to the string.
+        """
+        return self.get_value(path, False)
+
+
     def get_list(self, path):
         """
         Retrieves a list from the configuration.

@@ -965,6 +965,16 @@ class TkGui(object):
             priority, 'Adjusts the priority given to Dwarf Fortress by your OS')
         priority.grid(column=0, row=4, columnspan=2, sticky="nsew")
         self.controls['procPriority'] = priority
+
+        closeOnLaunch = Button(
+            f, text='Close GUI on launch', command=self.toggle_autoclose)
+        create_tooltip(
+            closeOnLaunch,
+            'Whether this GUI should close when Dwarf Fortress is launched')
+        closeOnLaunch.grid(column=0, row=5, columnspan=2, sticky="nsew")
+        self.controls['autoClose'] = (
+            closeOnLaunch,
+            lambda v: ('NO', 'YES')[self.lnp.userconfig.get_bool('autoClose')])
         return f
 
     def create_menu(self, root):
@@ -1140,21 +1150,24 @@ class TkGui(object):
 
     def update_displays(self):
         """Updates configuration displays (buttons, etc.)."""
-        for key, value in self.lnp.settings:
-            if key in list(self.controls.keys()):
-                if hasattr(self.controls[key], '__iter__'):
-                    # Allow (control, func) tuples, etc. to customize value
-                    control = self.controls[key][0]
-                    value = self.controls[key][1](value)
-                else:
-                    control = self.controls[key]
-                if isinstance(control, Entry):
-                    control.delete(0, END)
-                    control.insert(0, value)
-                else:
-                    control["text"] = (
-                        control["text"].split(':')[0] + ': ' +
-                        value)
+        for key in self.controls.keys():
+            try:
+                value = getattr(self.lnp.settings, key)
+            except KeyError:
+                value = None
+            if hasattr(self.controls[key], '__iter__'):
+                # Allow (control, func) tuples, etc. to customize value
+                control = self.controls[key][0]
+                value = self.controls[key][1](value)
+            else:
+                control = self.controls[key]
+            if isinstance(control, Entry):
+                control.delete(0, END)
+                control.insert(0, value)
+            else:
+                control["text"] = (
+                    control["text"].split(':')[0] + ': ' +
+                    value)
 
     def set_pop_cap(self):
         """Requests new population cap from the user."""
@@ -1305,6 +1318,10 @@ class TkGui(object):
             self.color_preview.create_rectangle(
                 col*16, row*16, (col+1)*16, (row+1)*16,
                 fill="#%02x%02x%02x" % c, width=0)
+
+    def toggle_autoclose(self):
+        self.lnp.toggle_autoclose()
+        self.update_displays()
 
     def install_graphics(self, listbox):
         """
