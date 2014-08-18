@@ -9,7 +9,6 @@ from tkgui import TkGui
 import distutils.dir_util as dir_util
 import fnmatch
 import glob
-import json
 import os
 import re
 import shutil
@@ -118,7 +117,11 @@ class PyLNP(object):
         if sys.platform == 'win32':
             self.run_program(os.path.join(self.df_dir, 'Dwarf Fortress.exe'))
         else:
-            self.run_program(os.path.join(self.df_dir, 'df'))
+            # Run DFHack if available
+            if os.path.isfile(os.path.join(self.df_dir, 'dfhack')):
+                self.run_program(os.path.join(self.df_dir, 'dfhack'))
+            else:
+                self.run_program(os.path.join(self.df_dir, 'df'))
         for prog in self.autorun:
             if os.access(os.path.join(self.utils_dir, prog), os.F_OK):
                 self.run_program(os.path.join(self.utils_dir, prog))
@@ -248,6 +251,10 @@ class PyLNP(object):
         return tuple(result)
 
     def current_pack(self):
+        """
+        Returns the currently installed graphics pack.
+        If the pack cannot be identified, returns "FONT/GRAPHICS_FONT".
+        """
         packs = self.read_graphics()
         for p in packs:
             if (self.settings.FONT == p[1] and
@@ -662,7 +669,6 @@ class PyLNP(object):
                 print(
                     "Error checking for updates: " + ex.reason,
                     file=sys.stderr)
-                pass
             except:
                 pass
 
