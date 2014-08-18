@@ -675,6 +675,7 @@ class PyLNP(object):
     def next_update(self, days):
         """Sets the next update check to occur in <days> days."""
         self.userconfig['nextUpdate'] = (time.time() + days * 24 * 60 * 60)
+        self.userconfig['updateDays'] = days
         self.save_config()
 
     def start_update(self):

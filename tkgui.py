@@ -377,8 +377,13 @@ class UpdateWindow(object):
         self.options = [
             "next launch", "1 day", "3 days", "7 days", "14 days", "30 days"]
         self.var = StringVar(top)
-        self.var.set(self.options[0])
-        OptionMenu(f, self.var, self.options[0], *self.options).grid(
+        try:
+            default_idx = [0, 1, 3, 7, 14, 30].index(
+                self.lnp.userconfig.get_number('updateDays'))
+        except ValueError:
+            default_idx = 0
+        self.var.set(self.options[default_idx])
+        OptionMenu(f, self.var, self.options[default_idx], *self.options).grid(
             column=1, row=1)
         f.pack(fill=BOTH, expand=Y)
 
