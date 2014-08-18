@@ -41,7 +41,7 @@ class JSONConfiguration(object):
             for p in path:
                 result = result[p]
             return result
-        except IndexError:
+        except KeyError:
             return default
 
     def get_string(self, path):
