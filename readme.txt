@@ -18,7 +18,7 @@ There are a few user-visible differences and enhancements compared to v16:
 - Multiple utilities can be selected and launched simultaneously.
 - Utilities may be automatically started at the same time as Dwarf Fortress. (Also seen in v16.1 by daveralph1234, although with a different interface)
 - Color scheme installation and preview
-- **EXPERIMENTAL:** Installing graphics sets by patching instead of replacing init.txt and d_init.txt. This preserves all options not strictly related to graphics sets. Can be enabled (and disabled) from the Experimental menu. *Note: Patching must currently be re-activated when the program is started - the setting is not saved, and it is disabled by default.*
+- **EXPERIMENTAL:** Installing graphics sets by patching instead of replacing init.txt and d_init.txt. This preserves all options not strictly related to graphics sets. Can be enabled (and disabled) from the Testing menu. *Note: Patching must currently be re-activated when the program is started - the setting is not saved, and it is disabled by default.*
 
 Platform-specific notes
 =======================

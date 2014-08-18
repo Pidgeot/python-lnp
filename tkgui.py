@@ -543,7 +543,7 @@ class TkGui(object):
         f = Frame(n)
         f.pack(side=TOP, fill=BOTH, expand=Y)
         options = Labelframe(f, text='Options')
-        options.pack(side=TOP, fill=BOTH, expand=Y)
+        options.pack(side=TOP, fill=BOTH, expand=N)
         Grid.columnconfigure(options, 0, weight=1)
         Grid.columnconfigure(options, 1, weight=1)
 
@@ -612,7 +612,7 @@ class TkGui(object):
         self.controls['laborLists'] = starting_labors
 
         modifications = Labelframe(f, text='Modifications', width=192)
-        modifications.pack(side=TOP, expand=Y, anchor="w")
+        modifications.pack(side=TOP, expand=N, anchor="w")
         Grid.columnconfigure(modifications, 0, weight=1)
         Grid.columnconfigure(modifications, 1, weight=1)
 
@@ -626,10 +626,11 @@ class TkGui(object):
         self.controls['aquifers'] = aquifers
 
         keybindings = Labelframe(f, text='Key Bindings')
-        keybindings.pack(side=BOTTOM, fill=BOTH, expand=Y, anchor="s")
+        keybindings.pack(
+            side=BOTTOM, fill=BOTH, expand=Y)
         Grid.columnconfigure(keybindings, 0, weight=2)
-        Grid.columnconfigure(keybindings, 2, weight=1)
-        Grid.columnconfigure(keybindings, 3, weight=1)
+        #Grid.columnconfigure(keybindings, 2, weight=1)
+        Grid.rowconfigure(keybindings, 1, weight=1)
 
         keybinding_files = Listbox(
             keybindings, height=4, listvariable=self.keybinds,
@@ -640,23 +641,26 @@ class TkGui(object):
         keybinding_files['yscrollcommand'] = s.set
         s.grid(column=1, row=0, rowspan=2, sticky="ns")
 
+        buttons = Frame(keybindings)
         load_keyb = Button(
-            keybindings, text='Load',
+            buttons, text='Load',
             command=lambda: self.load_keybinds(keybinding_files))
-        load_keyb.grid(column=2, row=0)
+        load_keyb.pack(side=TOP)
         create_tooltip(load_keyb, 'Load selected keybindings')
         refresh_keyb = Button(
-            keybindings, text='Refresh', command=self.read_keybinds)
+            buttons, text='Refresh', command=self.read_keybinds)
         create_tooltip(refresh_keyb, 'Refresh keybinding list')
-        refresh_keyb.grid(column=3, row=0)
-        save_keyb = Button(keybindings, text='Save', command=self.save_keybinds)
+        refresh_keyb.pack(side=TOP)
+        save_keyb = Button(buttons, text='Save', command=self.save_keybinds)
         create_tooltip(save_keyb, 'Save your current keybindings')
-        save_keyb.grid(column=2, row=1)
+        save_keyb.pack(side=TOP)
         delete_keyb = Button(
-            keybindings, text='Delete',
+            buttons, text='Delete',
             command=lambda: self.delete_keybinds(keybinding_files))
         create_tooltip(delete_keyb, 'Delete selected keybinding')
-        delete_keyb.grid(column=3, row=1)
+        delete_keyb.pack(side=TOP)
+        buttons.grid(column=2, row=0)
+
         return f
 
     def create_graphics(self, n):
@@ -783,7 +787,7 @@ class TkGui(object):
         progs.pack(side=TOP, expand=Y, fill=BOTH)
         Grid.columnconfigure(progs, 0, weight=1)
         Grid.columnconfigure(progs, 1, weight=1)
-        Grid.rowconfigure(progs, 2, weight=1)
+        Grid.rowconfigure(progs, 3, weight=1)
 
         run_prog = Button(
             progs, text='Run Program', command=self.run_selected_utilities)
@@ -980,7 +984,7 @@ class TkGui(object):
         menubar.add_cascade(menu=menu_folders, label='Folders')
         menubar.add_cascade(menu=menu_links, label='Links')
         menubar.add_cascade(menu=menu_help, label='Help')
-        menubar.add_cascade(menu=menu_beta, label='Experimental')
+        menubar.add_cascade(menu=menu_beta, label='Testing')
 
         menu_file.add_command(
             label='Re-load param set', command=self.load_params,
