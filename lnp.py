@@ -20,6 +20,7 @@ import webbrowser
 from datetime import datetime
 
 from settings import DFConfiguration
+from json_config import JSONConfiguration
 
 try:  # Python 2
     # pylint:disable=import-error
@@ -74,11 +75,8 @@ class PyLNP(object):
         self.load_autorun()
         self.find_df_folder()
 
-        self.config = json.load(open('PyLNP.json'), encoding='utf-8')
-        try:
-            self.userconfig = json.load(open('PyLNP.user'), encoding='utf-8')
-        except:
-            self.userconfig = {'nextUpdate': 0}
+        self.config = JSONConfiguration('PyLNP.json')
+        self.userconfig = JSONConfiguration('PyLNP.user')
         self.new_version = None
 
         self.check_update()
@@ -101,7 +99,7 @@ class PyLNP(object):
 
     def save_config(self):
         """Saves LNP configuration."""
-        json.dump(self.userconfig, open('PyLNP.user', 'w'))
+        self.userconfig.save_data()
 
     def restore_defaults(self):
         """Copy default settings into the selected Dwarf Fortress instance."""
