@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Framework for logging errors."""
-from __future__ import unicode_literals
+from __future__ import print_function, unicode_literals
 import sys
 
 class CaptureStream(object):

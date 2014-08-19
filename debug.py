@@ -3,6 +3,7 @@
 """Use this script to run PyLNP from a different directory than it's
 normally located in. Useful for development, so you can work on a copy
 located elsewhere."""
+from __future__ import print_function, unicode_literals
 import lnp
 
 lnp.BASEDIR = '..' #Path containing the actual LNP folder.
