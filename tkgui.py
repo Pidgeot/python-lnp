@@ -1138,8 +1138,8 @@ class TkGui(object):
 
     def update_autorun_list(self):
         """Updates the autorun list."""
-        # pylint:disable=bad-builtin
-        map(self.proglist.delete, self.proglist.get_children())
+        for i in self.proglist.get_children():
+            self.proglist.delete(i)
         for p in self.progs:
             exe = os.path.join(
                 os.path.basename(os.path.dirname(p)), os.path.basename(p))
