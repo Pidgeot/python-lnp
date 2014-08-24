@@ -463,6 +463,7 @@ class TkGui(object):
         self.graphics = Variable(root)
         self.progs = Variable(root)
         self.colors = Variable(root)
+        self.embarks = Variable(root)
 
         self.controls = dict()
         self.proglist = None
@@ -545,6 +546,7 @@ class TkGui(object):
         self.read_utilities()
         self.update_displays()
         self.read_colors()
+        self.read_embarks()
         if self.lnp.config.get_list('dfhack'):
             self.update_hack_list()
 
@@ -650,7 +652,6 @@ class TkGui(object):
         keybindings.pack(
             side=BOTTOM, fill=BOTH, expand=Y)
         Grid.columnconfigure(keybindings, 0, weight=2)
-        #Grid.columnconfigure(keybindings, 2, weight=1)
         Grid.rowconfigure(keybindings, 1, weight=1)
 
         keybinding_files = Listbox(
@@ -682,6 +683,33 @@ class TkGui(object):
         delete_keyb.pack(side=TOP)
         buttons.grid(column=2, row=0)
 
+        embarks = Labelframe(f, text='Embark profiles')
+        embarks.pack(
+            side=BOTTOM, fill=BOTH, expand=Y)
+        Grid.columnconfigure(embarks, 0, weight=2)
+        Grid.rowconfigure(embarks, 1, weight=1)
+
+        embark_files = Listbox(
+            embarks, height=4, listvariable=self.embarks,
+            activestyle='dotbox', selectmode='multiple')
+        embark_files.grid(column=0, row=0, rowspan=2, sticky="nsew")
+        s = Scrollbar(
+            embarks, orient=VERTICAL, command=embark_files.yview)
+        embark_files['yscrollcommand'] = s.set
+        s.grid(column=1, row=0, rowspan=2, sticky="ns")
+
+        buttons = Frame(embarks)
+        install_embarks = Button(
+            buttons, text='Load',
+            command=lambda: self.install_embarks(embark_files))
+        install_embarks.pack(side=TOP)
+        create_tooltip(install_embarks, 'Load selected embark profiles')
+        refresh_embarks = Button(
+            buttons, text='Refresh', command=self.read_embarks)
+        create_tooltip(refresh_embarks, 'Refresh embark profile list')
+        refresh_embarks.pack(side=TOP)
+        buttons.grid(column=2, row=0)
+
         return f
 
     def create_graphics(self, n):
@@ -705,7 +733,7 @@ class TkGui(object):
         self.controls['FONT'] = (curr_pack, lambda x: self.lnp.current_pack())
 
         graphicpacks = Listbox(
-            change_graphics, height=10, listvariable=self.graphics,
+            change_graphics, height=8, listvariable=self.graphics,
             activestyle='dotbox')
         graphicpacks.grid(column=0, row=1, columnspan=2, sticky="nsew", pady=4)
 
@@ -1193,6 +1221,10 @@ class TkGui(object):
         self.colors.set(self.lnp.read_colors())
         self.paint_color_preview(self.color_files)
 
+    def read_embarks(self):
+        """Reads list of embark profiles."""
+        self.embarks.set(self.lnp.read_embarks())
+
     def toggle_autorun(self, event):
         """
         Toggles autorun for a utility.
@@ -1405,6 +1437,20 @@ class TkGui(object):
         for item in self.hacklist.selection():
             self.lnp.toggle_hack(self.hacklist.item(item, 'text'))
         self.update_hack_list()
+
+    def install_embarks(self, listbox):
+        """
+        Installs selected embark profiles.
+
+        Params:
+            listbox
+                Listbox containing the list of embark profiles.
+        """
+        if len(listbox.curselection()) != 0:
+            files = []
+            for f in listbox.curselection():
+                files.append(listbox.get(f))
+            self.lnp.install_embarks(files)
 
     def install_graphics(self, listbox):
         """

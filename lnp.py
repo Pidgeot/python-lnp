@@ -63,6 +63,7 @@ class PyLNP(object):
         self.graphics_dir = os.path.join(self.lnp_dir, 'Graphics')
         self.utils_dir = os.path.join(self.lnp_dir, 'Utilities')
         self.colors_dir = os.path.join(self.lnp_dir, 'Colors')
+        self.embarks_dir = os.path.join(self.lnp_dir, 'Embarks')
 
         self.folders = []
         self.df_dir = ''
@@ -335,6 +336,13 @@ class PyLNP(object):
                         os.path.join(self.utils_dir)))
 
         return progs
+
+    def read_embarks(self):
+        """Returns a list of embark profiles."""
+        return tuple([
+            os.path.basename(o) for o in
+            glob.glob(os.path.join(self.embarks_dir, '*.txt'))
+            ])
 
     def toggle_autoclose(self):
         self.userconfig['autoClose'] = not self.userconfig.get_bool('autoClose')
@@ -837,7 +845,23 @@ class PyLNP(object):
         f.flush()
         f.close()
 
+    def install_embarks(self, files):
+        """
+        Installs a list of embark profiles.
+
+        Params:
+            files
+                List of files to install.
+        """
+        out = open(os.path.join(self.init_dir, 'embark_profiles.txt'), 'w')
+        for f in files:
+            embark = open(os.path.join(self.embarks_dir, f))
+            out.write(embark.read()+"\n\n")
+        out.flush()
+        out.close()
+
 def open_folder(path):
+
     """
     Opens a folder in the system file manager.
 
