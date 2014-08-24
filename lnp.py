@@ -56,14 +56,14 @@ class PyLNP(object):
         else:
             os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-        self.lnp_dir = os.path.join(BASEDIR, 'LNP')
+        self.lnp_dir = self.identify_folder_name(BASEDIR, 'LNP')
         if not os.path.isdir(self.lnp_dir):
             print('WARNING: LNP folder is missing!', file=sys.stderr)
-        self.keybinds_dir = os.path.join(self.lnp_dir, 'Keybinds')
-        self.graphics_dir = os.path.join(self.lnp_dir, 'Graphics')
-        self.utils_dir = os.path.join(self.lnp_dir, 'Utilities')
-        self.colors_dir = os.path.join(self.lnp_dir, 'Colors')
-        self.embarks_dir = os.path.join(self.lnp_dir, 'Embarks')
+        self.keybinds_dir = self.identify_folder_name(self.lnp_dir, 'Keybinds')
+        self.graphics_dir = self.identify_folder_name(self.lnp_dir, 'Graphics')
+        self.utils_dir = self.identify_folder_name(self.lnp_dir, 'Utilities')
+        self.colors_dir = self.identify_folder_name(self.lnp_dir, 'Colors')
+        self.embarks_dir = self.identify_folder_name(self.lnp_dir, 'Embarks')
 
         self.folders = []
         self.df_dir = ''
@@ -82,6 +82,25 @@ class PyLNP(object):
         self.check_update()
 
         TkGui(self)
+
+    @staticmethod
+    def identify_folder_name(base, name):
+        """
+        Allows folder names to be lowercase on case-sensitive systems.
+        Returns "base/name" where name is lowercase if the lower case version
+        exists and the standard case version does not.
+
+        Params:
+            base
+                The path containing the desired folder.
+            name
+                The standard case name of the desired folder.
+        """
+        normal = os.path.join(base, name)
+        lower = os.path.join(base, name.lower())
+        if os.path.isdir(lower) and not os.path.isdir(normal):
+            return lower
+        return normal
 
     def load_params(self):
         """Loads settings from the selected Dwarf Fortress instance."""
