@@ -117,9 +117,11 @@ class PyLNP(object):
         if sys.platform == 'win32':
             self.run_program(os.path.join(self.df_dir, 'Dwarf Fortress.exe'))
         else:
-            # Run DFHack if available
+            # Linux/OSX: Run DFHack if available
             if os.path.isfile(os.path.join(self.df_dir, 'dfhack')):
-                self.run_program(os.path.join(self.df_dir, 'dfhack'))
+                if not self.run_program(
+                        os.path.join(self.df_dir, 'dfhack'), True):
+                    raise Exception('Failed to launch a new terminal.')
             else:
                 self.run_program(os.path.join(self.df_dir, 'df'))
         for prog in self.autorun:
@@ -128,16 +130,33 @@ class PyLNP(object):
         if self.userconfig.get_bool('autoClose'):
             sys.exit()
 
-    @staticmethod
-    def run_program(path):
+    def run_program(self, path, spawn_terminal=False):
         """
         Launches an external program.
 
-        :param path: The path of the program to launch.
+        Params:
+            path
+                The path of the program to launch.
+            spawn_terminal
+                Whether or not to spawn a new terminal for this app.
+                Used only for DFHack.
         """
         try:
             path = os.path.abspath(path)
-            if path.endswith('.jar'):  # Explicitly launch JAR files with Java
+            if spawn_terminal:
+                if sys.platform.startswith('linux'):
+                    script = 'xdg-terminal'
+                    if self.bundle == "linux":
+                        script = os.path.join(sys._MEIPASS, script)
+                    retcode = subprocess.call(
+                        [os.path.abspath(script), path],
+                        cwd=os.path.dirname(path))
+                    return retcode == 0
+                elif sys.platform == 'darwin':
+                    subprocess.Popen(
+                        ['open', '-a', 'Terminal.app', path],
+                        cwd=os.path.dirname(path))
+            elif path.endswith('.jar'):  # Explicitly launch JAR files with Java
                 subprocess.Popen(
                     ['java', '-jar', os.path.basename(path)],
                     cwd=os.path.dirname(path))
