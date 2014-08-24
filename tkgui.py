@@ -147,6 +147,13 @@ class ToolTip(object):
             tw.destroy()
 
     def settext(self, text):
+        """
+        Sets the tooltip text and redraws it if necessary.
+
+        Params:
+            text
+                The new tooltip text.
+        """
         if text == self.text:
             return
         self.text = text
@@ -1421,6 +1428,7 @@ class TkGui(object):
                 fill="#%02x%02x%02x" % c, width=0)
 
     def toggle_autoclose(self):
+        """Toggle automatic closing of the UI when launching DF."""
         self.lnp.toggle_autoclose()
         self.update_displays()
 

@@ -364,6 +364,7 @@ class PyLNP(object):
             ])
 
     def toggle_autoclose(self):
+        """Toggle automatic closing of the UI when launching DF."""
         self.userconfig['autoClose'] = not self.userconfig.get_bool('autoClose')
         self.userconfig.save_data()
 
