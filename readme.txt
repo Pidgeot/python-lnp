@@ -9,7 +9,7 @@ PyLNP is a port of LucasUP and tolyK's Lazy Newb Pack to Python, making it possi
 
 Differences
 ===========
-There are a few user-visible differences and enhancements compared to v16:
+There are a few user-visible differences and enhancements compared to v16, such as:
 
 - Any folder starting with "df" is considered a valid name for the Dwarf Fortress folder. This allows a freshly extracted copy to be recognized immediately.
 - If multiple valid DF folders are detected, you will be asked to select the desired instance. This allows you to manage multiple installs separately. (Similar feature exists in v17.2 by daveralph1234)
@@ -167,7 +167,6 @@ Please be as specific as possible when reporting an error - tell exactly what yo
 TODO/Ideas
 ==========
 * Better (more) error handling
-* Probably some general code cleanup
-* Probably need to fix some bugs
+* General code cleanup
 * Explicit patches for installing graphics packs
 * Other things?
