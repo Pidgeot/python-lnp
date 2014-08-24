@@ -741,7 +741,7 @@ class PyLNP(object):
         """Returns a list of color schemes."""
         return tuple([
             os.path.splitext(os.path.basename(p))[0] for p in
-            glob.glob(os.path.join(self.lnp_dir, 'colors', '*.txt'))])
+            glob.glob(os.path.join(self.colors_dir, '*.txt'))])
 
     def get_colors(self, colorscheme=None):
         """
