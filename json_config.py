@@ -24,7 +24,7 @@ class JSONConfiguration(object):
 
     def save_data(self):
         """Saves the data to the JSON file."""
-        json.dump(self.data, open(self.filename, 'w'))
+        json.dump(self.data, open(self.filename, 'w'), indent=2)
 
     def get_value(self, path, default=None):
         """
@@ -78,7 +78,6 @@ class JSONConfiguration(object):
                 /-delimited path to the string.
         """
         return self.get_value(path, False)
-
 
     def get_list(self, path):
         """
