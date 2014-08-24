@@ -72,11 +72,12 @@ class PyLNP(object):
         self.save_dir = ''
         self.autorun = []
 
+        self.config = JSONConfiguration('PyLNP.json')
+        self.userconfig = JSONConfiguration('PyLNP.user')
+
         self.load_autorun()
         self.find_df_folder()
 
-        self.config = JSONConfiguration('PyLNP.json')
-        self.userconfig = JSONConfiguration('PyLNP.user')
         self.new_version = None
 
         self.check_update()
