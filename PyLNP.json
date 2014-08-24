@@ -1,19 +1,19 @@
 {
-  "folders": [
-    ["Savegame folder","<df>/data/save"],
-    ["Utilities folder","LNP/Utilities"],
-    ["Graphics folder","LNP/Graphics"],
-    ["-","-"],
-    ["Main folder",""],
-    ["LNP folder","LNP"],
-    ["Dwarf Fortress folder","<df>"],
-    ["Init folder","<df>/data/init"]
-  ],
-  "links": [
-    ["DF Homepage","http://www.bay12games.com/dwarves/"],
-    ["DF Wiki","http://dwarffortresswiki.org/"],
-    ["DF Forums","http://www.bay12forums.com/smf/"]
-  ],
+	"folders": [
+		["Savegame folder","<df>/data/save"],
+		["Utilities folder","LNP/Utilities"],
+		["Graphics folder","LNP/Graphics"],
+		["-","-"],
+		["Main folder",""],
+		["LNP folder","LNP"],
+		["Dwarf Fortress folder","<df>"],
+		["Init folder","<df>/data/init"]
+	],
+	"links": [
+		["DF Homepage","http://www.bay12games.com/dwarves/"],
+		["DF Wiki","http://dwarffortresswiki.org/"],
+		["DF Forums","http://www.bay12forums.com/smf/"]
+	],
 	"hideUtilityPath": false,
 	"updates": {
 		"checkURL": "",
