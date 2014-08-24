@@ -107,22 +107,22 @@ def validate_number(value_if_allowed):
 # http://www.voidspace.org.uk/python/weblog/arch_d7_2006_07_01.shtml#e387
 class ToolTip(object):
     """Tooltip widget."""
-    def __init__(self, widget):
+    def __init__(self, widget, text):
         self.widget = widget
         self.tipwindow = None
         self.id = None
         self.event = None
         self.x = self.y = 0
-        self.text = ''
-
-    def showtip(self, text):
-        """Displays the tooltip."""
         self.text = text
+        self.active = False
+
+    def showtip(self):
+        """Displays the tooltip."""
+        self.active = True
         if self.tipwindow or not self.text:
             return
-        x, y, _, cy = self.widget.bbox("insert")
-        x = x + self.widget.winfo_rootx() + 27
-        y = y + cy + self.widget.winfo_rooty() + 27
+        x = self.widget.winfo_pointerx() + 16
+        y = self.widget.winfo_pointery() + 16
         self.tipwindow = tw = Toplevel(self.widget)
         tw.wm_overrideredirect(1)
         tw.wm_geometry("+%d+%d" % (x, y))
@@ -142,15 +142,24 @@ class ToolTip(object):
         """Hides the tooltip."""
         tw = self.tipwindow
         self.tipwindow = None
+        self.active = False
         if tw:
             tw.destroy()
+
+    def settext(self, text):
+        if text == self.text:
+            return
+        self.text = text
+        if self.active:
+            self.hidetip()
+            self.showtip()
 
 _TOOLTIP_DELAY = 500
 
 
 def create_tooltip(widget, text):
     """
-    Creates a tooltip for a widget.
+    Creates and returns a tooltip for a widget.
 
     Params:
         widget
@@ -159,7 +168,7 @@ def create_tooltip(widget, text):
             The tooltip text.
     """
     # pylint:disable=unused-argument
-    tooltip = ToolTip(widget)
+    tooltip = ToolTip(widget, text)
 
     def enter(event):
         """
@@ -170,7 +179,7 @@ def create_tooltip(widget, text):
                 The event data."""
         if tooltip.event:
             widget.after_cancel(tooltip.event)
-        tooltip.event = widget.after(_TOOLTIP_DELAY, tooltip.showtip, text)
+        tooltip.event = widget.after(_TOOLTIP_DELAY, tooltip.showtip)
 
     def leave(event):
         """
@@ -186,7 +195,7 @@ def create_tooltip(widget, text):
         tooltip.hidetip()
     widget.bind('<Enter>', enter)
     widget.bind('<Leave>', leave)
-
+    return tooltip
 
 class LogWindow(object):
     """Window used for displaying an error log."""
@@ -459,6 +468,8 @@ class TkGui(object):
         self.proglist = None
         self.color_files = None
         self.color_preview = None
+        self.hacklist = None
+        self.hack_tooltip = None
 
         main = Frame(root)
         if self.lnp.bundle == 'osx':
@@ -483,6 +494,9 @@ class TkGui(object):
         n.add(f2, text='Graphics')
         n.add(f3, text='Utilities')
         n.add(f4, text='Advanced')
+        if self.lnp.config.get_list('dfhack'):
+            f5 = self.create_dfhack(n)
+            n.add(f5, text='DFHack')
         n.enable_traversal()
         n.pack(fill=BOTH, expand=Y, padx=2, pady=3)
 
@@ -531,6 +545,8 @@ class TkGui(object):
         self.read_utilities()
         self.update_displays()
         self.read_colors()
+        if self.lnp.config.get_list('dfhack'):
+            self.update_hack_list()
 
         if self.lnp.new_version is not None:
             UpdateWindow(self.root, self.lnp)
@@ -857,11 +873,10 @@ class TkGui(object):
         self.controls['sound'] = sound_button
         volume = Entry(
             sound, width=4, validate='key', validatecommand=self.vcmd)
-        create_tooltip(volume, 'Adjust music volume')
+        create_tooltip(volume, 'Music volume (0 to 255)')
         volume.pack(side=LEFT)
         self.controls['volume'] = volume
         maxvolume = Label(sound, text='/255')
-        create_tooltip(volume, 'Music volume (0 to 255)')
         maxvolume.pack(side=LEFT)
 
         fps = Labelframe(f, text='FPS')
@@ -976,6 +991,60 @@ class TkGui(object):
             closeOnLaunch,
             lambda v: ('NO', 'YES')[self.lnp.userconfig.get_bool('autoClose')])
         return f
+
+    def create_dfhack(self, n):
+        """
+        Creates the DFHack tab.
+
+        Params:
+            n
+                Notebook instance to create the tab in.
+        """
+        f = Frame(n)
+        f.pack(side=TOP, fill=BOTH, expand=Y)
+        Grid.columnconfigure(f, 0, weight=1)
+        Grid.columnconfigure(f, 1, weight=1)
+        hacks = Labelframe(f, text='Available hacks')
+        hacks.pack(side=TOP, expand=Y, fill=BOTH)
+        Grid.columnconfigure(hacks, 0, weight=1)
+        Grid.columnconfigure(hacks, 1, weight=1)
+        Grid.rowconfigure(hacks, 1, weight=1)
+
+        Label(
+            hacks, text='Click on a hack to toggle it.').grid(
+                column=0, row=0, columnspan=2)
+        listframe = Frame(hacks)
+        listframe.grid(column=0, row=1, columnspan=2, sticky="nsew")
+        Grid.rowconfigure(listframe, 0, weight=1)
+        Grid.columnconfigure(listframe, 0, weight=1)
+        self.hacklist = hacklist = Treeview(
+            listframe, columns=('name', 'enabled'), show=['headings'],
+            selectmode='browse')
+        hacklist.column('name', width=1, anchor='w')
+        hacklist.column('enabled', width=50, anchor='c', stretch=NO)
+        hacklist.heading('name', text='Hack')
+        hacklist.heading('enabled', text='Enabled')
+        hacklist.grid(column=0, row=0, sticky="nsew")
+        hacklist.bind("<<TreeviewSelect>>", lambda e: self.toggle_hack())
+        s = Scrollbar(listframe, orient=VERTICAL, command=hacklist.yview)
+        hacklist['yscrollcommand'] = s.set
+        s.grid(column=1, row=0, sticky="ns")
+
+        self.hack_tooltip = create_tooltip(hacklist, '')
+        hacklist.bind('<Motion>', self.update_hack_tooltip)
+        return f
+
+    def update_hack_tooltip(self, event):
+        """
+        Event handler for mouse motion over the hack list.
+        Used to update the tooltip.
+        """
+        item = self.lnp.get_hack(self.hacklist.item(self.hacklist.identify(
+            'row', event.x, event.y))['text'])
+        if item:
+            self.hack_tooltip.settext(item['tooltip'])
+        else:
+            self.hack_tooltip.settext('')
 
     def create_menu(self, root):
         """
@@ -1322,6 +1391,20 @@ class TkGui(object):
     def toggle_autoclose(self):
         self.lnp.toggle_autoclose()
         self.update_displays()
+
+    def update_hack_list(self):
+        """Updates the hack list."""
+        for i in self.hacklist.get_children():
+            self.hacklist.delete(i)
+        for k, h in self.lnp.get_hacks().items():
+            self.hacklist.insert('', 'end', text=k, values=(
+                k, 'Yes' if h['enabled'] else 'No'))
+
+    def toggle_hack(self):
+        """Toggles the selected hack."""
+        for item in self.hacklist.selection():
+            self.lnp.toggle_hack(self.hacklist.item(item, 'text'))
+        self.update_hack_list()
 
     def install_graphics(self, listbox):
         """
