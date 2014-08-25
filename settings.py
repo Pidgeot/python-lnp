@@ -38,7 +38,7 @@ class DFConfiguration(object):
         self.inverse_field_names = dict()
         self.files = dict()
         self.in_files = dict()
-        #init.txt
+        # init.txt
         boolvals = ("YES", "NO")
         init = (os.path.join(base_dir, 'data', 'init', 'init.txt'),)
         self.create_option("truetype", "TRUETYPE", "YES", _force_bool, init)
@@ -55,7 +55,7 @@ class DFConfiguration(object):
                 "IDLE"), init)
         self.create_option(
             "compressSaves", "COMPRESSED_SAVES", "YES", boolvals, init)
-        #d_init.txt
+        # d_init.txt
         dinit = (os.path.join(base_dir, 'data', 'init', 'd_init.txt'),)
         self.create_option("popcap", "POPULATION_CAP", "200", None, dinit)
         self.create_option(
@@ -80,8 +80,8 @@ class DFConfiguration(object):
             "initialSave", "INITIAL_SAVE", "YES", boolvals, dinit)
         self.create_option(
             "pauseOnLoad", "PAUSE_ON_LOAD", "YES", boolvals, dinit)
-        #special
-        self.create_option("aquifers", "AQUIFER", "YES", _disabled, tuple(
+        # special
+        self.create_option("aquifers", "AQUIFER", "NO", _disabled, tuple(
             os.path.join(base_dir, 'raw', 'objects', a) for a in [
                 'inorganic_stone_layer.txt', 'inorganic_stone_mineral.txt',
                 'inorganic_stone_soil.txt']))
@@ -209,8 +209,7 @@ class DFConfiguration(object):
             if field in self.inverse_field_names:
                 field = self.inverse_field_names[field]
             if self.options[field] is _disabled:
-                #Assume option is disabled unless there is a single match
-                self.settings[field] = "NO"
+                # If there is a single match, flag the option as enabled
                 if "[{0}]".format(self.field_names[field]) in text:
                     self.settings[field] = "YES"
             else:
