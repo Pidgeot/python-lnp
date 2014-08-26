@@ -1037,19 +1037,16 @@ class TkGui(object):
         """
         f = Frame(n)
         f.pack(side=TOP, fill=BOTH, expand=Y)
-        Grid.columnconfigure(f, 0, weight=1)
-        Grid.columnconfigure(f, 1, weight=1)
         hacks = Labelframe(f, text='Available hacks')
         hacks.pack(side=TOP, expand=Y, fill=BOTH)
         Grid.columnconfigure(hacks, 0, weight=1)
-        Grid.columnconfigure(hacks, 1, weight=1)
         Grid.rowconfigure(hacks, 1, weight=1)
 
         Label(
             hacks, text='Click on a hack to toggle it.').grid(
-                column=0, row=0, columnspan=2)
+                column=0, row=0)
         listframe = Frame(hacks)
-        listframe.grid(column=0, row=1, columnspan=2, sticky="nsew")
+        listframe.grid(column=0, row=1, sticky="nsew")
         Grid.rowconfigure(listframe, 0, weight=1)
         Grid.columnconfigure(listframe, 0, weight=1)
         self.hacklist = hacklist = Treeview(
