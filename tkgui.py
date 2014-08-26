@@ -332,7 +332,7 @@ class SelectDF(object):
         Grid.rowconfigure(f, 1, weight=1)
         Grid.columnconfigure(f, 0, weight=1)
         Label(
-            f, text='Please select the Dwarf Fortress folder'
+            f, text='Please select the Dwarf Fortress folder '
             'you would like to use.').grid(column=0, row=0, columnspan=2)
         self.folderlist = Listbox(
             f, listvariable=self.listvar, activestyle='dotbox')
