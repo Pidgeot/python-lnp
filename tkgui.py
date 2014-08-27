@@ -472,6 +472,10 @@ class TkGui(object):
         self.colors = Variable(root)
         self.embarks = Variable(root)
 
+        self.volume_var = StringVar()
+        self.fps_var = StringVar()
+        self.gps_var = StringVar()
+
         self.controls = dict()
         self.proglist = None
         self.color_files = None
@@ -906,8 +910,12 @@ class TkGui(object):
         create_tooltip(sound_button, 'Turn game music on/off')
         sound_button.pack(side=LEFT)
         self.controls['sound'] = sound_button
+        self.volume_var.trace(
+            "w", lambda name, index, mode: self.change_entry(
+                'volume', self.volume_var))
         volume = Entry(
-            sound, width=4, validate='key', validatecommand=self.vcmd)
+            sound, width=4, validate='key', validatecommand=self.vcmd,
+            textvariable=self.volume_var)
         create_tooltip(volume, 'Music volume (0 to 255)')
         volume.pack(side=LEFT)
         self.controls['volume'] = volume
@@ -925,15 +933,23 @@ class TkGui(object):
         self.controls['fpsCounter'] = fps_counter
         calc_cap_label = Label(fps, text='Calculation FPS Cap:')
         calc_cap_label.pack(anchor="w")
+        self.fps_var.trace(
+            "w", lambda name, index, mode: self.change_entry(
+                'fpsCap', self.fps_var))
         calc_cap = Entry(
-            fps, width=4, validate='key', validatecommand=self.vcmd)
+            fps, width=4, validate='key', validatecommand=self.vcmd,
+            textvariable=self.fps_var)
         create_tooltip(calc_cap, 'How fast the game runs')
         calc_cap.pack(anchor="w")
         self.controls['fpsCap'] = calc_cap
         graphical_cap_label = Label(fps, text='Graphical FPS Cap:')
         graphical_cap_label.pack(anchor="w")
+        self.gps_var.trace(
+            "w", lambda name, index, mode: self.change_entry(
+                'gpsCap', self.gps_var))
         graphical_cap = Entry(
-            fps, width=4, validate='key', validatecommand=self.vcmd)
+            fps, width=4, validate='key', validatecommand=self.vcmd,
+            textvariable=self.gps_var)
         create_tooltip(
             graphical_cap, 'How fast the game visually updates.\nLower '
             'value may give small boost to FPS but will be less reponsive.')
@@ -1065,6 +1081,18 @@ class TkGui(object):
         self.hack_tooltip = create_tooltip(hacklist, '')
         hacklist.bind('<Motion>', self.update_hack_tooltip)
         return f
+
+    def change_entry(self, key, var):
+        """
+        Commits a change for the control specified by key.
+
+        Params:
+            key
+                The key for the control that changed.
+            var
+                The variable bound to the control.
+        """
+        self.lnp.set_option(key, var.get())
 
     def update_hack_tooltip(self, event):
         """
