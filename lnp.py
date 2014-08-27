@@ -23,10 +23,10 @@ from json_config import JSONConfiguration
 
 try:  # Python 2
     # pylint:disable=import-error
-    from urllib2 import urlopen, URLError
+    from urllib2 import urlopen, URLError, Request
 except ImportError:  # Python 3
     # pylint:disable=import-error, no-name-in-module
-    from urllib.request import urlopen
+    from urllib.request import urlopen, Request
     from urllib.error import URLError
 
 BASEDIR = '.'
@@ -712,8 +712,10 @@ class PyLNP(object):
             return
         if self.userconfig['nextUpdate'] < time.time():
             try:
-                version_text = urlopen(
-                    self.config['updates']['checkURL']).read()
+                req = Request(
+                    self.config['updates']['checkURL'],
+                    headers={'User-Agent':'PyLNP'})
+                version_text = urlopen(req).read()
                 # Note: versionRegex must capture the version number in a group
                 new_version = re.search(
                     self.config['updates']['versionRegex'],
