@@ -1092,7 +1092,8 @@ class TkGui(object):
             var
                 The variable bound to the control.
         """
-        self.lnp.set_option(key, var.get())
+        if var.get() != '':
+            self.lnp.set_option(key, var.get())
 
     def update_hack_tooltip(self, event):
         """
