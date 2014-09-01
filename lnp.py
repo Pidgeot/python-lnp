@@ -270,11 +270,27 @@ class PyLNP(object):
         self.load_params()
         self.read_hacks()
 
+    @staticmethod
+    def get_text_files(directory):
+        """
+        Returns a list of .txt files in <directory>.
+        Excludes all filenames beginning with "readme" (case-insensitive).
+
+        Params:
+            directory
+                The directory to search.
+        """
+        temp = glob.glob(os.path.join(directory, '*.txt'))
+        result = []
+        for f in temp:
+            if not os.path.basename(f).lower().startswith('readme'):
+                result.append(f)
+        return result
+
     def read_keybinds(self):
         """Returns a list of keybinding files."""
         return tuple([
-            os.path.basename(o) for o in
-            glob.glob(os.path.join(self.keybinds_dir, '*.txt'))
+            os.path.basename(o) for o in self.get_text_files(self.keybinds_dir)
             ])
 
     def read_graphics(self):
@@ -360,9 +376,7 @@ class PyLNP(object):
     def read_embarks(self):
         """Returns a list of embark profiles."""
         return tuple([
-            os.path.basename(o) for o in
-            glob.glob(os.path.join(self.embarks_dir, '*.txt'))
-            ])
+            os.path.basename(o) for o in self.get_text_files(self.embarks_dir)])
 
     def toggle_autoclose(self):
         """Toggle automatic closing of the UI when launching DF."""
@@ -758,7 +772,7 @@ class PyLNP(object):
         """Returns a list of color schemes."""
         return tuple([
             os.path.splitext(os.path.basename(p))[0] for p in
-            glob.glob(os.path.join(self.colors_dir, '*.txt'))])
+            self.get_text_files(self.colors_dir)])
 
     def get_colors(self, colorscheme=None):
         """
