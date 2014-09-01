@@ -15,6 +15,7 @@
 		["DF Forums","http://www.bay12forums.com/smf/"]
 	],
 	"hideUtilityPath": false,
+	"hideUtilityExt": false,
 	"updates": {
 		"checkURL": "",
 		"versionRegex": "",
