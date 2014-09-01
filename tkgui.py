@@ -1309,7 +1309,7 @@ class TkGui(object):
             "Settings", "Population cap:",
             initialvalue=self.lnp.settings.popcap, parent=self.root)
         if v is not None:
-            self.lnp.set_option('popcap', v)
+            self.lnp.set_option('popcap', str(v))
             self.update_displays()
 
     def set_child_cap(self):
