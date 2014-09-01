@@ -3,7 +3,7 @@
 """Configuration and raw manipulation for Dwarf Fortress."""
 from __future__ import print_function, unicode_literals
 
-import os, re, shutil
+import sys, os, re, shutil
 
 # Markers to read certain settings correctly
 
@@ -215,13 +215,18 @@ class DFConfiguration(object):
             else:
                 match = re.search(r'\[{0}:(.+?)\]'.format(
                     self.field_names[field]), text)
-                if (
-                        self.options[field] is _force_bool and
-                        match.group(1) != "NO"):
-                    #Interpret everything other than "NO" as "YES"
-                    self.settings[field] = "YES"
+                if match:
+                    if (self.options[field] is _force_bool and
+                            match.group(1) != "NO"):
+                        #Interpret everything other than "NO" as "YES"
+                        self.settings[field] = "YES"
+                    else:
+                        self.settings[field] = match.group(1)
                 else:
-                    self.settings[field] = match.group(1)
+                    print(
+                        'WARNING: Expected match for field ' + field +
+                        ' in file ' + filename +
+                        '. Possible DF version mismatch?', file=sys.stderr)
 
     @staticmethod
     def read_value(filename, field):
