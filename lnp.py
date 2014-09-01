@@ -17,6 +17,7 @@ import tempfile
 import time
 import webbrowser
 from datetime import datetime
+import errorlog
 
 from settings import DFConfiguration
 from json_config import JSONConfiguration
@@ -55,6 +56,7 @@ class PyLNP(object):
                 os.chdir('../../..')
         else:
             os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        errorlog.start()
 
         self.lnp_dir = self.identify_folder_name(BASEDIR, 'LNP')
         if not os.path.isdir(self.lnp_dir):

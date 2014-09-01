@@ -9,7 +9,7 @@ class CaptureStream(object):
     file."""
     def __init__(self, name, tee=True):
         """
-        Redirects named stream from sys.
+        Constructor for CaptureStream. Call redirect() to start redirection.
 
         Params:
             name
@@ -24,8 +24,7 @@ class CaptureStream(object):
         self.name = name
         self.tee = tee
         self.stream = getattr(sys, name)
-        self.outfile = open(name+'.txt', 'w')
-        self.hook()
+        self.outfile = None
 
     def write(self, string):
         """
@@ -51,6 +50,16 @@ class CaptureStream(object):
     def unhook(self):
         """Restores the original stream object."""
         setattr(sys, self.name, self.stream)
+
+    def redirect(self):
+        """Sets up the initial redirection."""
+        self.outfile = open(self.name+'.txt', 'w')
+        self.hook()
+
+def start():
+    """Starts redirection of stdout and stderr."""
+    out.redirect()
+    err.redirect()
 
 out = CaptureStream('stdout', not hasattr(sys, 'frozen'))
 err = CaptureStream('stderr', not hasattr(sys, 'frozen'))
