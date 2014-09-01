@@ -792,8 +792,8 @@ class TkGui(object):
 
         colors = Labelframe(f, text='Color schemes')
         colors.pack(side=BOTTOM, fill=BOTH, expand=Y, anchor="s")
-        Grid.columnconfigure(colors, 0, weight=3)
-        Grid.columnconfigure(colors, 2, weight=1)
+        Grid.columnconfigure(colors, 0, weight=2)
+        Grid.rowconfigure(colors, 1, weight=1)
 
         self.color_files = color_files = Listbox(
             colors, height=4, listvariable=self.colors,
@@ -824,7 +824,7 @@ class TkGui(object):
             command=lambda: self.delete_colors(color_files))
         create_tooltip(delete_color, 'Delete selected color scheme')
         delete_color.pack(side=TOP)
-        buttons.grid(column=2, row=0, rowspan=3)
+        buttons.grid(column=2, row=0, rowspan=2)
 
         self.color_preview = Canvas(
             colors, width=128, height=32, highlightthickness=0, takefocus=False)
