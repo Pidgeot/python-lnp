@@ -510,6 +510,18 @@ class PyLNP(object):
                 shutil.copyfile(
                     os.path.join(gfx_dir, 'data', 'init', 'colors.txt'),
                     os.path.join(self.df_dir, 'data', 'init', 'colors.txt'))
+                try: # TwbT support
+                    os.remove(os.path.join(
+                        self.df_dir, 'data', 'init', 'overrides.txt'))
+                except:
+                    pass
+                try: # TwbT support
+                    shutil.copyfile(
+                        os.path.join(gfx_dir, 'data', 'init', 'overrides.txt'),
+                        os.path.join(
+                            self.df_dir, 'data', 'init', 'overrides.txt'))
+                except:
+                    pass
             except Exception:
                 sys.excepthook(*sys.exc_info())
                 return False
@@ -679,6 +691,9 @@ class PyLNP(object):
             shutil.copyfile(
                 os.path.join(tmp, 'data', 'init', 'd_init.txt'),
                 os.path.join(pack, 'data', 'init', 'd_init.txt'))
+            shutil.copyfile(
+                os.path.join(tmp, 'data', 'init', 'overrides.txt'),
+                os.path.join(pack, 'data', 'init', 'overrides.txt'))
         except IOError:
             sys.excepthook(*sys.exc_info())
             retval = False
