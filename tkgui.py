@@ -484,12 +484,8 @@ class TkGui(object):
         self.hack_tooltip = None
 
         main = Frame(root)
-        if self.lnp.bundle == 'osx':
-            # Image is inside application bundle on OS X
-            image = os.path.join(
-                os.path.dirname(sys.executable), '..', 'Resources', 'LNPSMALL')
-        elif self.lnp.bundle in ['win', 'linux']:
-            # Image is inside executable on Linux and Windows
+        if self.lnp.bundle in ['win', 'linux', 'osx']:
+            # Image is inside executable
             # pylint: disable=protected-access, no-member
             image = os.path.join(sys._MEIPASS, 'LNPSMALL')
         else:

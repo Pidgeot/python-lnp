@@ -41,10 +41,15 @@ if sys.platform == 'win32':
 if sys.platform.startswith('linux'):
     a.datas += [('xdg-terminal','xdg-terminal','DATA')]
 pyz = PYZ(a.pure)
-exe = EXE(
-    pyz, a.scripts, a.binaries, a.zipfiles, a.datas, name='PyLNP'+extension,
-    debug=False, strip=None, upx=True, console=False, icon='LNP.ico')
-if sys.platform == 'darwin': # NOTE: Currently untested.
-    app = BUNDLE(exe,name=os.path.join('dist', 'PyLNP.app'),icon='LNP.icns')
+if sys.platform != 'darwin':
+    exe = EXE(
+        pyz, a.scripts, a.binaries, a.zipfiles, a.datas, name='PyLNP'+extension,
+        debug=False, strip=None, upx=True, console=False, icon='LNP.ico')
+else: # NOTE: Currently untested.
+    exe = EXE(
+        pyz, a.scripts, exclude_binaries=True, name='PyLNP'+extension,
+        debug=False, strip=None, upx=True, console=False)
+    coll = COLLECT(exe, a.binaries, a.zipfiles, a.datas, strip=None, upx=True, name='PyLNP')
+    app = BUNDLE(coll,name='PyLNP.app',icon='LNP.icns')
 
 # vim:expandtab

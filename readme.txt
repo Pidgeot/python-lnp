@@ -117,12 +117,12 @@ Building your own executable
 ============================
 If you want to make your own executable, you can do that. This is particularly useful on OS X, which doesn't have any good way of launching a Python script directly from Finder.
 
-The code is prepared for different executable generators on each platforms: pyinstaller on Windows and Linux, and py2app on OS X. If you want to use a different one, you'll need to do the appropriate modifications yourself.
+The executables are built using PyInstaller. If you want to use a different executable generator, you'll need to do the appropriate modifications yourself.
 
 These instructions are tested with Python 2.7, but should work with 3.x as well. You may be able to substitute "easy_install" with "pip install".
 
 Note:
-  The resulting executable must be placed in the same directory as the LNP.py script is currently placed. This is because it relies on a specific directory structure in order to find the Dwarf Fortress folder, as well as utilities, graphics packs, etc.
+  The resulting executable must be placed in the same directory as the LNP.py script is currently placed (it should be next to your Dwarf Fortress folder, and the LNP data folder). This is because it relies on a specific directory structure in order to find the Dwarf Fortress folder, as well as utilities, graphics packs, etc.
 
 Windows
 -------
@@ -149,12 +149,14 @@ Building:
 OS X
 ----
 Installing prerequisites:
-  If you have MacPorts installed, use it to install py2app. If you don't, open a terminal and type "easy_install py2app".
+  You'll need PyInstaller, preferably version 2.0 or later: http://www.pyinstaller.org/
+
+  A simple way to install it is to open a terminal and type "sudo easy_install pyinstaller".
 
   You may also need to install command-line compilers; see above.
 
 Building:
-  Open the LNP directory in a Terminal and type "python setup.py py2app". Wait for the build to finish, and you will find a new folder named dist. Inside that folder is the application bundle, PyLNP.
+  Open the LNP directory in a Terminal and type "pyinstaller lnp.spec". Wait for the build to finish, and you will find a new folder named dist. Inside that folder is the application bundle, PyLNP.
 
 When something goes wrong
 =========================
