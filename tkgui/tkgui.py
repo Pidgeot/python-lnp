@@ -898,7 +898,7 @@ class TkGui(object):
 
         self.color_preview.delete(ALL)
         for i, c in enumerate(colors):
-            row = i / 8
+            row = i // 8
             col = i % 8
             self.color_preview.create_rectangle(
                 col*16, row*16, (col+1)*16, (row+1)*16,
