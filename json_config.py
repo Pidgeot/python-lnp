@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Proxy to abstract access to JSON configuration and gracefully handle missing
 keys."""
-from __future__ import print_function, unicode_literals
+from __future__ import print_function, unicode_literals, absolute_import
 import json
 
 class JSONConfiguration(object):

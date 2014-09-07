@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """PyLNP main library."""
-from __future__ import print_function, unicode_literals
+from __future__ import print_function, unicode_literals, absolute_import
 
 import sys
-from tkgui import TkGui
+from tkgui.tkgui import TkGui
 
 import distutils.dir_util as dir_util
 import fnmatch
