@@ -74,7 +74,10 @@ class PyLNP(object):
         self.save_dir = ''
         self.autorun = []
 
-        self.config = JSONConfiguration('PyLNP.json')
+        config_file = 'PyLNP.json'
+        if os.access(os.path.join(self.lnp_dir, 'PyLNP.json'), os.F_OK):
+            config_file = os.path.join(self.lnp_dir, 'PyLNP.json')
+        self.config = JSONConfiguration(config_file)
         self.userconfig = JSONConfiguration('PyLNP.user')
 
         self.load_autorun()
