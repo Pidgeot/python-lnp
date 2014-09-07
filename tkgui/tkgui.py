@@ -544,31 +544,6 @@ class TkGui(object):
         hacklist.bind('<Motion>', self.update_hack_tooltip)
         return f
 
-    def change_entry(self, key, var):
-        """
-        Commits a change for the control specified by key.
-
-        Params:
-            key
-                The key for the control that changed.
-            var
-                The variable bound to the control.
-        """
-        if var.get() != '':
-            self.lnp.set_option(key, var.get())
-
-    def update_hack_tooltip(self, event):
-        """
-        Event handler for mouse motion over the hack list.
-        Used to update the tooltip.
-        """
-        item = self.lnp.get_hack(self.hacklist.item(self.hacklist.identify(
-            'row', event.x, event.y))['text'])
-        if item:
-            self.hack_tooltip.settext(item['tooltip'])
-        else:
-            self.hack_tooltip.settext('')
-
     def create_menu(self, root):
         """
         Creates the menu bar.
@@ -643,6 +618,30 @@ class TkGui(object):
         menu_beta.add_command(
             label='Toggle graphics pack patching', command=self.toggle_patching)
 
+    def change_entry(self, key, var):
+        """
+        Commits a change for the control specified by key.
+
+        Params:
+            key
+                The key for the control that changed.
+            var
+                The variable bound to the control.
+        """
+        if var.get() != '':
+            self.lnp.set_option(key, var.get())
+
+    def update_hack_tooltip(self, event):
+        """
+        Event handler for mouse motion over the hack list.
+        Used to update the tooltip.
+        """
+        item = self.lnp.get_hack(self.hacklist.item(self.hacklist.identify(
+            'row', event.x, event.y))['text'])
+        if item:
+            self.hack_tooltip.settext(item['tooltip'])
+        else:
+            self.hack_tooltip.settext('')
     def load_params(self):
         """Reads configuration data."""
         try:
