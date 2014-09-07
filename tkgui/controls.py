@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint:disable=unused-wildcard-import,wildcard-import
+# pylint:disable=unused-wildcard-import,wildcard-import,invalid-name
 """Controls used by the TKinter GUI."""
 from __future__ import print_function, unicode_literals, absolute_import
 
@@ -12,13 +12,11 @@ if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
     from tkinter.ttk import *
-    import tkinter.messagebox as messagebox
     import tkinter.simpledialog as simpledialog
 else:
     # pylint:disable=import-error
     from Tkinter import *
     from ttk import *
-    import tkMessageBox as messagebox
     import tkSimpleDialog as simpledialog
 
 # Monkeypatch simpledialog to use themed dialogs from ttk
@@ -115,7 +113,7 @@ def create_tooltip(widget, text):
             The tooltip text.
     """
     tooltip = _ToolTip(widget, text)
-
+    # pylint:disable=unused-argument
     def enter(event):
         """
         Event handler on mouse enter.
@@ -355,6 +353,7 @@ def create_toggle_list(parent, columns, framegridopts, listopts={}):
         listopts
             Additional options for the Treeview.
     """
+    # pylint:disable=star-args,dangerous-default-value
     lf = Frame(parent)
     lf.grid(**framegridopts)
     Grid.rowconfigure(lf, 0, weight=1)
@@ -384,6 +383,7 @@ def create_numeric_entry(parent, variable, option, tooltip):
         validatecommand=__ui.vcmd, textvariable=variable)
     variable.trace(
         "w", lambda name, index, mode: __ui.change_entry(option, variable))
+    create_tooltip(e, tooltip)
     binding.bind(e, option)
     return e
 

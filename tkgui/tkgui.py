@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint:disable=unused-wildcard-import,wildcard-import
+# pylint:disable=unused-wildcard-import,wildcard-import,invalid-name
 """TKinter-based GUI for PyLNP."""
 from __future__ import print_function, unicode_literals, absolute_import
 

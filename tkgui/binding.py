@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# pylint:disable=invalid-name
 """Handles control binding for the TKinter GUI."""
 from __future__ import print_function, unicode_literals, absolute_import
 
