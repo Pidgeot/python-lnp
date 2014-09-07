@@ -747,9 +747,9 @@ class TkGui(object):
         for p in self.progs:
             exe = os.path.join(
                 os.path.basename(os.path.dirname(p)), os.path.basename(p))
-            if self.lnp.config["hideUtilityPath"]:
+            if self.lnp.config.get_bool('hideUtilityPath'):
                 exe = os.path.basename(exe)
-            if self.lnp.config["hideUtilityExt"]:
+            if self.lnp.config.get_bool('hideUtilityExt'):
                 exe = os.path.splitext(exe)[0]
             self.proglist.insert('', 'end', text=p, values=(
                 exe, 'Yes' if p in self.lnp.autorun else 'No'))

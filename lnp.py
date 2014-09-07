@@ -724,19 +724,19 @@ class PyLNP(object):
 
     def check_update(self):
         """Checks for updates using the URL specified in PyLNP.json."""
-        if self.config['updates']['checkURL'] == '':
+        if self.config.get_string('updates/checkURL') == '':
             return
-        if self.userconfig['nextUpdate'] < time.time():
+        if self.userconfig.get_number('nextUpdate') < time.time():
             try:
                 req = Request(
-                    self.config['updates']['checkURL'],
+                    self.config.get_string('updates/checkURL')
                     headers={'User-Agent':'PyLNP'})
                 version_text = urlopen(req).read()
                 # Note: versionRegex must capture the version number in a group
                 new_version = re.search(
-                    self.config['updates']['versionRegex'],
+                    self.config.get_string('updates/versionRegex')
                     version_text).group(1)
-                if new_version != self.config['updates']['packVersion']:
+                if new_version != self.config.get_string('updates/packVersion'):
                     self.new_version = new_version
             except URLError as ex:
                 print(
@@ -753,7 +753,7 @@ class PyLNP(object):
 
     def start_update(self):
         """Launches a webbrowser to the specified update URL."""
-        webbrowser.open(self.config['updates']['downloadURL'])
+        webbrowser.open(self.config.get_string('updates/downloadURL'))
 
     def read_colors(self):
         """Returns a list of color schemes."""
