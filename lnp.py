@@ -729,12 +729,12 @@ class PyLNP(object):
         if self.userconfig.get_number('nextUpdate') < time.time():
             try:
                 req = Request(
-                    self.config.get_string('updates/checkURL')
+                    self.config.get_string('updates/checkURL'),
                     headers={'User-Agent':'PyLNP'})
                 version_text = urlopen(req).read()
                 # Note: versionRegex must capture the version number in a group
                 new_version = re.search(
-                    self.config.get_string('updates/versionRegex')
+                    self.config.get_string('updates/versionRegex'),
                     version_text).group(1)
                 if new_version != self.config.get_string('updates/packVersion'):
                     self.new_version = new_version
