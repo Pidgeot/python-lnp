@@ -560,13 +560,13 @@ class TkGui(object):
         menu_folders = Menu(menubar)
         menu_links = Menu(menubar)
         menu_help = Menu(menubar)
-        menu_beta = Menu(menubar)
+        #menu_beta = Menu(menubar)
         menubar.add_cascade(menu=menu_file, label='File')
         menubar.add_cascade(menu=menu_run, label='Run')
         menubar.add_cascade(menu=menu_folders, label='Folders')
         menubar.add_cascade(menu=menu_links, label='Links')
         menubar.add_cascade(menu=menu_help, label='Help')
-        menubar.add_cascade(menu=menu_beta, label='Testing')
+        #menubar.add_cascade(menu=menu_beta, label='Testing')
 
         menu_file.add_command(
             label='Re-load param set', command=self.load_params,
@@ -614,9 +614,6 @@ class TkGui(object):
         root.bind_all('<F1>', lambda e: self.show_help())
         root.bind_all('<Alt-F1>', lambda e: self.show_about())
         root.createcommand('tkAboutDialog', self.show_about)
-
-        menu_beta.add_command(
-            label='Toggle graphics pack patching', command=self.toggle_patching)
 
     def change_entry(self, key, var):
         """
@@ -1003,21 +1000,5 @@ class TkGui(object):
         for item in self.proglist.selection():
             utility_path = self.proglist.item(item, 'text')
             self.lnp.run_program(os.path.join(self.lnp.utils_dir, utility_path))
-
-    def toggle_patching(self):
-        """Toggles the use of patchingfor installing graphics packs."""
-        if self.lnp.install_inits == self.lnp.copy_inits:
-            self.lnp.install_inits = self.lnp.patch_inits
-            messagebox.showinfo(
-                title=self.root.title(),
-                message='Enabled patching of init.txt and d_init.txt during '
-                'installation of graphics packs. Note: This is still an '
-                'experimental feature; backup your files first.')
-        else:
-            self.lnp.install_inits = self.lnp.copy_inits
-            messagebox.showinfo(
-                title=self.root.title(),
-                message='Disabled patching of init.txt and d_init.txt during '
-                'installation of graphics packs. Files will be replaced.')
 
 # vim:expandtab

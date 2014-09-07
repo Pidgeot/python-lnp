@@ -491,8 +491,6 @@ class PyLNP(object):
     def install_graphics(self, pack):
         """
         Installs the graphics pack located in LNP/Graphics/<pack>.
-        install_inits should point to the appropriate method used to handle the
-        inits (copy_inits or patch_inits).
 
         Params:
             pack
@@ -522,7 +520,7 @@ class PyLNP(object):
                 dir_util.copy_tree(
                     os.path.join(gfx_dir, 'data', 'art'),
                     os.path.join(self.df_dir, 'data', 'art'))
-                self.install_inits(gfx_dir)
+                self.patch_inits(gfx_dir)
                 shutil.copyfile(
                     os.path.join(gfx_dir, 'data', 'init', 'colors.txt'),
                     os.path.join(self.df_dir, 'data', 'init', 'colors.txt'))
@@ -546,17 +544,6 @@ class PyLNP(object):
         else:
             return None
         self.load_params()
-
-    def copy_inits(self, gfx_dir):
-        """
-        Installs init files from a graphics pack by overwriting.
-        """
-        shutil.copyfile(
-            os.path.join(gfx_dir, 'data', 'init', 'init.txt'),
-            os.path.join(self.df_dir, 'data', 'init', 'init.txt'))
-        shutil.copyfile(
-            os.path.join(gfx_dir, 'data', 'init', 'd_init.txt'),
-            os.path.join(self.df_dir, 'data', 'init', 'd_init.txt'))
 
     def patch_inits(self, gfx_dir):
         """
@@ -634,8 +621,6 @@ class PyLNP(object):
             os.path.join(gfx_dir, 'data', 'init', 'd_init.txt'), d_init_fields,
             False)
         self.save_params()
-
-    install_inits = copy_inits
 
     def update_savegames(self):
         """Update save games with current raws."""
