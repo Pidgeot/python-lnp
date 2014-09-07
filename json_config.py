@@ -48,7 +48,7 @@ class JSONConfiguration(object):
 
     def get_string(self, path):
         """
-        Retrieves a string from the configuration.
+        Retrieves a value from the configuration.
         Returns an empty string if the path does not exist.
 
         Params:
@@ -59,7 +59,7 @@ class JSONConfiguration(object):
 
     def get_number(self, path):
         """
-        Retrieves a number from the configuration.
+        Retrieves a value from the configuration.
         Returns 0 if the path does not exist.
 
         Params:
@@ -70,7 +70,7 @@ class JSONConfiguration(object):
 
     def get_bool(self, path):
         """
-        Retrieves a number from the configuration.
+        Retrieves a value from the configuration.
         Returns False if the path does not exist.
 
         Params:
@@ -81,7 +81,7 @@ class JSONConfiguration(object):
 
     def get_list(self, path):
         """
-        Retrieves a list from the configuration.
+        Retrieves a value from the configuration.
         Returns an empty list if the path does not exist.
 
         Params:
@@ -92,7 +92,7 @@ class JSONConfiguration(object):
 
     def get_dict(self, path):
         """
-        Retrieves a dictionary (dict) from the configuration.
+        Retrieves a value from the configuration.
         Returns an empty dictionary if the path does not exist.
 
         Params:
@@ -102,7 +102,8 @@ class JSONConfiguration(object):
         return self.get_value(path, {})
 
     def set_value(self, key, value):
-        """Writes a value to a key.
+        """
+        Writes a value to a key.
         Note: Arbitrary paths not supported - you must refresh entire key.
 
         Params:
