@@ -212,7 +212,7 @@ class TkGui(object):
         if self.lnp.bundle == 'osx':
             # Image is inside application bundle on OS X
             return os.path.join(
-                os.path.dirname(sys.executable), '..', 'Resources', filename)
+                os.path.dirname(sys.executable), filename)
         elif self.lnp.bundle in ['win', 'linux']:
             # Image is inside executable on Linux and Windows
             # pylint: disable=protected-access, no-member, maybe-no-member
