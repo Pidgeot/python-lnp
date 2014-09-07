@@ -590,22 +590,12 @@ class TkGui(object):
         root.bind_all('<Control-r>', lambda e: self.lnp.run_df())
         root.bind_all('<Control-i>', lambda e: self.run_init())
 
-        # pylint:disable=unused-variable
-        for i, f in enumerate(self.lnp.config['folders']):
-            if f[0] == '-':
-                menu_folders.add_separator()
-            else:
-                menu_folders.add_command(
-                    label=f[0],
-                    command=lambda i=i: self.lnp.open_folder_idx(i))
-
-        for i, f in enumerate(self.lnp.config['links']):
-            if f[0] == '-':
-                menu_links.add_separator()
-            else:
-                menu_links.add_command(
-                    label=f[0],
-                    command=lambda i=i: self.lnp.open_link_idx(i))
+        self.populate_menu(
+            self.lnp.config.get_list('folders'), menu_folders,
+            self.lnp.open_folder_idx)
+        self.populate_menu(
+            self.lnp.config.get_list('links'), menu_links,
+            self.lnp.open_link_idx)
 
         menu_help.add_command(
             label="Help", command=self.show_help, accelerator='F1')
@@ -614,6 +604,26 @@ class TkGui(object):
         root.bind_all('<F1>', lambda e: self.show_help())
         root.bind_all('<Alt-F1>', lambda e: self.show_about())
         root.createcommand('tkAboutDialog', self.show_about)
+
+    @staticmethod
+    def populate_menu(collection, menu, method):
+        """
+        Populates a menu with items from a collection.
+
+        Params:
+            collection
+                A collection of menu item data.
+            menu
+                The menu to create the items under.
+            method
+                The method to be called when the menu item is selected.
+        """
+        #pylint:disable=unused-variable
+        for i, f in enumerate(collection):
+            if f[0] == '-':
+                menu.add_separator()
+            else:
+                menu.add_command(label=f[0], command=lambda i=i: method(i))
 
     def change_entry(self, key, var):
         """
@@ -639,6 +649,7 @@ class TkGui(object):
             self.hack_tooltip.settext(item['tooltip'])
         else:
             self.hack_tooltip.settext('')
+
     def load_params(self):
         """Reads configuration data."""
         try:
