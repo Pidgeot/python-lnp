@@ -17,6 +17,7 @@ import tempfile
 import time
 from datetime import datetime
 import errorlog
+from threading import Thread
 
 from settings import DFConfiguration
 from json_config import JSONConfiguration
@@ -85,9 +86,9 @@ class PyLNP(object):
 
         self.new_version = None
 
+        self.ui = TkGui(self)
         self.check_update()
-
-        TkGui(self)
+        self.ui.start()
 
     @staticmethod
     def identify_folder_name(base, name):
@@ -760,23 +761,29 @@ class PyLNP(object):
         if self.userconfig.get_number('updateDays') == -1:
             return
         if self.userconfig.get_number('nextUpdate') < time.time():
-            try:
-                req = Request(
-                    self.config.get_string('updates/checkURL'),
-                    headers={'User-Agent':'PyLNP'})
-                version_text = urlopen(req).read()
-                # Note: versionRegex must capture the version number in a group
-                new_version = re.search(
-                    self.config.get_string('updates/versionRegex'),
-                    version_text).group(1)
-                if new_version != self.config.get_string('updates/packVersion'):
-                    self.new_version = new_version
-            except URLError as ex:
-                print(
-                    "Error checking for updates: " + str(ex.reason),
-                    file=sys.stderr)
-            except:
-                pass
+            t = Thread(target=self.perform_update_check)
+            t.daemon = True
+            t.start()
+
+    def perform_update_check(self):
+        try:
+            req = Request(
+                self.config.get_string('updates/checkURL'),
+                headers={'User-Agent':'PyLNP'})
+            version_text = urlopen(req, timeout=3).read()
+            # Note: versionRegex must capture the version number in a group
+            new_version = re.search(
+                self.config.get_string('updates/versionRegex'),
+                version_text).group(1)
+            if new_version != self.config.get_string('updates/packVersion'):
+                self.new_version = new_version
+                self.ui.on_update_available()
+        except URLError as ex:
+            print(
+                "Error checking for updates: " + str(ex.reason),
+                file=sys.stderr)
+        except:
+            pass
 
     def next_update(self, days):
         """Sets the next update check to occur in <days> days."""

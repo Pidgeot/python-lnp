@@ -227,7 +227,7 @@ class UpdateWindow(ChildWindow):
         Grid.rowconfigure(f, 1, weight=1)
         Grid.columnconfigure(f, 0, weight=1)
         Label(
-            f, text='Update is available (version '+self.lnp.new_version +
+            f, text='Update is available (version '+str(self.lnp.new_version) +
             '). Update now?').grid(column=0, row=0, columnspan=2)
         Label(f, text='Check again in').grid(column=0, row=1)
 

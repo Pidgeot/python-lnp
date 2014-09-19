@@ -105,6 +105,7 @@ class TkGui(object):
         """
         self.lnp = lnp
         self.root = root = Tk()
+        self.updateDays = IntVar()
         controls.init(self)
         binding.init(lnp)
 
@@ -162,11 +163,16 @@ class TkGui(object):
         binding.update()
         for tab in self.tabs:
             tab.on_post_df_load()
+        root.bind('<<UpdateAvailable>>', lambda e: UpdateWindow(
+            self.root, self.lnp, self.updateDays))
 
-        if self.lnp.new_version is not None:
-            UpdateWindow(self.root, self.lnp, self.updateDays)
+    def start(self):
+        """Starts the UI."""
+        self.root.mainloop()
 
-        root.mainloop()
+    def on_update_available(self):
+        """Called by the main LNP class if an update is available."""
+        self.root.event_generate('<<UpdateAvailable>>', when='tail')
 
     def create_tab(self, class_, caption):
         """
@@ -265,7 +271,6 @@ class TkGui(object):
                 "every launch", "1 day", "3 days", "7 days", "14 days",
                 "30 days", "Never"]
             daylist = [0, 1, 3, 7, 14, 30, -1]
-            self.updateDays = IntVar()
             self.updateDays.set(self.lnp.userconfig.get_number('updateDays'))
             for i, o in enumerate(options):
                 menu_updates.add_radiobutton(
