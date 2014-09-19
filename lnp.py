@@ -139,17 +139,17 @@ class PyLNP(object):
         )
         self.load_params()
 
-    def run_df(self):
+    def run_df(self, force=False):
         """Launches Dwarf Fortress."""
         result = None
         if sys.platform == 'win32':
             result = self.run_program(
-                os.path.join(self.df_dir, 'Dwarf Fortress.exe'))
+                os.path.join(self.df_dir, 'Dwarf Fortress.exe'), force, True)
         else:
             # Linux/OSX: Run DFHack if available
             if os.path.isfile(os.path.join(self.df_dir, 'dfhack')):
                 result = self.run_program(
-                    os.path.join(self.df_dir, 'dfhack'), True)
+                    os.path.join(self.df_dir, 'dfhack'), force, True, True)
                 if result == False:
                     raise Exception('Failed to launch a new terminal.')
             else:
@@ -161,7 +161,7 @@ class PyLNP(object):
             sys.exit()
         return result
 
-    def run_program(self, path, spawn_terminal=False):
+    def run_program(self, path, force=False, is_df=False, spawn_terminal=False):
         """
         Launches an external program.
 
@@ -182,11 +182,12 @@ class PyLNP(object):
                     script = 'xdg-terminal'
                     if self.bundle == "linux":
                         script = os.path.join(sys._MEIPASS, script)
-                    if self.check_program_not_running(path, True):
+                    if force or self.check_program_not_running(path, True):
                         retcode = subprocess.call(
                             [os.path.abspath(script), path],
                             cwd=os.path.dirname(path))
                         return retcode == 0
+                    self.ui.on_program_running(path, is_df)
                     return None
                 elif sys.platform == 'darwin':
                     nonchild = True
@@ -197,9 +198,10 @@ class PyLNP(object):
                 nonchild = True
                 run_args = ['open', path]
                 workdir = path
-            if self.check_program_not_running(path, nonchild):
+            if force or self.check_program_not_running(path, nonchild):
                 self.running[path] = subprocess.Popen(run_args, cwd=workdir)
                 return True
+            self.ui.on_program_running(path, is_df)
             return None
         except OSError:
             sys.excepthook(*sys.exc_info())

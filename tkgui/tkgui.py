@@ -9,6 +9,7 @@ import sys
 
 from . import controls, binding
 from .child_windows import LogWindow, InitEditor, SelectDF, UpdateWindow
+from .child_windows import ConfirmRun
 
 from .options import OptionsTab
 from .graphics import GraphicsTab
@@ -173,6 +174,10 @@ class TkGui(object):
     def on_update_available(self):
         """Called by the main LNP class if an update is available."""
         self.root.event_generate('<<UpdateAvailable>>', when='tail')
+
+    def on_program_running(self, path, is_df):
+        """Called by the main LNP class if a program is already running."""
+        ConfirmRun(self.root, self.lnp, path, is_df)
 
     def create_tab(self, class_, caption):
         """

@@ -248,7 +248,7 @@ class UpdateWindow(ChildWindow):
         Button(
             buttons, text='No', command=self.close
             ).pack(side=LEFT)
-        buttons.pack(side=BOTTOM, anchor="e")
+        buttons.pack(side=BOTTOM)
 
     def yes(self):
         """Called when the Yes button is clicked."""
@@ -260,4 +260,53 @@ class UpdateWindow(ChildWindow):
         days = self.daylist[self.options.index(self.var.get())]
         self.parentVar.set(days)
         self.lnp.next_update(days)
+        self.top.destroy()
+
+class ConfirmRun(ChildWindow):
+    """Confirmation dialog for already running programs."""
+    def __init__(self, parent, lnp, path, is_df):
+        """
+        Constructor for ConfirmRun.
+
+        Params:
+            parent
+                Parent widget for the window.
+            lnp
+                Reference to the PyLNP object.
+            path
+                Path to the executable.
+            is_df
+                True if the program is DF itself.
+        """
+        self.parent = parent
+        self.lnp = lnp
+        self.path = path
+        super(ConfirmRun, self).__init__(parent, 'Program already running')
+        self.make_modal(self.close)
+
+    def create_controls(self, container):
+        f = Frame(container)
+        f.after(20000, self.close)
+        Label(
+            f,
+            text='The below program is already running. Launch it again?').grid(
+                column=0, row=0)
+        Label(f, text=self.path).grid(column=0, row=1)
+        f.pack(fill=BOTH, expand=Y)
+
+        buttons = Frame(container)
+        Button(buttons, text='Yes', command=self.yes).pack(side=LEFT)
+        Button(buttons, text='No', command=self.close).pack(side=LEFT)
+        buttons.pack(side=BOTTOM)
+
+    def yes(self):
+        """Called when the Yes button is clicked."""
+        if self.is_df:
+            self.lnp.run_df()
+        else:
+            self.lnp.run_program(self.path)
+        self.close()
+
+    def close(self):
+        """Called when the window is closed."""
         self.top.destroy()
