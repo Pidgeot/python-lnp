@@ -15,7 +15,6 @@ import shutil
 import subprocess
 import tempfile
 import time
-import webbrowser
 from datetime import datetime
 import errorlog
 
@@ -232,22 +231,13 @@ class PyLNP(object):
 
     def open_link_idx(self, i):
         """Opens the link specified by index i, as listed in PyLNP.json."""
-        webbrowser.open(self.config['links'][i][1])
+        self.open_url(self.config['links'][i][1])
 
     @staticmethod
-    def open_df_web():
+    def open_url(url):
         """Launches a web browser to the Dwarf Fortress webpage."""
-        webbrowser.open('http://www.bay12games.com/dwarves/')
-
-    @staticmethod
-    def open_wiki():
-        """Launches a web browser to the Dwarf Fortress Wiki."""
-        webbrowser.open('http://dwarffortresswiki.org/')
-
-    @staticmethod
-    def open_forums():
-        """Launches a web browser to the Dwarf Fortress forums."""
-        webbrowser.open('http://www.bay12forums.com/smf/')
+        import webbrowser
+        webbrowser.open(url)
 
     def find_df_folder(self):
         """Locates all suitable Dwarf Fortress installations (folders starting
@@ -756,7 +746,7 @@ class PyLNP(object):
 
     def start_update(self):
         """Launches a webbrowser to the specified update URL."""
-        webbrowser.open(self.config.get_string('updates/downloadURL'))
+        self.open_url(self.config.get_string('updates/downloadURL'))
 
     def read_colors(self):
         """Returns a list of color schemes."""
