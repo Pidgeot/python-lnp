@@ -766,6 +766,7 @@ class PyLNP(object):
             t.start()
 
     def perform_update_check(self):
+        """Performs the actual update check. Runs in a thread."""
         try:
             req = Request(
                 self.config.get_string('updates/checkURL'),
