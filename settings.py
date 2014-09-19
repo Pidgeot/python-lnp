@@ -80,6 +80,9 @@ class DFConfiguration(object):
             "initialSave", "INITIAL_SAVE", "YES", boolvals, dinit)
         self.create_option(
             "pauseOnLoad", "PAUSE_ON_LOAD", "YES", boolvals, dinit)
+        self.create_option(
+            "entombPets", "COFFIN_NO_PETS_DEFAULT", "NO", boolvals, dinit)
+        self.create_option("artifacts", "ARTIFACTS", "YES", boolvals, dinit)
         # special
         self.create_option("aquifers", "AQUIFER", "NO", _disabled, tuple(
             os.path.join(base_dir, 'raw', 'objects', a) for a in [
