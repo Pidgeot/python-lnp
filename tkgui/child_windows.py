@@ -199,11 +199,9 @@ class SelectDF(ChildWindow):
         """Called when the Cancel button is clicked."""
         self.top.destroy()
 
-
-
 class UpdateWindow(ChildWindow):
     """Notification of a new update."""
-    def __init__(self, parent, lnp):
+    def __init__(self, parent, lnp, parentVar):
         """
         Constructor for UpdateWindow.
 
@@ -215,9 +213,11 @@ class UpdateWindow(ChildWindow):
         """
         self.parent = parent
         self.lnp = lnp
+        self.parentVar = parentVar
         self.options = [
-            "next launch", "1 day", "3 days", "7 days", "14 days", "30 days"]
-        self.daylist = [0, 1, 3, 7, 14, 30]
+            "next launch", "1 day", "3 days", "7 days", "14 days", "30 days",
+            "Never"]
+        self.daylist = [0, 1, 3, 7, 14, 30, -1]
         self.var = StringVar(parent)
         super(UpdateWindow, self).__init__(parent, 'Update available')
         self.make_modal(self.close)
@@ -258,5 +258,6 @@ class UpdateWindow(ChildWindow):
     def close(self):
         """Called when the window is closed."""
         days = self.daylist[self.options.index(self.var.get())]
+        self.parentVar.set(days)
         self.lnp.next_update(days)
         self.top.destroy()

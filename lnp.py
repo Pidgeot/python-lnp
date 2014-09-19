@@ -749,9 +749,15 @@ class PyLNP(object):
                     VERSION, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
             textfile.close()
 
+    def updates_configured(self):
+        """Returns True if update checking have been configured."""
+        return self.config.get_string('updates/checkURL') != ''
+
     def check_update(self):
         """Checks for updates using the URL specified in PyLNP.json."""
-        if self.config.get_string('updates/checkURL') == '':
+        if not self.updates_configured():
+            return
+        if self.userconfig.get_number('updateDays') == -1:
             return
         if self.userconfig.get_number('nextUpdate') < time.time():
             try:

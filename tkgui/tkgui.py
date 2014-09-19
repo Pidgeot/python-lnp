@@ -164,7 +164,7 @@ class TkGui(object):
             tab.on_post_df_load()
 
         if self.lnp.new_version is not None:
-            UpdateWindow(self.root, self.lnp)
+            UpdateWindow(self.root, self.lnp, self.updateDays)
 
         root.mainloop()
 
@@ -258,6 +258,20 @@ class TkGui(object):
             accelerator='Ctrl+S')
         menu_file.add_command(
             label='Output log', command=lambda: LogWindow(self.root))
+        if self.lnp.updates_configured():
+            self.menu_updates = menu_updates = Menu(menubar)
+            menu_file.add_cascade(menu=menu_updates, label='Check for updates')
+            options = [
+                "every launch", "1 day", "3 days", "7 days", "14 days",
+                "30 days", "Never"]
+            daylist = [0, 1, 3, 7, 14, 30, -1]
+            self.updateDays = IntVar()
+            self.updateDays.set(self.lnp.userconfig.get_number('updateDays'))
+            for i, o in enumerate(options):
+                menu_updates.add_radiobutton(
+                    label=o, value=daylist[i], variable=self.updateDays,
+                    command=lambda i=i: self.configure_updates(daylist[i]))
+
         if sys.platform != 'darwin':
             menu_file.add_command(
                 label='Exit', command=self.exit_program, accelerator='Alt+F4')
@@ -286,6 +300,11 @@ class TkGui(object):
         root.bind_all('<F1>', lambda e: self.show_help())
         root.bind_all('<Alt-F1>', lambda e: self.show_about())
         root.createcommand('tkAboutDialog', self.show_about)
+
+    def configure_updates(self, days):
+        """Sets the number of days until next update check."""
+        self.updateDays.set(days)
+        self.lnp.next_update(days)
 
     @staticmethod
     def populate_menu(collection, menu, method):
