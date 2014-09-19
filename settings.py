@@ -55,6 +55,8 @@ class DFConfiguration(object):
                 "IDLE"), init)
         self.create_option(
             "compressSaves", "COMPRESSED_SAVES", "YES", boolvals, init)
+        self.create_option(
+            "printmode", "PRINT_MODE", "2D", ("2D", "STANDARD"), init)
         # d_init.txt
         dinit = (os.path.join(base_dir, 'data', 'init', 'd_init.txt'),)
         self.create_option("popcap", "POPULATION_CAP", "200", None, dinit)

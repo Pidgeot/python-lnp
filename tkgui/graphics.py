@@ -63,18 +63,23 @@ class GraphicsTab(Tab):
             self, 'Advanced', True)
         advanced.pack(fill=X, expand=Y)
 
+        controls.create_option_button(
+            advanced, 'Print Mode',
+            'Changes how Dwarf Fortress draws to the screen. "2D" allows '
+            'Truetype fonts, "standard" enables advanced graphics tools.',
+            'printmode').grid(column=0, row=0, columnspan=2, sticky="nsew")
         controls.create_trigger_button(
             advanced, 'Open Graphics Folder',
             'Add your own graphics packs here!', self.lnp.open_graphics).grid(
-                column=0, row=0, columnspan=2, sticky="nsew")
+                column=0, row=1, columnspan=2, sticky="nsew")
         controls.create_trigger_button(
             advanced, 'Refresh List', 'Refresh list of graphics packs',
-            self.read_graphics).grid(column=0, row=1, sticky="nsew")
+            self.read_graphics).grid(column=0, row=2, sticky="nsew")
         controls.create_trigger_button(
             advanced, 'Simplify Graphic Folders',
             'Deletes unnecessary files from graphics packs '
             '(saves space, useful for re-packaging)',
-            self.simplify_graphics).grid(column=1, row=1, sticky="nsew")
+            self.simplify_graphics).grid(column=1, row=2, sticky="nsew")
 
         colors, color_files, buttons = \
             controls.create_file_list_buttons(
