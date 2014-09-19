@@ -27,7 +27,7 @@ class GraphicsTab(Tab):
         self.graphics = Variable()
         self.colors = Variable()
 
-    def read_data(self):
+    def on_post_df_load(self):
         self.read_graphics()
         self.read_colors()
 
