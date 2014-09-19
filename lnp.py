@@ -733,7 +733,7 @@ class PyLNP(object):
                     self.new_version = new_version
             except URLError as ex:
                 print(
-                    "Error checking for updates: " + ex.reason,
+                    "Error checking for updates: " + str(ex.reason),
                     file=sys.stderr)
             except:
                 pass
