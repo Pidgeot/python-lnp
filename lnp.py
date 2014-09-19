@@ -72,6 +72,7 @@ class PyLNP(object):
         self.init_dir = ''
         self.save_dir = ''
         self.autorun = []
+        self.running = {}
 
         config_file = 'PyLNP.json'
         if os.access(os.path.join(self.lnp_dir, 'PyLNP.json'), os.F_OK):
@@ -139,21 +140,25 @@ class PyLNP(object):
 
     def run_df(self):
         """Launches Dwarf Fortress."""
+        result = None
         if sys.platform == 'win32':
-            self.run_program(os.path.join(self.df_dir, 'Dwarf Fortress.exe'))
+            result = self.run_program(
+                os.path.join(self.df_dir, 'Dwarf Fortress.exe'))
         else:
             # Linux/OSX: Run DFHack if available
             if os.path.isfile(os.path.join(self.df_dir, 'dfhack')):
-                if not self.run_program(
-                        os.path.join(self.df_dir, 'dfhack'), True):
+                result = self.run_program(
+                    os.path.join(self.df_dir, 'dfhack'), True)
+                if result == False:
                     raise Exception('Failed to launch a new terminal.')
             else:
-                self.run_program(os.path.join(self.df_dir, 'df'))
+                result = self.run_program(os.path.join(self.df_dir, 'df'))
         for prog in self.autorun:
             if os.access(os.path.join(self.utils_dir, prog), os.F_OK):
                 self.run_program(os.path.join(self.utils_dir, prog))
         if self.userconfig.get_bool('autoClose'):
             sys.exit()
+        return result
 
     def run_program(self, path, spawn_terminal=False):
         """
@@ -168,31 +173,60 @@ class PyLNP(object):
         """
         try:
             path = os.path.abspath(path)
+            workdir = os.path.dirname(path)
+            run_args = path
+            nonchild = False
             if spawn_terminal:
                 if sys.platform.startswith('linux'):
                     script = 'xdg-terminal'
                     if self.bundle == "linux":
                         script = os.path.join(sys._MEIPASS, script)
-                    retcode = subprocess.call(
-                        [os.path.abspath(script), path],
-                        cwd=os.path.dirname(path))
-                    return retcode == 0
+                    if self.check_program_not_running(path, True):
+                        retcode = subprocess.call(
+                            [os.path.abspath(script), path],
+                            cwd=os.path.dirname(path))
+                        return retcode == 0
+                    return None
                 elif sys.platform == 'darwin':
-                    subprocess.Popen(
-                        ['open', '-a', 'Terminal.app', path],
-                        cwd=os.path.dirname(path))
+                    nonchild = True
+                    run_args = ['open', '-a', 'Terminal.app', path]
             elif path.endswith('.jar'):  # Explicitly launch JAR files with Java
-                subprocess.Popen(
-                    ['java', '-jar', os.path.basename(path)],
-                    cwd=os.path.dirname(path))
+                run_args = ['java', '-jar', os.path.basename(path)]
             elif path.endswith('.app'):  # OS X application bundle
-                subprocess.Popen(['open', path], cwd=path)
-            else:
-                subprocess.Popen(path, cwd=os.path.dirname(path))
-            return True
+                nonchild = True
+                run_args = ['open', path]
+                workdir = path
+            if self.check_program_not_running(path, nonchild):
+                self.running[path] = subprocess.Popen(run_args, cwd=workdir)
+                return True
+            return None
         except OSError:
             sys.excepthook(*sys.exc_info())
             return False
+
+    def check_program_not_running(self, path, nonchild=False):
+        """
+        Returns True if a program is not currently running.
+
+        Params:
+            path
+                The path of the program.
+            nonchild
+                If set to True, attempts to check for the process among all
+                running processes, not just known child processes. Used for
+                DFHack on Linux and OS X; currently unsupported for Windows.
+        """
+        if nonchild:
+            ps = subprocess.Popen('ps axww', shell=True, stdout=subprocess.PIPE)
+            ps.wait()
+            s = ps.stdout.read()
+            return path not in s
+        else:
+            if path not in self.running:
+                return True
+            else:
+                self.running[path].poll()
+                return self.running[path].returncode is not None
 
     def open_folder_idx(self, i):
         """Opens the folder specified by index i, as listed in PyLNP.json."""
