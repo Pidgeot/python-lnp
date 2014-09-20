@@ -158,6 +158,14 @@ class TkGui(object):
 
         self.create_menu(root)
 
+        self.save_size = None
+        root.update()
+        root.minsize(width=root.winfo_width(), height=root.winfo_height())
+        root.geometry('{}x{}'.format(
+            self.lnp.userconfig.get_number('tkgui_width'),
+            self.lnp.userconfig.get_number('tkgui_height')))
+        root.bind("<Configure>", self.on_resize)
+
         if not self.ensure_df():
             return
         binding.update()
@@ -165,7 +173,14 @@ class TkGui(object):
             tab.on_post_df_load()
         root.bind('<<UpdateAvailable>>', lambda e: UpdateWindow(
             self.root, self.lnp, self.updateDays))
-        root.minsize(width=root.winfo_width(), height=root.winfo_height())
+
+    def on_resize(self, e):
+        """Called when the window is resized."""
+        self.lnp.userconfig['tkgui_width'] = self.root.winfo_width()
+        self.lnp.userconfig['tkgui_height'] = self.root.winfo_height()
+        if self.save_size:
+            self.root.after_cancel(self.save_size)
+        self.save_size = self.root.after(1000, self.lnp.userconfig.save_data)
 
     def start(self):
         """Starts the UI."""
