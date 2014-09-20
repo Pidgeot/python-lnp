@@ -31,7 +31,7 @@ except ImportError:  # Python 3
     from urllib.error import URLError
 
 BASEDIR = '.'
-VERSION = '0.5'
+VERSION = '0.5.1'
 
 
 class PyLNP(object):
