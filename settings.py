@@ -229,8 +229,8 @@ class DFConfiguration(object):
                         self.settings[field] = match.group(1)
                 else:
                     print(
-                        'WARNING: Expected match for field ' + field +
-                        ' in file ' + filename +
+                        'WARNING: Expected match for field ' + str(field) +
+                        ' in file ' + str(filename) +
                         '. Possible DF version mismatch?', file=sys.stderr)
 
     @staticmethod
@@ -248,7 +248,8 @@ class DFConfiguration(object):
         """
         try:
             settings_file = open(filename)
-            match = re.search(r'\['+field+r':(.+?)\]', settings_file.read())
+            match = re.search(
+                r'\['+str(field)+r':(.+?)\]', settings_file.read())
             if match is None:
                 return None
             return match.group(1)

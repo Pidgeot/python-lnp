@@ -55,6 +55,6 @@ def update():
         else:
             control["text"] = (
                 control["text"].split(':')[0] + ': ' +
-                value)
+                str(value))
 
 # vim:expandtab

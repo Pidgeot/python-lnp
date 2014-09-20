@@ -135,7 +135,7 @@ class GraphicsTab(Tab):
                         title='Error occurred',
                         message='Nothing was installed.\n'
                         'Folder does not exist or does not have required files '
-                        'or folders:\n'+gfx_dir)
+                        'or folders:\n'+str(gfx_dir))
             binding.update()
 
     def update_savegames(self):
@@ -156,12 +156,12 @@ class GraphicsTab(Tab):
             result = self.lnp.simplify_pack(pack)
             if result is None:
                 messagebox.showinfo(
-                    title='Error occurrred', message='No files in: '+pack)
+                    title='Error occurrred', message='No files in: '+str(pack))
             elif result is False:
                 messagebox.showerror(
                     title='Error occurred',
                     message='Error simplifying graphics folder. '
-                    'It may not have the required files.\n'+pack+'\n'
+                    'It may not have the required files.\n'+str(pack)+'\n'
                     'See the output log for error details.')
             else:
                 messagebox.showinfo(
