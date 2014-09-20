@@ -128,7 +128,7 @@ class TkGui(object):
 
         main = Frame(root)
         self.logo = logo = get_image(self.get_image_path('LNPSMALL'))
-        Label(root, image=logo).pack()
+        Label(root, image=logo, anchor=CENTER).pack(fill=X)
         main.pack(side=TOP, fill=BOTH, expand=Y)
         self.n = n = Notebook(main)
 
