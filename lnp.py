@@ -221,8 +221,8 @@ class PyLNP(object):
         """
         if nonchild:
             ps = subprocess.Popen('ps axww', shell=True, stdout=subprocess.PIPE)
-            ps.wait()
             s = ps.stdout.read()
+            ps.wait()
             return path not in s
         else:
             if path not in self.running:
