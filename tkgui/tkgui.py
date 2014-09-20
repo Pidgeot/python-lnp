@@ -123,12 +123,11 @@ class TkGui(object):
         elif windowing == "aqua":  # OS X has no window icons
             pass
 
-        root.resizable(0, 0)
         root.title("PyLNP")
         self.vcmd = (root.register(validate_number), '%P')
 
         main = Frame(root)
-        logo = get_image(self.get_image_path('LNPSMALL'))
+        self.logo = logo = get_image(self.get_image_path('LNPSMALL'))
         Label(root, image=logo).pack()
         main.pack(side=TOP, fill=BOTH, expand=Y)
         self.n = n = Notebook(main)
@@ -166,6 +165,7 @@ class TkGui(object):
             tab.on_post_df_load()
         root.bind('<<UpdateAvailable>>', lambda e: UpdateWindow(
             self.root, self.lnp, self.updateDays))
+        root.minsize(width=root.winfo_width(), height=root.winfo_height())
 
     def start(self):
         """Starts the UI."""
@@ -270,7 +270,7 @@ class TkGui(object):
         menu_file.add_command(
             label='Output log', command=lambda: LogWindow(self.root))
         if self.lnp.updates_configured():
-            self.menu_updates = menu_updates = Menu(menubar)
+            menu_updates = menu_updates = Menu(menubar)
             menu_file.add_cascade(menu=menu_updates, label='Check for updates')
             options = [
                 "every launch", "1 day", "3 days", "7 days", "14 days",

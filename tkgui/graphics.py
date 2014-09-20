@@ -34,6 +34,7 @@ class GraphicsTab(Tab):
     def create_controls(self):
         change_graphics = controls.create_control_group(
             self, 'Change Graphics', True)
+        Grid.rowconfigure(change_graphics, 1, weight=1)
         change_graphics.pack(side=TOP, fill=BOTH, expand=Y)
 
         curr_pack = Label(change_graphics, text='Current Graphics')
@@ -61,7 +62,7 @@ class GraphicsTab(Tab):
 
         advanced = controls.create_control_group(
             self, 'Advanced', True)
-        advanced.pack(fill=X, expand=Y)
+        advanced.pack(fill=X, expand=N)
 
         controls.create_option_button(
             advanced, 'Print Mode',
