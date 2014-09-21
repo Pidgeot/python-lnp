@@ -57,7 +57,8 @@ class GraphicsTab(Tab):
             self.update_savegames).grid(column=1, row=2, sticky="nsew")
         controls.create_option_button(
             change_graphics, 'TrueType Fonts',
-            'Toggles whether to use TrueType fonts or tileset for text',
+            'Toggles whether to use TrueType fonts or tileset for text. '
+            'Only works with Print Mode set to 2D.',
             'truetype').grid(column=0, row=3, columnspan=2, sticky="nsew")
 
         advanced = controls.create_control_group(
