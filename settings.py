@@ -3,7 +3,7 @@
 """Configuration and raw manipulation for Dwarf Fortress."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, os, re, shutil
+import sys, os, re
 
 # Markers to read certain settings correctly
 
@@ -293,9 +293,6 @@ class DFConfiguration(object):
                     '[{0}:{1}]'.format(
                         self.field_names[field], self.settings[field]), text)
         oldfile.close()
-        #Backup old file
-        backup = filename+'.bak'
-        shutil.copyfile(filename, backup)
         newfile = open(filename, 'w')
         newfile.write(text)
         newfile.close()

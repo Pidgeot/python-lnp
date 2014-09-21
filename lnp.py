@@ -477,7 +477,6 @@ class PyLNP(object):
         if not filename.endswith('.txt'):
             filename = filename + '.txt'
         target = os.path.join(self.init_dir, 'interface.txt')
-        os.rename(target, target+'.bak')
         shutil.copyfile(os.path.join(self.keybinds_dir, filename), target)
 
     def keybind_exists(self, filename):
