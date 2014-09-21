@@ -21,6 +21,12 @@ class _ForceBool(object):
 
 _force_bool = _ForceBool()
 
+class _NegatedBool(object):
+    """Marker class for DFConfiguration. Swaps YES and NO."""
+    pass
+
+_negated_bool = _NegatedBool()
+
 class DFConfiguration(object):
     """Reads and modifies Dwarf Fortress configuration textfiles."""
     def __init__(self, base_dir):
@@ -83,7 +89,7 @@ class DFConfiguration(object):
         self.create_option(
             "pauseOnLoad", "PAUSE_ON_LOAD", "YES", boolvals, dinit)
         self.create_option(
-            "entombPets", "COFFIN_NO_PETS_DEFAULT", "NO", boolvals, dinit)
+            "entombPets", "COFFIN_NO_PETS_DEFAULT", "NO", _negated_bool, dinit)
         self.create_option("artifacts", "ARTIFACTS", "YES", boolvals, dinit)
         # special
         self.create_option("aquifers", "AQUIFER", "NO", _disabled, tuple(
@@ -179,7 +185,7 @@ class DFConfiguration(object):
         """
         if items is None:
             return current
-        if items is _disabled or items is _force_bool:
+        if items is _disabled or items is _force_bool or items is _negated_bool:
             items = ("YES", "NO")
         return items[(items.index(current) + 1) % len(items)]
 
@@ -226,7 +232,10 @@ class DFConfiguration(object):
                         #Interpret everything other than "NO" as "YES"
                         self.settings[field] = "YES"
                     else:
-                        self.settings[field] = match.group(1)
+                        value = match.group(1)
+                        if self.options[field] is _negated_bool:
+                            value = ["YES", "NO"][["NO", "YES"].index(value)]
+                        self.settings[field] = value
                 else:
                     print(
                         'WARNING: Expected match for field ' + str(field) +
@@ -288,10 +297,13 @@ class DFConfiguration(object):
                     replace_from.format(self.field_names[field]),
                     replace_to.format(self.field_names[field]))
             else:
+                value = self.settings[field]
+                if self.options[field] is _negated_bool:
+                    value = ["YES", "NO"][["NO", "YES"].index(value)]
                 text = re.sub(
                     r'\[{0}:(.+?)\]'.format(self.field_names[field]),
                     '[{0}:{1}]'.format(
-                        self.field_names[field], self.settings[field]), text)
+                        self.field_names[field], value), text)
         oldfile.close()
         newfile = open(filename, 'w')
         newfile.write(text)
