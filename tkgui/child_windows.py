@@ -213,40 +213,26 @@ class UpdateWindow(ChildWindow):
         """
         self.parent = parent
         self.lnp = lnp
-        self.parentVar = parentVar
-        self.options = [
-            "next launch", "1 day", "3 days", "7 days", "14 days", "30 days",
-            "Never"]
-        self.daylist = [0, 1, 3, 7, 14, 30, -1]
-        self.var = StringVar(parent)
         super(UpdateWindow, self).__init__(parent, 'Update available')
         self.make_modal(self.close)
 
     def create_controls(self, container):
         f = Frame(container)
-        Grid.rowconfigure(f, 1, weight=1)
-        Grid.columnconfigure(f, 0, weight=1)
         Label(
-            f, text='Update is available (version '+str(self.lnp.new_version) +
-            '). Update now?').grid(column=0, row=0, columnspan=2)
-        Label(f, text='Check again in').grid(column=0, row=1)
+            f, text='An update is available (version ' +
+            str(self.lnp.new_version) + '). Download now?').grid(
+                column=0, row=0)
+        Label(f, text='You can control the frequency of update checks from the '
+              'menu File > Check for Updates.').grid(column=0, row=1)
 
-        try:
-            default_idx = self.daylist.index(
-                self.lnp.userconfig.get_number('updateDays'))
-        except ValueError:
-            default_idx = 0
-        self.var.set(self.options[default_idx])
-        OptionMenu(f, self.var, self.options[default_idx], *self.options).grid(
-            column=1, row=1)
         f.pack(fill=BOTH, expand=Y)
 
         buttons = Frame(container)
         Button(
-            buttons, text='Yes', command=self.yes
+            buttons, text='Download', command=self.yes
             ).pack(side=LEFT)
         Button(
-            buttons, text='No', command=self.close
+            buttons, text='Not now', command=self.close
             ).pack(side=LEFT)
         buttons.pack(side=BOTTOM)
 
@@ -257,9 +243,6 @@ class UpdateWindow(ChildWindow):
 
     def close(self):
         """Called when the window is closed."""
-        days = self.daylist[self.options.index(self.var.get())]
-        self.parentVar.set(days)
-        self.lnp.next_update(days)
         self.top.destroy()
 
 class ConfirmRun(ChildWindow):

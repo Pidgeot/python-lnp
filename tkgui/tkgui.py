@@ -288,8 +288,8 @@ class TkGui(object):
             menu_updates = menu_updates = Menu(menubar)
             menu_file.add_cascade(menu=menu_updates, label='Check for updates')
             options = [
-                "every launch", "1 day", "3 days", "7 days", "14 days",
-                "30 days", "Never"]
+                "every launch", "every day", "every 3 days", "every 7 days",
+                "every 14 days", "every 30 days", "Never"]
             daylist = [0, 1, 3, 7, 14, 30, -1]
             self.updateDays.set(self.lnp.userconfig.get_number('updateDays'))
             for i, o in enumerate(options):
