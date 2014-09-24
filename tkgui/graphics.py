@@ -5,6 +5,7 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 from . import controls, binding
+from .layout import GridLayouter
 from .tab import Tab
 import sys
 
@@ -37,51 +38,50 @@ class GraphicsTab(Tab):
         Grid.rowconfigure(change_graphics, 1, weight=1)
         change_graphics.pack(side=TOP, fill=BOTH, expand=Y)
 
+        grid = GridLayouter(2)
         curr_pack = Label(change_graphics, text='Current Graphics')
-        curr_pack.grid(column=0, row=0, columnspan=2, sticky="nsew")
+        grid.add(curr_pack, 2)
         binding.bind(curr_pack, 'FONT', lambda x: self.lnp.current_pack())
 
         listframe = Frame(change_graphics)
-        listframe.grid(column=0, row=1, columnspan=2, sticky="nsew", pady=4)
+        grid.add(listframe, 2, pady=4)
         _, graphicpacks = controls.create_file_list(
             listframe, None, self.graphics, height=8)
 
-        controls.create_trigger_button(
+        grid.add(controls.create_trigger_button(
             change_graphics, 'Install Graphics',
             'Install selected graphics pack',
-            lambda: self.install_graphics(graphicpacks)).grid(
-                column=0, row=2, sticky="nsew")
-        controls.create_trigger_button(
+            lambda: self.install_graphics(graphicpacks)))
+        grid.add(controls.create_trigger_button(
             change_graphics, 'Update Savegames',
             'Install current graphics pack in all savegames',
-            self.update_savegames).grid(column=1, row=2, sticky="nsew")
-        controls.create_option_button(
+            self.update_savegames))
+        grid.add(controls.create_option_button(
             change_graphics, 'TrueType Fonts',
             'Toggles whether to use TrueType fonts or tileset for text. '
-            'Only works with Print Mode set to 2D.',
-            'truetype').grid(column=0, row=3, columnspan=2, sticky="nsew")
+            'Only works with Print Mode set to 2D.', 'truetype'))
 
         advanced = controls.create_control_group(
             self, 'Advanced', True)
         advanced.pack(fill=X, expand=N)
 
-        controls.create_option_button(
+        grid = GridLayouter(2)
+        grid.add(controls.create_option_button(
             advanced, 'Print Mode',
             'Changes how Dwarf Fortress draws to the screen. "2D" allows '
             'Truetype fonts, "standard" enables advanced graphics tools.',
-            'printmode').grid(column=0, row=0, columnspan=2, sticky="nsew")
-        controls.create_trigger_button(
+            'printmode'), 2)
+        grid.add(controls.create_trigger_button(
             advanced, 'Open Graphics Folder',
-            'Add your own graphics packs here!', self.lnp.open_graphics).grid(
-                column=0, row=1, columnspan=2, sticky="nsew")
-        controls.create_trigger_button(
+            'Add your own graphics packs here!', self.lnp.open_graphics), 2)
+        grid.add(controls.create_trigger_button(
             advanced, 'Refresh List', 'Refresh list of graphics packs',
-            self.read_graphics).grid(column=0, row=2, sticky="nsew")
-        controls.create_trigger_button(
+            self.read_graphics))
+        grid.add(controls.create_trigger_button(
             advanced, 'Simplify Graphic Folders',
             'Deletes unnecessary files from graphics packs '
             '(saves space, useful for re-packaging)',
-            self.simplify_graphics).grid(column=1, row=2, sticky="nsew")
+            self.simplify_graphics))
 
         colors, color_files, buttons = \
             controls.create_file_list_buttons(

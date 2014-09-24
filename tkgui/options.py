@@ -5,6 +5,7 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 from . import controls, binding
+from .layout import GridLayouter
 from .tab import Tab
 import sys
 
@@ -35,51 +36,52 @@ class OptionsTab(Tab):
         options = controls.create_control_group(self, 'Gameplay Options', True)
         options.pack(side=TOP, fill=BOTH, expand=N)
 
-        controls.create_trigger_option_button(
+        grid = GridLayouter(2)
+        grid.add(controls.create_trigger_option_button(
             options, 'Population Cap', 'Maximum population in your fort',
-            self.set_pop_cap, 'popcap').grid(column=0, row=0, sticky="nsew")
-        controls.create_trigger_option_button(
+            self.set_pop_cap, 'popcap'))
+        grid.add(controls.create_trigger_option_button(
             options, 'Child Cap', 'Maximum children in your fort',
-            self.set_child_cap, 'childcap').grid(column=1, row=0, sticky="nsew")
-        controls.create_option_button(
+            self.set_child_cap, 'childcap'))
+        grid.add(controls.create_option_button(
             options, 'Invaders',
             'Toggles whether invaders (goblins, etc.) show up',
-            'invaders').grid(column=0, row=1, sticky="nsew")
-        controls.create_option_button(
+            'invaders'))
+        grid.add(controls.create_option_button(
             options, 'Cave-ins',
             'Toggles whether unsupported bits of terrain will collapse',
-            'caveins').grid(column=1, row=1, sticky="nsew")
-        controls.create_option_button(
+            'caveins'))
+        grid.add(controls.create_option_button(
             options, 'Temperature',
             'Toggles whether things will burn, melt, freeze, etc.',
-            'temperature').grid(column=0, row=2, sticky="nsew")
-        controls.create_option_button(
-            options, 'Weather', 'Rain, snow, etc.', 'weather').grid(
-                column=1, row=2, sticky="nsew")
-        controls.create_option_button(
+            'temperature'))
+        grid.add(controls.create_option_button(
+            options, 'Weather', 'Rain, snow, etc.', 'weather'))
+        grid.add(controls.create_option_button(
             options, 'Entomb Pets',
             'Whether deceased pets should be entombed in coffins by default.',
-            'entombPets').grid(column=0, row=3, sticky="nsew")
-        controls.create_option_button(
+            'entombPets'))
+        grid.add(controls.create_option_button(
             options, 'Artifacts',
             'Whether dwarfs should enter artifact producing moods.',
-            'artifacts').grid(column=1, row=3, sticky="nsew")
-        controls.create_option_button(
+            'artifacts'))
+        grid.add(controls.create_option_button(
             options, 'Starting Labors', 'Which labors are enabled by default:'
             'by skill level of dwarves, by their unit type, or none',
-            'laborLists').grid(column=0, row=4, columnspan=2, sticky="nsew")
+            'laborLists'))
 
         display = controls.create_control_group(self, 'Display Options', True)
         display.pack(side=TOP, fill=BOTH, expand=N)
-        controls.create_option_button(
+
+        grid = GridLayouter(2)
+        grid.add(controls.create_option_button(
             display, 'Liquid Depth',
             'Displays the depth of liquids with numbers 1-7',
-            'liquidDepth').grid(column=0, row=0, sticky="nsew")
-        controls.create_option_button(
+            'liquidDepth'))
+        grid.add(controls.create_option_button(
             display, 'Varied Ground',
             'If ground tiles use a variety of punctuation, or only periods',
-            'variedGround').grid(column=1, row=0, sticky="nsew")
-
+            'variedGround'))
 
         mods = controls.create_control_group(
             self, 'Modifications')
