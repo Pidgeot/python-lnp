@@ -263,7 +263,9 @@ def create_file_list(parent, title, listvar, **args):
     lf.pack(side=BOTTOM, fill=BOTH, expand=Y, anchor="s")
     Grid.columnconfigure(lf, 0, weight=2)
     Grid.rowconfigure(lf, 1, weight=1)
-    lb = Listbox(lf, listvariable=listvar, activestyle='dotbox', **args)
+    lb = Listbox(
+        lf, listvariable=listvar, activestyle='dotbox', exportselection=0,
+        **args)
     lb.grid(column=0, row=0, rowspan=2, sticky="nsew")
     create_scrollbar(lf, lb, column=1, row=0, rowspan=2)
     return (lf, lb)
