@@ -178,8 +178,8 @@ class DFConfiguration(object):
 
         Returns:
             If no list of values is given, returns current.
-            If the current value is the last value in the list, returns the
-            first value in the list.
+            If the current value is the last value in the list, or the value
+            does not exist in the list, returns the first value in the list.
             Otherwise, returns the value from items immediately following the
             current value.
         """
@@ -187,6 +187,8 @@ class DFConfiguration(object):
             return current
         if items is _disabled or items is _force_bool or items is _negated_bool:
             items = ("YES", "NO")
+        if current not in items:
+            return items[0]
         return items[(items.index(current) + 1) % len(items)]
 
     def read_settings(self):
