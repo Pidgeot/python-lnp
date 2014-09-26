@@ -110,6 +110,9 @@ class TkGui(object):
         controls.init(self)
         binding.init(lnp)
 
+        if not self.ensure_df():
+            return
+
         root.option_add('*tearOff', FALSE)
         windowing = root.tk.call('tk', 'windowingsystem')
         if windowing == "win32":
@@ -166,8 +169,6 @@ class TkGui(object):
             self.lnp.userconfig.get_number('tkgui_height')))
         root.bind("<Configure>", self.on_resize)
 
-        if not self.ensure_df():
-            return
         binding.update()
         for tab in self.tabs:
             tab.on_post_df_load()
@@ -212,7 +213,9 @@ class TkGui(object):
         """Ensures a DF installation is active before proceeding."""
         if self.lnp.df_dir == '':
             if self.lnp.folders:
+                self.root.withdraw()
                 selector = SelectDF(self.root, self.lnp.folders)
+                self.root.deiconify()
                 if selector.result == '':
                     messagebox.showerror(
                         self.root.title(),

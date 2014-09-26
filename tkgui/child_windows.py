@@ -54,7 +54,8 @@ class ChildWindow(object):
             on_cancel
                 Method to be called if the user closes the window.
         """
-        self.top.transient(self.parent)
+        if self.parent.state() != "withdrawn":
+            self.top.transient(self.parent)
         self.top.wait_visibility()
         self.top.grab_set()
         self.top.focus_set()
