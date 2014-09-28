@@ -212,10 +212,9 @@ class TkGui(object):
     def ensure_df(self):
         """Ensures a DF installation is active before proceeding."""
         if self.lnp.df_dir == '':
+            self.root.withdraw()
             if self.lnp.folders:
-                self.root.withdraw()
                 selector = SelectDF(self.root, self.lnp.folders)
-                self.root.deiconify()
                 if selector.result == '':
                     messagebox.showerror(
                         self.root.title(),
@@ -235,8 +234,8 @@ class TkGui(object):
                     "Could not find Dwarf Fortress, quitting.")
                 self.root.destroy()
                 return False
+            self.root.deiconify()
         return True
-
 
     def get_image_path(self, filename):
         """
