@@ -434,6 +434,8 @@ class PyLNP(object):
         self.autorun = []
         try:
             for line in open(os.path.join(self.utils_dir, 'autorun.txt')):
+                if line.endswith('\n'):
+                    line = line[:-1]
                 self.autorun.append(line)
         except IOError:
             pass
