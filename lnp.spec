@@ -45,7 +45,7 @@ if sys.platform != 'darwin':
     exe = EXE(
         pyz, a.scripts, a.binaries, a.zipfiles, a.datas, name='PyLNP'+extension,
         debug=False, strip=None, upx=True, console=False, icon='LNP.ico')
-else: # NOTE: Currently untested.
+else:
     exe = EXE(
         pyz, a.scripts, exclude_binaries=True, name='PyLNP'+extension,
         debug=False, strip=None, upx=True, console=False)
