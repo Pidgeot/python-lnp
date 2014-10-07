@@ -4,9 +4,12 @@
 """Contains base class used for child windows."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, os, errorlog
+import sys, os
 
 from . import controls
+
+from core import errorlog, launcher, paths, update
+from core.lnp import lnp
 
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
@@ -137,17 +140,17 @@ class InitEditor(DualTextWindow):
         self.gui.save_params()
         self.left.delete('1.0', END)
         self.left.insert('1.0', open(
-            os.path.join(self.gui.lnp.init_dir, 'init.txt')).read())
+            os.path.join(paths.get('init'), 'init.txt')).read())
         self.right.delete('1.0', END)
         self.right.insert('1.0', open(
-            os.path.join(self.gui.lnp.init_dir, 'd_init.txt')).read())
+            os.path.join(paths.get('init'), 'd_init.txt')).read())
 
     def save(self):
         """Saves configuration data from the text widgets."""
-        f = open(os.path.join(self.gui.lnp.init_dir, 'init.txt'), 'w')
+        f = open(os.path.join(paths.get('init'), 'init.txt'), 'w')
         f.write(self.left.get('1.0', 'end'))
         f.close()
-        f = open(os.path.join(self.gui.lnp.init_dir, 'd_init.txt'), 'w')
+        f = open(os.path.join(paths.get('init'), 'd_init.txt'), 'w')
         f.write(self.right.get('1.0', 'end'))
         f.close()
         self.gui.load_params()
@@ -202,7 +205,7 @@ class SelectDF(ChildWindow):
 
 class UpdateWindow(ChildWindow):
     """Notification of a new update."""
-    def __init__(self, parent, lnp, parentVar):
+    def __init__(self, parent, parentVar):
         """
         Constructor for UpdateWindow.
 
@@ -213,7 +216,6 @@ class UpdateWindow(ChildWindow):
                 Reference to the PyLNP object.
         """
         self.parent = parent
-        self.lnp = lnp
         super(UpdateWindow, self).__init__(parent, 'Update available')
         self.make_modal(self.close)
 
@@ -221,7 +223,7 @@ class UpdateWindow(ChildWindow):
         f = Frame(container)
         Label(
             f, text='An update is available (version ' +
-            str(self.lnp.new_version) + '). Download now?').grid(
+            str(lnp.new_version) + '). Download now?').grid(
                 column=0, row=0)
         Label(f, text='You can control the frequency of update checks from the '
               'menu File > Check for Updates.').grid(column=0, row=1)
@@ -239,7 +241,7 @@ class UpdateWindow(ChildWindow):
 
     def yes(self):
         """Called when the Yes button is clicked."""
-        self.lnp.start_update()
+        update.start_update()
         self.close()
 
     def close(self):
@@ -248,7 +250,7 @@ class UpdateWindow(ChildWindow):
 
 class ConfirmRun(ChildWindow):
     """Confirmation dialog for already running programs."""
-    def __init__(self, parent, lnp, path, is_df):
+    def __init__(self, parent, path, is_df):
         """
         Constructor for ConfirmRun.
 
@@ -263,7 +265,6 @@ class ConfirmRun(ChildWindow):
                 True if the program is DF itself.
         """
         self.parent = parent
-        self.lnp = lnp
         self.path = path
         super(ConfirmRun, self).__init__(parent, 'Program already running')
         self.make_modal(self.close)
@@ -286,9 +287,9 @@ class ConfirmRun(ChildWindow):
     def yes(self):
         """Called when the Yes button is clicked."""
         if self.is_df:
-            self.lnp.run_df()
+            launcher.run_df()
         else:
-            self.lnp.run_program(self.path)
+            launcher.run_program(self.path)
         self.close()
 
     def close(self):

@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 """Framework for logging errors."""
 from __future__ import print_function, unicode_literals, absolute_import
-import sys
+import sys, os
+
+from . import paths
 
 class CaptureStream(object):
     """ Redirects output to a file-like object to an internal list as well as a
@@ -53,7 +55,8 @@ class CaptureStream(object):
 
     def redirect(self):
         """Sets up the initial redirection."""
-        self.outfile = open(self.name+'.txt', 'w')
+        self.outfile = open(
+            os.path.join(paths.get('root'), self.name+'.txt'), 'w')
         self.hook()
 
 def start():

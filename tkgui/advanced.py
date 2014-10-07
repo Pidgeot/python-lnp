@@ -9,6 +9,9 @@ from .layout import GridLayouter
 from .tab import Tab
 import sys
 
+from core import launcher
+from core.lnp import lnp
+
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
@@ -95,7 +98,7 @@ class AdvancedTab(Tab):
             'compressSaves'))
         grid.add(controls.create_trigger_button(
             saverelated, 'Open Savegame Folder', 'Open the savegame folder',
-            self.lnp.open_savegames))
+            launcher.open_savegames))
 
         main_grid.add(Frame(self, height=30), 2)
         main_grid.add(controls.create_option_button(
@@ -107,10 +110,11 @@ class AdvancedTab(Tab):
             self, 'Close GUI on launch',
             'Whether this GUI should close when Dwarf Fortress is launched',
             self.toggle_autoclose, 'autoClose', lambda v: ('NO', 'YES')[
-                self.lnp.userconfig.get_bool('autoClose')]), 2)
+                lnp.userconfig.get_bool('autoClose')]), 2)
 
-    def toggle_autoclose(self):
+    @staticmethod
+    def toggle_autoclose():
         """Toggle automatic closing of the UI when launching DF."""
-        self.lnp.toggle_autoclose()
+        launcher.toggle_autoclose()
         binding.update()
 

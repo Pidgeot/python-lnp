@@ -29,7 +29,7 @@ _negated_bool = _NegatedBool()
 
 class DFConfiguration(object):
     """Reads and modifies Dwarf Fortress configuration textfiles."""
-    def __init__(self, base_dir):
+    def __init__(self, base_dir, df_info):
         """
         Constructor for DFConfiguration.
 
@@ -61,11 +61,20 @@ class DFConfiguration(object):
                 "IDLE"), init)
         self.create_option(
             "compressSaves", "COMPRESSED_SAVES", "YES", boolvals, init)
-        self.create_option(
-            "printmode", "PRINT_MODE", "2D", ("2D", "STANDARD"), init)
+        if 'legacy' not in df_info.variations:
+            printmodes = ["2D", "STANDARD"]
+            if 'twbt' in df_info.variations:
+                printmodes += ["TWBT", "TWBT_LEGACY"]
+            self.create_option(
+                "printmode", "PRINT_MODE", "2D", tuple(printmodes), init)
         # d_init.txt
         dinit = (os.path.join(base_dir, 'data', 'init', 'd_init.txt'),)
+        if df_info.version < '0.31.04':
+            dinit = init
         self.create_option("popcap", "POPULATION_CAP", "200", None, dinit)
+        if df_info.version >= '0.40.05':
+            self.create_option(
+                "strict_popcap", "STRICT_POPULATION_CAP", "220", None, dinit)
         self.create_option(
             "childcap", "BABY_CHILD_CAP", "100:1000", None, dinit)
         self.create_option("invaders", "INVADERS", "YES", boolvals, dinit)
@@ -266,6 +275,42 @@ class DFConfiguration(object):
             return match.group(1)
         except IOError:
             return None
+
+    @staticmethod
+    def has_field(filename, field, num_params=-1, min_params=-1, max_params=-1):
+        """
+        Returns True if <field> exists in <filename> and has the specified
+        number of parameters.
+
+        Params:
+            filename
+                The file to check.
+            field
+                The field to look for.
+            num_params
+                The exact number of parameters for the field. -1 for no limit.
+            min_params
+                The minimum number of parameters for the field. -1 for no limit.
+            max_params
+                The maximum number of parameters for the field. -1 for no limit.
+        """
+        try:
+            settings_file = open(filename)
+            match = re.search(
+                r'\['+str(field)+r'(:.+?)\]', settings_file.read())
+            if match is None:
+                return False
+            params = match.group(1)
+            param_count = params.count(":")
+            if num_params != -1 and param_count != num_params:
+                return False
+            if min_params != -1 and param_count < min_params:
+                return False
+            if max_params != -1 and param_count > max_params:
+                return False
+            return True
+        except IOError:
+            return False
 
     def write_settings(self):
         """Write all settings to their respective files."""

@@ -17,6 +17,9 @@ from .utilities import UtilitiesTab
 from .advanced import AdvancedTab
 from .dfhack import DFHackTab
 
+from core.lnp import lnp
+from core import df, launcher, paths, update
+
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
@@ -96,7 +99,7 @@ def validate_number(value_if_allowed):
 
 class TkGui(object):
     """Main GUI window."""
-    def __init__(self, lnp):
+    def __init__(self):
         """
         Constructor for TkGui.
 
@@ -104,7 +107,6 @@ class TkGui(object):
             lnp
                 A PyLNP instance to perform actual work.
         """
-        self.lnp = lnp
         self.root = root = Tk()
         self.updateDays = IntVar()
         controls.init(self)
@@ -135,12 +137,11 @@ class TkGui(object):
         main.pack(side=TOP, fill=BOTH, expand=Y)
         self.n = n = Notebook(main)
 
-        self.tabs = []
         self.create_tab(OptionsTab, 'Options')
         self.create_tab(GraphicsTab, 'Graphics')
         self.create_tab(UtilitiesTab, 'Utilities')
         self.create_tab(AdvancedTab, 'Advanced')
-        if self.lnp.config.get_list('dfhack'):
+        if lnp.config.get_list('dfhack'):
             self.create_tab(DFHackTab, 'DFHack')
         n.enable_traversal()
         n.pack(fill=BOTH, expand=Y, padx=2, pady=3)
@@ -150,7 +151,7 @@ class TkGui(object):
 
         controls.create_trigger_button(
             main_buttons, 'Play Dwarf Fortress!', 'Play the game!',
-            self.lnp.run_df).grid(column=0, row=0, sticky="nsew")
+            launcher.run_df).grid(column=0, row=0, sticky="nsew")
         controls.create_trigger_button(
             main_buttons, 'Init Editor',
             'Edit init and d_init in a built-in text editor',
@@ -165,23 +166,21 @@ class TkGui(object):
         root.update()
         root.minsize(width=root.winfo_width(), height=root.winfo_height())
         root.geometry('{}x{}'.format(
-            self.lnp.userconfig.get_number('tkgui_width'),
-            self.lnp.userconfig.get_number('tkgui_height')))
+            lnp.userconfig.get_number('tkgui_width'),
+            lnp.userconfig.get_number('tkgui_height')))
         root.bind("<Configure>", self.on_resize)
 
         binding.update()
-        for tab in self.tabs:
-            tab.on_post_df_load()
         root.bind('<<UpdateAvailable>>', lambda e: UpdateWindow(
-            self.root, self.lnp, self.updateDays))
+            self.root, self.updateDays))
 
     def on_resize(self, e):
         """Called when the window is resized."""
-        self.lnp.userconfig['tkgui_width'] = self.root.winfo_width()
-        self.lnp.userconfig['tkgui_height'] = self.root.winfo_height()
+        lnp.userconfig['tkgui_width'] = self.root.winfo_width()
+        lnp.userconfig['tkgui_height'] = self.root.winfo_height()
         if self.save_size:
             self.root.after_cancel(self.save_size)
-        self.save_size = self.root.after(1000, self.lnp.userconfig.save_data)
+        self.save_size = self.root.after(1000, lnp.userconfig.save_data)
 
     def start(self):
         """Starts the UI."""
@@ -193,7 +192,7 @@ class TkGui(object):
 
     def on_program_running(self, path, is_df):
         """Called by the main LNP class if a program is already running."""
-        ConfirmRun(self.root, self.lnp, path, is_df)
+        ConfirmRun(self.root, path, is_df)
 
     def create_tab(self, class_, caption):
         """
@@ -205,16 +204,15 @@ class TkGui(object):
             caption
                 Caption for the newly created tab.
         """
-        tab = class_(self.lnp, self.n)
+        tab = class_(self.n)
         self.n.add(tab, text=caption)
-        self.tabs.append(tab)
 
     def ensure_df(self):
         """Ensures a DF installation is active before proceeding."""
-        if self.lnp.df_dir == '':
+        if paths.get('df') == '':
             self.root.withdraw()
-            if self.lnp.folders:
-                selector = SelectDF(self.root, self.lnp.folders)
+            if lnp.folders:
+                selector = SelectDF(self.root, lnp.folders)
                 if selector.result == '':
                     messagebox.showerror(
                         self.root.title(),
@@ -223,7 +221,7 @@ class TkGui(object):
                     return False
                 else:
                     try:
-                        self.lnp.set_df_folder(selector.result)
+                        df.set_df_folder(selector.result)
                     except IOError as e:
                         messagebox.showerror(self.root.title(), e.message)
                         self.exit_program()
@@ -237,17 +235,18 @@ class TkGui(object):
             self.root.deiconify()
         return True
 
-    def get_image_path(self, filename):
+    @staticmethod
+    def get_image_path(filename):
         """
         Returns <filename> with its expected path. If running in a bundle,
         this will point to the place internal resources are located; if running
         the script directly, no modification takes place.
         """
-        if self.lnp.bundle == 'osx':
+        if lnp.bundle == 'osx':
             # Image is inside application bundle on OS X
             return os.path.join(
                 os.path.dirname(sys.executable), filename)
-        elif self.lnp.bundle in ['win', 'linux']:
+        elif lnp.bundle in ['win', 'linux']:
             # Image is inside executable on Linux and Windows
             # pylint: disable=protected-access, no-member, maybe-no-member
             return os.path.join(sys._MEIPASS, filename)
@@ -286,14 +285,14 @@ class TkGui(object):
             accelerator='Ctrl+S')
         menu_file.add_command(
             label='Output log', command=lambda: LogWindow(self.root))
-        if self.lnp.updates_configured():
+        if update.updates_configured():
             menu_updates = menu_updates = Menu(menubar)
             menu_file.add_cascade(menu=menu_updates, label='Check for updates')
             options = [
                 "every launch", "every day", "every 3 days", "every 7 days",
                 "every 14 days", "every 30 days", "Never"]
             daylist = [0, 1, 3, 7, 14, 30, -1]
-            self.updateDays.set(self.lnp.userconfig.get_number('updateDays'))
+            self.updateDays.set(lnp.userconfig.get_number('updateDays'))
             for i, o in enumerate(options):
                 menu_updates.add_radiobutton(
                     label=o, value=daylist[i], variable=self.updateDays,
@@ -306,19 +305,19 @@ class TkGui(object):
         root.bind_all('<Control-s>', lambda e: self.save_params())
 
         menu_run.add_command(
-            label='Dwarf Fortress', command=self.lnp.run_df,
+            label='Dwarf Fortress', command=launcher.run_df,
             accelerator='Ctrl+R')
         menu_run.add_command(
             label='Init Editor', command=self.run_init, accelerator='Ctrl+I')
-        root.bind_all('<Control-r>', lambda e: self.lnp.run_df())
+        root.bind_all('<Control-r>', lambda e: launcher.run_df())
         root.bind_all('<Control-i>', lambda e: self.run_init())
 
         self.populate_menu(
-            self.lnp.config.get_list('folders'), menu_folders,
-            self.lnp.open_folder_idx)
+            lnp.config.get_list('folders'), menu_folders,
+            launcher.open_folder_idx)
         self.populate_menu(
-            self.lnp.config.get_list('links'), menu_links,
-            self.lnp.open_link_idx)
+            lnp.config.get_list('links'), menu_links,
+            launcher.open_link_idx)
 
         menu_help.add_command(
             label="Help", command=self.show_help, accelerator='F1')
@@ -331,7 +330,7 @@ class TkGui(object):
     def configure_updates(self, days):
         """Sets the number of days until next update check."""
         self.updateDays.set(days)
-        self.lnp.next_update(days)
+        update.next_update(days)
 
     @staticmethod
     def populate_menu(collection, menu, method):
@@ -353,7 +352,8 @@ class TkGui(object):
             else:
                 menu.add_command(label=f[0], command=lambda i=i: method(i))
 
-    def change_entry(self, key, var):
+    @staticmethod
+    def change_entry(key, var):
         """
         Commits a change for the control specified by key.
 
@@ -364,20 +364,21 @@ class TkGui(object):
                 The variable bound to the control.
         """
         if var.get() != '':
-            self.lnp.set_option(key, var.get())
+            df.set_option(key, var.get())
 
     def load_params(self):
         """Reads configuration data."""
         try:
-            self.lnp.load_params()
+            df.load_params()
         except IOError as e:
             messagebox.showerror(self.root.title(), e.message)
             self.exit_program()
         binding.update()
 
-    def save_params(self):
+    @staticmethod
+    def save_params():
         """Writes configuration data."""
-        self.lnp.save_params()
+        df.save_params()
 
     def restore_defaults(self):
         """Restores default configuration data."""
@@ -386,7 +387,7 @@ class TkGui(object):
                 'ALL SETTINGS will be reset to game defaults.\n'
                 'You may need to re-install graphics afterwards.',
                 title='Reset all settings to Defaults?', icon='question'):
-            self.lnp.restore_defaults()
+            df.restore_defaults()
             messagebox.showinfo(
                 self.root.title(),
                 'All settings reset to defaults!')
@@ -395,7 +396,8 @@ class TkGui(object):
         """Quits the program."""
         self.root.destroy()
 
-    def run_program(self, path):
+    @staticmethod
+    def run_program(path):
         """
         Launches another program.
 
@@ -404,7 +406,7 @@ class TkGui(object):
                 Path to the program to launch.
         """
         path = os.path.abspath(path)
-        self.lnp.run_program(path)
+        launcher.run_program(path)
 
     def run_init(self):
         """Opens the init editor."""
@@ -422,7 +424,8 @@ class TkGui(object):
             title='About', message="PyLNP - Lazy Newb Pack Python Edition\n\n"
             "Port by Pidgeot\n\nOriginal program: LucasUP, TolyK/aTolyK")
 
-    def cycle_option(self, field):
+    @staticmethod
+    def cycle_option(field):
         """
         Cycles through possible values for an option.
 
@@ -430,10 +433,11 @@ class TkGui(object):
             field
                 The option to cycle.
         """
-        self.lnp.cycle_option(field)
+        df.cycle_option(field)
         binding.update()
 
-    def set_option(self, field):
+    @staticmethod
+    def set_option(field):
         """
         Sets an option directly.
 
@@ -442,7 +446,7 @@ class TkGui(object):
                 The field name to change. The corresponding value is
                 automatically read.
         """
-        self.lnp.set_option(field, binding.get(field))
+        df.set_option(field, binding.get(field))
         binding.update()
 
 

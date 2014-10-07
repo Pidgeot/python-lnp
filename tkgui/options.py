@@ -9,6 +9,8 @@ from .layout import GridLayouter
 from .tab import Tab
 import sys
 
+from core import df, keybinds, embarks
+
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
@@ -100,25 +102,27 @@ class OptionsTab(Tab):
                 lambda: self.delete_keybinds(keybinding_files))
         keybindings.pack(side=BOTTOM, fill=BOTH, expand=Y)
 
-        embarks, embark_files, _ = \
+        embarkframe, embark_files, _ = \
             controls.create_readonly_file_list_buttons(
                 self, 'Embark profiles', self.embarks,
                 lambda: self.install_embarks(embark_files),
                 self.read_embarks, selectmode='multiple')
-        embarks.pack(side=BOTTOM, fill=BOTH, expand=Y)
+        embarkframe.pack(side=BOTTOM, fill=BOTH, expand=Y)
 
-    def set_pop_cap(self):
+    @staticmethod
+    def set_pop_cap():
         """Requests new population cap from the user."""
         v = simpledialog.askinteger(
             "Settings", "Population cap:",
-            initialvalue=self.lnp.settings.popcap)
+            initialvalue=df.settings.popcap)
         if v is not None:
-            self.lnp.set_option('popcap', str(v))
+            df.set_option('popcap', str(v))
             binding.update()
 
-    def set_child_cap(self):
+    @staticmethod
+    def set_child_cap():
         """Requests new child cap from the user."""
-        child_split = list(self.lnp.settings.childcap.split(':'))
+        child_split = list(df.settings.childcap.split(':'))
         child_split.append('0')  # In case syntax is invalid
         v = simpledialog.askinteger(
             "Settings", "Absolute cap on babies + children:",
@@ -129,10 +133,15 @@ class OptionsTab(Tab):
                 "(lowest of the two values will be used as the cap)",
                 initialvalue=child_split[1])
             if v2 is not None:
-                self.lnp.set_option('childcap', str(v)+':'+str(v2))
+                df.set_option('childcap', str(v)+':'+str(v2))
                 binding.update()
 
-    def load_keybinds(self, listbox):
+    def read_keybinds(self):
+        """Reads list of keybinding files."""
+        self.keybinds.set(keybinds.read_keybinds())
+
+    @staticmethod
+    def load_keybinds(listbox):
         """
         Replaces keybindings with selected file.
 
@@ -141,7 +150,7 @@ class OptionsTab(Tab):
                 Listbox containing the list of keybinding files.
         """
         if len(listbox.curselection()) != 0:
-            self.lnp.load_keybinds(listbox.get(listbox.curselection()[0]))
+            keybinds.load_keybinds(listbox.get(listbox.curselection()[0]))
 
     def save_keybinds(self):
         """Saves keybindings to a file."""
@@ -150,10 +159,10 @@ class OptionsTab(Tab):
         if v is not None:
             if not v.endswith('.txt'):
                 v = v + '.txt'
-            if (not self.lnp.keybind_exists(v) or messagebox.askyesno(
+            if (not keybinds.keybind_exists(v) or messagebox.askyesno(
                     message='Overwrite {0}?'.format(v),
                     icon='question', title='Overwrite file?')):
-                self.lnp.save_keybinds(v)
+                keybinds.save_keybinds(v)
                 self.read_keybinds()
 
     def delete_keybinds(self, listbox):
@@ -169,10 +178,15 @@ class OptionsTab(Tab):
             if messagebox.askyesno(
                     'Delete file?',
                     'Are you sure you want to delete {0}?'.format(filename)):
-                self.lnp.delete_keybinds(filename)
+                keybinds.delete_keybinds(filename)
             self.read_keybinds()
 
-    def install_embarks(self, listbox):
+    def read_embarks(self):
+        """Reads list of embark profiles."""
+        self.embarks.set(embarks.read_embarks())
+
+    @staticmethod
+    def install_embarks(listbox):
         """
         Installs selected embark profiles.
 
@@ -184,12 +198,4 @@ class OptionsTab(Tab):
             files = []
             for f in listbox.curselection():
                 files.append(listbox.get(f))
-            self.lnp.install_embarks(files)
-
-    def read_keybinds(self):
-        """Reads list of keybinding files."""
-        self.keybinds.set(self.lnp.read_keybinds())
-
-    def read_embarks(self):
-        """Reads list of embark profiles."""
-        self.embarks.set(self.lnp.read_embarks())
+            embarks.install_embarks(files)

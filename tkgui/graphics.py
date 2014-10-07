@@ -9,6 +9,8 @@ from .layout import GridLayouter
 from .tab import Tab
 import sys
 
+from core import colors, graphics
+
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
@@ -28,7 +30,7 @@ class GraphicsTab(Tab):
         self.graphics = Variable()
         self.colors = Variable()
 
-    def on_post_df_load(self):
+    def read_data(self):
         self.read_graphics()
         self.read_colors()
 
@@ -41,7 +43,7 @@ class GraphicsTab(Tab):
         grid = GridLayouter(2)
         curr_pack = Label(change_graphics, text='Current Graphics')
         grid.add(curr_pack, 2)
-        binding.bind(curr_pack, 'FONT', lambda x: self.lnp.current_pack())
+        binding.bind(curr_pack, 'FONT', lambda x: graphics.current_pack())
 
         listframe = Frame(change_graphics)
         grid.add(listframe, 2, pady=4)
@@ -73,7 +75,7 @@ class GraphicsTab(Tab):
             'printmode'), 2)
         grid.add(controls.create_trigger_button(
             advanced, 'Open Graphics Folder',
-            'Add your own graphics packs here!', self.lnp.open_graphics), 2)
+            'Add your own graphics packs here!', graphics.open_graphics), 2)
         grid.add(controls.create_trigger_button(
             advanced, 'Refresh List', 'Refresh list of graphics packs',
             self.read_graphics))
@@ -83,13 +85,13 @@ class GraphicsTab(Tab):
             '(saves space, useful for re-packaging)',
             self.simplify_graphics))
 
-        colors, color_files, buttons = \
+        colorframe, color_files, buttons = \
             controls.create_file_list_buttons(
                 self, 'Color schemes', self.colors,
                 lambda: self.load_colors(color_files),
                 self.read_colors, self.save_colors,
                 lambda: self.delete_colors(color_files))
-        colors.pack(side=BOTTOM, fill=BOTH, expand=Y, anchor="s")
+        colorframe.pack(side=BOTTOM, fill=BOTH, expand=Y, anchor="s")
         buttons.grid(rowspan=3)
 
         self.color_files = color_files
@@ -98,12 +100,13 @@ class GraphicsTab(Tab):
             lambda e: self.paint_color_preview(color_files))
 
         self.color_preview = Canvas(
-            colors, width=128, height=32, highlightthickness=0, takefocus=False)
+            colorframe, width=128, height=32, highlightthickness=0,
+            takefocus=False)
         self.color_preview.grid(column=0, row=2)
 
     def read_graphics(self):
         """Reads list of graphics packs."""
-        self.graphics.set(tuple([p[0] for p in self.lnp.read_graphics()]))
+        self.graphics.set(tuple([p[0] for p in graphics.read_graphics()]))
 
     def install_graphics(self, listbox):
         """
@@ -118,7 +121,7 @@ class GraphicsTab(Tab):
             if messagebox.askokcancel(
                     message='Your graphics, settings and raws will be changed.',
                     title='Are you sure?'):
-                result = self.lnp.install_graphics(gfx_dir)
+                result = graphics.install_graphics(gfx_dir)
                 if result is False:
                     messagebox.showerror(
                         title='Error occurred', message='Something went wrong: '
@@ -140,9 +143,10 @@ class GraphicsTab(Tab):
                         'or folders:\n'+str(gfx_dir))
             binding.update()
 
-    def update_savegames(self):
+    @staticmethod
+    def update_savegames():
         """Updates saved games with new raws."""
-        count = self.lnp.update_savegames()
+        count = graphics.update_savegames()
         if count > 0:
             messagebox.showinfo(
                 title='Update complete',
@@ -155,7 +159,7 @@ class GraphicsTab(Tab):
         """Removes unnecessary files from graphics packs."""
         self.read_graphics()
         for pack in self.graphics.get():
-            result = self.lnp.simplify_pack(pack)
+            result = graphics.simplify_pack(pack)
             if result is None:
                 messagebox.showinfo(
                     title='Error occurrred', message='No files in: '+str(pack))
@@ -174,10 +178,11 @@ class GraphicsTab(Tab):
 
     def read_colors(self):
         """Reads list of color schemes."""
-        self.colors.set(self.lnp.read_colors())
+        self.colors.set(colors.read_colors())
         self.paint_color_preview(self.color_files)
 
-    def load_colors(self, listbox):
+    @staticmethod
+    def load_colors(listbox):
         """
         Replaces color scheme  with selected file.
 
@@ -186,17 +191,17 @@ class GraphicsTab(Tab):
                 Listbox containing the list of color schemes.
         """
         if len(listbox.curselection()) != 0:
-            self.lnp.load_colors(listbox.get(listbox.curselection()[0]))
+            colors.load_colors(listbox.get(listbox.curselection()[0]))
 
     def save_colors(self):
         """Saves color scheme to a file."""
         v = simpledialog.askstring(
             "Save Color scheme", "Save current color scheme as:")
         if v is not None:
-            if (not self.lnp.color_exists(v) or messagebox.askyesno(
+            if (not colors.color_exists(v) or messagebox.askyesno(
                     message='Overwrite {0}?'.format(v),
                     icon='question', title='Overwrite file?')):
-                self.lnp.save_colors(v)
+                colors.save_colors(v)
                 self.read_colors()
 
     def delete_colors(self, listbox):
@@ -212,7 +217,7 @@ class GraphicsTab(Tab):
             if messagebox.askyesno(
                     'Delete file?',
                     'Are you sure you want to delete {0}?'.format(filename)):
-                self.lnp.delete_colors(filename)
+                colors.delete_colors(filename)
             self.read_colors()
 
     def paint_color_preview(self, listbox):
@@ -227,10 +232,10 @@ class GraphicsTab(Tab):
         colorscheme = None
         if len(listbox.curselection()) != 0:
             colorscheme = listbox.get(listbox.curselection()[0])
-        colors = self.lnp.get_colors(colorscheme)
+        colorlist = colors.get_colors(colorscheme)
 
         self.color_preview.delete(ALL)
-        for i, c in enumerate(colors):
+        for i, c in enumerate(colorlist):
             row = i // 8
             col = i % 8
             self.color_preview.create_rectangle(

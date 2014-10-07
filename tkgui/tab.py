@@ -17,11 +17,10 @@ else:
 
 class Tab(Frame):
     """Base class for notebook tabs for the TKinter GUI."""
-    def __init__(self, lnp, parent):
+    def __init__(self, parent):
         #pylint:disable=super-init-not-called
         Frame.__init__(self, parent)
         self.pack(side=TOP, fill=BOTH, expand=Y)
-        self.lnp = lnp
         self.create_variables()
         self.create_controls()
         self.read_data()
@@ -34,16 +33,11 @@ class Tab(Frame):
         pass
 
     def read_data(self):
-        """Reads data for any TKinter variables. Overridden in child classes."""
+        """Reads all external data needed. Overridden in child classes."""
         pass
 
     def create_controls(self):
         """Creates all controls for this tab. Overriden in child classes."""
         pass
 
-    def on_post_df_load(self):
-        """
-        Reads data from the DF install once this is loaded.
-        Overridden in child classes.
-        """
-        pass
+

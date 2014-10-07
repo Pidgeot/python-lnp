@@ -8,6 +8,9 @@ from . import controls
 from .tab import Tab
 import sys, os
 
+from core import launcher, paths, utilities
+from core.lnp import lnp
+
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
@@ -36,7 +39,7 @@ class UtilitiesTab(Tab):
             self.run_selected_utilities).grid(column=0, row=0, sticky="nsew")
         controls.create_trigger_button(
             progs, 'Open Utilities Folder', 'Open the utilities folder',
-            self.lnp.open_utils).grid(column=1, row=0, sticky="nsew")
+            utilities.open_utils).grid(column=1, row=0, sticky="nsew")
         Label(
             progs, text='Double-click on a program to launch it.').grid(
                 column=0, row=1, columnspan=2)
@@ -64,7 +67,7 @@ class UtilitiesTab(Tab):
 
     def read_utilities(self):
         """Reads list of utilities."""
-        self.progs = self.lnp.read_utilities()
+        self.progs = utilities.read_utilities()
         self.update_autorun_list()
 
     def toggle_autorun(self, event):
@@ -75,7 +78,7 @@ class UtilitiesTab(Tab):
             event
                 Data for the click event that triggered this.
         """
-        self.lnp.toggle_autorun(self.proglist.item(self.proglist.identify(
+        utilities.toggle_autorun(self.proglist.item(self.proglist.identify(
             'row', event.x, event.y), 'text'))
         self.update_autorun_list()
 
@@ -86,16 +89,17 @@ class UtilitiesTab(Tab):
         for p in self.progs:
             exe = os.path.join(
                 os.path.basename(os.path.dirname(p)), os.path.basename(p))
-            if self.lnp.config.get_bool('hideUtilityPath'):
+            if lnp.config.get_bool('hideUtilityPath'):
                 exe = os.path.basename(exe)
-            if self.lnp.config.get_bool('hideUtilityExt'):
+            if lnp.config.get_bool('hideUtilityExt'):
                 exe = os.path.splitext(exe)[0]
             self.proglist.insert('', 'end', text=p, values=(
-                exe, 'Yes' if p in self.lnp.autorun else 'No'))
+                exe, 'Yes' if p in lnp.autorun else 'No'))
 
     def run_selected_utilities(self):
         """Runs selected utilities."""
         for item in self.proglist.selection():
             utility_path = self.proglist.item(item, 'text')
-            self.lnp.run_program(os.path.join(self.lnp.utils_dir, utility_path))
+            launcher.run_program(os.path.join(
+                paths.get('utilities'), utility_path))
 
