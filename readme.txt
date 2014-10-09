@@ -99,19 +99,15 @@ OS X:
 Running the source code
 -----------------------
 Windows:
-  Double-click launch.pyw in the LNP folder (or lnp.py to get a console window with extra debugging information).
+  Double-click launch.py in the LNP folder. If you want to get rid of the console window that pops up, rename it to launch.pyw.
 Linux:
-  Make sure lnp.py is executable. Next, double-click and run it, or start a terminal and execute it from there with "python lnp.py" or "./lnp.py". You can optionally substitute "lnp.py" for "launch.pyw"; the result is the same.
+  Make sure launch.py is executable. Next, double-click and run it, or start a terminal and execute it from there with "python launch.py" or "./launch.py".
 OS X:
-  OS X does not provide a way to launch a Python script from Finder, so start a terminal, navigate to the directory, and execute "python lnp.py" or "./lnp.py". You can optionally substitute "lnp.py" for "launch.pyw"; the result is the same.
+  OS X does not provide a way to launch a Python script from Finder, so start a terminal, navigate to the directory, and execute "python launch.py" or "./launch.py".
 
 Modifying the source code
 =========================
 PyLNP is licensed under the ISC license (see COPYING.txt), which essentially allows you to modify and distribute changes as you see fit. (This only applies to the launcher. Any bundled utilities, graphics packs, etc. have their own licenses; refer to those projects separately.)
-
-If you're going to modify the source code, it can be very useful to keep your code in a different directory than normal; unfortunately, this also prevents you from executing lnp.pyw directly, since it expects to find the files in the same directory.
-
-The source checkout includes a file debug.py which changes the base directory and launches the PyLNP GUI. You should modify it to set the correct location of the LNP and Dwarf Fortress folders, and then run that file instead of lnp.pyw.
 
 Building your own executable
 ============================
@@ -127,14 +123,16 @@ Note:
 Windows
 -------
 Installing prerequisites:
-  First install setuptools: https://pypi.python.org/pypi/setuptools/0.9.8#windows
+  You'll need PyInstaller, preferably version 2.0 or later: http://www.pyinstaller.org/
+
+  The best way I've found to install that is to first install setuptools: https://pypi.python.org/pypi/setuptools/0.9.8#windows
 
   Manually install pywin32: http://sourceforge.net/projects/pywin32/files/pywin32/
 
   Next, run "easy_install pyinstaller" from the Scripts directory in your Python installation.
 
 Building:
-  Open the LNP directory in a command-line and type "pyinstaller lnp.spec". Wait for the build to finish, and you will find a new folder named dist. Inside that folder is the stand-alone executable, named lnp.exe.
+  Open the LNP directory in a Command Prompt and type "pyinstaller lnp.spec". Wait for the build to finish, and you will find a new folder named dist. Inside that folder is the stand-alone executable, named lnp.exe.
 
 Linux
 -----
