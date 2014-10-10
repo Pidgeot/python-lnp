@@ -39,3 +39,24 @@ def get_text_files(directory):
             result.append(f)
     return result
 
+def detect_installed_file(current_file, test_files):
+    """Returns the file in <test_files> which is contained in
+    <current_file>, or "Unknown"."""
+    current = open(current_file).read()
+    for f in test_files:
+        tested = open(f).read()
+        if tested in current:
+            return f
+    return "Unknown"
+
+def detect_installed_files(current_file, test_files):
+    """Returns a list of files in <test_files> that are contained in
+    <current_file>."""
+    current = open(current_file).read()
+    installed = []
+    for f in test_files:
+        tested = open(f).read()
+        if tested in current:
+            installed.append(f)
+    return installed
+

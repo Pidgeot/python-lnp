@@ -84,4 +84,9 @@ def delete_colors(filename):
         filename = filename + '.txt'
     os.remove(os.path.join(paths.get('colors'), filename))
 
-
+def get_installed_file():
+    """Returns the name of the currently installed color scheme."""
+    files = helpers.get_text_files(paths.get('colors'))
+    current = os.path.join(paths.get('init'), 'colors.txt')
+    result = helpers.detect_installed_file(current, files)
+    return os.path.splitext(os.path.basename(result))[0]

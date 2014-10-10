@@ -63,3 +63,9 @@ def delete_keybinds(filename):
         filename = filename + '.txt'
     os.remove(os.path.join(paths.get('keybinds'), filename))
 
+def get_installed_file():
+    """Returns the name of the currently installed keybindings."""
+    files = helpers.get_text_files(paths.get('keybinds'))
+    current = os.path.join(paths.get('init'), 'interface.txt')
+    result = helpers.detect_installed_file(current, files)
+    return os.path.basename(result)

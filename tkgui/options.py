@@ -100,18 +100,18 @@ class OptionsTab(Tab):
             'in them (Infinite sources of underground water, but may flood '
             'your fort', 'aquifers').grid(column=0, row=0, sticky="nsew")
 
-        keybindings, keybinding_files, _ = \
+        keybindings, self.keybinding_files, _ = \
             controls.create_file_list_buttons(
                 self, 'Key Bindings', self.keybinds,
-                lambda: self.load_keybinds(keybinding_files),
+                lambda: self.load_keybinds(self.keybinding_files),
                 self.read_keybinds, self.save_keybinds,
-                lambda: self.delete_keybinds(keybinding_files))
+                lambda: self.delete_keybinds(self.keybinding_files))
         keybindings.pack(side=BOTTOM, fill=BOTH, expand=Y)
 
-        embarkframe, embark_files, _ = \
+        embarkframe, self.embark_files, _ = \
             controls.create_readonly_file_list_buttons(
                 self, 'Embark profiles', self.embarks,
-                lambda: self.install_embarks(embark_files),
+                lambda: self.install_embarks(self.embark_files),
                 self.read_embarks, selectmode='multiple')
         embarkframe.pack(side=BOTTOM, fill=BOTH, expand=Y)
 
@@ -154,10 +154,15 @@ class OptionsTab(Tab):
 
     def read_keybinds(self):
         """Reads list of keybinding files."""
-        self.keybinds.set(keybinds.read_keybinds())
+        files = keybinds.read_keybinds()
+        self.keybinds.set(files)
+        current = keybinds.get_installed_file()
+        for i, f in enumerate(files):
+            if f == current:
+                self.keybinding_files.itemconfig(i, fg='red')
+                break
 
-    @staticmethod
-    def load_keybinds(listbox):
+    def load_keybinds(self, listbox):
         """
         Replaces keybindings with selected file.
 
@@ -167,6 +172,7 @@ class OptionsTab(Tab):
         """
         if len(listbox.curselection()) != 0:
             keybinds.load_keybinds(listbox.get(listbox.curselection()[0]))
+            self.read_keybinds()
 
     def save_keybinds(self):
         """Saves keybindings to a file."""
@@ -199,10 +205,14 @@ class OptionsTab(Tab):
 
     def read_embarks(self):
         """Reads list of embark profiles."""
-        self.embarks.set(embarks.read_embarks())
+        files = embarks.read_embarks()
+        self.embarks.set(files)
+        current = embarks.get_installed_files()
+        for i, f in enumerate(files):
+            if f in current:
+                self.embark_files.itemconfig(i, fg='red')
 
-    @staticmethod
-    def install_embarks(listbox):
+    def install_embarks(self, listbox):
         """
         Installs selected embark profiles.
 
@@ -215,3 +225,4 @@ class OptionsTab(Tab):
             for f in listbox.curselection():
                 files.append(listbox.get(f))
             embarks.install_embarks(files)
+            self.read_embarks()

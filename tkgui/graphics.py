@@ -182,11 +182,17 @@ class GraphicsTab(Tab):
 
     def read_colors(self):
         """Reads list of color schemes."""
-        self.colors.set(colors.read_colors())
+        files = colors.read_colors()
+        self.colors.set(files)
+        current = colors.get_installed_file()
+        for i, f in enumerate(files):
+            if f == current:
+                self.color_files.itemconfig(i, fg='red')
+                break
+
         self.paint_color_preview(self.color_files)
 
-    @staticmethod
-    def load_colors(listbox):
+    def load_colors(self, listbox):
         """
         Replaces color scheme  with selected file.
 
@@ -196,6 +202,7 @@ class GraphicsTab(Tab):
         """
         if len(listbox.curselection()) != 0:
             colors.load_colors(listbox.get(listbox.curselection()[0]))
+            self.read_colors()
 
     def save_colors(self):
         """Saves color scheme to a file."""

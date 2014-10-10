@@ -27,4 +27,9 @@ def install_embarks(files):
     out.flush()
     out.close()
 
-
+def get_installed_files():
+    """Returns the names of the currently installed embark profiles."""
+    files = helpers.get_text_files(paths.get('embarks'))
+    current = os.path.join(paths.get('init'), 'embark_profiles.txt')
+    result = helpers.detect_installed_files(current, files)
+    return [os.path.basename(r) for r in result]
