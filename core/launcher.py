@@ -17,8 +17,13 @@ def run_df(force=False):
     """Launches Dwarf Fortress."""
     result = None
     if sys.platform == 'win32':
+        if ('legacy' in lnp.df_info.variations and
+                lnp.df_info.version <= '0.31.14'):
+            df_filename = 'dwarfort.exe'
+        else:
+            df_filename = 'Dwarf Fortress.exe'
         result = run_program(
-            os.path.join(paths.get('df'), 'Dwarf Fortress.exe'), force, True)
+            os.path.join(paths.get('df'), df_filename), force, True)
     else:
         # Linux/OSX: Run DFHack if available
         if os.path.isfile(os.path.join(paths.get('df'), 'dfhack')):
