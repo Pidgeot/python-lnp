@@ -74,7 +74,8 @@ class GraphicsTab(Tab):
             grid.add(controls.create_option_button(
                 advanced, 'Print Mode',
                 'Changes how Dwarf Fortress draws to the screen. "2D" allows '
-                'Truetype fonts, "standard" enables advanced graphics tools.',
+                'Truetype fonts, "standard" enables advanced graphics tools. '
+                'Certain modifications may use other values.',
                 'printmode'), 2)
         grid.add(controls.create_trigger_button(
             advanced, 'Open Graphics Folder',
