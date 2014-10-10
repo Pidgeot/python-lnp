@@ -155,7 +155,7 @@ class DFInstall(object):
                 os.path.exists(os.path.join(self.df_dir, 'SDLreal.dll')) or
                 os.path.exists(os.path.join(self.df_dir, 'SDLhack.dll'))):
             result.append('dfhack')
-            if glob(os.path.join(self.df_dir, 'hack', 'plugin', 'twbt.plug.*')):
+            if glob(os.path.join(self.df_dir, 'hack', 'plugins', 'twbt.plug.*')):
                 result.append('twbt')
         if self.version < '0.31.12' or not DFConfiguration.has_field(
                 os.path.join(self.init_dir, 'init.txt'), 'PRINT_MODE'):
