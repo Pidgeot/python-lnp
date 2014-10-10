@@ -61,8 +61,9 @@ class DFConfiguration(object):
             "procPriority", "PRIORITY", "NORMAL", (
                 "REALTIME", "HIGH", "ABOVE_NORMAL", "NORMAL", "BELOW_NORMAL",
                 "IDLE"), init)
-        self.create_option(
-            "compressSaves", "COMPRESSED_SAVES", "YES", boolvals, init)
+        if df_info.version >= '0.31.01':
+            self.create_option(
+                "compressSaves", "COMPRESSED_SAVES", "YES", boolvals, init)
         if 'legacy' not in df_info.variations:
             printmodes = ["2D", "STANDARD"]
             if 'twbt' in df_info.variations:
@@ -108,10 +109,16 @@ class DFConfiguration(object):
             "entombPets", "COFFIN_NO_PETS_DEFAULT", "NO", _negated_bool, dinit)
         self.create_option("artifacts", "ARTIFACTS", "YES", boolvals, dinit)
         # special
-        self.create_option("aquifers", "AQUIFER", "NO", _disabled, tuple(
-            os.path.join(base_dir, 'raw', 'objects', a) for a in [
+        if df_info.version < '0.31':
+            aquifer_files = [
+                'matgloss_stone_layer.txt', 'matgloss_stone_mineral.txt',
+                'matgloss_stone_soil.txt']
+        else:
+            aquifer_files = [
                 'inorganic_stone_layer.txt', 'inorganic_stone_mineral.txt',
-                'inorganic_stone_soil.txt']))
+                'inorganic_stone_soil.txt']
+        self.create_option("aquifers", "AQUIFER", "NO", _disabled, tuple(
+            os.path.join(base_dir, 'raw', 'objects', a) for a in aquifer_files))
 
     def create_option(self, name, field_name, default, values, files):
         """

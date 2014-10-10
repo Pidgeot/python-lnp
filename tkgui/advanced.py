@@ -92,10 +92,11 @@ class AdvancedTab(Tab):
         grid.add(controls.create_option_button(
             saverelated, 'Backup Saves', 'Makes a backup of every autosave',
             'autoBackup'))
-        grid.add(controls.create_option_button(
-            saverelated, 'Compress Saves', 'Whether to compress the savegames '
-            '(keep this on unless you experience problems with your saves',
-            'compressSaves'))
+        if lnp.df_info.version >= '0.31.01':
+            grid.add(controls.create_option_button(
+                saverelated, 'Compress Saves', 'Whether to compress the '
+                'savegames (keep this on unless you experience problems with '
+                'your saves', 'compressSaves'))
         grid.add(controls.create_trigger_button(
             saverelated, 'Open Savegame Folder', 'Open the savegame folder',
             launcher.open_savegames))

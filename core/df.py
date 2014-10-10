@@ -125,7 +125,8 @@ class DFInstall(object):
     def detect_version(self):
         """
         Attempts to detect Dwarf Fortress version based on release notes or
-        init file contents. Init detection currently supports 0.31 and up.
+        init file contents. Init detection currently supports 0.31 and up;
+        assumes 40d if detection fails.
         """
         notes = os.path.join(self.df_dir, 'release notes.txt')
         if os.path.isfile(notes):
@@ -134,6 +135,7 @@ class DFInstall(object):
                 notes_text = open(notes).read()
                 m = re.search(r"Release notes for ([\d.]+)", notes_text)
                 return Version(m.group(1))
+            # pylint:disable=bare-except
             except:
                 # If we can't find a match in the release notes,
                 # fall back to using init detection
@@ -154,7 +156,7 @@ class DFInstall(object):
         for v in versions:
             if DFConfiguration.has_field(v[0], v[1]):
                 return Version(v[2])
-        return Version('0.31')
+        return Version('0.28.181.40d')
 
     def detect_variations(self):
         """
