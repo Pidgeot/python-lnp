@@ -70,7 +70,7 @@ class DFConfiguration(object):
                 "printmode", "PRINT_MODE", "2D", tuple(printmodes), init)
         # d_init.txt
         dinit = (os.path.join(base_dir, 'data', 'init', 'd_init.txt'),)
-        if df_info.version < '0.31.04':
+        if df_info.version <= '0.31.03':
             dinit = init
         self.create_option("popcap", "POPULATION_CAP", "200", None, dinit)
         if df_info.version >= '0.40.05':
@@ -87,8 +87,13 @@ class DFConfiguration(object):
             "liquidDepth", "SHOW_FLOW_AMOUNTS", "YES", boolvals, dinit)
         self.create_option(
             "variedGround", "VARIED_GROUND_TILES", "YES", boolvals, dinit)
-        self.create_option("laborLists", "SET_LABOR_LISTS", "SKILLS", (
-            "NO", "SKILLS", "BY_UNIT_TYPE"), dinit)
+        if df_info.version >= '0.34.03':
+            if df_info.version <= '0.34.06':
+                self.create_option(
+                    "laborLists", "SET_LABOR_LISTS", "YES", boolvals, dinit)
+            else:
+                self.create_option("laborLists", "SET_LABOR_LISTS", "SKILLS", (
+                    "NO", "SKILLS", "BY_UNIT_TYPE"), dinit)
         self.create_option("autoSave", "AUTOSAVE", "SEASONAL", (
             "NONE", "SEASONAL", "YEARLY"), dinit)
         self.create_option("autoBackup", "AUTOBACKUP", "YES", boolvals, dinit)

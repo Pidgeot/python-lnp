@@ -73,10 +73,15 @@ class OptionsTab(Tab):
             options, 'Artifacts',
             'Whether dwarfs should enter artifact producing moods.',
             'artifacts'))
-        grid.add(controls.create_option_button(
-            options, 'Starting Labors', 'Which labors are enabled by default:'
-            'by skill level of dwarves, by their unit type, or none',
-            'laborLists'), 2)
+        if lnp.df_info.version >= '0.34.03':
+            if lnp.df_info.version <= '0.34.06':
+                tooltip = 'Whether labors are enabled by default.'
+            else:
+                tooltip = (
+                    'Which labors are enabled by default: by skill level of '
+                    'dwarves, by their unit type, or none')
+            grid.add(controls.create_option_button(
+                options, 'Starting Labors', tooltip, 'laborLists'), 2)
 
         display = controls.create_control_group(self, 'Display Options', True)
         display.pack(side=TOP, fill=BOTH, expand=N)
