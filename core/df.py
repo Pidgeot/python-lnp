@@ -3,7 +3,7 @@
 """Code relating to a specific Dwarf Fortress installation."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, os, shutil
+import sys, os, shutil, re
 from datetime import datetime
 from distutils import dir_util
 from glob import glob
@@ -124,9 +124,20 @@ class DFInstall(object):
 
     def detect_version(self):
         """
-        Attempts to detect Dwarf Fortress version based on init file contents.
-        Currently supports 0.31 and later.
+        Attempts to detect Dwarf Fortress version based on release notes or
+        init file contents. Init detection currently supports 0.31 and up.
         """
+        notes = os.path.join(self.df_dir, 'release notes.txt')
+        if os.path.isfile(notes):
+            try:
+                # If the release notes exist, get the version from there
+                notes_text = open(notes).read()
+                m = re.search(r"Release notes for ([\d.]+)", notes_text)
+                return Version(m.group(1))
+            except:
+                # If we can't find a match in the release notes,
+                # fall back to using init detection
+                pass
         init = os.path.join(self.init_dir, 'init.txt')
         d_init = os.path.join(self.init_dir, 'd_init.txt')
         versions = [
@@ -134,8 +145,8 @@ class DFInstall(object):
             (d_init, 'POST_PREPARE_EMBARK_CONFIRMATION', '0.40.09'),
             (d_init, 'STRICT_POPULATION_CAP', '0.40.05'),
             (d_init, 'TREE_ROOTS', '0.40.01'),
-            (d_init, 'TRACK_N', '0.34.07'),
-            (d_init, 'SET_LABOR_LISTS', '0.34.02'),
+            (d_init, 'TRACK_N', '0.34.08'),
+            (d_init, 'SET_LABOR_LISTS', '0.34.03'),
             (d_init, 'WALKING_SPREADS_SPATTER_DWF', '0.31.16'),
             (d_init, 'PILLAR_TILE', '0.31.08'),
             (d_init, 'AUTOSAVE', '0.31.04'),
@@ -155,7 +166,8 @@ class DFInstall(object):
                 os.path.exists(os.path.join(self.df_dir, 'SDLreal.dll')) or
                 os.path.exists(os.path.join(self.df_dir, 'SDLhack.dll'))):
             result.append('dfhack')
-            if glob(os.path.join(self.df_dir, 'hack', 'plugins', 'twbt.plug.*')):
+            if glob(os.path.join(
+                    self.df_dir, 'hack', 'plugins', 'twbt.plug.*')):
                 result.append('twbt')
         if self.version < '0.31.12' or not DFConfiguration.has_field(
                 os.path.join(self.init_dir, 'init.txt'), 'PRINT_MODE'):
@@ -186,3 +198,13 @@ class Version(object):
         if type(other) != Version:
             return self < Version(other)
         return self.data < other.data
+
+    def __eq__(self, other):
+        if type(self) != Version:
+            return Version(self) == other
+        if type(other) != Version:
+            return self == Version(other)
+        return self.data == other.data
+
+    def __str__(self):
+        return ".".join([str(i) for i in self.data])
