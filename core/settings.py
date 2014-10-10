@@ -52,7 +52,8 @@ class DFConfiguration(object):
         self.create_option("sound", "SOUND", "YES", boolvals, init)
         self.create_option("volume", "VOLUME", "255", None, init)
         self.create_option("introMovie", "INTRO", "YES", boolvals, init)
-        self.create_option("startWindowed", "WINDOWED", "YES", boolvals, init)
+        self.create_option(
+            "startWindowed", "WINDOWED", "YES", ("YES", "NO", "PROMPT"), init)
         self.create_option("fpsCounter", "FPS", "NO", boolvals, init)
         self.create_option("fpsCap", "FPS_CAP", "100", None, init)
         self.create_option("gpsCap", "G_FPS_CAP", "50", None, init)
