@@ -47,7 +47,8 @@ class DFConfiguration(object):
         # init.txt
         boolvals = ("YES", "NO")
         init = (os.path.join(base_dir, 'data', 'init', 'init.txt'),)
-        self.create_option("truetype", "TRUETYPE", "YES", _force_bool, init)
+        if 'legacy' not in df_info.variations:
+            self.create_option("truetype", "TRUETYPE", "YES", _force_bool, init)
         self.create_option("sound", "SOUND", "YES", boolvals, init)
         self.create_option("volume", "VOLUME", "255", None, init)
         self.create_option("introMovie", "INTRO", "YES", boolvals, init)

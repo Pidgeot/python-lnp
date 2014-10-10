@@ -10,6 +10,7 @@ from .tab import Tab
 import sys
 
 from core import colors, graphics
+from core.lnp import lnp
 
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
@@ -58,21 +59,23 @@ class GraphicsTab(Tab):
             change_graphics, 'Update Savegames',
             'Install current graphics pack in all savegames',
             self.update_savegames))
-        grid.add(controls.create_option_button(
-            change_graphics, 'TrueType Fonts',
-            'Toggles whether to use TrueType fonts or tileset for text. '
-            'Only works with Print Mode set to 2D.', 'truetype'))
+        if 'legacy' not in lnp.df_info.variations:
+            grid.add(controls.create_option_button(
+                change_graphics, 'TrueType Fonts',
+                'Toggles whether to use TrueType fonts or tileset for text. '
+                'Only works with Print Mode set to 2D.', 'truetype'))
 
         advanced = controls.create_control_group(
             self, 'Advanced', True)
         advanced.pack(fill=X, expand=N)
 
         grid = GridLayouter(2)
-        grid.add(controls.create_option_button(
-            advanced, 'Print Mode',
-            'Changes how Dwarf Fortress draws to the screen. "2D" allows '
-            'Truetype fonts, "standard" enables advanced graphics tools.',
-            'printmode'), 2)
+        if 'legacy' not in lnp.df_info.variations:
+            grid.add(controls.create_option_button(
+                advanced, 'Print Mode',
+                'Changes how Dwarf Fortress draws to the screen. "2D" allows '
+                'Truetype fonts, "standard" enables advanced graphics tools.',
+                'printmode'), 2)
         grid.add(controls.create_trigger_button(
             advanced, 'Open Graphics Folder',
             'Add your own graphics packs here!', graphics.open_graphics), 2)
