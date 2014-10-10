@@ -10,6 +10,7 @@ from .tab import Tab
 import sys
 
 from core import df, keybinds, embarks
+from core.lnp import lnp
 
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
@@ -45,6 +46,11 @@ class OptionsTab(Tab):
         grid.add(controls.create_trigger_option_button(
             options, 'Child Cap', 'Maximum children in your fort',
             self.set_child_cap, 'childcap'))
+        if lnp.df_info.version >= '0.40.05':
+            grid.add(controls.create_trigger_option_button(
+                options, 'Strict Population Cap',
+                'Strict limit on population in your fort (blocks births)',
+                self.set_strict_pop_cap, 'strictPopcap'), 2)
         grid.add(controls.create_option_button(
             options, 'Invaders',
             'Toggles whether invaders (goblins, etc.) show up',
@@ -70,7 +76,7 @@ class OptionsTab(Tab):
         grid.add(controls.create_option_button(
             options, 'Starting Labors', 'Which labors are enabled by default:'
             'by skill level of dwarves, by their unit type, or none',
-            'laborLists'))
+            'laborLists'), 2)
 
         display = controls.create_control_group(self, 'Display Options', True)
         display.pack(side=TOP, fill=BOTH, expand=N)
@@ -117,6 +123,16 @@ class OptionsTab(Tab):
             initialvalue=df.settings.popcap)
         if v is not None:
             df.set_option('popcap', str(v))
+            binding.update()
+
+    @staticmethod
+    def set_strict_pop_cap():
+        """Requests new strict population cap from the user."""
+        v = simpledialog.askinteger(
+            "Settings", "Strict population cap:",
+            initialvalue=df.settings.strictPopcap)
+        if v is not None:
+            df.set_option('strictPopcap', str(v))
             binding.update()
 
     @staticmethod

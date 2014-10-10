@@ -74,7 +74,7 @@ class DFConfiguration(object):
         self.create_option("popcap", "POPULATION_CAP", "200", None, dinit)
         if df_info.version >= '0.40.05':
             self.create_option(
-                "strict_popcap", "STRICT_POPULATION_CAP", "220", None, dinit)
+                "strictPopcap", "STRICT_POPULATION_CAP", "220", None, dinit)
         self.create_option(
             "childcap", "BABY_CHILD_CAP", "100:1000", None, dinit)
         self.create_option("invaders", "INVADERS", "YES", boolvals, dinit)
