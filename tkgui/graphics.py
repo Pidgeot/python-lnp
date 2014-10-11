@@ -191,7 +191,8 @@ class GraphicsTab(Tab):
         for i, f in enumerate(files):
             if f == current:
                 self.color_files.itemconfig(i, fg='red')
-                break
+            else:
+                self.color_files.itemconfig(i, fg='black')
 
         self.paint_color_preview(self.color_files)
 
