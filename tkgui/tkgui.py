@@ -141,7 +141,7 @@ class TkGui(object):
         self.create_tab(GraphicsTab, 'Graphics')
         self.create_tab(UtilitiesTab, 'Utilities')
         self.create_tab(AdvancedTab, 'Advanced')
-        if lnp.config.get_list('dfhack'):
+        if 'dfhack' in lnp.df_info.variations:
             self.create_tab(DFHackTab, 'DFHack')
         n.enable_traversal()
         n.pack(fill=BOTH, expand=Y, padx=2, pady=3)

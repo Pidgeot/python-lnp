@@ -4,7 +4,7 @@
 """DFHack tab for the TKinter GUI."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-from . import controls
+from . import binding, controls
 from .tab import Tab
 import sys
 
@@ -30,6 +30,14 @@ class DFHackTab(Tab):
         self.update_hack_list()
 
     def create_controls(self):
+        controls.create_trigger_option_button(
+            self, 'Enable DFHack',
+            'Controls whether DFHack should be enabled. Turning DFHack off '
+            'also disables addons like TwbT.',
+            self.toggle_dfhack, 'use_dfhack', lambda v: ('NO', 'YES')[
+                hacks.is_dfhack_enabled()]).pack(
+                    side=TOP, expand=N, fill=X, pady=4)
+
         hacks_frame = Labelframe(self, text='Available hacks')
         hacks_frame.pack(side=TOP, expand=Y, fill=BOTH)
         Grid.columnconfigure(hacks_frame, 0, weight=1)
@@ -79,4 +87,8 @@ class DFHackTab(Tab):
             hacks.toggle_hack(self.hacklist.item(item, 'text'))
         self.update_hack_list()
 
-
+    @staticmethod
+    def toggle_dfhack():
+        """Toggles the use of DFHack."""
+        hacks.toggle_dfhack()
+        binding.update()

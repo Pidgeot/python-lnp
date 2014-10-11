@@ -6,7 +6,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys, os, subprocess
 
 from .lnp import lnp
-from . import paths
+from . import hacks, paths
 
 def toggle_autoclose():
     """Toggle automatic closing of the UI when launching DF."""
@@ -25,8 +25,9 @@ def run_df(force=False):
         result = run_program(
             os.path.join(paths.get('df'), df_filename), force, True)
     else:
-        # Linux/OSX: Run DFHack if available
-        if os.path.isfile(os.path.join(paths.get('df'), 'dfhack')):
+        # Linux/OSX: Run DFHack if available and enabled
+        if (os.path.isfile(os.path.join(paths.get('df'), 'dfhack')) and
+                hacks.is_dfhack_enabled()):
             result = run_program(
                 os.path.join(paths.get('df'), 'dfhack'), force, True, True)
             if result == False:

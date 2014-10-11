@@ -3,7 +3,7 @@
 """DFHack management."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import os
+import sys, os, shutil, filecmp
 from . import paths
 from .lnp import lnp
 
@@ -18,6 +18,38 @@ def read_hacks():
     except IOError:
         for h in get_hacks().values():
             h['enabled'] = False
+
+def is_dfhack_enabled():
+    """Returns YES if DFHack should be used."""
+    if sys.platform == 'win32':
+        if 'dfhack' not in lnp.df_info.variations:
+            return False
+        sdl = os.path.join(paths.get('df'), 'SDL.dll')
+        sdlreal = os.path.join(paths.get('df'), 'SDLreal.dll')
+        if not os.path.isfile(sdlreal):
+            return False
+        return not filecmp.cmp(sdl, sdlreal, 0)
+    else:
+        return lnp.userconfig.get_value('use_dfhack', True)
+
+def toggle_dfhack():
+    """Toggles the use of DFHack."""
+    if sys.platform == 'win32':
+        if 'dfhack' not in lnp.df_info.variations:
+            return
+        sdl = os.path.join(paths.get('df'), 'SDL.dll')
+        sdlhack = os.path.join(paths.get('df'), 'SDLhack.dll')
+        sdlreal = os.path.join(paths.get('df'), 'SDLreal.dll')
+        if is_dfhack_enabled():
+            shutil.copyfile(sdl, sdlhack)
+            shutil.copyfile(sdlreal, sdl)
+        else:
+            shutil.copyfile(sdl, sdlreal)
+            shutil.copyfile(sdlhack, sdl)
+    else:
+        lnp.userconfig['use_dfhack'] = not lnp.userconfig.get_value(
+            'use_dfhack', True)
+        lnp.save_config()
 
 def get_hacks():
     """Returns dict of available hacks."""
