@@ -33,7 +33,8 @@ class OptionsTab(Tab):
 
     def read_data(self):
         self.read_keybinds()
-        self.read_embarks()
+        if lnp.df_info.version >= '0.28.181.40a':
+            self.read_embarks()
 
     def create_controls(self):
         options = controls.create_control_group(self, 'Gameplay Options', True)
@@ -113,12 +114,13 @@ class OptionsTab(Tab):
                 lambda: self.delete_keybinds(self.keybinding_files))
         keybindings.pack(side=BOTTOM, fill=BOTH, expand=Y)
 
-        embarkframe, self.embark_files, _ = \
-            controls.create_readonly_file_list_buttons(
-                self, 'Embark profiles', self.embarks,
-                lambda: self.install_embarks(self.embark_files),
-                self.read_embarks, selectmode='multiple')
-        embarkframe.pack(side=BOTTOM, fill=BOTH, expand=Y)
+        if lnp.df_info.version >= '0.28.181.40a':
+            embarkframe, self.embark_files, _ = \
+                controls.create_readonly_file_list_buttons(
+                    self, 'Embark profiles', self.embarks,
+                    lambda: self.install_embarks(self.embark_files),
+                    self.read_embarks, selectmode='multiple')
+            embarkframe.pack(side=BOTTOM, fill=BOTH, expand=Y)
 
     @staticmethod
     def set_pop_cap():
