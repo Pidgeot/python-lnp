@@ -370,6 +370,31 @@ class DFConfiguration(object):
         newfile.write(text)
         newfile.close()
 
+    def create_file(self, filename, fields):
+        """
+        Create a new file containing the specified fields.
+
+        Params:
+            filename
+                Name of the file to write.
+            fields
+                List of all field names to write.
+        """
+        newfile = open(filename, 'w')
+        for field in fields:
+            if self.options[field] is _disabled:
+                if self.settings[field] == "NO":
+                    text = "!{0}!"
+                else:
+                    text = "[{0}]"
+                newfile.write(text.format(self.field_names[field])+'\n')
+            else:
+                value = self.settings[field]
+                if self.options[field] is _negated_bool:
+                    value = ["YES", "NO"][["NO", "YES"].index(value)]
+                newfile.write('[' + field + ':' + value + ']\n')
+        newfile.close()
+
     def __str__(self):
         return (
             "base_dir = {0}\nsettings = {1}\noptions = {2}\n"

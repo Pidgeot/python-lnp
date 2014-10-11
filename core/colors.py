@@ -3,7 +3,7 @@
 """Color scheme management."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import os, shutil
+import sys, os, shutil
 from . import helpers, paths
 from .lnp import lnp
 
@@ -18,7 +18,10 @@ def get_colors(colorscheme=None):
     Returns RGB tuples for all 16 colors in <colorscheme>.txt, or
     data/init/colors.txt if no scheme is provided."""
     result = []
-    f = os.path.join(paths.get('init'), 'colors.txt')
+    if lnp.df_info.version <= '0.31.03':
+        f = os.path.join(paths.get('init'), 'init.txt')
+    else:
+        f = os.path.join(paths.get('init'), 'colors.txt')
     if colorscheme is not None:
         f = os.path.join(paths.get('colors'), colorscheme+'.txt')
     for c in [
@@ -42,9 +45,20 @@ def load_colors(filename):
     """
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
-    shutil.copyfile(
-        os.path.join(paths.get('colors'), filename),
-        os.path.join(paths.get('init'), 'colors.txt'))
+    if lnp.df_info.version <= '0.31.03':
+        colors = [
+            'BLACK', 'BLUE', 'GREEN', 'CYAN', 'RED', 'MAGENTA', 'BROWN',
+            'LGRAY', 'DGRAY', 'LBLUE', 'LGREEN', 'LCYAN', 'LRED',
+            'LMAGENTA', 'YELLOW', 'WHITE']
+        colors = ([c+'_R' for c in colors] + [c+'_G' for c in colors] +
+                  [c+'_B' for c in colors])
+        lnp.settings.read_file(
+            os.path.join(paths.get('colors'), filename), colors, False)
+        lnp.settings.write_settings()
+    else:
+        shutil.copyfile(
+            os.path.join(paths.get('colors'), filename),
+            os.path.join(paths.get('init'), 'colors.txt'))
 
 def save_colors(filename):
     """
@@ -57,7 +71,19 @@ def save_colors(filename):
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
     filename = os.path.join(paths.get('colors'), filename)
-    shutil.copyfile(os.path.join(paths.get('init'), 'colors.txt'), filename)
+    if lnp.df_info.version <= '0.31.03':
+        print(
+            "Exporting colors is only supported for DF 0.31.04 and later",
+            file=sys.stderr)
+        colors = [
+            'BLACK', 'BLUE', 'GREEN', 'CYAN', 'RED', 'MAGENTA', 'BROWN',
+            'LGRAY', 'DGRAY', 'LBLUE', 'LGREEN', 'LCYAN', 'LRED',
+            'LMAGENTA', 'YELLOW', 'WHITE']
+        colors = ([c+'_R' for c in colors] + [c+'_G' for c in colors] +
+                  [c+'_B' for c in colors])
+        lnp.settings.create_file(filename, colors)
+    else:
+        shutil.copyfile(os.path.join(paths.get('init'), 'colors.txt'), filename)
     read_colors()
 
 def color_exists(filename):
@@ -87,6 +113,9 @@ def delete_colors(filename):
 def get_installed_file():
     """Returns the name of the currently installed color scheme."""
     files = helpers.get_text_files(paths.get('colors'))
-    current = os.path.join(paths.get('init'), 'colors.txt')
+    if lnp.df_info.version <= '0.31.03':
+        current = os.path.join(paths.get('init'), 'init.txt')
+    else:
+        current = os.path.join(paths.get('init'), 'colors.txt')
     result = helpers.detect_installed_file(current, files)
     return os.path.splitext(os.path.basename(result))[0]

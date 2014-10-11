@@ -33,8 +33,7 @@ class GraphicsTab(Tab):
 
     def read_data(self):
         self.read_graphics()
-        if lnp.df_info.version >= '0.31.04':
-            self.read_colors()
+        self.read_colors()
 
     def create_controls(self):
         change_graphics = controls.create_control_group(
@@ -90,8 +89,6 @@ class GraphicsTab(Tab):
             '(saves space, useful for re-packaging)',
             self.simplify_graphics))
 
-        if lnp.df_info.version < '0.31.04':
-            return
         colorframe, color_files, buttons = \
             controls.create_file_list_buttons(
                 self, 'Color schemes', self.colors,
