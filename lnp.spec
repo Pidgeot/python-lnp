@@ -25,11 +25,10 @@ else:
     icon='LNP.gif'
 
 extension=''
-script='lnp.py'
+script='launch.py'
 if sys.platform == 'win32':
     icon='LNP.ico'
     extension='.exe'
-    script='launch.py'
 
 a = Analysis(
   [script], pathex=['.'], hiddenimports=[], hookspath=None, runtime_hooks=None)
