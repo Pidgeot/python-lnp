@@ -24,6 +24,9 @@ def run_df(force=False):
             df_filename = 'Dwarf Fortress.exe'
         result = run_program(
             os.path.join(paths.get('df'), df_filename), force, True)
+    elif sys.platform == 'darwin' and lnp.df_info.version <= '0.28.181.40d':
+        run_program(
+            os.path.join(paths.get('df'), 'Dwarf Fortress.app'), force, True)
     else:
         # Linux/OSX: Run DFHack if available and enabled
         if (os.path.isfile(os.path.join(paths.get('df'), 'dfhack')) and
