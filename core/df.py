@@ -118,9 +118,16 @@ class DFInstall(object):
         self.df_dir = path
         self.init_dir = os.path.join(path, 'data', 'init')
         self.save_dir = os.path.join(path, 'data', 'save')
-        self.version = self.detect_version()
+        self.version, self.source = self.detect_version()
         self.variations = self.detect_variations()
         self.settings = DFConfiguration(path, self)
+
+    def __str__(self):
+        result = 'Dwarf Fortress version: {0} (detected using {1})'.format(
+            self.version, self.source)
+        if self.variations:
+            result += '\nVariations detected: ' + ', '.join(self.variations)
+        return result
 
     def detect_version(self):
         """
@@ -134,7 +141,7 @@ class DFInstall(object):
                 # If the release notes exist, get the version from there
                 notes_text = open(notes).read()
                 m = re.search(r"Release notes for ([\d.]+)", notes_text)
-                return Version(m.group(1))
+                return (Version(m.group(1)), 'release notes')
             # pylint:disable=bare-except
             except:
                 # If we can't find a match in the release notes,
@@ -155,8 +162,8 @@ class DFInstall(object):
             (init, 'COMPRESSED_SAVES', '0.31.01')]
         for v in versions:
             if DFConfiguration.has_field(v[0], v[1]):
-                return Version(v[2])
-        return Version('0.28.181.40d')
+                return (Version(v[2]), 'init detection')
+        return (Version('0.28.181.40d'), 'fallback')
 
     def detect_variations(self):
         """

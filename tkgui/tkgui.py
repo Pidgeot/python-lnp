@@ -323,6 +323,7 @@ class TkGui(object):
             label="Help", command=self.show_help, accelerator='F1')
         menu_help.add_command(
             label="About", command=self.show_about, accelerator='Alt+F1')
+        menu_help.add_command(label="About DF...", command=self.show_df_info)
         root.bind_all('<F1>', lambda e: self.show_help())
         root.bind_all('<Alt-F1>', lambda e: self.show_about())
         root.createcommand('tkAboutDialog', self.show_about)
@@ -449,5 +450,8 @@ class TkGui(object):
         df.set_option(field, binding.get(field))
         binding.update()
 
-
+    @staticmethod
+    def show_df_info():
+        """Shows basic information about the current DF install."""
+        messagebox.showinfo(title='DF info', message=str(lnp.df_info))
 # vim:expandtab
