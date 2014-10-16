@@ -39,7 +39,7 @@ class PyLNP(object):
         else:
             os.chdir(os.path.join(os.path.dirname(__file__), '..'))
         self.detect_basedir()
-        errorlog.start()
+        #errorlog.start()
 
         from . import df, paths, update, utilities
 

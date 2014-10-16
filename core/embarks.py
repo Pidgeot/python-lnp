@@ -4,6 +4,7 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import os
+from io import open
 from . import helpers, paths
 
 def read_embarks():
@@ -20,9 +21,11 @@ def install_embarks(files):
         files
             List of files to install.
     """
-    out = open(os.path.join(paths.get('init'), 'embark_profiles.txt'), 'w')
+    out = open(
+        os.path.join(paths.get('init'), 'embark_profiles.txt'), 'w',
+        encoding='cp437')
     for f in files:
-        embark = open(os.path.join(paths.get('embarks'), f))
+        embark = open(os.path.join(paths.get('embarks'), f), encoding='cp437')
         out.write(embark.read()+"\n\n")
     out.flush()
     out.close()

@@ -5,6 +5,7 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os
+from io import open
 
 from . import controls
 
@@ -140,17 +141,23 @@ class InitEditor(DualTextWindow):
         self.gui.save_params()
         self.left.delete('1.0', END)
         self.left.insert('1.0', open(
-            os.path.join(paths.get('init'), 'init.txt')).read())
+            os.path.join(paths.get('init'), 'init.txt'),
+            encoding='cp437').read())
         self.right.delete('1.0', END)
         self.right.insert('1.0', open(
-            os.path.join(paths.get('init'), 'd_init.txt')).read())
+            os.path.join(paths.get('init'), 'd_init.txt'),
+            encoding='cp437').read())
 
     def save(self):
         """Saves configuration data from the text widgets."""
-        f = open(os.path.join(paths.get('init'), 'init.txt'), 'w')
+        f = open(
+            os.path.join(paths.get('init'), 'init.txt'), 'w', encoding='cp437',
+            errors='replace')
         f.write(self.left.get('1.0', 'end'))
         f.close()
-        f = open(os.path.join(paths.get('init'), 'd_init.txt'), 'w')
+        f = open(
+            os.path.join(paths.get('init'), 'd_init.txt'), 'w',
+            encoding='cp437', errors='replace')
         f.write(self.right.get('1.0', 'end'))
         f.close()
         self.gui.load_params()

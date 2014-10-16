@@ -4,6 +4,7 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os, re, fnmatch
+from io import open
 from . import paths
 from .lnp import lnp
 from .launcher import open_folder
@@ -20,7 +21,7 @@ def read_utility_lists(path):
     """
     result = []
     try:
-        util_file = open(path)
+        util_file = open(path, encoding='utf-8')
         for line in util_file:
             for match in re.findall(r'\[(.+)\]', line):
                 result.append(match)
@@ -81,7 +82,9 @@ def load_autorun():
     """Loads autorun settings."""
     lnp.autorun = []
     try:
-        for line in open(os.path.join(paths.get('utilities'), 'autorun.txt')):
+        for line in open(
+                os.path.join(paths.get('utilities'), 'autorun.txt'),
+                encoding='utf-8'):
             if line.endswith('\n'):
                 line = line[:-1]
             lnp.autorun.append(line)

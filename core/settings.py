@@ -4,6 +4,7 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os, re
+from io import open
 
 # Markers to read certain settings correctly
 
@@ -235,7 +236,7 @@ class DFConfiguration(object):
             calling create_option(field_name, field_name, value, None,
             (filename,)).
         """
-        settings_file = open(filename)
+        settings_file = open(filename, 'r', encoding='cp437')
         text = settings_file.read()
         if auto_add:
             for match in re.findall(r'\[(.+?):(.+?)\]', text):
@@ -281,7 +282,7 @@ class DFConfiguration(object):
             The field to read.
         """
         try:
-            settings_file = open(filename)
+            settings_file = open(filename, 'r', encoding='cp437')
             match = re.search(
                 r'\['+str(field)+r':(.+?)\]', settings_file.read())
             if match is None:
@@ -309,7 +310,7 @@ class DFConfiguration(object):
                 The maximum number of parameters for the field. -1 for no limit.
         """
         try:
-            settings_file = open(filename)
+            settings_file = open(filename, 'r', encoding='cp437')
             match = re.search(
                 r'\['+str(field)+r'(:.+?)\]', settings_file.read())
             if match is None:
@@ -342,7 +343,7 @@ class DFConfiguration(object):
             fields
                 List of all field names to change.
         """
-        oldfile = open(filename, 'r')
+        oldfile = open(filename, 'r', encoding='cp437')
         text = oldfile.read()
         for field in fields:
             if self.options[field] is _disabled:
@@ -366,7 +367,7 @@ class DFConfiguration(object):
                     '[{0}:{1}]'.format(
                         self.field_names[field], value), text)
         oldfile.close()
-        newfile = open(filename, 'w')
+        newfile = open(filename, 'w', encoding='cp437')
         newfile.write(text)
         newfile.close()
 
@@ -380,7 +381,7 @@ class DFConfiguration(object):
             fields
                 List of all field names to write.
         """
-        newfile = open(filename, 'w')
+        newfile = open(filename, 'w', encoding='cp437')
         for field in fields:
             if self.options[field] is _disabled:
                 if self.settings[field] == "NO":

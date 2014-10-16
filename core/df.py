@@ -8,6 +8,7 @@ from datetime import datetime
 from distutils import dir_util
 from glob import glob
 from functools import total_ordering
+from io import open
 
 from .settings import DFConfiguration
 from . import hacks, paths
@@ -58,7 +59,7 @@ def install_extras():
     install_file = os.path.join(paths.get('df'), 'PyLNP{0}.txt'.format(VERSION))
     if not os.access(install_file, os.F_OK):
         dir_util.copy_tree(extras_dir, paths.get('df'))
-        textfile = open(install_file, 'w')
+        textfile = open(install_file, 'w', encoding='utf-8')
         textfile.write(
             'PyLNP V{0} extras installed!\nTime: {1}'.format(
                 VERSION, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
@@ -139,7 +140,7 @@ class DFInstall(object):
         if os.path.isfile(notes):
             try:
                 # If the release notes exist, get the version from there
-                notes_text = open(notes).read()
+                notes_text = open(notes, encoding='latin1').read()
                 m = re.search(r"Release notes for ([\d.]+)", notes_text)
                 return (Version(m.group(1)), 'release notes')
             # pylint:disable=bare-except

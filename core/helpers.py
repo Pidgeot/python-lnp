@@ -4,6 +4,7 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import os, glob
+from io import open
 
 def identify_folder_name(base, name):
     """
@@ -43,9 +44,9 @@ def detect_installed_file(current_file, test_files):
     """Returns the file in <test_files> which is contained in
     <current_file>, or "Unknown"."""
     try:
-        current = open(current_file).read()
+        current = open(current_file, encoding='cp437').read()
         for f in test_files:
-            tested = open(f).read()
+            tested = open(f, encoding='cp437').read()
             if tested in current:
                 return f
     except IOError:
@@ -57,10 +58,10 @@ def detect_installed_files(current_file, test_files):
     <current_file>."""
     installed = []
     try:
-        current = open(current_file).read()
+        current = open(current_file, encoding='cp437').read()
         for f in test_files:
             try:
-                tested = open(f).read()
+                tested = open(f, encoding='cp437').read()
                 if tested in current:
                     installed.append(f)
             except IOError:

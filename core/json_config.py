@@ -24,7 +24,8 @@ class JSONConfiguration(object):
 
     def save_data(self):
         """Saves the data to the JSON file."""
-        json.dump(self.data, open(self.filename, 'w'), indent=2)
+        json.dump(
+            self.data, open(self.filename, 'w'), encoding='utf-8', indent=2)
 
     def get_value(self, path, default=None):
         """
