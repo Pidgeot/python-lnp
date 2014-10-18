@@ -127,7 +127,7 @@ class OptionsTab(Tab):
         """Requests new population cap from the user."""
         v = simpledialog.askinteger(
             "Settings", "Population cap:",
-            initialvalue=df.settings.popcap)
+            initialvalue=lnp.settings.popcap)
         if v is not None:
             df.set_option('popcap', str(v))
             binding.update()
@@ -137,7 +137,7 @@ class OptionsTab(Tab):
         """Requests new strict population cap from the user."""
         v = simpledialog.askinteger(
             "Settings", "Strict population cap:",
-            initialvalue=df.settings.strictPopcap)
+            initialvalue=lnp.settings.strictPopcap)
         if v is not None:
             df.set_option('strictPopcap', str(v))
             binding.update()
@@ -145,7 +145,7 @@ class OptionsTab(Tab):
     @staticmethod
     def set_child_cap():
         """Requests new child cap from the user."""
-        child_split = list(df.settings.childcap.split(':'))
+        child_split = list(lnp.settings.childcap.split(':'))
         child_split.append('0')  # In case syntax is invalid
         v = simpledialog.askinteger(
             "Settings", "Absolute cap on babies + children:",
