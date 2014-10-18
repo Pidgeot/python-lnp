@@ -23,7 +23,10 @@ def current_pack():
         if (lnp.settings.FONT == p[1] and
                 lnp.settings.GRAPHICS_FONT == p[2]):
             return p[0]
-    return str(lnp.settings.FONT)+'/'+str(lnp.settings.GRAPHICS_FONT)
+    result = str(lnp.settings.FONT)
+    if lnp.settings.version_has_option('GRAPHICS_FONT'):
+        result += '/'+str(lnp.settings.GRAPHICS_FONT)
+    return result
 
 def read_graphics():
     """Returns a list of graphics directories."""

@@ -34,43 +34,49 @@ class AdvancedTab(Tab):
 
         main_grid = GridLayouter(2)
 
-        sound = controls.create_control_group(self, 'Sound')
-        main_grid.add(sound)
+        if lnp.settings.version_has_option('sound'):
+            sound = controls.create_control_group(self, 'Sound')
+            main_grid.add(sound)
 
-        controls.create_option_button(
-            sound, 'Sound', 'Turn game music on/off', 'sound').pack(side=LEFT)
-        controls.create_numeric_entry(
-            sound, self.volume_var, 'volume', 'Music volume (0 to 255)').pack(
-                side=LEFT)
-        Label(sound, text='/255').pack(side=LEFT)
+            controls.create_option_button(
+                sound, 'Sound', 'Turn game music on/off', 'sound').pack(
+                    side=LEFT)
+            if lnp.settings.version_has_option('volume'):
+                controls.create_numeric_entry(
+                    sound, self.volume_var, 'volume',
+                    'Music volume (0 to 255)').pack(side=LEFT)
+                Label(sound, text='/255').pack(side=LEFT)
+        if lnp.settings.version_has_option('fpsCounter'):
+            fps = controls.create_control_group(self, 'FPS')
+            main_grid.add(fps, rowspan=2)
 
-        fps = controls.create_control_group(self, 'FPS')
-        main_grid.add(fps, rowspan=2)
+            controls.create_option_button(
+                fps, 'FPS Counter', 'Whether or not to display your FPS',
+                'fpsCounter').pack(fill=BOTH)
+            if lnp.settings.version_has_option('fpsCap'):
+                Label(fps, text='Calculation FPS Cap:').pack(anchor="w")
+                controls.create_numeric_entry(
+                    fps, self.fps_var, 'fpsCap', 'How fast the game runs').pack(
+                        anchor="w")
+            if lnp.settings.version_has_option('gpsCap'):
+                Label(fps, text='Graphical FPS Cap:').pack(anchor="w")
+                controls.create_numeric_entry(
+                    fps, self.gps_var, 'gpsCap', 'How fast the game visually '
+                    'updates.\nLower value may give small boost to FPS but '
+                    'will be less reponsive.').pack(anchor="w")
 
-        controls.create_option_button(
-            fps, 'FPS Counter', 'Whether or not to display your FPS',
-            'fpsCounter').pack(fill=BOTH)
-        Label(fps, text='Calculation FPS Cap:').pack(anchor="w")
-        controls.create_numeric_entry(
-            fps, self.fps_var, 'fpsCap', 'How fast the game runs').pack(
-                anchor="w")
-        Label(fps, text='Graphical FPS Cap:').pack(anchor="w")
-        controls.create_numeric_entry(
-            fps, self.gps_var, 'gpsCap', 'How fast the game visually updates.\n'
-            'Lower value may give small boost to FPS but will be less '
-            'reponsive.').pack(anchor="w")
+        if lnp.settings.version_has_option('introMovie'):
+            startup = controls.create_control_group(self, 'Startup')
+            main_grid.add(startup)
+            Grid.columnconfigure(startup, 0, weight=1)
 
-        startup = controls.create_control_group(self, 'Startup')
-        main_grid.add(startup)
-        Grid.columnconfigure(startup, 0, weight=1)
-
-        controls.create_option_button(
-            startup, 'Intro Movie',
-            'Do you want to see the beautiful ASCII intro movie?',
-            'introMovie').grid(column=0, row=0, sticky="nsew")
-        controls.create_option_button(
-            startup, 'Windowed', 'Start windowed or fullscreen',
-            'startWindowed').grid(column=0, row=1, sticky="nsew")
+            controls.create_option_button(
+                startup, 'Intro Movie',
+                'Do you want to see the beautiful ASCII intro movie?',
+                'introMovie').grid(column=0, row=0, sticky="nsew")
+            controls.create_option_button(
+                startup, 'Windowed', 'Start windowed or fullscreen',
+                'startWindowed').grid(column=0, row=1, sticky="nsew")
 
         saverelated = controls.create_control_group(
             self, 'Save-related', True)

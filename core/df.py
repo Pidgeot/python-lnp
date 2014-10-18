@@ -133,15 +133,14 @@ class DFInstall(object):
     def detect_version(self):
         """
         Attempts to detect Dwarf Fortress version based on release notes or
-        init file contents. Init detection currently supports 0.31 and up;
-        assumes 40d if detection fails.
+        init file contents.
         """
         notes = os.path.join(self.df_dir, 'release notes.txt')
         if os.path.isfile(notes):
             try:
                 # If the release notes exist, get the version from there
                 notes_text = open(notes, encoding='latin1').read()
-                m = re.search(r"Release notes for ([\d.]+)", notes_text)
+                m = re.search(r"Release notes for ([\d.a-z]+)", notes_text)
                 return (Version(m.group(1)), 'release notes')
             # pylint:disable=bare-except
             except:
@@ -151,20 +150,40 @@ class DFInstall(object):
         init = os.path.join(self.init_dir, 'init.txt')
         d_init = os.path.join(self.init_dir, 'd_init.txt')
         versions = [
-            (d_init, 'GRAZE_COEFFICIENT', '0.40.13'),
-            (d_init, 'POST_PREPARE_EMBARK_CONFIRMATION', '0.40.09'),
-            (d_init, 'STRICT_POPULATION_CAP', '0.40.05'),
-            (d_init, 'TREE_ROOTS', '0.40.01'),
-            (d_init, 'TRACK_N', '0.34.08'),
-            (d_init, 'SET_LABOR_LISTS', '0.34.03'),
-            (d_init, 'WALKING_SPREADS_SPATTER_DWF', '0.31.16'),
-            (d_init, 'PILLAR_TILE', '0.31.08'),
-            (d_init, 'AUTOSAVE', '0.31.04'),
-            (init, 'COMPRESSED_SAVES', '0.31.01')]
+            (d_init, 'GRAZE_COEFFICIENT', '0.40.13', {}),
+            (d_init, 'POST_PREPARE_EMBARK_CONFIRMATION', '0.40.09', {}),
+            (d_init, 'STRICT_POPULATION_CAP', '0.40.05', {}),
+            (d_init, 'TREE_ROOTS', '0.40.01', {}),
+            (d_init, 'TRACK_N', '0.34.08', {}),
+            (d_init, 'SET_LABOR_LISTS', '0.34.03', {}),
+            (d_init, 'WALKING_SPREADS_SPATTER_DWF', '0.31.16', {}),
+            (d_init, 'PILLAR_TILE', '0.31.08', {}),
+            (d_init, 'AUTOSAVE', '0.31.04', {}),
+            (init, 'COMPRESSED_SAVES', '0.31.01', {}),
+            (init, 'PARTIAL_PRINT', '0.28.181.40c', {'num_params':2}),
+            (init, 'FULLGRID', '0.28.181.40b', {}),
+            (init, 'STORE_DIST_ITEM_DECREASE', '0.28.181.40a', {}),
+            (init, 'GRID', '0.28.181.39f', {}),
+            (init, 'SHOW_EMBARK_RIVER', '0.28.131.39d', {}),
+            (init, 'IDLERS', '0.28.131.39a', {}),
+            (init, 'AUTOSAVE_PAUSE', '0.27.176.38b', {}),
+            (init, 'ZERO_RENT', '0.27.176.38a', {}),
+            (init, 'PAUSE_ON_LOAD', '0.27.169.33g', {}),
+            (init, 'PRIORITY', '0.27.169.33c', {}),
+            (init, 'AUTOSAVE', '0.27.169.32a', {}),
+            (init, 'POPULATION_CAP', '0.23.130.23a', {}),
+            (init, 'FPS', '0.22.121.23b', {}),
+            (init, 'BLACK_SPACE', '0.22.120.23a', {}),
+            (init, 'ADVENTURER_TRAPS', '0.22.110.23a', {}),
+            (init, 'MOUSE', '0.21.104.21a', {}),
+            (init, 'ENGRAVINGS_START_OBSCURED', '0.21.104.19d', {}),
+            (init, 'WINDOWED', '0.21.102.19a', {}),
+            (init, 'KEY_HOLD_MS', '0.21.101.19a', {}),
+            (init, 'SOUND', '0.21.100.19a', {})]
         for v in versions:
-            if DFConfiguration.has_field(v[0], v[1]):
+            if DFConfiguration.has_field(v[0], v[1], **v[3]):
                 return (Version(v[2]), 'init detection')
-        return (Version('0.28.181.40d'), 'fallback')
+        return (Version('0.21.93.19a'), 'fallback')
 
     def detect_variations(self):
         """
@@ -188,6 +207,9 @@ class DFInstall(object):
 class Version(object):
     """Container for a version number for easy comparisons."""
     def __init__(self, version):
+        #Known errors in release notes
+        if version == "0.23.125.23a":
+            version = "0.23.130.23a"
         s = ""
         data = []
         for c in version:

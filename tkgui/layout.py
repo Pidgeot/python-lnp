@@ -4,6 +4,8 @@
 """Layout helpers for the TKinter GUI."""
 from __future__ import print_function, unicode_literals, absolute_import
 
+from . import controls
+
 class GridLayouter(object):
     """Class to automate grid layouts."""
     def __init__(self, cols):
@@ -30,6 +32,8 @@ class GridLayouter(object):
             opts
                 Extra options for the grid layout.
         """
+        if control is controls.fake_control:
+            return
         self.controls.append((control, span, opts))
         self.layout()
 

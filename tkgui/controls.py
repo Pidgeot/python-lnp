@@ -7,6 +7,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys
 
 from . import binding
+from core.lnp import lnp
 
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
@@ -95,6 +96,16 @@ class _ToolTip(object):
 _TOOLTIP_DELAY = 500
 
 __ui = None
+
+class _FakeControl(object):
+    """Fake control returned if an option doesn't exist."""
+    @staticmethod
+    def grid(*args, **kwargs):
+        """Prevents breaking for code that tries to layout the control."""
+        return
+    pack = grid
+
+fake_control = _FakeControl()
 
 def init(ui):
     """Connect to a TkGui instance."""
@@ -222,6 +233,8 @@ def create_trigger_option_button(
             If given, a reference to a function that pre-processes the
             given option for display.
     """
+    if not lnp.settings.version_has_option(option):
+        return fake_control
     b = create_trigger_button(parent, text, tooltip, command)
     binding.bind(b, option, update_func)
     return b
@@ -380,6 +393,8 @@ def create_numeric_entry(parent, variable, option, tooltip):
         tooltip
             The tooltip for the Entry.
     """
+    if not lnp.settings.version_has_option(option):
+        return fake_control
     e = Entry(
         parent, width=4, validate='key',
         validatecommand=__ui.vcmd, textvariable=variable)
