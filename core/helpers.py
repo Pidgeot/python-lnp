@@ -47,6 +47,8 @@ def detect_installed_file(current_file, test_files):
         current = open(current_file, encoding='cp437').read()
         for f in test_files:
             tested = open(f, encoding='cp437').read()
+            if tested[-1] == '\n':
+                tested = tested[:-1]
             if tested in current:
                 return f
     except IOError:
@@ -62,6 +64,8 @@ def detect_installed_files(current_file, test_files):
         for f in test_files:
             try:
                 tested = open(f, encoding='cp437').read()
+                if tested[-1] == '\n':
+                    tested = tested[:-1]
                 if tested in current:
                     installed.append(f)
             except IOError:
