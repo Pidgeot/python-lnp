@@ -18,10 +18,9 @@ def find_df_folders():
     """Locates all suitable Dwairf Fortress installations (folders starting
     with "Dwarf Fortress" or "df")"""
     lnp.folders = tuple([
-        os.path.basename(o) for o in
-        glob(os.path.join(lnp.BASEDIR, 'Dwarf Fortress*')) +
-        glob(os.path.join(lnp.BASEDIR, 'df*')) if os.path.isdir(o)
-        ])
+        os.path.basename(o) for o in glob(os.path.join(lnp.BASEDIR, '*')) if
+        os.path.isdir(o) and os.path.exists(os.path.join(
+            o, 'data', 'init', 'init.txt'))])
 
 def find_df_folder():
     """Locates all suitable Dwairf Fortress installations (folders starting
