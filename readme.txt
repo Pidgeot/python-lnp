@@ -5,33 +5,26 @@ PyLNP
 A Pack for Lazy and/or Newb-y dwarves everywhere
 ------------------------------------------------
 
-PyLNP is a port of LucasUP and tolyK's Lazy Newb Pack to Python, making it possible to run the program on all platforms DF runs on.
+PyLNP is an enhanced port of LucasUP and tolyK's Lazy Newb Pack to Python, making it possible to run the program on all platforms DF runs on.
+
+The forum thread for PyLNP is located at http://www.bay12forums.com/smf/index.php?topic=140808 - if you have a question that is not answered here, go ahead and ask it there.
 
 Differences
 ===========
 There are a few user-visible differences and enhancements compared to v16, such as:
 
-- Any folder starting with "df" is considered a valid name for the Dwarf Fortress folder. This allows a freshly extracted copy to be recognized immediately.
+- Dwarf Fortress can be placed in an arbitrarily-named folder.
 - If multiple valid DF folders are detected, you will be asked to select the desired instance. This allows you to manage multiple installs separately. (Similar feature exists in v17.2 by daveralph1234)
 - A new menu item, File > Output log has been added. This opens a window containing various messages captured while executing the launcher. If errors occur, they will show up here, and are also written to a file.
 - In addition to excluding specific file names from utilities, you can also *include* specific file names, if they're found. Simply create a file include.txt in the Utilities folder and fill it in with the same syntax as exclude.txt.
 - Multiple utilities can be selected and launched simultaneously.
 - Utilities may be automatically started at the same time as Dwarf Fortress. (Also seen in v16.1 by daveralph1234, although with a different interface)
-- Color scheme installation and preview
+- Color scheme installation and preview.
 - Installing graphics sets by patching instead of replacing init.txt and d_init.txt. This preserves all options not strictly related to graphics sets.
 
-Platform-specific notes
-=======================
-Each platform will detect different file types in the Utilities pane.
-
-Windows:
-  \*.exe, \*.jar, \*.bat
-Linux:
-  \*.jar, \*.sh
-OS X:
-  \*.app, \*.jar, \*.sh
-
-You can use the include.txt mechanism to display executables not matched by these filters.
+--------------------
+Running the launcher
+--------------------
 
 Pre-built executables
 =====================
@@ -75,7 +68,7 @@ Windows:
 
   To get a better looking logo, first install setuptools: https://pypi.python.org/pypi/setuptools/0.9.8#windows
 
-  Next, open a command-line to the Scripts directory in your Python installation and run the command "easy_install pillow".
+  Next, open a command-line to the Scripts directory in your Python installation and run the command ``easy_install pillow``.
 
 Linux:
   Virtually all Linux distributions these days include Python, although especially older installations may not have an appropriate version, and some may not have Tk support installed by default.
@@ -94,16 +87,16 @@ OS X:
 
   First, you need to install command-line compilers. The easiest way I've found is to install Xcode, then open it and go to Preferences > Downloads and install them from there. It should also be possible to download these compilers directly from https://developer.apple.com/downloads/, but you're on your own for that.
 
-  Once the compilers are in place, open a Terminal and type "sudo easy_install pillow". OS X should come with the libraries needed to build Pillow to load the logo.
+  Once the compilers are in place, open a Terminal and type ``sudo easy_install pillow``. OS X should come with the libraries needed to build Pillow to load the logo.
 
 Running the source code
 -----------------------
 Windows:
   Double-click launch.py in the LNP folder. If you want to get rid of the console window that pops up, rename it to launch.pyw.
 Linux:
-  Make sure launch.py is executable. Next, double-click and run it, or start a terminal and execute it from there with "python launch.py" or "./launch.py".
+  Make sure launch.py is executable. Next, double-click and run it, or start a terminal and execute it from there with ``python launch.py`` or ``./launch.py``.
 OS X:
-  OS X does not provide a way to launch a Python script from Finder, so start a terminal, navigate to the directory, and execute "python launch.py" or "./launch.py".
+  OS X does not provide a way to launch a Python script from Finder, so start a terminal, navigate to the directory, and execute ``python launch.py`` or ``./launch.py``.
 
 Modifying the source code
 =========================
@@ -129,7 +122,7 @@ Installing prerequisites:
 
   Manually install pywin32: http://sourceforge.net/projects/pywin32/files/pywin32/
 
-  Next, run "easy_install pyinstaller" from the Scripts directory in your Python installation.
+  Next, run ``easy_install pyinstaller`` from the Scripts directory in your Python installation.
 
 Building:
   Open the LNP directory in a Command Prompt and type "pyinstaller lnp.spec". Wait for the build to finish, and you will find a new folder named dist. Inside that folder is the stand-alone executable, named lnp.exe.
@@ -139,22 +132,22 @@ Linux
 Installing prerequisites:
   You'll need PyInstaller, preferably version 2.0 or later: http://www.pyinstaller.org/
 
-  The easiest way to install it is to use your package manager to install it directly (if available), or first install python-pip from your package manager and then run "sudo easy_install pyinstaller" in a terminal.
+  The easiest way to install it is to use your package manager to install it directly (if available), or first install python-pip from your package manager and then run ``sudo pip install pyinstaller`` in a terminal.
 
 Building:
-  Open the LNP directory in a Terminal and type "pyinstaller lnp.spec". Wait for the build to finish, and you will find a new folder named dist. Inside that folder is the stand-alone executable, named lnp.
+  Open the LNP directory in a Terminal and type ``pyinstaller lnp.spec``. Wait for the build to finish, and you will find a new folder named dist. Inside that folder is the stand-alone executable, named lnp.
 
 OS X
 ----
 Installing prerequisites:
   You'll need PyInstaller, preferably version 2.0 or later: http://www.pyinstaller.org/
 
-  A simple way to install it is to open a terminal and type "sudo easy_install pyinstaller".
+  A simple way to install it is to open a terminal and type ``sudo easy_install pyinstaller``.
 
   You may also need to install command-line compilers; see above.
 
 Building:
-  Open the LNP directory in a Terminal and type "pyinstaller lnp.spec". Wait for the build to finish, and you will find a new folder named dist. Inside that folder is the application bundle, PyLNP.
+  Open the LNP directory in a Terminal and type ``pyinstaller lnp.spec``. Wait for the build to finish, and you will find a new folder named dist. Inside that folder is the application bundle, PyLNP.
 
 When something goes wrong
 =========================
@@ -164,9 +157,209 @@ If the program *does* crash, you can look at stdout.txt and stderr.txt which are
 
 Please be as specific as possible when reporting an error - tell exactly what you were doing. If you were installing a graphics pack, mention which one (provide a link to where you got it). If the problem is with a utility, make sure the utility works if you launch it manually - if it doesn't, then it's a problem with the utility, not with PyLNP.
 
-TODO/Ideas
+-------------
+Customization
+-------------
+
+Various aspects of PyLNP can be customized (e.g. for use in packs). This section details how.
+
+PyLNP.json
 ==========
-* Better (more) error handling
-* General code cleanup
-* Explicit patches for installing graphics packs
-* Other things?
+For basic pack customization, a JSON file named PyLNP.json is used. This file must be stored in either the base folder, or in the LNP folder (see below). If both exist, the one in the LNP folder will be used.
+
+This file configures several aspects of the launcher. All parts are optional in the sense that the launcher will work even if nothing is there.
+
+Each key in the file is documented below.
+
+``folders``, ``links``
+----------------------
+``folders`` and ``links`` are both lists containing other lists. These are used to populate the Folders and Links menu in the program.
+
+Each entry is a list containing 2 values: the caption for the menu item, and the destination to be opened when the menu item is activated. To insert a separator, use a dash as a caption (``-``).
+
+Folder paths are relative to the base directory. Use ``<df>`` as a placeholder for the actual Dwarf Fortress directory.
+
+Example::
+
+  "folders": [
+    ["Savegame folder","<df>/data/save"],
+    ["Utilities folder","LNP/Utilities"],
+    ["Graphics folder","LNP/Graphics"],
+    ["-","-"],
+    ["Main folder",""],
+    ["LNP folder","LNP"],
+    ["Dwarf Fortress folder","<df>"],
+    ["Init folder","<df>/data/init"]
+  ],
+  links: [
+    ["DF Homepage","http://www.bay12games.com/dwarves/"],
+    ["DF Wiki","http://dwarffortresswiki.org/"],
+    ["DF Forums","http://www.bay12forums.com/smf/"]
+  ]
+
+``hideUtilityPath``, ``hideUtilityExt``
+---------------------------------------
+These options control whether to hide the path and extension of utilities in the utility list.
+
+Using "DwarfTool/DwarfTool.exe" as an example:
+
+  ``hideUtilityPath`` is false, ``hideUtilityExt`` is false:
+    DwarfTool/DwarfTool.exe
+
+  ``hideUtilityPath`` is false, ``hideUtilityExt`` is true:
+    DwarfTool/DwarfTool
+
+  ``hideUtilityPath`` is true, ``hideUtilityExt`` is false:
+    DwarfTool.exe
+
+  ``hideUtilityPath`` is true, ``hideUtilityExt`` is true:
+    DwarfTool
+
+Only the *last* folder name is ever displayed: if the full path is "Utilities/Foo/DwarfTool", only "DwarfTool" will be shown for the path name.
+
+For further customization of displayed utility titles, see "Relabeling utilites" below.
+
+``updates``
+-----------
+This object contains 4 strings, all used to check for pack updates.
+
+``checkURL`` must point to a URL containing the latest version of your pack.
+``versionRegex`` must be a regular expression that extracts the latest version from the page contents of the aforementioned URL. If you don't understand regular expressions, ask on the forums.
+``downloadURL`` should point to the URL the user should be sent to if he wants to update. Note that updating is not automatic: the user must take care of the actual download and unpacking.
+``packVersion`` contains the current version of your pack.
+
+The pack is considered updated if the pack version does not match the version extracted using the regular expression.
+
+``dfhack``
+----------
+This is an object containing hacks that can be toggled on or off on the DFHack tab.
+
+Each individual hack consists of three elements: a title, a command to be executed by DFHack, and a tooltip. The ``dfhack`` object should contain subobjects where the title is used as the name of the key for a subobject, and the subobject itself contains two keys: ``command`` and ``tooltip``.
+
+Example::
+
+	"dfhack": {
+        "Partial Mouse Control": {
+            "command": "mousequery edge enable",
+            "tooltip": "allows scrolling by hovering near edge of map; conflicts with isometric view; may cause trouble with levers or macros"
+        },
+        "Performance Tweaks": {
+            "command": "multicmd repeat -time 3 months -command cleanowned x; repeat -time 3 months -command clean all",
+            "tooltip": "dfhack fixes to run regularly, changes the game a little but helps a lot on old or slow hardware (dump worn items, remove all contaminants)"
+        }
+    }
+
+Directory structure
+===================
+PyLNP expects to see the following directory structure::
+
+  <base folder>
+    <Dwarf Fortress main folder>
+    LNP
+      Colors
+      Defaults
+      Embarks
+      Extras
+      Graphics
+      Keybinds
+      Utilities
+
+PyLNP itself may be placed anywhere, so long as it is somewhere inside the base folder. It can be placed directly in the base folder, in a subfolder, in a subfolder of a subfolder, etc. The base folder is determined by checking the its own directory; if it cannot find a Dwarf Fortress folder, it will try the parent folder, and continue in this manner until it finds a suitable folder; that folder is considered the base folder.
+
+Additionally, it will look for a configuration file PyLNP.json (see above) in either the base folder, or the LNP folder. If both exist, it will use the one in the LNP folder.
+
+All currently available DF versions are supported. If multiple valid DF folders are present, a selection dialog will be shown at the start of the program.
+
+The LNP folder and all subfolders are optional, but certain features will not work properly.
+
+On case-sensitive platforms (Linux, OS X), you must use either this exact case, or all-lowercase names for each pre-defined folder name (e.g. ``LNP`` and ``lnp`` are both okay; ``Lnp`` is not.)
+
+In all folders containing .txt files, any filename starting with ``README`` (arbitrary case) is ignored.
+
+PyLNP.user
+----------
+This file, found in the base folder, contains user settings such as window width and height. It should not be distributed if you make a pack.
+
+Colors
+------
+This folder contains color schemes. As of DF 0.31.04, these are stored as data/init/colors.txt in the Dwarf Fortress folder; in 0.31.03 and below, they are contained in data/init/init.txt.
+
+Saving the current color scheme only works with DF 0.31.04 or later.
+
+Defaults
+--------
+This folder should contain two files: init.txt and d_init.txt. These files will replace the corresponding files in data/init when the user clicks the Defaults button.
+
+Keep in mind that these files should be kept current with the DF installation you are using - only use files matching your DF version.
+
+For DF 0.31.03 and below: Only init.txt is used, since these versions do not have d_init.txt.
+
+Embarks
+-------
+This folder contains embark profiles, stored as data/init/embark_profiles.txt. Multiple of these files can be installed at once.
+
+This feature is only available for DF 0.28.181.40a and later; for earlier versions it will be hidden.
+
+Extras
+------
+If this version of PyLNP has not yet been run on the selected DF installation, any files in here will be copied to the Dwarf Fortress directory on launch.
+
+Graphics
+--------
+This folder contains graphics packs, consisting of data and raw folders.
+
+Keybinds
+--------
+This folder contains keybindings.
+
+If you intend to use multiple versions of DF, note that legacy Windows and Mac versions uses a different keybinding syntax, so files from newer SDL-based versions are not compatible (and vice versa).
+
+Utilities
+=========
+Each platform will autodetect different file types in the Utilities pane.
+
+Windows:
+  \*.exe, \*.jar, \*.bat
+Linux:
+  \*.jar, \*.sh
+OS X:
+  \*.app, \*.jar, \*.sh
+
+Correcting the auto-detection
+-----------------------------
+For some platforms, you may wish to include a utility not matched by the above patterns. Also, some utilities may include subprograms that should not appear in the list.
+
+To correct these, you can use the files ``include.txt`` and ``exclude.txt`` in the Utilities directory. These files follow a simple format, similar to : anything contained in square brackets is either included or excluded, respectively, from the final list of utilities, while anything else is ignored.
+
+Only filenames are considered in these lists; paths are ignored.
+
+For example, to prevent the file ``libfoo.jar`` from appearing, add ``[libfoo.jar]`` to exclude.txt. To include a file ``bar.py``, add ``[bar.py]`` to include.txt.
+
+Alternatively, you can also use the file ``utilities.txt`` to cover both scenarios, as documented below.
+
+Relabeling utilities
+--------------------
+By default, the title for a utility is derived from its filename. This can be overriden using the file ``utilities.txt`` in the Utilites folder, and tooltips can be added.
+
+The basic syntax is similar to include.txt and exclude.txt detailed above: anything in square brackets is an entry, while everything else is a comment.
+
+Each entry consists of up to 3 fields, separated with a colon. The first field specifies the filename to match, the second field provides an override for the title, and the third field contains the tooltip to use for the utility.
+
+Both title and tooltip are optional; if omitted or left blank, the default will be used (default title and no tooltip).
+
+To exclude a filename from the auto-detection, give it a title of ``EXCLUDE``.
+
+Examples::
+
+  [dwarftool.exe:DwarfTool:A utility to do stuff with your dwarves] Custom title and tooltip
+  [bar.py] Not covered by auto-detection: any matches will be displayed with default title and no tooltip
+  [lib_xyz.jar:EXCLUDE] Exclude lib_xyz.jar from the utility list
+  [bar.exe::This is a tooltip] Default name, custom tooltip
+
+DFHack
+======
+If DFHack is detected in the Dwarf Fortress folder, a DFHack tab is added to the launcher.
+
+This tab includes a list where preconfigured hacks can be turned on or off. See the respective section in the description of PyLNP.json for information on how to configure these hacks.
+
+All active hacks are written to a file named ``PyLNP_dfhack_onload.init`` in the Dwarf Fortress folder. This file must be loaded by your standard ``onload.init`` file to take effect.
