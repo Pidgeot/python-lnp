@@ -316,7 +316,7 @@ If you intend to use multiple versions of DF, note that legacy Windows and Mac v
 
 Utilities
 =========
-Each platform will autodetect different file types in the Utilities pane.
+Each platform will auto-detect different file types in the Utilities pane.
 
 Windows:
   \*.exe, \*.jar, \*.bat
@@ -347,7 +347,7 @@ Each entry consists of up to 3 fields, separated with a colon. The first field s
 
 Both title and tooltip are optional; if omitted or left blank, the default will be used (default title and no tooltip).
 
-To exclude a filename from the auto-detection, give it a title of ``EXCLUDE``.
+To exclude a filename from the auto-detection, give it a title of ``EXCLUDE``. All other file names will be included in the detection, even if they do not match the normal file name patterns.
 
 Examples::
 
