@@ -60,10 +60,22 @@ class UtilitiesTab(Tab):
         else:
             proglist.bind("<3>", self.toggle_autorun)
 
+        self.list_tooltip = controls.create_tooltip(proglist, '')
+        proglist.bind('<Motion>', self.update_tooltip)
+
         refresh = controls.create_trigger_button(
             progs, 'Refresh List', 'Refresh the list of utilities',
             self.read_utilities)
         refresh.grid(column=0, row=4, columnspan=2, sticky="nsew")
+
+    def update_tooltip(self, event):
+        """
+        Event handler for mouse motion over the utility list.
+        Used to update the tooltip.
+        """
+        tip = utilities.get_tooltip(self.proglist.item(self.proglist.identify(
+            'row', event.x, event.y))['text'])
+        self.list_tooltip.settext(tip)
 
     def read_utilities(self):
         """Reads list of utilities."""
@@ -87,14 +99,9 @@ class UtilitiesTab(Tab):
         for i in self.proglist.get_children():
             self.proglist.delete(i)
         for p in self.progs:
-            exe = os.path.join(
-                os.path.basename(os.path.dirname(p)), os.path.basename(p))
-            if lnp.config.get_bool('hideUtilityPath'):
-                exe = os.path.basename(exe)
-            if lnp.config.get_bool('hideUtilityExt'):
-                exe = os.path.splitext(exe)[0]
+            title = utilities.get_title(p)
             self.proglist.insert('', 'end', text=p, values=(
-                exe, 'Yes' if p in lnp.autorun else 'No'))
+                title, 'Yes' if p in lnp.autorun else 'No'))
 
     def run_selected_utilities(self):
         """Runs selected utilities."""

@@ -13,9 +13,46 @@ def open_utils():
     """Opens the utilities folder."""
     open_folder(paths.get('utilities'))
 
+metadata = {}
+
+def read_metadata():
+    """Read metadata from the utilities directory."""
+    metadata.clear()
+    entries = read_utility_lists(
+        os.path.join(paths.get('utilities'), 'utilities.txt'))
+    for e in entries:
+        data = e.split(':', 2)
+        if len(data) < 3:
+            data.extend(['',''])
+        metadata[data[0]] = {'title': data[1]}
+        metadata[data[0]]['tooltip'] = data[2]
+
+def get_title(path):
+    """
+    Returns a title for the given utility. If an non-blank override exists, it
+    will be used; otherwise, the filename will be manipulated according to
+    PyLNP.json settings."""
+    if os.path.basename(path) in metadata:
+        if metadata[os.path.basename(path)]['title'] != '':
+            return metadata[os.path.basename(path)]['title']
+    result = os.path.join(
+        os.path.basename(os.path.dirname(path)), os.path.basename(path))
+    if lnp.config.get_bool('hideUtilityPath'):
+        result = os.path.basename(result)
+    if lnp.config.get_bool('hideUtilityExt'):
+        result = os.path.splitext(result)[0]
+    return result
+
+def get_tooltip(path):
+    """Returns the tooltip for the given utility, or an empty string."""
+    try:
+        return metadata[os.path.basename(path)]['tooltip']
+    except KeyError:
+        return ''
+
 def read_utility_lists(path):
     """
-    Reads a list of filenames from a utility list (e.g. include.txt).
+    Reads a list of filenames/tags from a utility list (e.g. include.txt).
 
     :param path: The file to read.
     """
@@ -23,7 +60,7 @@ def read_utility_lists(path):
     try:
         util_file = open(path, encoding='utf-8')
         for line in util_file:
-            for match in re.findall(r'\[(.+)\]', line):
+            for match in re.findall(r'\[(.+?)\]', line):
                 result.append(match)
     except IOError:
         pass
@@ -31,13 +68,18 @@ def read_utility_lists(path):
 
 def read_utilities():
     """Returns a list of utility programs."""
+    read_metadata()
     exclusions = read_utility_lists(os.path.join(
         paths.get('utilities'), 'exclude.txt'))
+    exclusions.extend(
+        [u for u in metadata.keys() if metadata[u]['title'] == 'EXCLUDE'])
     # Allow for an include list of filenames that will be treated as valid
     # utilities. Useful for e.g. Linux, where executables rarely have
     # extensions.
     inclusions = read_utility_lists(os.path.join(
         paths.get('utilities'), 'include.txt'))
+    inclusions.extend(
+        [u for u in metadata.keys() if metadata[u]['title'] != 'EXCLUDE'])
     progs = []
     patterns = ['*.jar']  # Java applications
     if sys.platform in ['windows', 'win32']:
@@ -48,7 +90,8 @@ def read_utilities():
     for root, dirnames, filenames in os.walk(paths.get('utilities')):
         if sys.platform == 'darwin':
             for dirname in dirnames:
-                if fnmatch.fnmatch(dirname, '*.app'):
+                if (fnmatch.fnmatch(dirname, '*.app') and
+                        dirname not in exclusions):
                     # OS X application bundles are really directories
                     progs.append(os.path.relpath(
                         os.path.join(root, dirname),
