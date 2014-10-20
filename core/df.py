@@ -106,10 +106,11 @@ def restore_defaults():
         os.path.join(paths.get('defaults'), 'init.txt'),
         os.path.join(paths.get('init'), 'init.txt')
         )
-    shutil.copy(
-        os.path.join(paths.get('defaults'), 'd_init.txt'),
-        os.path.join(paths.get('init'), 'd_init.txt')
-    )
+    if lnp.df_info.version > '0.31.03':
+        shutil.copy(
+            os.path.join(paths.get('defaults'), 'd_init.txt'),
+            os.path.join(paths.get('init'), 'd_init.txt')
+        )
     load_params()
 
 class DFInstall(object):
