@@ -402,9 +402,15 @@ terminal_generic()
         TERM=xterm
     fi
 
-    terminal_exec=`which $TERM >/dev/null 2>/dev/null`
+    terminal_exec=`which $TERM 2>/dev/null`
 
     if [ -x "$terminal_exec" ]; then
+			  if [ x"$1" == x"" ]; then
+            $terminal_exec
+        else
+            $terminal_exec "-e" "$1"
+        fi
+
         if [ $? -eq 0 ]; then
             exit_success
         else
