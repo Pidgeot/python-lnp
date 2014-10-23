@@ -5,6 +5,11 @@ keys."""
 from __future__ import print_function, unicode_literals, absolute_import
 import sys, json
 
+if sys.version_info[0] == 3:  # Alternate import names
+    enc_dict = {}
+else:
+    enc_dict = {'encoding': 'utf-8'}
+
 class JSONConfiguration(object):
     """Proxy for JSON-based configuration files."""
 
@@ -18,17 +23,18 @@ class JSONConfiguration(object):
         """
         self.filename = filename
         try:
-            self.data = json.load(open(filename), encoding='utf-8')
+            self.data = json.load(open(filename), **enc_dict)
         except:
             print(
                 "Note: Failed to read JSON from " + filename +
-                ", ignoring data", file=sys.stderr)
+                ", ignoring data - error details follow", file=sys.stderr)
+            sys.excepthook(*sys.exc_info())
             self.data = {}
 
     def save_data(self):
         """Saves the data to the JSON file."""
         json.dump(
-            self.data, open(self.filename, 'w'), encoding='utf-8', indent=2)
+            self.data, open(self.filename, 'w'), indent=2, **enc_dict)
 
     def get_value(self, path, default=None):
         """
