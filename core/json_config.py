@@ -3,7 +3,7 @@
 """Proxy to abstract access to JSON configuration and gracefully handle missing
 keys."""
 from __future__ import print_function, unicode_literals, absolute_import
-import json
+import sys, json
 
 class JSONConfiguration(object):
     """Proxy for JSON-based configuration files."""
@@ -19,7 +19,10 @@ class JSONConfiguration(object):
         self.filename = filename
         try:
             self.data = json.load(open(filename), encoding='utf-8')
-        except IOError:
+        except:
+            print(
+                "Note: Failed to read JSON from " + filename +
+                ", ignoring data", file=sys.stderr)
             self.data = {}
 
     def save_data(self):
