@@ -26,6 +26,22 @@ There are a few user-visible differences and enhancements compared to v16, such 
 Running the launcher
 --------------------
 
+Platform-specific notes
+=======================
+On Linux and OS X, it is necessary to spawn a new terminal when using DFHack. Unfortunately, Linux provides no standard way of doing this; it varies depending on your setup.
+
+For this reason, a secondary script, ``xdg-terminal``, is used to perform this task. Unfortunately, this script cannot be guaranteed to work on *all* Linux systems, and unsupported systems may not behave as intended, particularly if the launcher is closed while DF is running.
+
+The script should work as intended with any of the following desktop environments and window managers:
+ - GNOME
+ - KDE
+ - MATE
+ - xfce
+ - lxde
+ - i3wm
+
+For other setups, the script will attempt a fallback, but it is not guaranteed to work. If it does not work for you, you will not be able to launch DFHack from the launcher before the script is adapted to fit your system.
+
 Pre-built executables
 =====================
 Stand-alone pre-built executables are available for Windows, Linux and OS X; see the forum topic. Simply download and extract the appropriate file.
