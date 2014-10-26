@@ -84,19 +84,6 @@ class OptionsTab(Tab):
             grid.add(controls.create_option_button(
                 options, 'Starting Labors', tooltip, 'laborLists'), 2)
 
-        display = controls.create_control_group(self, 'Display Options', True)
-        display.pack(side=TOP, fill=BOTH, expand=N)
-
-        grid = GridLayouter(2)
-        grid.add(controls.create_option_button(
-            display, 'Liquid Depth',
-            'Displays the depth of liquids with numbers 1-7',
-            'liquidDepth'))
-        grid.add(controls.create_option_button(
-            display, 'Varied Ground',
-            'If ground tiles use a variety of punctuation, or only periods',
-            'variedGround'))
-
         mods = controls.create_control_group(
             self, 'Modifications')
         mods.pack(side=TOP, expand=N, anchor="w")
