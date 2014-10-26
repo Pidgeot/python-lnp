@@ -45,6 +45,7 @@ class DFConfiguration(object):
         self.inverse_field_names = dict()
         self.files = dict()
         self.in_files = dict()
+        self.missing_fields = []
 
         self.df_info = df_info
         # init.txt
@@ -108,6 +109,7 @@ class DFConfiguration(object):
         self.create_option(
             "entombPets", "COFFIN_NO_PETS_DEFAULT", "NO", _negated_bool, dinit)
         self.create_option("artifacts", "ARTIFACTS", "YES", boolvals, dinit)
+        self.create_option("grazeCoef", "GRAZE_COEFFICIENT", "100", None, dinit)
         # special
         if df_info.version < '0.31':
             aquifer_files = [
@@ -265,10 +267,11 @@ class DFConfiguration(object):
                             value = ["YES", "NO"][["NO", "YES"].index(value)]
                         self.settings[field] = value
                 else:
+                    self.missing_fields.append(self.field_names[field])
                     print(
-                        'WARNING: Expected match for field ' + str(field) +
-                        ' in file ' + str(filename) +
-                        '. Possible DF version mismatch?', file=sys.stderr)
+                        'WARNING: Field ' + str(self.field_names[field]) +
+                        ' seems to be missing from file ' + str(filename) +
+                        '!', file=sys.stderr)
 
     @staticmethod
     def read_value(filename, field):
@@ -401,6 +404,9 @@ class DFConfiguration(object):
     def version_has_option(self, option_name):
         if option_name in self.field_names:
             option_name = self.field_names[option_name]
+        if option_name in self.missing_fields:
+            # Field was missing when expected, pretend it doesn't exist yet
+            return False
 
         if option_name[0] == option_name.lower()[0]:
             # Internal name, let it pass by

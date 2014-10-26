@@ -74,6 +74,10 @@ class OptionsTab(Tab):
             options, 'Artifacts',
             'Whether dwarfs should enter artifact producing moods.',
             'artifacts'))
+        grid.add(controls.create_trigger_option_button(
+            options, 'Graze Coefficient',
+            'Scales how often grazing animals need to eat.  Larger numbers '
+            'require less food.', self.set_graze_coef, 'grazeCoef'), 2)
         if lnp.df_info.version >= '0.34.03':
             if lnp.df_info.version <= '0.34.06':
                 tooltip = 'Whether labors are enabled by default.'
@@ -145,6 +149,17 @@ class OptionsTab(Tab):
             if v2 is not None:
                 df.set_option('childcap', str(v)+':'+str(v2))
                 binding.update()
+
+    @staticmethod
+    def set_graze_coef():
+        """Requests new graze coefficient from the user."""
+        v = simpledialog.askinteger(
+            "Settings", "Graze coefficient:",
+            initialvalue=lnp.settings.grazeCoef)
+        if v is not None:
+            df.set_option('grazeCoef', str(v))
+            binding.update()
+
 
     def read_keybinds(self):
         """Reads list of keybinding files."""
