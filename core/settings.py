@@ -603,7 +603,7 @@ class DFConfiguration(object):
             An iterable containing the field names to read.
         """
         def get_match(text, match_field):
-            if isinstance(match_field, str):
+            if isinstance(match_field, str) or isinstance(match_field, basestring):
                 match = re.search(
                     r'\['+str(match_field)+r':(.+?)\]', text)
                 if match is None:
