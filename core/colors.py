@@ -34,12 +34,16 @@ def get_colors(colorscheme=None):
         else:
             f = os.path.join(paths.get('init'), 'colors.txt')
 
+    color_fields = []
     for c in _df_colors:
-        result.append((
-            int(lnp.settings.read_value(f, c+'_R')),
-            int(lnp.settings.read_value(f, c+'_G')),
-            int(lnp.settings.read_value(f, c+'_B'))))
-    return result
+        color_fields.append((c+'_R', c+'_G', c+'_B'))
+
+    result = lnp.settings.read_values(f, *color_fields)
+
+    int_result = []
+    for t in result:
+        int_result.append(map(int, t))
+    return int_result
 
 def load_colors(filename):
     """
