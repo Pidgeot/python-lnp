@@ -30,17 +30,16 @@ def current_pack():
 
 def read_graphics():
     """Returns a list of graphics directories."""
+    graphics_path = paths.get('graphics')
     packs = [
         os.path.basename(o) for o in
-        glob.glob(os.path.join(paths.get('graphics'), '*')) if
+        glob.glob(os.path.join(graphics_path, '*')) if
         os.path.isdir(o)]
     result = []
     for p in packs:
-        font = lnp.settings.read_value(os.path.join(
-            paths.get('graphics'), p, 'data', 'init', 'init.txt'), 'FONT')
-        graphics = lnp.settings.read_value(
-            os.path.join(paths.get('graphics'), p, 'data', 'init', 'init.txt'),
-            'GRAPHICS_FONT')
+        init_path = os.path.join(graphics_path, p, 'data', 'init', 'init.txt')
+        font = lnp.settings.read_value(init_path, 'FONT')
+        graphics = lnp.settings.read_value(init_path, 'GRAPHICS_FONT')
         result.append((p, font, graphics))
     return tuple(result)
 
