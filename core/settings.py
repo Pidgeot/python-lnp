@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """Configuration and raw manipulation for Dwarf Fortress."""
 from __future__ import print_function, unicode_literals, absolute_import
-from pkg_resources import parse_version
 
 import sys, os, re
 from io import open
@@ -706,9 +705,9 @@ class DFConfiguration(object):
 
         option = data[option_name]
         if len(option) == 2:
-            return parse_version(option[0]) <= parse_version(self.df_info.version) < parse_version(option[1])
+            return option[0] <= self.df_info.version < option[1]
         else:
-            return parse_version(option[0]) <= parse_version(self.df_info.version)
+            return option[0] <= self.df_info.version
 
     def __str__(self):
         return (
