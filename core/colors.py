@@ -18,12 +18,15 @@ def get_colors(colorscheme=None):
     Returns RGB tuples for all 16 colors in <colorscheme>.txt, or
     data/init/colors.txt if no scheme is provided."""
     result = []
-    if lnp.df_info.version <= '0.31.03':
-        f = os.path.join(paths.get('init'), 'init.txt')
-    else:
-        f = os.path.join(paths.get('init'), 'colors.txt')
+
     if colorscheme is not None:
         f = os.path.join(paths.get('colors'), colorscheme+'.txt')
+    else:
+        if lnp.df_info.version <= '0.31.03':
+            f = os.path.join(paths.get('init'), 'init.txt')
+        else:
+            f = os.path.join(paths.get('init'), 'colors.txt')
+
     for c in [
             'BLACK', 'BLUE', 'GREEN', 'CYAN', 'RED', 'MAGENTA', 'BROWN',
             'LGRAY', 'DGRAY', 'LBLUE', 'LGREEN', 'LCYAN', 'LRED',
