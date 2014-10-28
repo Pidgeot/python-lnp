@@ -348,16 +348,17 @@ class DFConfiguration(object):
         """
         oldfile = open(filename, 'r', encoding='cp437')
         text = oldfile.read()
+
+        option_disable = ("[{0}]", "!{0}!")
+        option_enable = tuple(reversed(option_disable))
+
         for field in fields:
             if self.options[field] is _disabled:
-                replace_from = None
-                replace_to = None
                 if self.settings[field] == "NO":
-                    replace_from = "[{0}]"
-                    replace_to = "!{0}!"
+                    replace_from, replace_to = option_disable
                 else:
-                    replace_from = "!{0}!"
-                    replace_to = "[{0}]"
+                    replace_from, replace_to = option_enable
+
                 text = text.replace(
                     replace_from.format(self.field_names[field]),
                     replace_to.format(self.field_names[field]))
