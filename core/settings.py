@@ -592,6 +592,39 @@ class DFConfiguration(object):
         except IOError:
             return None
 
+
+    @staticmethod
+    def read_values(filename, *fields):
+        """
+        Params:
+          filename
+            The file to read from.
+          field
+            An iterable containing the field names to read.
+        """
+        def get_match(text, match_field):
+            if isinstance(match_field, str):
+                match = re.search(
+                    r'\['+str(match_field)+r':(.+?)\]', text)
+                if match is None:
+                    return None
+                else:
+                    return match.group(1)
+            elif isinstance(match_field, (tuple, list)):
+                return map(lambda f: get_match(text, f), match_field)
+            return None
+
+        result = []
+        try:
+            settings_file = open(filename, 'r', encoding='cp437')
+            settings = settings_file.read()
+            for field in fields:
+                result.append(get_match(settings, field))
+        except IOError:
+            result = [None] * len(fields)
+
+        return result
+
     @staticmethod
     def has_field(filename, field, num_params=-1, min_params=-1, max_params=-1):
         """
