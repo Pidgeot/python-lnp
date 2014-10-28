@@ -24,8 +24,6 @@ def get_colors(colorscheme=None):
     """
     Returns RGB tuples for all 16 colors in <colorscheme>.txt, or
     data/init/colors.txt if no scheme is provided."""
-    result = []
-
     if colorscheme is not None:
         f = os.path.join(paths.get('colors'), colorscheme+'.txt')
     else:
@@ -42,7 +40,7 @@ def get_colors(colorscheme=None):
 
     int_result = []
     for t in result:
-        int_result.append(map(int, t))
+        int_result.append(tuple(map(int, t)))
     return int_result
 
 def load_colors(filename):
