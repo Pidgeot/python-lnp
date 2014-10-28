@@ -38,8 +38,7 @@ def read_graphics():
     result = []
     for p in packs:
         init_path = os.path.join(graphics_path, p, 'data', 'init', 'init.txt')
-        font = lnp.settings.read_value(init_path, 'FONT')
-        graphics = lnp.settings.read_value(init_path, 'GRAPHICS_FONT')
+        font, graphics = lnp.settings.read_values(init_path, 'FONT', 'GRAPHICS_FONT')
         result.append((p, font, graphics))
     return tuple(result)
 
