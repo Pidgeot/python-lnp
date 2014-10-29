@@ -7,6 +7,13 @@ import sys, os, shutil
 from . import helpers, paths
 from .lnp import lnp
 
+_df_colors = (
+    'BLACK', 'BLUE', 'GREEN', 'CYAN',
+    'RED', 'MAGENTA', 'BROWN', 'LGRAY',
+    'DGRAY', 'LBLUE', 'LGREEN', 'LCYAN',
+    'LRED', 'LMAGENTA', 'YELLOW', 'WHITE'
+)
+
 def read_colors():
     """Returns a list of color schemes."""
     return tuple([
@@ -17,22 +24,24 @@ def get_colors(colorscheme=None):
     """
     Returns RGB tuples for all 16 colors in <colorscheme>.txt, or
     data/init/colors.txt if no scheme is provided."""
-    result = []
-    if lnp.df_info.version <= '0.31.03':
-        f = os.path.join(paths.get('init'), 'init.txt')
-    else:
-        f = os.path.join(paths.get('init'), 'colors.txt')
     if colorscheme is not None:
         f = os.path.join(paths.get('colors'), colorscheme+'.txt')
-    for c in [
-            'BLACK', 'BLUE', 'GREEN', 'CYAN', 'RED', 'MAGENTA', 'BROWN',
-            'LGRAY', 'DGRAY', 'LBLUE', 'LGREEN', 'LCYAN', 'LRED',
-            'LMAGENTA', 'YELLOW', 'WHITE']:
-        result.append((
-            int(lnp.settings.read_value(f, c+'_R')),
-            int(lnp.settings.read_value(f, c+'_G')),
-            int(lnp.settings.read_value(f, c+'_B'))))
-    return result
+    else:
+        if lnp.df_info.version <= '0.31.03':
+            f = os.path.join(paths.get('init'), 'init.txt')
+        else:
+            f = os.path.join(paths.get('init'), 'colors.txt')
+
+    color_fields = []
+    for c in _df_colors:
+        color_fields.append((c+'_R', c+'_G', c+'_B'))
+
+    result = lnp.settings.read_values(f, *color_fields)
+
+    int_result = []
+    for t in result:
+        int_result.append(tuple(map(int, t)))
+    return int_result
 
 def load_colors(filename):
     """
@@ -46,12 +55,8 @@ def load_colors(filename):
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
     if lnp.df_info.version <= '0.31.03':
-        colors = [
-            'BLACK', 'BLUE', 'GREEN', 'CYAN', 'RED', 'MAGENTA', 'BROWN',
-            'LGRAY', 'DGRAY', 'LBLUE', 'LGREEN', 'LCYAN', 'LRED',
-            'LMAGENTA', 'YELLOW', 'WHITE']
-        colors = ([c+'_R' for c in colors] + [c+'_G' for c in colors] +
-                  [c+'_B' for c in colors])
+        colors = ([c+'_R' for c in _df_colors] + [c+'_G' for c in _df_colors] +
+                  [c+'_B' for c in _df_colors])
         lnp.settings.read_file(
             os.path.join(paths.get('colors'), filename), colors, False)
         lnp.settings.write_settings()
@@ -75,12 +80,8 @@ def save_colors(filename):
         print(
             "Exporting colors is only supported for DF 0.31.04 and later",
             file=sys.stderr)
-        colors = [
-            'BLACK', 'BLUE', 'GREEN', 'CYAN', 'RED', 'MAGENTA', 'BROWN',
-            'LGRAY', 'DGRAY', 'LBLUE', 'LGREEN', 'LCYAN', 'LRED',
-            'LMAGENTA', 'YELLOW', 'WHITE']
-        colors = ([c+'_R' for c in colors] + [c+'_G' for c in colors] +
-                  [c+'_B' for c in colors])
+        colors = ([c+'_R' for c in _df_colors] + [c+'_G' for c in _df_colors] +
+                  [c+'_B' for c in _df_colors])
         lnp.settings.create_file(filename, colors)
     else:
         shutil.copyfile(os.path.join(paths.get('init'), 'colors.txt'), filename)
