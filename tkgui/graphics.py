@@ -146,12 +146,17 @@ class GraphicsTab(Tab):
                         'Graphics may not be installed correctly.\n'
                         'See the output log for error details.')
                 elif result:
-                    if messagebox.askyesno(
-                            'Update Savegames?',
-                            'Graphics and settings installed!\n'
-                            'Would you like to update your savegames to '
-                            'properly use the new graphics?'):
-                        self.update_savegames()
+                    if len(graphics.savegames_to_update()) != 0:
+                        if messagebox.askyesno(
+                                'Update Savegames?',
+                                'Graphics and settings installed!\n'
+                                'Would you like to update your savegames to '
+                                'properly use the new graphics?'):
+                            self.update_savegames()
+                    else:
+                        messagebox.showinfo(
+                            'Graphics installed',
+                            'Graphics and settings installed!')
                 else:
                     messagebox.showerror(
                         title='Error occurred',

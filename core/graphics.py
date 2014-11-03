@@ -38,7 +38,8 @@ def read_graphics():
     result = []
     for p in packs:
         init_path = os.path.join(graphics_path, p, 'data', 'init', 'init.txt')
-        font, graphics = lnp.settings.read_values(init_path, 'FONT', 'GRAPHICS_FONT')
+        font, graphics = lnp.settings.read_values(
+            init_path, 'FONT', 'GRAPHICS_FONT')
         result.append((p, font, graphics))
     return tuple(result)
 
@@ -238,6 +239,12 @@ def simplify_pack(pack):
     if os.path.isdir(tmp):
         dir_util.remove_tree(tmp)
     return retval
+
+def savegames_to_update():
+    """Returns a list of savegames that will be updated."""
+    return [
+        o for o in glob.glob(os.path.join(paths.get('save'), '*'))
+        if os.path.isdir(o) and not o.endswith('current')]
 
 def update_savegames():
     """Update save games with current raws."""
