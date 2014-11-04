@@ -43,20 +43,19 @@ def load_colors(filename):
     Params:
         filename
         The name of the new colorscheme to install (filename without
-        extension).
+        extension). If no path specified, file is assumed to be in LNP/Colors.
     """
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
+    if os.path.dirname(filename) == '':
+        filename = os.path.join(paths.get('colors'), filename)
     if lnp.df_info.version <= '0.31.03':
         colors = ([c+'_R' for c in _df_colors] + [c+'_G' for c in _df_colors] +
                   [c+'_B' for c in _df_colors])
-        lnp.settings.read_file(
-            os.path.join(paths.get('colors'), filename), colors, False)
+        lnp.settings.read_file(filename, colors, False)
         lnp.settings.write_settings()
     else:
-        shutil.copyfile(
-            os.path.join(paths.get('colors'), filename),
-            os.path.join(paths.get('init'), 'colors.txt'))
+        shutil.copyfile(filename, os.path.join(paths.get('init'), 'colors.txt'))
 
 def save_colors(filename):
     """
