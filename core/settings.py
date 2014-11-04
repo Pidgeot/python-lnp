@@ -594,7 +594,6 @@ class DFConfiguration(object):
         except IOError:
             return None
 
-
     @staticmethod
     def read_values(filename, *fields):
         """
@@ -605,7 +604,9 @@ class DFConfiguration(object):
             An iterable containing the field names to read.
         """
         def get_match(text, match_field):
-            if isinstance(match_field, str) or isinstance(match_field, basestring):
+            """Reads the field names in <match_field> from <text>."""
+            if isinstance(match_field, str) or isinstance(
+                    match_field, basestring):
                 match = re.search(
                     r'\['+str(match_field)+r':(.+?)\]', text)
                 if match is None:
@@ -613,7 +614,7 @@ class DFConfiguration(object):
                 else:
                     return match.group(1)
             elif isinstance(match_field, (tuple, list)):
-                return map(lambda f: get_match(text, f), match_field)
+                return [get_match(text, f) for f in match_field]
             return None
 
         result = []
@@ -734,6 +735,7 @@ class DFConfiguration(object):
         newfile.close()
 
     def version_has_option(self, option_name):
+        """Returns True if <option_name> exists in the current DF version."""
         if option_name in self.field_names:
             option_name = self.field_names[option_name]
         if option_name in self.missing_fields:
