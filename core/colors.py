@@ -42,8 +42,8 @@ def load_colors(filename):
 
     Params:
         filename
-        The name of the new colorscheme to install (filename without
-        extension). If no path specified, file is assumed to be in LNP/Colors.
+        The name of the new colorscheme to install (extension optional).
+        If no path is specified, file is assumed to be in LNP/Colors.
     """
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
