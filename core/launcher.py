@@ -13,33 +13,44 @@ def toggle_autoclose():
     lnp.userconfig['autoClose'] = not lnp.userconfig.get_bool('autoClose')
     lnp.userconfig.save_data()
 
-def run_df(force=False):
-    """Launches Dwarf Fortress."""
-    result = None
+
+def get_df_executable():
+    base_path = paths.get('df')
+    spawn_terminal = False
     if sys.platform == 'win32':
-        if ('legacy' in lnp.df_info.variations and
-                lnp.df_info.version <= '0.31.14'):
+        if 'legacy' in lnp.df_info.variations and lnp.df_info.version <= '0.31.14':
             df_filename = 'dwarfort.exe'
         else:
             df_filename = 'Dwarf Fortress.exe'
-        result = run_program(
-            os.path.join(paths.get('df'), df_filename), force, True)
     elif sys.platform == 'darwin' and lnp.df_info.version <= '0.28.181.40d':
-        run_program(
-            os.path.join(paths.get('df'), 'Dwarf Fortress.app'), force, True)
+        df_filename = 'Dwarf Fortress.app'
     else:
         # Linux/OSX: Run DFHack if available and enabled
-        if (os.path.isfile(os.path.join(paths.get('df'), 'dfhack')) and
-                hacks.is_dfhack_enabled()):
-            result = run_program(
-                os.path.join(paths.get('df'), 'dfhack'), force, True, True)
-            if result == False:
-                raise Exception('Failed to launch a new terminal.')
+        if os.path.isfile(os.path.join(base_path, 'dfhack')) and hacks.is_dfhack_enabled():
+            df_filename = 'dfhack'
+            spawn_terminal = True
         else:
-            result = run_program(os.path.join(paths.get('df'), 'df'))
+            df_filename = 'df'
+
+    return df_filename, spawn_terminal
+
+
+def run_df(force=False):
+    """Launches Dwarf Fortress."""
+    df_filename, spawn_terminal = get_df_executable()
+    base_path = paths.get('df')
+
+    executable = os.path.join(base_path, df_filename)
+    result = run_program(executable, force, True, spawn_terminal)
+    if (force and not result) or result is False:
+        raise Exception('Failed to run Dwarf Fortress.')
+
+    util_path = paths.get('utilities')
     for prog in lnp.autorun:
-        if os.access(os.path.join(paths.get('utilities'), prog), os.F_OK):
-            run_program(os.path.join(paths.get('utilities'), prog))
+        utilility = os.path.join(util_path, prog)
+        if os.access(utilility, os.F_OK):
+            run_program(utilility)
+
     if lnp.userconfig.get_bool('autoClose'):
         sys.exit()
     return result
