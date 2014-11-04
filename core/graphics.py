@@ -7,7 +7,7 @@ import sys, os, shutil, glob, tempfile
 import distutils.dir_util as dir_util
 from .launcher import open_folder
 from .lnp import lnp
-from . import df, paths
+from . import colors, df, paths
 
 def open_graphics():
     """Opens the graphics pack folder."""
@@ -65,25 +65,36 @@ def install_graphics(pack):
             if os.path.isdir(os.path.join(paths.get('df'), 'raw', 'graphics')):
                 dir_util.remove_tree(
                     os.path.join(paths.get('df'), 'raw', 'graphics'))
+
             # Copy new raws
             dir_util.copy_tree(
                 os.path.join(gfx_dir, 'raw'),
                 os.path.join(paths.get('df'), 'raw'))
+
+            #Copy art
             if os.path.isdir(os.path.join(paths.get('data'), 'art')):
                 dir_util.remove_tree(
                     os.path.join(paths.get('data'), 'art'))
             dir_util.copy_tree(
                 os.path.join(gfx_dir, 'data', 'art'),
                 os.path.join(paths.get('data'), 'art'))
+
             patch_inits(gfx_dir)
-            shutil.copyfile(
-                os.path.join(gfx_dir, 'data', 'init', 'colors.txt'),
-                os.path.join(paths.get('init'), 'colors.txt'))
-            try: # TwbT support
+
+            # Install colorscheme
+            if lnp.df_info.version >= '0.31.04':
+                colors.load_colors(os.path.join(
+                    gfx_dir, 'data', 'init', 'colors.txt'))
+            else:
+                colors.load_colors(os.path.join(
+                    gfx_dir, 'data', 'init', 'init.txt'))
+
+            # TwbT overrides
+            try:
                 os.remove(os.path.join(paths.get('init'), 'overrides.txt'))
             except:
                 pass
-            try: # TwbT support
+            try:
                 shutil.copyfile(
                     os.path.join(gfx_dir, 'data', 'init', 'overrides.txt'),
                     os.path.join(paths.get('init'), 'overrides.txt'))
@@ -103,9 +114,6 @@ def patch_inits(gfx_dir):
     Installs init files from a graphics pack by selectively changing
     specific fields. All settings outside of the mentioned fields are
     preserved.
-
-    TODO: Consider if there's a better option than listing all fields
-    explicitly...
     """
     d_init_fields = [
         'WOUND_COLOR_NONE', 'WOUND_COLOR_MINOR',
@@ -167,12 +175,16 @@ def patch_inits(gfx_dir):
     init_fields = [
         'FONT', 'FULLFONT', 'GRAPHICS', 'GRAPHICS_FONT',
         'GRAPHICS_FULLFONT', 'TRUETYPE']
-    lnp.settings.read_file(
-        os.path.join(gfx_dir, 'data', 'init', 'init.txt'), init_fields,
-        False)
-    lnp.settings.read_file(
-        os.path.join(gfx_dir, 'data', 'init', 'd_init.txt'), d_init_fields,
-        False)
+    init_fields = [f for f in init_fields if lnp.settings.version_has_option(f)]
+    d_init_fields = [
+        f for f in d_init_fields if lnp.settings.version_has_option(f)]
+    init = os.path.join(gfx_dir, 'data', 'init', 'init.txt')
+    if lnp.df_info.version <= '0.31.03':
+        d_init = init
+    else:
+        d_init = os.path.join(gfx_dir, 'data', 'init', 'd_init.txt')
+    lnp.settings.read_file(init, init_fields, False)
+    lnp.settings.read_file(d_init, d_init_fields, False)
     df.save_params()
 
 def simplify_graphics():
