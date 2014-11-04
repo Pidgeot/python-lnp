@@ -37,6 +37,8 @@ def read_graphics():
         os.path.isdir(o)]
     result = []
     for p in packs:
+        if not validate_pack(p):
+            continue
         init_path = os.path.join(graphics_path, p, 'data', 'init', 'init.txt')
         font, graphics = lnp.settings.read_values(
             init_path, 'FONT', 'GRAPHICS_FONT')
@@ -108,6 +110,22 @@ def install_graphics(pack):
     else:
         return None
     df.load_params()
+
+def validate_pack(pack):
+    """Checks for presence of all required files for a pack install."""
+    result = True
+    gfx_dir = os.path.join(paths.get('graphics'), pack)
+    result &= os.path.isdir(gfx_dir)
+    result &= os.path.isdir(os.path.join(gfx_dir, 'raw', 'graphics'))
+    result &= os.path.isdir(os.path.join(gfx_dir, 'data', 'init'))
+    result &= os.path.isdir(os.path.join(gfx_dir, 'data', 'art'))
+    result &= os.path.isfile(os.path.join(gfx_dir, 'data', 'init', 'init.txt'))
+    if lnp.df_info.version >= '0.31.04':
+        result &= os.path.isfile(os.path.join(
+            gfx_dir, 'data', 'init', 'd_init.txt'))
+        result &= os.path.isfile(os.path.join(
+            gfx_dir, 'data', 'init', 'colors.txt'))
+    return result
 
 def patch_inits(gfx_dir):
     """
