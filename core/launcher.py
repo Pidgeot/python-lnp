@@ -76,7 +76,7 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
                 script = 'xdg-terminal'
                 if lnp.bundle == "linux":
                     script = os.path.join(sys._MEIPASS, script)
-                if force or check_program_not_running(path, True):
+                if force or not program_is_running(path, True):
                     retcode = subprocess.call(
                         [os.path.abspath(script), path],
                         cwd=os.path.dirname(path))
@@ -92,7 +92,7 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
             nonchild = True
             run_args = ['open', path]
             workdir = path
-        if force or check_program_not_running(path, nonchild):
+        if force or not program_is_running(path, nonchild):
             lnp.running[path] = subprocess.Popen(run_args, cwd=workdir)
             return True
         lnp.ui.on_program_running(path, is_df)
@@ -101,9 +101,9 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
         sys.excepthook(*sys.exc_info())
         return False
 
-def check_program_not_running(path, nonchild=False):
+def program_is_running(path, nonchild=False):
     """
-    Returns True if a program is not currently running.
+    Returns True if a program is currently running.
 
     Params:
         path
@@ -117,13 +117,13 @@ def check_program_not_running(path, nonchild=False):
         ps = subprocess.Popen('ps axww', shell=True, stdout=subprocess.PIPE)
         s = ps.stdout.read()
         ps.wait()
-        return path not in s
+        return path in s
     else:
         if path not in lnp.running:
-            return True
+            return False
         else:
             lnp.running[path].poll()
-            return lnp.running[path].returncode is not None
+            return lnp.running[path].returncode is None
 
 def open_folder_idx(i):
     """Opens the folder specified by index i, as listed in PyLNP.json."""
