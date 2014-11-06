@@ -4,6 +4,7 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os, subprocess
+import distutils.spawn
 
 from .lnp import lnp
 from . import hacks, paths
@@ -55,6 +56,19 @@ def run_df(force=False):
         sys.exit()
     return result
 
+
+def get_terminal_launcher():
+    if sys.platform == 'darwin':
+        return ['open', '-a', 'Terminal.app']
+    elif sys.platform.startswith('linux'):
+        #prefer distribution provided terminal launchers
+        for script in ['x-terminal-emulator', 'xdg-terminal']:
+            path = distutils.spawn.find_executable(script)
+            if path and os.access(path, os.F_OK):
+                return [path]
+        return [os.path.join(sys._MEIPASS, 'xdg-terminal')]
+    raise Exception('No terminal launcher for platform: ' + sys.platform)
+
 def run_program(path, force=False, is_df=False, spawn_terminal=False):
     """
     Launches an external program.
@@ -80,16 +94,10 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
         workdir = os.path.dirname(path)
         run_args = path
         if spawn_terminal:
-            if sys.platform.startswith('linux'):
-                script = 'xdg-terminal'
-                if lnp.bundle == "linux":
-                    script = os.path.join(sys._MEIPASS, script)
-                retcode = subprocess.call(
-                    [os.path.abspath(script), path],
-                    cwd=os.path.dirname(path))
-                return retcode == 0
-            elif sys.platform == 'darwin':
-                run_args = ['open', '-a', 'Terminal.app', path]
+            term = get_terminal_launcher()
+            term.append(path)
+            retcode = subprocess.call(term, cwd=workdir)
+            return retcode == 0
         elif path.endswith('.jar'):  # Explicitly launch JAR files with Java
             run_args = ['java', '-jar', os.path.basename(path)]
         elif path.endswith('.app'):  # OS X application bundle
