@@ -115,7 +115,7 @@ def program_is_running(path, nonchild=False):
             DFHack on Linux and OS X; currently unsupported for Windows.
     """
     if nonchild:
-        ps = subprocess.Popen('ps axww', shell=True, stdout=subprocess.PIPE)
+        ps = subprocess.Popen(['ps', 'axww'], stdout=subprocess.PIPE)
         s = ps.stdout.read()
         ps.wait()
         return path in s
