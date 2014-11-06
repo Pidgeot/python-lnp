@@ -66,37 +66,38 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
             Whether or not to spawn a new terminal for this app.
             Used only for DFHack.
     """
+    path = os.path.abspath(path)
+    check_nonchild = (spawn_terminal and sys.platform.startswith('linux')) \
+                     or sys.platform == 'darwin' \
+                     or path.endswith('.app')
+
+    is_running = program_is_running(path, check_nonchild)
+    if not force and is_running:
+        lnp.ui.on_program_running(path, is_df)
+        return None
+
     try:
-        path = os.path.abspath(path)
         workdir = os.path.dirname(path)
         run_args = path
-        nonchild = False
         if spawn_terminal:
             if sys.platform.startswith('linux'):
                 script = 'xdg-terminal'
                 if lnp.bundle == "linux":
                     script = os.path.join(sys._MEIPASS, script)
-                if force or not program_is_running(path, True):
-                    retcode = subprocess.call(
-                        [os.path.abspath(script), path],
-                        cwd=os.path.dirname(path))
-                    return retcode == 0
-                lnp.ui.on_program_running(path, is_df)
-                return None
+                retcode = subprocess.call(
+                    [os.path.abspath(script), path],
+                    cwd=os.path.dirname(path))
+                return retcode == 0
             elif sys.platform == 'darwin':
-                nonchild = True
                 run_args = ['open', '-a', 'Terminal.app', path]
         elif path.endswith('.jar'):  # Explicitly launch JAR files with Java
             run_args = ['java', '-jar', os.path.basename(path)]
         elif path.endswith('.app'):  # OS X application bundle
-            nonchild = True
             run_args = ['open', path]
             workdir = path
-        if force or not program_is_running(path, nonchild):
-            lnp.running[path] = subprocess.Popen(run_args, cwd=workdir)
-            return True
-        lnp.ui.on_program_running(path, is_df)
-        return None
+
+        lnp.running[path] = subprocess.Popen(run_args, cwd=workdir)
+        return True
     except OSError:
         sys.excepthook(*sys.exc_info())
         return False
