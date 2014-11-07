@@ -14,12 +14,13 @@ def toggle_autoclose():
     lnp.userconfig['autoClose'] = not lnp.userconfig.get_bool('autoClose')
     lnp.userconfig.save_data()
 
-
 def get_df_executable():
+    """Returns the path of the executable needed to launch Dwarf Fortress."""
     base_path = paths.get('df')
     spawn_terminal = False
     if sys.platform == 'win32':
-        if 'legacy' in lnp.df_info.variations and lnp.df_info.version <= '0.31.14':
+        if ('legacy' in lnp.df_info.variations and
+                lnp.df_info.version <= '0.31.14'):
             df_filename = 'dwarfort.exe'
         else:
             df_filename = 'Dwarf Fortress.exe'
@@ -27,14 +28,14 @@ def get_df_executable():
         df_filename = 'Dwarf Fortress.app'
     else:
         # Linux/OSX: Run DFHack if available and enabled
-        if os.path.isfile(os.path.join(base_path, 'dfhack')) and hacks.is_dfhack_enabled():
+        if (os.path.isfile(os.path.join(base_path, 'dfhack')) and
+                hacks.is_dfhack_enabled()):
             df_filename = 'dfhack'
             spawn_terminal = True
         else:
             df_filename = 'df'
 
     return df_filename, spawn_terminal
-
 
 def run_df(force=False):
     """Launches Dwarf Fortress."""
@@ -56,8 +57,8 @@ def run_df(force=False):
         sys.exit()
     return result
 
-
 def get_terminal_launcher():
+    """Returns a command prefix to launch a program in a new terminal."""
     if sys.platform == 'darwin':
         return ['open', '-a', 'Terminal.app']
     elif sys.platform.startswith('linux'):
@@ -67,6 +68,7 @@ def get_terminal_launcher():
         if distutils.spawn.find_executable('xdg-terminal'):
             return ['xdg-terminal']
         if lnp.bundle == "linux":
+            # pylint: disable=protected-access
             return [os.path.join(sys._MEIPASS, 'xdg-terminal')]
         return ['xdg-terminal']
     raise Exception('No terminal launcher for platform: ' + sys.platform)
@@ -83,8 +85,9 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
             Used only for DFHack.
     """
     path = os.path.abspath(path)
-    check_nonchild = (spawn_terminal and sys.platform.startswith('linux')) \
-        or (sys.platform == 'darwin' and (path.endswith('.app') or spawn_terminal))
+    check_nonchild = ((spawn_terminal and sys.platform.startswith('linux')) or
+                      (sys.platform == 'darwin' and (
+                          path.endswith('.app') or spawn_terminal)))
 
     is_running = program_is_running(path, check_nonchild)
     if not force and is_running:
@@ -161,8 +164,9 @@ def open_folder(path):
         path
             The folder path to open.
     """
-# http://stackoverflow.com/q/6631299
+    # http://stackoverflow.com/q/6631299
     path = os.path.normpath(path)
+    # pylint: disable=broad-except, bare-except
     try:
         if sys.platform == 'darwin':
             subprocess.check_call(['open', '--', path])
@@ -170,5 +174,5 @@ def open_folder(path):
             subprocess.check_call(['xdg-open', path])
         elif sys.platform in ['windows', 'win32']:
             subprocess.check_call(['explorer', path])
-    except Exception:
+    except:
         pass
