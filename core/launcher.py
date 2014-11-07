@@ -48,9 +48,9 @@ def run_df(force=False):
 
     util_path = paths.get('utilities')
     for prog in lnp.autorun:
-        utilility = os.path.join(util_path, prog)
-        if os.access(utilility, os.F_OK):
-            run_program(utilility)
+        utility = os.path.join(util_path, prog)
+        if os.access(utility, os.F_OK):
+            run_program(utility)
 
     if lnp.userconfig.get_bool('autoClose'):
         sys.exit()
@@ -61,12 +61,14 @@ def get_terminal_launcher():
     if sys.platform == 'darwin':
         return ['open', '-a', 'Terminal.app']
     elif sys.platform.startswith('linux'):
-        #prefer distribution provided terminal launchers
-        for script in ['x-terminal-emulator', 'xdg-terminal']:
-            path = distutils.spawn.find_executable(script)
-            if path and os.access(path, os.F_OK):
-                return [path]
-        return [os.path.join(sys._MEIPASS, 'xdg-terminal')]
+        # prefer distribution provided terminal launchers
+        if distutils.spawn.find_executable('x-terminal-emulator'):
+            return ['x-terminal-emulator', '-e']
+        if distutils.spawn.find_executable('xdg-terminal'):
+            return ['xdg-terminal']
+        if lnp.bundle == "linux":
+            return [os.path.join(sys._MEIPASS, 'xdg-terminal')]
+        return ['xdg-terminal']
     raise Exception('No terminal launcher for platform: ' + sys.platform)
 
 def run_program(path, force=False, is_df=False, spawn_terminal=False):
@@ -82,8 +84,7 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
     """
     path = os.path.abspath(path)
     check_nonchild = (spawn_terminal and sys.platform.startswith('linux')) \
-                     or sys.platform == 'darwin' \
-                     or path.endswith('.app')
+        or (sys.platform == 'darwin' and (path.endswith('.app') or spawn_terminal))
 
     is_running = program_is_running(path, check_nonchild)
     if not force and is_running:
@@ -93,10 +94,9 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
     try:
         workdir = os.path.dirname(path)
         run_args = path
-        if spawn_terminal:
+        if spawn_terminal and not sys.platform.startswith('win'):
             term = get_terminal_launcher()
-            term.append(path)
-            retcode = subprocess.call(term, cwd=workdir)
+            retcode = subprocess.call(term + [path], cwd=workdir)
             return retcode == 0
         elif path.endswith('.jar'):  # Explicitly launch JAR files with Java
             run_args = ['java', '-jar', os.path.basename(path)]
