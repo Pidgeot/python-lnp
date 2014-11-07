@@ -6,6 +6,9 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys, os, re
 from io import open
 
+if sys.version_info[0] == 3:
+    basestring = str
+
 # Markers to read certain settings correctly
 
 class _DisableValues(object):
