@@ -18,6 +18,7 @@ from .advanced import AdvancedTab
 from .dfhack import DFHackTab
 
 from core.lnp import lnp
+from core.utilities import get_lnp_file
 from core import df, launcher, paths, update
 
 if sys.version_info[0] == 3:  # Alternate import names
@@ -120,11 +121,11 @@ class TkGui(object):
         if windowing == "win32":
             root.tk.call(
                 'wm', 'iconbitmap', root, "-default",
-                self.get_image_path('LNP.ico'))
+                get_lnp_file('LNP.ico'))
         elif windowing == "x11":
             root.tk.call(
                 'wm', 'iconphoto', root, "-default",
-                get_image(self.get_image_path('LNP')))
+                get_image(get_lnp_file('LNP')))
         elif windowing == "aqua":  # OS X has no window icons
             pass
 
@@ -132,7 +133,7 @@ class TkGui(object):
         self.vcmd = (root.register(validate_number), '%P')
 
         main = Frame(root)
-        self.logo = logo = get_image(self.get_image_path('LNPSMALL'))
+        self.logo = logo = get_image(get_lnp_file('LNPSMALL'))
         Label(root, image=logo, anchor=CENTER).pack(fill=X)
         main.pack(side=TOP, fill=BOTH, expand=Y)
         self.n = n = Notebook(main)
@@ -234,24 +235,6 @@ class TkGui(object):
                 return False
             self.root.deiconify()
         return True
-
-    @staticmethod
-    def get_image_path(filename):
-        """
-        Returns <filename> with its expected path. If running in a bundle,
-        this will point to the place internal resources are located; if running
-        the script directly, no modification takes place.
-        """
-        if lnp.bundle == 'osx':
-            # Image is inside application bundle on OS X
-            return os.path.join(
-                os.path.dirname(sys.executable), filename)
-        elif lnp.bundle in ['win', 'linux']:
-            # Image is inside executable on Linux and Windows
-            # pylint: disable=protected-access, no-member, maybe-no-member
-            return os.path.join(sys._MEIPASS, filename)
-        else:
-            return filename
 
     def create_menu(self, root):
         """

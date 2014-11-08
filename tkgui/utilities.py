@@ -39,7 +39,7 @@ class UtilitiesTab(Tab):
             self.run_selected_utilities).grid(column=0, row=0, sticky="nsew")
         controls.create_trigger_button(
             progs, 'Open Utilities Folder', 'Open the utilities folder',
-            utilities.open_utils).grid(column=1, row=0, sticky="nsew")
+            launcher.open_utils).grid(column=1, row=0, sticky="nsew")
         Label(
             progs, text='Double-click on a program to launch it.').grid(
                 column=0, row=1, columnspan=2)

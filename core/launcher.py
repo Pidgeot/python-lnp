@@ -5,6 +5,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os, subprocess
 import distutils.spawn
+from .utilities import get_lnp_file
 
 from .lnp import lnp
 from . import hacks, paths
@@ -67,10 +68,7 @@ def get_terminal_launcher():
             return ['x-terminal-emulator', '-e']
         if distutils.spawn.find_executable('xdg-terminal'):
             return ['xdg-terminal']
-        if lnp.bundle == "linux":
-            # pylint: disable=protected-access
-            return [os.path.join(sys._MEIPASS, 'xdg-terminal')]
-        return ['xdg-terminal']
+        return get_lnp_file('xdg-terminal')
     raise Exception('No terminal launcher for platform: ' + sys.platform)
 
 def run_program(path, force=False, is_df=False, spawn_terminal=False):
@@ -155,6 +153,12 @@ def open_url(url):
     """Launches a web browser to the Dwarf Fortress webpage."""
     import webbrowser
     webbrowser.open(url)
+
+
+def open_utils():
+    """Opens the utilities folder."""
+    open_folder(paths.get('utilities'))
+
 
 def open_folder(path):
     """

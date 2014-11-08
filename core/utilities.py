@@ -7,11 +7,6 @@ import sys, os, re, fnmatch
 from io import open
 from . import paths
 from .lnp import lnp
-from .launcher import open_folder
-
-def open_utils():
-    """Opens the utilities folder."""
-    open_folder(paths.get('utilities'))
 
 metadata = {}
 
@@ -140,3 +135,21 @@ def save_autorun():
     autofile.write("\n".join(lnp.autorun))
     autofile.close()
 
+
+def get_lnp_file(filename):
+    """
+    If running in a bundle, this will point to the place internal
+    resources are located; if running the script directly,
+    no modification takes place.
+    :param str filename:
+    :return str: Path for bundled filename
+    """
+    if lnp.bundle == 'osx':
+        # file is inside application bundle on OS X
+        return os.path.join(os.path.dirname(sys.executable), filename)
+    elif lnp.bundle in ['win', 'linux']:
+        # file is inside executable on Linux and Windows
+        # pylint: disable=protected-access, no-member, maybe-no-member
+        return os.path.join(sys._MEIPASS, filename)
+    else:
+        return filename
