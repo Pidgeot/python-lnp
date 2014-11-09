@@ -5,7 +5,6 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 from . import controls
-from core.utilities import open_utils
 from .tab import Tab
 import sys, os
 
@@ -40,7 +39,7 @@ class UtilitiesTab(Tab):
             self.run_selected_utilities).grid(column=0, row=0, sticky="nsew")
         controls.create_trigger_button(
             progs, 'Open Utilities Folder', 'Open the utilities folder',
-            open_utils).grid(column=1, row=0, sticky="nsew")
+            utilities.open_utils).grid(column=1, row=0, sticky="nsew")
         Label(
             progs, text='Double-click on a program to launch it.').grid(
                 column=0, row=1, columnspan=2)

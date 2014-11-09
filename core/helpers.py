@@ -6,8 +6,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 import os, glob
 from io import open
 import sys
-from core.lnp import lnp
-
+from .lnp import lnp
 
 def identify_folder_name(base, name):
     """
@@ -76,7 +75,6 @@ def detect_installed_files(current_file, test_files):
     except IOError:
         pass
     return installed
-
 
 def get_resource(filename):
     """

@@ -8,10 +8,9 @@ import os
 import subprocess
 import distutils.spawn
 
-from core.helpers import get_resource
+from .helpers import get_resource
 from .lnp import lnp
 from . import hacks, paths
-
 
 def toggle_autoclose():
     """Toggle automatic closing of the UI when launching DF."""
@@ -156,7 +155,6 @@ def open_url(url):
     """Launches a web browser to the Dwarf Fortress webpage."""
     import webbrowser
     webbrowser.open(url)
-
 
 def open_folder(path):
     """
