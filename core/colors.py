@@ -28,13 +28,16 @@ def get_colors(colorscheme=None):
     # pylint:disable=bare-except
     try:
         if colorscheme is not None:
-            f = os.path.join(paths.get('colors'), colorscheme+'.txt')
+            f = colorscheme
+            if not f.endswith('.txt'):
+                f = f + '.txt'
+            if os.path.dirname(f) == '':
+                f = os.path.join(paths.get('colors'), f)
         else:
             if lnp.df_info.version <= '0.31.03':
                 f = os.path.join(paths.get('init'), 'init.txt')
             else:
                 f = os.path.join(paths.get('init'), 'colors.txt')
-
         color_fields = [(c+'_R', c+'_G', c+'_B') for c in _df_colors]
         result = lnp.settings.read_values(f, *color_fields)
         return [tuple(map(int, t)) for t in result]

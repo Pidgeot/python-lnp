@@ -7,9 +7,9 @@ from __future__ import print_function, unicode_literals, absolute_import
 from . import controls, binding
 from .layout import GridLayouter
 from .tab import Tab
-import sys
+import sys, os
 
-from core import colors, graphics
+from core import colors, graphics, paths
 from core.lnp import lnp
 
 if sys.version_info[0] == 3:  # Alternate import names
@@ -50,6 +50,10 @@ class GraphicsTab(Tab):
         grid.add(listframe, 2, pady=4)
         _, graphicpacks = controls.create_file_list(
             listframe, None, self.graphics, height=8)
+        self.graphicpacks = graphicpacks
+        graphicpacks.bind(
+            '<<ListboxSelect>>',
+            lambda e: self.select_graphics(graphicpacks))
 
         grid.add(controls.create_trigger_button(
             change_graphics, 'Install Graphics',
@@ -114,7 +118,7 @@ class GraphicsTab(Tab):
         self.color_files = color_files
         color_files.bind(
             '<<ListboxSelect>>',
-            lambda e: self.paint_color_preview(color_files))
+            lambda e: self.select_colors(color_files))
 
         self.color_preview = Canvas(
             colorframe, width=128, height=32, highlightthickness=0,
@@ -124,6 +128,7 @@ class GraphicsTab(Tab):
     def read_graphics(self):
         """Reads list of graphics packs."""
         self.graphics.set(tuple([p[0] for p in graphics.read_graphics()]))
+        self.select_graphics(self.graphicpacks)
 
     def install_graphics(self, listbox):
         """
@@ -209,7 +214,7 @@ class GraphicsTab(Tab):
             else:
                 self.color_files.itemconfig(i, fg='black')
 
-        self.paint_color_preview(self.color_files)
+        self.select_colors(self.color_files)
 
     def load_colors(self, listbox):
         """
@@ -250,18 +255,35 @@ class GraphicsTab(Tab):
                 colors.delete_colors(filename)
             self.read_colors()
 
-    def paint_color_preview(self, listbox):
-        """
-        Draws a preview of the selected color scheme. If no scheme is selected,
-        draws the currently installed color scheme.
+    def select_graphics(self, listbox):
+        """Event handler for selecting a graphics pack."""
+        colorscheme = None
+        if len(listbox.curselection()) != 0:
+            pack = listbox.get(listbox.curselection()[0])
+            if lnp.df_info.version >= '0.31.04':
+                colorscheme = os.path.join(
+                    paths.get('graphics'), pack, 'data', 'init', 'colors.txt')
+            else:
+                colorscheme = os.path.join(
+                    paths.get('graphics'), pack, 'data', 'init', 'init.txt')
+        self.paint_color_preview(colorscheme)
 
-        Params:
-            listbox
-                Listbox containing the list of color schemes.
-        """
+    def select_colors(self, listbox):
+        """Event handler for selecting a colorscheme."""
         colorscheme = None
         if len(listbox.curselection()) != 0:
             colorscheme = listbox.get(listbox.curselection()[0])
+        self.paint_color_preview(colorscheme)
+
+    def paint_color_preview(self, colorscheme):
+        """
+        Draws a preview of a color scheme. If no scheme is specified,
+        draws the currently installed color scheme.
+
+        Params:
+            colorscheme
+                Listbox containing the list of color schemes.
+        """
         colorlist = colors.get_colors(colorscheme)
         self.color_preview.delete(ALL)
 
