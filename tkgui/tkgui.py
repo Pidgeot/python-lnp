@@ -10,6 +10,7 @@ import sys
 from . import controls, binding
 from .child_windows import LogWindow, InitEditor, SelectDF, UpdateWindow
 from .child_windows import ConfirmRun
+from core.helpers import get_resource
 
 from .options import OptionsTab
 from .graphics import GraphicsTab
@@ -18,7 +19,6 @@ from .advanced import AdvancedTab
 from .dfhack import DFHackTab
 
 from core.lnp import lnp
-from core.utilities import get_lnp_file
 from core import df, launcher, paths, update
 
 if sys.version_info[0] == 3:  # Alternate import names
@@ -121,11 +121,11 @@ class TkGui(object):
         if windowing == "win32":
             root.tk.call(
                 'wm', 'iconbitmap', root, "-default",
-                get_lnp_file('LNP.ico'))
+                get_resource('LNP.ico'))
         elif windowing == "x11":
             root.tk.call(
                 'wm', 'iconphoto', root, "-default",
-                get_image(get_lnp_file('LNP')))
+                get_image(get_resource('LNP')))
         elif windowing == "aqua":  # OS X has no window icons
             pass
 
@@ -133,7 +133,7 @@ class TkGui(object):
         self.vcmd = (root.register(validate_number), '%P')
 
         main = Frame(root)
-        self.logo = logo = get_image(get_lnp_file('LNPSMALL'))
+        self.logo = logo = get_image(get_resource('LNPSMALL'))
         Label(root, image=logo, anchor=CENTER).pack(fill=X)
         main.pack(side=TOP, fill=BOTH, expand=Y)
         self.n = n = Notebook(main)

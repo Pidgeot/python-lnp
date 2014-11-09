@@ -5,6 +5,9 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import os, glob
 from io import open
+import sys
+from core.lnp import lnp
+
 
 def identify_folder_name(base, name):
     """
@@ -74,3 +77,21 @@ def detect_installed_files(current_file, test_files):
         pass
     return installed
 
+
+def get_resource(filename):
+    """
+    If running in a bundle, this will point to the place internal
+    resources are located; if running the script directly,
+    no modification takes place.
+    :param str filename:
+    :return str: Path for bundled filename
+    """
+    if lnp.bundle == 'osx':
+        # file is inside application bundle on OS X
+        return os.path.join(os.path.dirname(sys.executable), filename)
+    elif lnp.bundle in ['win', 'linux']:
+        # file is inside executable on Linux and Windows
+        # pylint: disable=protected-access, no-member, maybe-no-member
+        return os.path.join(sys._MEIPASS, filename)
+    else:
+        return filename

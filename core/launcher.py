@@ -5,7 +5,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os, subprocess
 import distutils.spawn
-from .utilities import get_lnp_file
+from core.helpers import get_resource
 
 from .lnp import lnp
 from . import hacks, paths
@@ -68,7 +68,7 @@ def get_terminal_launcher():
             return ['x-terminal-emulator', '-e']
         if distutils.spawn.find_executable('xdg-terminal'):
             return ['xdg-terminal']
-        return [get_lnp_file('xdg-terminal')]
+        return [get_resource('xdg-terminal')]
     raise Exception('No terminal launcher for platform: ' + sys.platform)
 
 def run_program(path, force=False, is_df=False, spawn_terminal=False):
