@@ -9,9 +9,14 @@ import re
 import fnmatch
 from io import open
 
-from . import paths
+from core import paths
+from core.launcher import open_folder
 from .lnp import lnp
 
+
+def open_utils():
+    """Opens the utilities folder."""
+    open_folder(paths.get('utilities'))
 
 metadata = {}
 
