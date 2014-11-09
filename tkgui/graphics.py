@@ -169,6 +169,7 @@ class GraphicsTab(Tab):
                         'Folder does not exist or does not have required files '
                         'or folders:\n'+str(gfx_dir))
             binding.update()
+            self.read_colors()
 
     @staticmethod
     def update_savegames():
