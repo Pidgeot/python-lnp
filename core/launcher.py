@@ -68,7 +68,7 @@ def get_terminal_launcher():
             return ['x-terminal-emulator', '-e']
         if distutils.spawn.find_executable('xdg-terminal'):
             return ['xdg-terminal']
-        return get_lnp_file('xdg-terminal')
+        return [get_lnp_file('xdg-terminal')]
     raise Exception('No terminal launcher for platform: ' + sys.platform)
 
 def run_program(path, force=False, is_df=False, spawn_terminal=False):
