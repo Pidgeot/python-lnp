@@ -6,7 +6,6 @@ from __future__ import print_function, unicode_literals, absolute_import
 import os, glob
 from io import open
 import sys
-from .lnp import lnp
 
 def identify_folder_name(base, name):
     """
@@ -84,6 +83,7 @@ def get_resource(filename):
     :param str filename:
     :return str: Path for bundled filename
     """
+    from .lnp import lnp
     if lnp.bundle == 'osx':
         # file is inside application bundle on OS X
         return os.path.join(os.path.dirname(sys.executable), filename)
