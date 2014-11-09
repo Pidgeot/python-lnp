@@ -263,11 +263,15 @@ class GraphicsTab(Tab):
         if len(listbox.curselection()) != 0:
             colorscheme = listbox.get(listbox.curselection()[0])
         colorlist = colors.get_colors(colorscheme)
-
         self.color_preview.delete(ALL)
-        for i, c in enumerate(colorlist):
-            row = i // 8
-            col = i % 8
-            self.color_preview.create_rectangle(
-                col*16, row*16, (col+1)*16, (row+1)*16,
-                fill="#%02x%02x%02x" % c, width=0)
+
+        if not colorlist:
+            self.color_preview.create_text(
+                0, 0, text="Error reading colorscheme", anchor=NW)
+        else:
+            for i, c in enumerate(colorlist):
+                row = i // 8
+                col = i % 8
+                self.color_preview.create_rectangle(
+                    col*16, row*16, (col+1)*16, (row+1)*16,
+                    fill="#%02x%02x%02x" % c, width=0)
