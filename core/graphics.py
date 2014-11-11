@@ -104,12 +104,13 @@ def install_graphics(pack):
                 pass
         except Exception:
             sys.excepthook(*sys.exc_info())
-            return False
+            result = False
         else:
-            return True
+            result = True
+        df.load_params()
+        return result
     else:
         return None
-    df.load_params()
 
 def validate_pack(pack):
     """Checks for presence of all required files for a pack install."""
