@@ -102,6 +102,8 @@ def install_graphics(pack):
                     os.path.join(paths.get('init'), 'overrides.txt'))
             except:
                 pass
+            df.load_params()
+            
         except Exception:
             sys.excepthook(*sys.exc_info())
             return False
@@ -109,7 +111,6 @@ def install_graphics(pack):
             return True
     else:
         return None
-    df.load_params()
 
 def validate_pack(pack):
     """Checks for presence of all required files for a pack install."""
