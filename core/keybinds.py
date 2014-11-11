@@ -49,7 +49,6 @@ def save_keybinds(filename):
         filename = filename + '.txt'
     filename = os.path.join(paths.get('keybinds'), filename)
     shutil.copyfile(os.path.join(paths.get('init'), 'interface.txt'), filename)
-    read_keybinds()
 
 def delete_keybinds(filename):
     """

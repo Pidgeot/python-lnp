@@ -85,7 +85,6 @@ def save_colors(filename):
         lnp.settings.create_file(filename, colors)
     else:
         shutil.copyfile(os.path.join(paths.get('init'), 'colors.txt'), filename)
-    read_colors()
 
 def color_exists(filename):
     """
