@@ -38,7 +38,10 @@ class CaptureStream(object):
                 The string to write.
         """
         self.lines.append(string)
-        self.outfile.write(string)
+        if sys.version_info[0] == 2:
+            self.outfile.write(unicode(string))
+        else:
+            self.outfile.write(string)
         if self.tee:
             return self.stream.write(string)
 
