@@ -192,7 +192,7 @@ def patch_inits(gfx_dir):
         'TREE_TRUNK_INTERIOR', 'TREE_TRUNK_INTERIOR_DEAD']
     init_fields = [
         'FONT', 'FULLFONT', 'GRAPHICS', 'GRAPHICS_FONT',
-        'GRAPHICS_FULLFONT', 'TRUETYPE']
+        'GRAPHICS_FULLFONT', 'TRUETYPE', 'PRINT_MODE']
     init_fields = [f for f in init_fields if lnp.settings.version_has_option(f)]
     d_init_fields = [
         f for f in d_init_fields if lnp.settings.version_has_option(f)]
