@@ -106,9 +106,11 @@ def install_graphics(pack):
             
         except Exception:
             sys.excepthook(*sys.exc_info())
-            return False
+            result = False
         else:
-            return True
+            result = True
+        df.load_params()
+        return result
     else:
         return None
 
