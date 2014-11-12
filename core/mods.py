@@ -6,8 +6,23 @@ from . import raws
 
 paths.register('mods', 'LNP', 'mods')
 
-def simplify_mod_and_df_folders_to_defined_format():
-    raws.simplify_mods()
+def read_mods():
+    """Returns a list of mod packs"""
+    # should go in tkgui/mods.py later
+    return [os.path.basename(o) for o in
+            glob.glob(os.path.join(paths.get('mods'), '*'))
+            if os.path.isdir(o) and not os.path.basename(o)=='temp']
+
+def simplify_mods():
+    """Removes unnecessary files from all mods."""
+    for pack in read_mods():
+        simplify_pack(pack, 'mods')
+
+def simplify_pack(pack):
+    """Removes unnecessary files from one mod."""
+    raws.simplify_pack(pack, 'mods')
+    raws.remove_vanilla_raws_from_pack(pack, 'mods')
+    raws.remove_empty_dirs(pack, 'mods')
 
 def do_merge_seq (mod_text, vanilla_text, gen_text):
     """Merges sequences of lines.  Returns empty string if a line changed by the mod
@@ -171,13 +186,6 @@ def clear_temp():
               'w') as log:
         log.write('# List of mods merged by PyLNP mod loader\n' + 
                   os.path.dirname(vanilla_raw_folder)[:-4] + '\n')
-
-def read_mods():
-    """Returns a list of mod packs"""
-    # should go in tkgui/mods.py later
-    return [os.path.basename(o) for o in
-            glob.glob(os.path.join(paths.get('mods'), '*'))
-            if os.path.isdir(o) and not os.path.basename(o)=='temp']
 
 def init_paths(lnpdir):
     global mods_folder, mods_folders_list, vanilla_folder, vanilla_raw_folder, installed_raw_folder

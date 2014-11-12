@@ -8,71 +8,7 @@ import distutils.dir_util as dir_util
 
 from . import paths
 
-def read_graphics():
-    """Returns a list of graphics directories."""
-    graphics_path = paths.get('graphics')
-    packs = [
-        os.path.basename(o) for o in
-        glob.glob(os.path.join(graphics_path, '*')) if
-        os.path.isdir(o)]
-    result = []
-    for p in packs:
-        if not validate_pack(p):
-            continue
-        init_path = os.path.join(graphics_path, p, 'data', 'init', 'init.txt')
-        font, graphics = lnp.settings.read_values(
-            init_path, 'FONT', 'GRAPHICS_FONT')
-        result.append((p, font, graphics))
-    return tuple(result)
-
-def read_mods():
-    """Returns a list of mod packs"""
-    # should go in tkgui/mods.py later
-    return [os.path.basename(o) for o in
-            glob.glob(os.path.join(paths.get('mods'), '*'))
-            if os.path.isdir(o)]
-
 paths.register('baselines', 'LNP', 'baselines')
-
-def rebuild_pack(pack, folder='graphics'):
-    """Takes a reduced graphics pack, and rebuilds it using vanilla raws in a tempdir.
-    The tmpdir MUST be removed by the calling function after use.
-    (TODO:  pass a filelike object instead?)
-    
-    Params:
-        pack
-            The pack to simplify.
-        folder
-            The parent folder of the pack (either 'mods' or 'graphics')
-
-    Returns:
-        The full path to a tmpdir containingthe rebuild graphics pack.
-    """
-    if not (folder=='graphics' or folder=='mods'):
-        return False
-    pack = os.path.join(paths.get(folder), pack)
-    tmp = tempfile.mkdtemp()
-    dir_util.copy_tree(find_vanilla_raws(), tmp)
-    dir_util.copy_tree(pack, tmp)
-    return tmp
-
-def simplify_graphics():
-    """Removes unnecessary files from all graphics packs."""
-    for pack in read_graphics():
-        simplify_graphics_pack()
-
-def simplify_graphics_pack(pack):
-    """Removes unnecessary files from one graphics pack."""
-    simplify_pack(pack, 'graphics')
-    remove_vanilla_raws_from_pack(pack, 'graphics')
-    remove_empty_dirs(pack, 'graphics')
-
-def simplify_mods():
-    """Removes unnecessary files from all mod packs."""
-    for pack in read_mods():
-        simplify_pack(pack, 'mods')
-        remove_vanilla_raws_from_pack(pack, 'mods')
-        remove_empty_dirs(pack, 'mods')
 
 def find_vanilla_raws(version=''):
     # override for testing:

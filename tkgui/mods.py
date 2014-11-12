@@ -9,6 +9,7 @@ from .tab import Tab
 import sys, os, shutil
 
 from core import mods
+from core import raws
 from core import paths
 
 if sys.version_info[0] == 3:  # Alternate import names
@@ -30,7 +31,7 @@ class ModsTab(Tab):
 
     def read_data(self):
         mods.init_paths(paths.get('lnp'))
-        available = mods.mod_folders_list
+        available = mods.read_mods()
         installed = mods.get_installed_mods_from_log()
         available = [m for m in available if m not in installed]
         self.available.set(tuple(available))
@@ -74,7 +75,7 @@ class ModsTab(Tab):
         f = controls.create_control_group(self, None, True)
         controls.create_trigger_button(
             f, 'Simplify Mods', 'Simplify Mods',
-            mods.simplify_mod_and_df_folders_to_defined_format).grid(
+            mods.simplify_mods()).grid(
                 row=0, column=0, sticky="nsew")
         controls.create_trigger_button(
             f, 'Install Mods', 'Copy "installed" mods to DF folder.  '

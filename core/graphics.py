@@ -58,7 +58,10 @@ def install_graphics(pack):
         False if an exception occured
         None if required files are missing (raw/graphics, data/init)
     """
-    gfx_dir = raws.rebuild_pack(pack, 'graphics')
+    gfx_dir = tempfile.mkdtemp()
+    dir_util.copy_tree(raws.find_vanilla_raws(), tmp)
+    dir_util.copy_tree(os.path.join(paths.get('graphics'), pack), tmp)
+
     if (os.path.isdir(gfx_dir) and
             os.path.isdir(os.path.join(gfx_dir, 'raw', 'graphics')) and
             os.path.isdir(os.path.join(gfx_dir, 'data', 'init'))):
@@ -215,11 +218,14 @@ def patch_inits(gfx_dir):
 
 def simplify_graphics():
     """Removes unnecessary files from all graphics packs."""
-    raws.simplify_graphics()
+    for pack in read_graphics():
+        simplify_pack(pack)
 
 def simplify_pack(pack):
     """Removes unnecessary files from one graphics pack."""
-    raws.simplify_graphics_pack(pack)
+    raws.simplify_pack(pack, 'graphics')
+    raws.remove_vanilla_raws_from_pack(pack, 'graphics')
+    raws.remove_empty_dirs(pack, 'graphics')
 
 def savegames_to_update():
     """Returns a list of savegames that will be updated."""
