@@ -6,7 +6,7 @@ import io
 import re
 
 
-class DFRaw:
+class DFRaw(object):
     _option_disable = ("[{0}]", "!{0}!")
     _option_enable = tuple(reversed(_option_disable))
 
