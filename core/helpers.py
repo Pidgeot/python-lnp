@@ -5,7 +5,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import os, glob
 import sys
-from .dfraw import Raw
+from .dfraw import DFRaw
 
 
 def identify_folder_name(base, name):
@@ -46,9 +46,9 @@ def detect_installed_file(current_file, test_files):
     """Returns the file in <test_files> which is contained in
     <current_file>, or "Unknown"."""
     try:
-        current = Raw.read(current_file)
+        current = DFRaw.read(current_file)
         for f in test_files:
-            tested = Raw.read(f)
+            tested = DFRaw.read(f)
             if tested[-1] == '\n':
                 tested = tested[:-1]
             if tested in current:
@@ -62,10 +62,10 @@ def detect_installed_files(current_file, test_files):
     <current_file>."""
     installed = []
     try:
-        current = Raw.read(current_file)
+        current = DFRaw.read(current_file)
         for f in test_files:
             try:
-                tested = Raw.read(f)
+                tested = DFRaw.read(f)
                 if tested[-1] == '\n':
                     tested = tested[:-1]
                 if tested in current:

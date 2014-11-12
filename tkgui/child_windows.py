@@ -8,7 +8,7 @@ import sys, os
 from . import controls
 
 from core import errorlog, launcher, paths, update
-from core.dfraw import Raw
+from core.dfraw import DFRaw
 from core.lnp import lnp
 
 if sys.version_info[0] == 3:  # Alternate import names
@@ -139,18 +139,18 @@ class InitEditor(DualTextWindow):
         """Loads configuration data into the text widgets."""
         self.gui.save_params()
         self.left.delete('1.0', END)
-        self.left.insert('1.0', Raw.read(
+        self.left.insert('1.0', DFRaw.read(
             os.path.join(paths.get('init'), 'init.txt')))
         self.right.delete('1.0', END)
-        self.right.insert('1.0', Raw.read(
+        self.right.insert('1.0', DFRaw.read(
             os.path.join(paths.get('init'), 'd_init.txt')))
 
     def save(self):
         """Saves configuration data from the text widgets."""
-        Raw.write(
+        DFRaw.write(
             os.path.join(paths.get('init'), 'init.txt'),
             self.left.get('1.0', 'end'))
-        Raw.write(
+        DFRaw.write(
             os.path.join(paths.get('init'), 'd_init.txt'),
             self.right.get('1.0', 'end'))
         self.gui.load_params()

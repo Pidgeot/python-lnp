@@ -4,7 +4,7 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os, re
-from .dfraw import Raw
+from .dfraw import DFRaw
 
 if sys.version_info[0] == 3:
     basestring = str
@@ -542,7 +542,7 @@ class DFConfiguration(object):
             (filename,)).
         """
 
-        text = Raw.read(filename)
+        text = DFRaw.read(filename)
         if auto_add:
             for match in re.findall(r'\[(.+?):(.+?)\]', text):
                 self.create_option(
@@ -589,7 +589,7 @@ class DFConfiguration(object):
         """
         try:
             match = re.search(
-                r'\['+str(field)+r':(.+?)\]', Raw.read(filename))
+                r'\['+str(field)+r':(.+?)\]', DFRaw.read(filename))
             if match is None:
                 return None
             return match.group(1)
@@ -621,7 +621,7 @@ class DFConfiguration(object):
 
         result = []
         try:
-            settings = Raw.read(filename)
+            settings = DFRaw.read(filename)
             for field in fields:
                 result.append(get_match(settings, field))
         except IOError:
@@ -649,7 +649,7 @@ class DFConfiguration(object):
         """
         try:
             match = re.search(
-                r'\['+str(field)+r'(:.+?)\]', Raw.read(filename))
+                r'\['+str(field)+r'(:.+?)\]', DFRaw.read(filename))
             if match is None:
                 return False
             params = match.group(1)
@@ -681,7 +681,7 @@ class DFConfiguration(object):
             fields
                 List of all field names to change.
         """
-        with Raw(filename) as raw:
+        with DFRaw(filename) as raw:
             for field in fields:
                 field_name = self.field_names[field]
                 if self.options[field] is _disabled:
@@ -702,7 +702,7 @@ class DFConfiguration(object):
             fields
                 List of all field names to write.
         """
-        with Raw.open(filename, 'wt') as newfile:
+        with DFRaw.open(filename, 'wt') as newfile:
             for field in fields:
                 if self.options[field] is _disabled:
                     if self.settings[field] == "NO":
