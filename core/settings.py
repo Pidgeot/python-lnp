@@ -668,12 +668,11 @@ class DFConfiguration(object):
         """Write all settings to their respective files."""
         for files in self.in_files:
             for filename in files:
-                self.write_file(filename, self.in_files[files])
+                self.update_file(filename, self.in_files[files])
 
-    def write_file(self, filename, fields):
+    def update_file(self, filename, fields):
         """
         Write settings to a specific file.
-        TODO: This function should probably be renamed to update_file
 
         Params:
             filename
