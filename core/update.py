@@ -3,7 +3,7 @@
 """Update handling."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, re, time
+import sys, re, time, fnmatch
 from threading import Thread
 
 try:  # Python 2
@@ -15,7 +15,7 @@ except ImportError:  # Python 3
     from urllib.error import URLError
 
 from .lnp import lnp
-from . import launcher
+from . import launcher, paths
 
 def updates_configured():
     """Returns True if update checking have been configured."""
@@ -63,4 +63,37 @@ def start_update():
     """Launches a webbrowser to the specified update URL."""
     launcher.open_url(lnp.config.get_string('updates/downloadURL'))
 
+def download_df_version_to_baselines(version='invalid_string'):
+    """Download the specified version of DF from Bay12 Games
+    to serve as a baseline, in LNP/Baselines/
 
+    Params:
+        version
+            The requested version of DF
+
+    Returns:
+        True if the download was started (in a thread, for availability later)
+        False if the download did not start
+        None if the version string was invalid
+    """
+    # May not actually work!  I'm making this up as I go...
+    pattern = 'df_[234][0123456789]_[0123][0123456789]'
+    if not fnmatch.fnmatch(version, pattern):
+        return None
+    # TODO:  actually get appropriate full version
+    filename = 'df_40_07_win.zip'
+
+    t = Thread(target=download_df_zip_from_bay12(filename))
+    t.daemon = True
+    t.start() # now I have two problems
+    
+def download_df_zip_from_bay12(filename):
+    """Downloads a zipped version of DF from Bay12 Games.
+    'filename' is yhe full name of the file to retrieve,
+    eg 'df_40_07_win.zip'    """
+    url = 'http://www.bay12games.com/dwarves/' + filename
+    req = Request(url, headers={'User-Agent':'PyLNP'})
+    archive = urlopen(req, timeout=3).read()
+    with open(os.path.join(paths.get('baselines'), filename), 'wb') as f:
+        f.write(archive)
+        f.close()

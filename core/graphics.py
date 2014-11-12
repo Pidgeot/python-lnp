@@ -59,8 +59,8 @@ def install_graphics(pack):
         None if required files are missing (raw/graphics, data/init)
     """
     gfx_dir = tempfile.mkdtemp()
-    dir_util.copy_tree(raws.find_vanilla_raws(), tmp)
-    dir_util.copy_tree(os.path.join(paths.get('graphics'), pack), tmp)
+    dir_util.copy_tree(raws.find_vanilla_raws(), gfx_dir)
+    dir_util.copy_tree(os.path.join(paths.get('graphics'), pack), gfx_dir)
 
     if (os.path.isdir(gfx_dir) and
             os.path.isdir(os.path.join(gfx_dir, 'raw', 'graphics')) and

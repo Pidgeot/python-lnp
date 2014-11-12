@@ -6,11 +6,11 @@ from __future__ import print_function, unicode_literals, absolute_import
 import os, shutil, filecmp, sys, glob, tempfile
 import distutils.dir_util as dir_util
 
-from . import paths
+from . import paths, update
 
 paths.register('baselines', 'LNP', 'baselines')
 
-def find_vanilla_raws(version=''):
+def find_vanilla_raws(version=None):
     # override for testing:
     return os.path.join('LNP', 'Baselines', 'df_40_11_win', 'raw')
     """Finds vanilla raws for the requested version.
@@ -19,27 +19,33 @@ def find_vanilla_raws(version=''):
     Params:
         version
             String indicating version in format 'df_40_15'
-            None returns the latest available version.
+            None returns the latest available raws.
 
     Returns:
-        The path to a vanilla 'raw' folder
-        None if path could not be found or made
+        The path to the requested vanilla 'raw' folder
+        If requested version unavailable, path to latest version
+        None if no version was available.
     """
-    baselines_path = os.path.join(paths.get('baselines'))
-    available = [os.path.relpath(item, baselines_path) for item in
-                 glob.glob(os.path.join(baselines_path, 'df_??_?*'))]
+    # TODO: handle other DF versions; esp. small pack and non-SDL releases
+    # and non-zip files?  Folder size minimisation?
+    available = [os.path.basename(item) for item in glob.glob(
+                 os.path.join(paths.get('baselines'), 'df_??_?*'))]
     if version == None:
         version = available[-1][0:8]
-    version_dir = os.path.join(baselines_path, version + '_win')
+    version_dir = os.path.join(paths.get('baselines'), version)
+    version_dir_win = os.path.join(paths.get('baselines'), version + '_win')
 
     if os.path.isdir(version_dir):
         return os.path.join(version_dir, 'raw')
+    elif os.path.isdir(version_dir_win):
+        return os.path.join(version_dir, 'raw')
     elif os.path.isfile(version_dir + '.zip'):
-        file = zipfile.ZipFile(version_dir + '.zip')
+        file = zipfile.ZipFile(version_dir + '_win.zip')
         file.extractall(version_dir)
         return os.path.join(version_dir, 'raw')
-    # TODO: attempt to download requested file from Bay12 Games
-    return None
+    else:
+        update.download_df_version_to_baselines(version)
+        return None
 
 def simplify_pack(pack, folder):
     """Removes unnecessary files from LNP/<folder>/<pack>.

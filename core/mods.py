@@ -16,7 +16,7 @@ def read_mods():
 def simplify_mods():
     """Removes unnecessary files from all mods."""
     for pack in read_mods():
-        simplify_pack(pack, 'mods')
+        simplify_pack(pack)
 
 def simplify_pack(pack):
     """Removes unnecessary files from one mod."""
@@ -189,7 +189,7 @@ def clear_temp():
 
 def init_paths(lnpdir):
     global mods_folder, mods_folders_list, vanilla_folder, vanilla_raw_folder, installed_raw_folder
-    raws.simplify_mods()
+    simplify_mods()
     installed_raw_folder = os.path.join(paths.get('df'), 'raw')
     mods_folder = os.path.join(lnpdir, 'Mods')
     vanilla_raw_folder = raws.find_vanilla_raws(version=None)
@@ -232,7 +232,7 @@ def get_installed_mods_from_log():
     '''Return best possible mod load order to recreate installed with available'''
     logged = read_installation_log(os.path.join(installed_raw_folder, 'installed_mods.txt'))
     # return list overlap - like set intersection, but ordered
-    return [mod for mod in logged if mod in mods_folders_list]
+    return [mod for mod in logged if mod in mod_folders_list]
 
 def read_installation_log(file):
     '''Read an 'installed_mods.txt' and return it's full contents.'''
