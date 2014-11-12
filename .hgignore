@@ -6,3 +6,7 @@ dist
 PyLNP.user
 stderr.txt
 stdout.txt
+
+Dwarf Fortress *
+LNP
+__pycache__
