@@ -8,7 +8,7 @@ from . import controls
 from .tab import Tab
 import sys, os, shutil
 
-from core import ModProcessor
+from core import mods
 from core import paths
 
 if sys.version_info[0] == 3:  # Alternate import names
@@ -29,9 +29,9 @@ class ModsTab(Tab):
         self.available = Variable()
 
     def read_data(self):
-        ModProcessor.init_paths(paths.get('lnp'))
-        available = ModProcessor.mod_folders_list
-        installed = ModProcessor.get_installed_mods_from_log()
+        mods.init_paths(paths.get('lnp'))
+        available = mods.mod_folders_list
+        installed = mods.get_installed_mods_from_log()
         available = [m for m in available if m not in installed]
         self.available.set(tuple(available))
         self.installed.set(tuple(installed))
@@ -74,7 +74,7 @@ class ModsTab(Tab):
         f = controls.create_control_group(self, None, True)
         controls.create_trigger_button(
             f, 'Simplify Mods', 'Simplify Mods',
-            ModProcessor.simplify_mod_and_df_folders_to_defined_format).grid(
+            mods.simplify_mod_and_df_folders_to_defined_format).grid(
                 row=0, column=0, sticky="nsew")
         controls.create_trigger_button(
             f, 'Install Mods', 'Copy "installed" mods to DF folder.  '
@@ -132,7 +132,7 @@ class ModsTab(Tab):
     def create_from_installed(self):
         m = simpledialog.askstring("Create Mod", "New mod name:")
         if m is not None and m != '':
-            ModProcessor.make_mod_from_installed_raws(m)
+            mods.make_mod_from_installed_raws(m)
             self.read_data()
 
     def add_to_installed(self):
@@ -160,14 +160,14 @@ class ModsTab(Tab):
         self.perform_merge()
 
     def perform_merge(self):
-        ModProcessor.clear_temp()
+        mods.clear_temp()
         # Set status to unknown before merging
         for i, _ in enumerate(self.installed_list.get(0, END)):
             self.installed_list.itemconfig(i, bg='white')
         status = 3
         colors = ['green', 'yellow', 'orange', 'red']
         for i, mod in enumerate(self.installed_list.get(0, END)):
-            status = ModProcessor.merge_a_mod(mod)
+            status = mods.merge_a_mod(mod)
             self.installed_list.itemconfig(i, bg=colors[status])
             if status == 3:
                 return
