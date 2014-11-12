@@ -102,8 +102,6 @@ def install_graphics(pack):
                     os.path.join(paths.get('init'), 'overrides.txt'))
             except:
                 pass
-            df.load_params()
-            
         except Exception:
             sys.excepthook(*sys.exc_info())
             result = False
