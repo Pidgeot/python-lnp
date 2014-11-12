@@ -4,7 +4,7 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os, re
-from io import open
+from .dfraw import Raw
 
 if sys.version_info[0] == 3:
     basestring = str
@@ -541,8 +541,8 @@ class DFConfiguration(object):
             calling create_option(field_name, field_name, value, None,
             (filename,)).
         """
-        settings_file = open(filename, 'r', encoding='cp437')
-        text = settings_file.read()
+
+        text = Raw.read(filename)
         if auto_add:
             for match in re.findall(r'\[(.+?):(.+?)\]', text):
                 self.create_option(
@@ -588,9 +588,8 @@ class DFConfiguration(object):
             The field to read.
         """
         try:
-            settings_file = open(filename, 'r', encoding='cp437')
             match = re.search(
-                r'\['+str(field)+r':(.+?)\]', settings_file.read())
+                r'\['+str(field)+r':(.+?)\]', Raw.read(filename))
             if match is None:
                 return None
             return match.group(1)
@@ -622,8 +621,7 @@ class DFConfiguration(object):
 
         result = []
         try:
-            settings_file = open(filename, 'r', encoding='cp437')
-            settings = settings_file.read()
+            settings = Raw.read(filename)
             for field in fields:
                 result.append(get_match(settings, field))
         except IOError:
@@ -650,9 +648,8 @@ class DFConfiguration(object):
                 The maximum number of parameters for the field. -1 for no limit.
         """
         try:
-            settings_file = open(filename, 'r', encoding='cp437')
             match = re.search(
-                r'\['+str(field)+r'(:.+?)\]', settings_file.read())
+                r'\['+str(field)+r'(:.+?)\]', Raw.read(filename))
             if match is None:
                 return False
             params = match.group(1)
@@ -676,6 +673,7 @@ class DFConfiguration(object):
     def write_file(self, filename, fields):
         """
         Write settings to a specific file.
+        TODO: This function should probably be renamed to update_file
 
         Params:
             filename
@@ -683,34 +681,16 @@ class DFConfiguration(object):
             fields
                 List of all field names to change.
         """
-        oldfile = open(filename, 'r', encoding='cp437')
-        text = oldfile.read()
-
-        option_disable = ("[{0}]", "!{0}!")
-        option_enable = tuple(reversed(option_disable))
-
-        for field in fields:
-            if self.options[field] is _disabled:
-                if self.settings[field] == "NO":
-                    replace_from, replace_to = option_disable
+        with Raw(filename) as raw:
+            for field in fields:
+                field_name = self.field_names[field]
+                if self.options[field] is _disabled:
+                    raw.toggle(field_name, self.settings[field] != "NO")
                 else:
-                    replace_from, replace_to = option_enable
-
-                text = text.replace(
-                    replace_from.format(self.field_names[field]),
-                    replace_to.format(self.field_names[field]))
-            else:
-                value = self.settings[field]
-                if self.options[field] is _negated_bool:
-                    value = ["YES", "NO"][["NO", "YES"].index(value)]
-                text = re.sub(
-                    r'\[{0}:(.+?)\]'.format(self.field_names[field]),
-                    '[{0}:{1}]'.format(
-                        self.field_names[field], value), text)
-        oldfile.close()
-        newfile = open(filename, 'w', encoding='cp437')
-        newfile.write(text)
-        newfile.close()
+                    value = self.settings[field]
+                    if self.options[field] is _negated_bool:
+                        value = ["YES", "NO"][["NO", "YES"].index(value)]
+                    raw.set_value(field_name, value)
 
     def create_file(self, filename, fields):
         """
@@ -722,20 +702,19 @@ class DFConfiguration(object):
             fields
                 List of all field names to write.
         """
-        newfile = open(filename, 'w', encoding='cp437')
-        for field in fields:
-            if self.options[field] is _disabled:
-                if self.settings[field] == "NO":
-                    text = "!{0}!"
+        with Raw.open(filename, 'wt') as newfile:
+            for field in fields:
+                if self.options[field] is _disabled:
+                    if self.settings[field] == "NO":
+                        text = "!{0}!"
+                    else:
+                        text = "[{0}]"
+                    newfile.write(text.format(self.field_names[field])+'\n')
                 else:
-                    text = "[{0}]"
-                newfile.write(text.format(self.field_names[field])+'\n')
-            else:
-                value = self.settings[field]
-                if self.options[field] is _negated_bool:
-                    value = ["YES", "NO"][["NO", "YES"].index(value)]
-                newfile.write('[' + field + ':' + value + ']\n')
-        newfile.close()
+                    value = self.settings[field]
+                    if self.options[field] is _negated_bool:
+                        value = ["YES", "NO"][["NO", "YES"].index(value)]
+                    newfile.write('[' + field + ':' + value + ']\n')
 
     def version_has_option(self, option_name):
         """Returns True if <option_name> exists in the current DF version."""
