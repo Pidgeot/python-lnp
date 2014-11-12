@@ -17,6 +17,7 @@ from .graphics import GraphicsTab
 from .utilities import UtilitiesTab
 from .advanced import AdvancedTab
 from .dfhack import DFHackTab
+from .mods import ModsTab
 
 from core.lnp import lnp
 from core import df, launcher, paths, update
@@ -144,6 +145,7 @@ class TkGui(object):
         self.create_tab(AdvancedTab, 'Advanced')
         if 'dfhack' in lnp.df_info.variations:
             self.create_tab(DFHackTab, 'DFHack')
+        self.create_tab(ModsTab, 'Mods')
         n.enable_traversal()
         n.pack(fill=BOTH, expand=Y, padx=2, pady=3)
 
