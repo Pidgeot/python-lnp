@@ -6,9 +6,6 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys, os, re
 from .dfraw import DFRaw
 
-if sys.version_info[0] == 3:
-    basestring = str
-
 # Markers to read certain settings correctly
 
 class _DisableValues(object):
@@ -573,61 +570,6 @@ class DFConfiguration(object):
                         'WARNING: Field ' + str(self.field_names[field]) +
                         ' seems to be missing from file ' + str(filename) +
                         '!', file=sys.stderr)
-
-    @staticmethod
-    def read_value(filename, field):
-        """
-        Reads a single field <field> from the file <filename> and returns the
-        associated value. If multiple fields with this name exists, returns the
-        first one. If no such field exists, or an IOError occurs, returns None.
-
-        Params:
-          filename
-            The file to read from.
-          field
-            The field to read.
-        """
-        try:
-            match = re.search(
-                r'\['+str(field)+r':(.+?)\]', DFRaw.read(filename))
-            if match is None:
-                return None
-            return match.group(1)
-        except IOError:
-            return None
-
-    @staticmethod
-    def read_values(filename, *fields):
-        """
-        Params:
-          filename
-            The file to read from.
-          field
-            An iterable containing the field names to read.
-        """
-        def get_match(text, match_field):
-            """Reads the field names in <match_field> from <text>."""
-            if isinstance(match_field, str) or isinstance(
-                    match_field, basestring):
-                match = re.search(
-                    r'\['+str(match_field)+r':(.+?)\]', text)
-                if match is None:
-                    return None
-                else:
-                    return match.group(1)
-            elif isinstance(match_field, (tuple, list)):
-                return [get_match(text, f) for f in match_field]
-            return None
-
-        result = []
-        try:
-            settings = DFRaw.read(filename)
-            for field in fields:
-                result.append(get_match(settings, field))
-        except IOError:
-            result = [None] * len(fields)
-
-        return result
 
     @staticmethod
     def has_field(filename, field, num_params=-1, min_params=-1, max_params=-1):

@@ -8,6 +8,7 @@ import distutils.dir_util as dir_util
 from .launcher import open_folder
 from .lnp import lnp
 from . import colors, df, paths
+from .dfraw import DFRaw
 
 def open_graphics():
     """Opens the graphics pack folder."""
@@ -40,8 +41,7 @@ def read_graphics():
         if not validate_pack(p):
             continue
         init_path = os.path.join(graphics_path, p, 'data', 'init', 'init.txt')
-        font, graphics = lnp.settings.read_values(
-            init_path, 'FONT', 'GRAPHICS_FONT')
+        font, graphics = DFRaw(init_path).get_values('FONT', 'GRAPHICS_FONT')
         result.append((p, font, graphics))
     return tuple(result)
 

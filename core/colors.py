@@ -6,6 +6,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys, os, shutil
 from . import helpers, paths
 from .lnp import lnp
+from .dfraw import DFRaw
 
 _df_colors = (
     'BLACK', 'BLUE', 'GREEN', 'CYAN',
@@ -39,7 +40,7 @@ def get_colors(colorscheme=None):
             else:
                 f = os.path.join(paths.get('init'), 'colors.txt')
         color_fields = [(c+'_R', c+'_G', c+'_B') for c in _df_colors]
-        result = lnp.settings.read_values(f, *color_fields)
+        result = DFRaw(f).get_values(*color_fields)
         return [tuple(map(int, t)) for t in result]
     except:
         return []
