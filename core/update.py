@@ -80,12 +80,14 @@ def download_df_version_to_baselines(version='invalid_string'):
     pattern = 'df_[234][0123456789]_[0123][0123456789]'
     if not fnmatch.fnmatch(version, pattern):
         return None
-    # TODO:  actually get appropriate full version
-    filename = 'df_40_07_win.zip'
+    filename = version + '_win.zip'
+    download_df_zip_from_bay12(filename)
+    return True
 
     t = Thread(target=download_df_zip_from_bay12(filename))
     t.daemon = True
-    t.start() # now I have two problems
+    t.start()
+    return True    
     
 def download_df_zip_from_bay12(filename):
     """Downloads a zipped version of DF from Bay12 Games.

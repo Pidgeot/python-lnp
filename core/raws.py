@@ -3,16 +3,15 @@
 """Advanced raw and data folder management, for mods or graphics packs."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import os, shutil, filecmp, sys, glob, tempfile
+import os, shutil, filecmp, sys, glob, tempfile, re
 import distutils.dir_util as dir_util
 
-from . import paths, update
+from . import paths
+from . import update
 
 paths.register('baselines', 'LNP', 'baselines')
 
 def find_vanilla_raws(version=None):
-    # override for testing:
-    return os.path.join('LNP', 'Baselines', 'df_40_11_win', 'raw')
     """Finds vanilla raws for the requested version.
     If required, unzip a DF release to create the folder in LNP/Baselines/.
 
@@ -23,6 +22,7 @@ def find_vanilla_raws(version=None):
 
     Returns:
         The path to the requested vanilla 'raw' folder
+            eg: 'LNP/Baselines/df_40_15/raw'
         If requested version unavailable, path to latest version
         None if no version was available.
     """
@@ -31,15 +31,21 @@ def find_vanilla_raws(version=None):
     available = [os.path.basename(item) for item in glob.glob(
                  os.path.join(paths.get('baselines'), 'df_??_?*'))]
     if version == None:
-        version = available[-1][0:8]
+        with open(os.path.join(paths.get('df'), 'release notes.txt')) as f:
+            ver = re.findall(' \d.\d\d.\d\d \\(', f.read())[0]
+            version = 'df_' + ver[3:4] + '_' + ver[6:7]
+        if version not in available:
+            # the download doesn't happen?
+            update.download_df_version_to_baselines(version)
+            version = available[-1][0:8]
+
     version_dir = os.path.join(paths.get('baselines'), version)
-    version_dir_win = os.path.join(paths.get('baselines'), version + '_win')
 
     if os.path.isdir(version_dir):
         return os.path.join(version_dir, 'raw')
     elif os.path.isdir(version_dir_win):
-        return os.path.join(version_dir, 'raw')
-    elif os.path.isfile(version_dir + '.zip'):
+        return os.path.join(version_dir_win, 'raw')
+    elif os.path.isfile(version_dir + '_win.zip'):
         file = zipfile.ZipFile(version_dir + '_win.zip')
         file.extractall(version_dir)
         return os.path.join(version_dir, 'raw')

@@ -185,7 +185,7 @@ def clear_temp():
     with open(os.path.join(mods_folder, 'temp', 'raw', 'installed_mods.txt'),
               'w') as log:
         log.write('# List of mods merged by PyLNP mod loader\n' + 
-                  os.path.dirname(vanilla_raw_folder)[:-4] + '\n')
+                  os.path.dirname(vanilla_raw_folder)[14:] + '\n')
 
 def init_paths(lnpdir):
     global mods_folder, mods_folders_list, vanilla_folder, vanilla_raw_folder, installed_raw_folder
