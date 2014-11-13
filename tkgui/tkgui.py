@@ -20,7 +20,7 @@ from .dfhack import DFHackTab
 from .mods import ModsTab
 
 from core.lnp import lnp
-from core import df, launcher, paths, update
+from core import df, launcher, paths, update, mods
 
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
@@ -145,7 +145,8 @@ class TkGui(object):
         self.create_tab(AdvancedTab, 'Advanced')
         if 'dfhack' in lnp.df_info.variations:
             self.create_tab(DFHackTab, 'DFHack')
-        self.create_tab(ModsTab, 'Mods')
+        if mods.read_mods():
+            self.create_tab(ModsTab, 'Mods')
         n.enable_traversal()
         n.pack(fill=BOTH, expand=Y, padx=2, pady=3)
 
