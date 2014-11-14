@@ -3,13 +3,15 @@
 """Advanced raw and data folder management, for mods or graphics packs."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import os, shutil, filecmp, sys, glob, tempfile, re
+import os, shutil, filecmp, sys, glob, tempfile, re, zipfile
 import distutils.dir_util as dir_util
 
 from . import paths
 from . import update
+from .lnp import lnp
 
-paths.register('baselines', 'LNP', 'baselines')
+# Needs to be fixed by someone competent
+paths.register('baselines', 'LNP', 'Baselines')
 
 def find_vanilla_raws(version=None):
     """Finds vanilla raws for the requested version.
@@ -28,30 +30,28 @@ def find_vanilla_raws(version=None):
     """
     # TODO: handle other DF versions; esp. small pack and non-SDL releases
     # and non-zip files?  Folder size minimisation?
-    available = [os.path.basename(item) for item in glob.glob(
-                 os.path.join(paths.get('baselines'), 'df_??_?*'))]
+    zipped = glob.glob(os.path.join(paths.get('baselines'), 'df_??_?*.zip'))
+    for item in zipped:
+        version = os.path.basename(item)[0:8]
+        file = os.path.join(paths.get('baselines'), version)
+        if not os.path.isdir(file):
+            zipfile.ZipFile(item).extractall(file)
+            simplify_pack(version, 'baselines')
+        os.remove(item)
+
+    available = [os.path.basename(item) for item in glob.glob(os.path.join(
+                paths.get('baselines'), 'df_??_?*')) if os.path.isdir(item)]
     if version == None:
-        with open(os.path.join(paths.get('df'), 'release notes.txt')) as f:
-            ver = re.findall(' \d.\d\d.\d\d \\(', f.read())[0]
-            version = 'df_' + ver[3:4] + '_' + ver[6:7]
-        if version not in available:
-            # the download doesn't happen?
-            update.download_df_version_to_baselines(version)
-            version = available[-1][0:8]
-
-    version_dir = os.path.join(paths.get('baselines'), version)
-
-    if os.path.isdir(version_dir):
-        return os.path.join(version_dir, 'raw')
-    elif os.path.isdir(version_dir_win):
-        return os.path.join(version_dir_win, 'raw')
-    elif os.path.isfile(version_dir + '_win.zip'):
-        file = zipfile.ZipFile(version_dir + '_win.zip')
-        file.extractall(version_dir)
-        return os.path.join(version_dir, 'raw')
-    else:
+        version = 'df_' + str(lnp.df_info.version)[2:].replace('.', '_')
+        if lnp.df_info.source == "init detection":
+            # WARNING: likley to be much too early in this case
+            # User should restore 'release notes.txt'
+            pass
+    if version not in available:
         update.download_df_version_to_baselines(version)
-        return None
+        version = available[-1]
+
+    return os.path.join(paths.get('baselines'), version, 'raw')
 
 def simplify_pack(pack, folder):
     """Removes unnecessary files from LNP/<folder>/<pack>.
@@ -71,7 +71,8 @@ def simplify_pack(pack, folder):
         False if an exception occurred
         None if folder is empty
     """
-    if not (folder=='graphics' or folder=='mods'):
+    valid_dirs = ('graphics', 'mods', 'baselines')
+    if not folder in valid_dirs:
         return False
     pack = os.path.join(paths.get(folder), pack)
     files_before = sum(len(f) for (_, _, f) in os.walk(pack))
@@ -96,30 +97,18 @@ def simplify_pack(pack, folder):
                 os.path.join(tmp, 'raw', 'objects'),
                 os.path.join(pack, 'raw', 'objects'))
 
-        if folder=='mods'and os.path.exists(os.path.join(tmp, 'manifest.json')):
-            shutil.copyfile(
-                os.path.join(tmp, 'manifest.json'),
-                os.path.join(pack, 'manifest.json'))
-        if folder=='mods'and os.path.exists(os.path.join(tmp, 'readme.txt')):
-            shutil.copyfile(
-                os.path.join(tmp, 'readme.txt'),
-                os.path.join(pack, 'readme.txt'))
-        if folder=='mods'and os.path.exists(os.path.join(tmp, 'installed_mods.txt')):
-            shutil.copyfile(
-                os.path.join(tmp, 'raw', 'installed_mods.txt'),
-                os.path.join(pack, 'raw', 'installed_mods.txt'))
-
-        if folder=='graphics':
+        if not folder=='mods':
             os.makedirs(os.path.join(pack, 'data', 'init'))
             os.makedirs(os.path.join(pack, 'data', 'art'))
             dir_util.copy_tree(
                 os.path.join(tmp, 'data', 'art'),
                 os.path.join(pack, 'data', 'art'))
             for filename in ('colors.txt', 'init.txt',
-                             'd_init.txt'): #, 'overrides.txt'
-                shutil.copyfile(
-                    os.path.join(tmp, 'data', 'init', filename),
-                    os.path.join(pack, 'data', 'init', filename))
+                             'd_init.txt', 'overrides.txt'):
+                if os.path.isfile(os.path.join(tmp, 'data', 'init', filename)):
+                    shutil.copyfile(
+                        os.path.join(tmp, 'data', 'init', filename),
+                        os.path.join(pack, 'data', 'init', filename))
 
     except IOError:
         sys.excepthook(*sys.exc_info())

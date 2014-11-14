@@ -3,7 +3,7 @@
 """Update handling."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, re, time, fnmatch
+import sys, re, time, os
 from threading import Thread
 
 try:  # Python 2
@@ -76,19 +76,16 @@ def download_df_version_to_baselines(version='invalid_string'):
         False if the download did not start
         None if the version string was invalid
     """
-    # May not actually work!  I'm making this up as I go...
     pattern = 'df_[234][0123456789]_[0123][0123456789]'
-    if not fnmatch.fnmatch(version, pattern):
+    if not re.match('df_\d\d_\d\d', version):
         return None
     filename = version + '_win.zip'
-    download_df_zip_from_bay12(filename)
-    return True
-
+    # thread seems to block return, which nullifies time saving...
     t = Thread(target=download_df_zip_from_bay12(filename))
     t.daemon = True
     t.start()
-    return True    
-    
+    return True
+
 def download_df_zip_from_bay12(filename):
     """Downloads a zipped version of DF from Bay12 Games.
     'filename' is yhe full name of the file to retrieve,
@@ -96,6 +93,6 @@ def download_df_zip_from_bay12(filename):
     url = 'http://www.bay12games.com/dwarves/' + filename
     req = Request(url, headers={'User-Agent':'PyLNP'})
     archive = urlopen(req, timeout=3).read()
-    with open(os.path.join(paths.get('baselines'), filename), 'wb') as f:
+    with open(os.path.join(paths.get('lnp'), 'Baselines', filename), 'wb') as f:
         f.write(archive)
         f.close()
