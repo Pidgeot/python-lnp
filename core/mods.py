@@ -4,7 +4,7 @@ import difflib, sys, time
 from . import paths
 from . import raws
 
-paths.register('mods', 'LNP', 'mods')
+paths.register('mods', paths.get('lnp'), 'mods')
 
 def read_mods():
     """Returns a list of mod packs"""
@@ -189,10 +189,9 @@ def clear_temp():
 
 def init_paths(lnpdir):
     global mods_folder, mods_folders_list, vanilla_folder, vanilla_raw_folder, installed_raw_folder
-    simplify_mods()
     installed_raw_folder = os.path.join(paths.get('df'), 'raw')
     mods_folder = os.path.join(lnpdir, 'Mods')
-    vanilla_raw_folder = raws.find_vanilla_raws(version=None)
+    vanilla_raw_folder = raws.find_vanilla_raws()
     mod_folders_list = read_mods()
     clear_temp()
 

@@ -10,8 +10,7 @@ from . import paths
 from . import update
 from .lnp import lnp
 
-# Needs to be fixed by someone competent
-paths.register('baselines', 'LNP', 'Baselines')
+paths.register('baselines', paths.get('lnp'), 'baselines')
 
 def find_vanilla_raws(version=None):
     """Finds vanilla raws for the requested version.

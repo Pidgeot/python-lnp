@@ -93,6 +93,6 @@ def download_df_zip_from_bay12(filename):
     url = 'http://www.bay12games.com/dwarves/' + filename
     req = Request(url, headers={'User-Agent':'PyLNP'})
     archive = urlopen(req, timeout=3).read()
-    with open(os.path.join(paths.get('lnp'), 'Baselines', filename), 'wb') as f:
+    with open(os.path.join(paths.get('baselines'), filename), 'wb') as f:
         f.write(archive)
         f.close()
