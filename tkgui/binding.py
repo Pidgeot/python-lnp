@@ -27,14 +27,21 @@ def init(lnp):
 def bind(control, option, update_func=None):
     """Binds a control to an option."""
 
+    if option not in __controls:
+        __controls[option] = []
+
     if update_func:
-        __controls[option] = (control, update_func)
+        value = (control, update_func)
     else:
-        __controls[option] = control
+        value = control
+    __controls[option].append(value)
 
 def get(field):
-    """Returns the value of the control known as <field>."""
-    return __controls[field].get()
+    """
+    Returns the value of the control known as <field>.
+    If multiple controls are bound, the earliest binding is used.
+    """
+    return __controls[field][0].get()
 
 def update():
     """Updates configuration displays (buttons, etc.)."""
@@ -43,18 +50,19 @@ def update():
             value = getattr(__lnp.settings, key)
         except KeyError:
             value = None
-        if hasattr(__controls[key], '__iter__'):
-            # Allow (control, func) tuples, etc. to customize value
-            control = __controls[key][0]
-            value = __controls[key][1](value)
-        else:
-            control = __controls[key]
-        if isinstance(control, Entry):
-            control.delete(0, END)
-            control.insert(0, value)
-        else:
-            control["text"] = (
-                control["text"].split(':')[0] + ': ' +
-                str(value))
+        for entry in __controls[key]:
+            if hasattr(entry, '__iter__'):
+                # Allow (control, func) tuples, etc. to customize value
+                control = entry[0]
+                value = entry[1](value)
+            else:
+                control = entry
+            if isinstance(control, Entry):
+                control.delete(0, END)
+                control.insert(0, value)
+            else:
+                control["text"] = (
+                    control["text"].split(':')[0] + ': ' +
+                    str(value))
 
 # vim:expandtab
