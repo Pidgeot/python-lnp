@@ -2,7 +2,7 @@ import os, shutil, filecmp, glob, tempfile
 import difflib, sys, time
 
 from . import paths
-from . import raws
+from . import baselines
 
 paths.register('mods', paths.get('lnp'), 'mods')
 
@@ -20,9 +20,9 @@ def simplify_mods():
 
 def simplify_pack(pack):
     """Removes unnecessary files from one mod."""
-    raws.simplify_pack(pack, 'mods')
-    raws.remove_vanilla_raws_from_pack(pack, 'mods')
-    raws.remove_empty_dirs(pack, 'mods')
+    baselines.simplify_pack(pack, 'mods')
+    baselines.remove_vanilla_raws_from_pack(pack, 'mods')
+    baselines.remove_empty_dirs(pack, 'mods')
 
 def do_merge_seq (mod_text, vanilla_text, gen_text):
     """Merges sequences of lines.  Returns empty string if a line changed by the mod
@@ -191,7 +191,7 @@ def init_paths(lnpdir):
     global mods_folder, mods_folders_list, vanilla_folder, vanilla_raw_folder, installed_raw_folder
     installed_raw_folder = os.path.join(paths.get('df'), 'raw')
     mods_folder = os.path.join(lnpdir, 'Mods')
-    vanilla_raw_folder = raws.find_vanilla_raws()
+    vanilla_raw_folder = baselines.find_vanilla_raws()
     mod_folders_list = read_mods()
     clear_temp()
 
@@ -247,7 +247,7 @@ def read_installation_log(file):
         mods_list.append(line.strip())
     return mods_list
 
-mods_folder = os.path.join('LNP', 'Mods')
+mods_folder = paths.get('mods')
 vanilla_folder = ''
 vanilla_raw_folder = ''
 mixed_raw_folder = ''

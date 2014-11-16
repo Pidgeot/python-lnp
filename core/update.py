@@ -76,7 +76,6 @@ def download_df_version_to_baselines(version='invalid_string'):
         False if the download did not start
         None if the version string was invalid
     """
-    pattern = 'df_[234][0123456789]_[0123][0123456789]'
     if not re.match('df_\d\d_\d\d', version):
         return None
     filename = version + '_win.zip'

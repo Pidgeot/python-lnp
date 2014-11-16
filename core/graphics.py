@@ -7,7 +7,7 @@ import sys, os, shutil, glob, tempfile
 import distutils.dir_util as dir_util
 from .launcher import open_folder
 from .lnp import lnp
-from . import colors, df, paths, raws
+from . import colors, df, paths, baselines
 
 def open_graphics():
     """Opens the graphics pack folder."""
@@ -59,7 +59,7 @@ def install_graphics(pack):
         None if required files are missing (raw/graphics, data/init)
     """
     gfx_dir = tempfile.mkdtemp()
-    dir_util.copy_tree(raws.find_vanilla_raws(), gfx_dir)
+    dir_util.copy_tree(baselines.find_vanilla_raws(), gfx_dir)
     dir_util.copy_tree(os.path.join(paths.get('graphics'), pack), gfx_dir)
 
     if (os.path.isdir(gfx_dir) and
@@ -223,9 +223,9 @@ def simplify_graphics():
 
 def simplify_pack(pack):
     """Removes unnecessary files from one graphics pack."""
-    raws.simplify_pack(pack, 'graphics')
-    raws.remove_vanilla_raws_from_pack(pack, 'graphics')
-    raws.remove_empty_dirs(pack, 'graphics')
+    baselines.simplify_pack(pack, 'graphics')
+    baselines.remove_vanilla_raws_from_pack(pack, 'graphics')
+    baselines.remove_empty_dirs(pack, 'graphics')
 
 def savegames_to_update():
     """Returns a list of savegames that will be updated."""

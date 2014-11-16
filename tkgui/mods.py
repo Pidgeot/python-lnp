@@ -9,7 +9,6 @@ from .tab import Tab
 import sys, os, shutil
 
 from core import mods
-from core import raws
 from core import paths
 
 if sys.version_info[0] == 3:  # Alternate import names
