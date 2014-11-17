@@ -29,7 +29,7 @@ class ModsTab(Tab):
         self.available = Variable()
 
     def read_data(self):
-        mods.init_paths(paths.get('lnp'))
+        mods.init_paths()
         available = mods.read_mods()
         installed = mods.get_installed_mods_from_log()
         available = [m for m in available if m not in installed]
@@ -173,8 +173,7 @@ class ModsTab(Tab):
                 return
 
     def install_mods(self):
-        # Assumption: Everything in Mods/temp goes into the DF folder. Adjust
-        # if needed.
+        """Replaces <df>/raw with the contents LNP/Baselines/temp/raw"""
         shutil.rmtree(os.path.join(paths.get('df'), 'raw'))
-        shutil.copytree(os.path.join(paths.get('lnp'), 'Mods', 'temp', 'raw'),
+        shutil.copytree(os.path.join(paths.get('baselines'), 'temp', 'raw'),
                         os.path.join(paths.get('df'), 'raw'))

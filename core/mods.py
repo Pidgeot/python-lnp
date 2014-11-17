@@ -11,7 +11,7 @@ def read_mods():
     # should go in tkgui/mods.py later
     return [os.path.basename(o) for o in
             glob.glob(os.path.join(paths.get('mods'), '*'))
-            if os.path.isdir(o) and not os.path.basename(o)=='temp']
+            if os.path.isdir(o)]
 
 def simplify_mods():
     """Removes unnecessary files from all mods."""
@@ -147,17 +147,17 @@ def merge_a_mod(mod):
         1:  Potential compatibility issues, no merge problems
         2:  Non-fatal error, overlapping lines or non-existent mod etc
         3:  Fatal error, respond by rebuilding to previous mod'''
-    mod_raw_folder = os.path.join(mods_folder, mod, 'raw')
+    mod_raw_folder = os.path.join(paths.get('mods'), mod, 'raw')
     if not os.path.isdir(mod_raw_folder):
         return 2
     status = merge_raw_folders(mod_raw_folder, vanilla_raw_folder)
     if status < 2:
-        with open(os.path.join(mods_folder, 'temp', 'raw', 'installed_mods.txt'), 'a') as log:
+        with open(os.path.join(mixed_raw_folder, 'installed_raws.txt'), 'a') as log:
             log.write(mod + '\n')
     return status
 
 def merge_raw_folders(mod_raw_folder, vanilla_raw_folder):
-    '''Behind the wrapper, to allow tricks by overriding the global variables'''
+    '''Merge the specified folders, output going in LNP/Baselines/temp/raw'''
     status = 0
     for file_tuple in os.walk(mod_raw_folder):
         for item in file_tuple[2]:
@@ -177,64 +177,60 @@ def merge_raw_folders(mod_raw_folder, vanilla_raw_folder):
     return status
 
 def clear_temp():
-    global mixed_raw_folder, vanilla_raw_folder
-    mixed_raw_folder = os.path.join(mods_folder, 'temp', 'raw')
-    if os.path.exists(os.path.join(mods_folder, 'temp')):
-        shutil.rmtree(os.path.join(mods_folder, 'temp'))
+    if os.path.exists(os.path.join(paths.get('baselines'), 'temp')):
+        shutil.rmtree(os.path.join(paths.get('baselines'), 'temp'))
     shutil.copytree(vanilla_raw_folder, mixed_raw_folder)
-    with open(os.path.join(mods_folder, 'temp', 'raw', 'installed_mods.txt'),
-              'w') as log:
-        log.write('# List of mods merged by PyLNP mod loader\n' + 
-                  os.path.dirname(vanilla_raw_folder)[14:] + '\n')
+    with open(os.path.join(mixed_raw_folder, 'installed_raws.txt'), 'w') as log:
+        log.write('# List of raws merged by PyLNP:\n' + 
+                  os.path.dirname(vanilla_raw_folder)[-8:] + '\n')
 
-def init_paths(lnpdir):
-    global mods_folder, mods_folders_list, vanilla_folder, vanilla_raw_folder, installed_raw_folder
-    installed_raw_folder = os.path.join(paths.get('df'), 'raw')
-    mods_folder = os.path.join(lnpdir, 'Mods')
+def init_paths():
+    global vanilla_raw_folder, mixed_raw_folder
     vanilla_raw_folder = baselines.find_vanilla_raws()
-    mod_folders_list = read_mods()
+    mixed_raw_folder = os.path.join(paths.get('baselines'), 'temp', 'raw')
     clear_temp()
 
 def make_mod_from_installed_raws(name):
     '''Capture whatever unavailable mods a user currently has installed as a mod called $name.
 
-        * If `installed_mods.txt` is not present, compare to vanilla
+        * If `installed_raws.txt` is not present, compare to vanilla
         * Otherwise, rebuild as much as possible then compare installed and rebuilt
         * Harder than I first thought... but not impossible'''
-    mod_load_order = get_installed_mods_from_log()
-    if mod_load_order:
+    if get_installed_mods_from_log():
         clear_temp()
-        for mod in mod_load_order:
+        for mod in get_installed_mods_from_log():
             merge_a_mod(mod)
-        best_effort_reconstruction = os.path.join(mods_folder, 'temp2', 'raw')
-        shutil.copytree(os.path.join(mods_folder, 'temp', 'raw'),
-                        os.path.join(mods_folder, 'temp2', 'raw'))
+        reconstruction = os.path.join(paths.get('baselines'), 'temp2', 'raw')
+        shutil.copytree(os.path.join(paths.get('baselines'), 'temp', 'raw'),
+                        os.path.join(paths.get('baselines'), 'temp2', 'raw'))
     else:
-        best_effort_reconstruction = vanilla_raw_folder
+        reconstruction = baselines.find_vanilla_raws()
 
     clear_temp()
-    merge_raw_folders(best_effort_reconstruction, installed_raw_folder)
-    simplify_mod_folder('temp')
-    if os.path.isdir(os.path.join(mods_folder, 'temp2')):
-        shutil.rmtree(os.path.join(mods_folder, 'temp2'))
+    merge_raw_folders(reconstruction, os.path.join(paths.get('df'), 'raw'))
 
-    if os.path.isdir(os.path.join(mods_folder, 'temp')):
-        if not name or os.path.isdir(os.path.join(mods_folder, name)):
-            name = 'Extracted Mod at '+str(int(time.time()))
-        shutil.copytree(os.path.join(mods_folder, 'temp'), os.path.join(mods_folder, name))
-        return_val = 'User unique mods extracted as "'+str(name)+'"'
-        return return_val
+    baselines.simplify_pack('temp', 'baselines')
+    baselines.remove_vanilla_raws_from_pack('temp', 'baselines')
+    baselines.remove_empty_dirs('temp', 'baselines')
+
+    if os.path.isdir(os.path.join(paths.get('baselines'), 'temp2')):
+        shutil.rmtree(os.path.join(paths.get('baselines'), 'temp2'))
+
+    if os.path.isdir(os.path.join(paths.get('baselines'), 'temp')):
+        shutil.copytree(os.path.join(paths.get('baselines'), 'temp'), 
+                        os.path.join(paths.get('mods'), name))
     else:
-        return 'No unique user mods found.'
+        # No unique mods, or graphics packs, were installed
+        pass
 
 def get_installed_mods_from_log():
     '''Return best possible mod load order to recreate installed with available'''
-    logged = read_installation_log(os.path.join(installed_raw_folder, 'installed_mods.txt'))
+    logged = read_installation_log(os.path.join(paths.get('df'), 'raw', 'installed_raws.txt'))
     # return list overlap - like set intersection, but ordered
-    return [mod for mod in logged if mod in mod_folders_list]
+    return [mod for mod in logged if mod in read_mods()]
 
 def read_installation_log(file):
-    '''Read an 'installed_mods.txt' and return it's full contents.'''
+    '''Read an 'installed_raws.txt' and return it's full contents.'''
     try:
         with open(file) as f:
             file_contents = list(f.readlines())
@@ -246,9 +242,3 @@ def read_installation_log(file):
             continue
         mods_list.append(line.strip())
     return mods_list
-
-mods_folder = paths.get('mods')
-vanilla_folder = ''
-vanilla_raw_folder = ''
-mixed_raw_folder = ''
-mod_folders_list = read_mods()
