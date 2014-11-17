@@ -308,7 +308,9 @@ def read_tilesets():
 
 def current_tilesets():
     """Returns the current tilesets as a tuple (FONT, GRAPHICS_FONT)."""
-    return (lnp.settings.FONT, lnp.settings.GRAPHICS_FONT)
+    if lnp.settings.version_has_option('GRAPHICS_FONT'):
+        return (lnp.settings.FONT, lnp.settings.GRAPHICS_FONT)
+    return (lnp.settings.FONT, None)
 
 def install_tilesets(font, graphicsfont):
     """
@@ -322,8 +324,9 @@ def install_tilesets(font, graphicsfont):
             os.path.join(paths.get('data'), 'art', font))
         df.set_option('FONT', font)
         df.set_option('FULLFONT', font)
-    if graphicsfont is not None and os.path.isfile(
-            os.path.join(paths.get('tilesets'), graphicsfont)):
+    if (lnp.settings.version_has_option('GRAPHICS_FONT') and
+            graphicsfont is not None and os.path.isfile(
+            os.path.join(paths.get('tilesets'), graphicsfont))):
         shutil.copyfile(
             os.path.join(paths.get('tilesets'), graphicsfont),
             os.path.join(paths.get('data'), 'art', graphicsfont))

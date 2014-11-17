@@ -108,13 +108,16 @@ class GraphicsTab(Tab):
 
         grid = GridLayouter(2)
         tempframe = Frame(customize)
-        grid.add(tempframe, pady=4)
         _, self.fonts = controls.create_file_list(
             tempframe, 'FONT', self.tilesets, height=8)
-        tempframe = Frame(customize)
-        grid.add(tempframe, pady=4)
-        _, self.graphicsfonts = controls.create_file_list(
-            tempframe, 'GRAPHICS_FONT', self.tilesets, height=8)
+        if lnp.settings.version_has_option('GRAPHICS_FONT'):
+            grid.add(tempframe, pady=4)
+            tempframe = Frame(customize)
+            grid.add(tempframe, pady=4)
+            _, self.graphicsfonts = controls.create_file_list(
+                tempframe, 'GRAPHICS_FONT', self.tilesets, height=8)
+        else:
+            grid.add(tempframe, 2, pady=4)
 
         grid.add(controls.create_trigger_button(
             customize, 'Install Tilesets',
