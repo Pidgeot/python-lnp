@@ -4,8 +4,8 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import os
-from io import open
 from . import helpers, paths
+from .dfraw import DFRaw
 
 def read_embarks():
     """Returns a list of embark profiles."""
@@ -21,14 +21,10 @@ def install_embarks(files):
         files
             List of files to install.
     """
-    out = open(
-        os.path.join(paths.get('init'), 'embark_profiles.txt'), 'w',
-        encoding='cp437')
-    for f in files:
-        embark = open(os.path.join(paths.get('embarks'), f), encoding='cp437')
-        out.write(embark.read()+"\n\n")
-    out.flush()
-    out.close()
+    with DFRaw.open(os.path.join(paths.get('init'), 'embark_profiles.txt'), 'wt') as out:
+        for f in files:
+            embark = DFRaw.read(os.path.join(paths.get('embarks'), f))
+            out.write(embark+"\n\n")
 
 def get_installed_files():
     """Returns the names of the currently installed embark profiles."""

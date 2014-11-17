@@ -241,4 +241,11 @@ class Version(object):
         return self.data == other.data
 
     def __str__(self):
-        return ".".join([str(i) for i in self.data])
+        result = ""
+        last = None
+        for d in self.data:
+            if result != "" and type(d) == type(last):
+                result += '.'
+            result += str(d)
+            last = d
+        return result

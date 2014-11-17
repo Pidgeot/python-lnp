@@ -5,11 +5,10 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os
-from io import open
-
 from . import controls
 
 from core import errorlog, launcher, paths, update
+from core.dfraw import DFRaw
 from core.lnp import lnp
 
 if sys.version_info[0] == 3:  # Alternate import names
@@ -140,26 +139,20 @@ class InitEditor(DualTextWindow):
         """Loads configuration data into the text widgets."""
         self.gui.save_params()
         self.left.delete('1.0', END)
-        self.left.insert('1.0', open(
-            os.path.join(paths.get('init'), 'init.txt'),
-            encoding='cp437').read())
+        self.left.insert('1.0', DFRaw.read(
+            os.path.join(paths.get('init'), 'init.txt')))
         self.right.delete('1.0', END)
-        self.right.insert('1.0', open(
-            os.path.join(paths.get('init'), 'd_init.txt'),
-            encoding='cp437').read())
+        self.right.insert('1.0', DFRaw.read(
+            os.path.join(paths.get('init'), 'd_init.txt')))
 
     def save(self):
         """Saves configuration data from the text widgets."""
-        f = open(
-            os.path.join(paths.get('init'), 'init.txt'), 'w', encoding='cp437',
-            errors='replace')
-        f.write(self.left.get('1.0', 'end'))
-        f.close()
-        f = open(
-            os.path.join(paths.get('init'), 'd_init.txt'), 'w',
-            encoding='cp437', errors='replace')
-        f.write(self.right.get('1.0', 'end'))
-        f.close()
+        DFRaw.write(
+            os.path.join(paths.get('init'), 'init.txt'),
+            self.left.get('1.0', 'end'))
+        DFRaw.write(
+            os.path.join(paths.get('init'), 'd_init.txt'),
+            self.right.get('1.0', 'end'))
         self.gui.load_params()
 
 class SelectDF(ChildWindow):

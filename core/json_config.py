@@ -3,7 +3,7 @@
 """Proxy to abstract access to JSON configuration and gracefully handle missing
 keys."""
 from __future__ import print_function, unicode_literals, absolute_import
-import sys, json
+import sys, os, json
 
 if sys.version_info[0] == 3:  # Alternate import names
     enc_dict = {}
@@ -22,6 +22,12 @@ class JSONConfiguration(object):
                 JSON filename to load data from.
         """
         self.filename = filename
+        self.data = {}
+        if not os.path.isfile(filename):
+            print(
+                "File " + filename + " does not exist",
+                file=sys.stderr)
+            return
         try:
             self.data = json.load(open(filename), **enc_dict)
         except:
@@ -29,7 +35,6 @@ class JSONConfiguration(object):
                 "Note: Failed to read JSON from " + filename +
                 ", ignoring data - error details follow", file=sys.stderr)
             sys.excepthook(*sys.exc_info())
-            self.data = {}
 
     def save_data(self):
         """Saves the data to the JSON file."""
