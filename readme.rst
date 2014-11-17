@@ -278,6 +278,7 @@ PyLNP expects to see the following directory structure::
       Extras
       Graphics
       Keybinds
+      Tilesets
       Utilities
 
 PyLNP itself may be placed anywhere, so long as it is somewhere inside the base folder. It can be placed directly in the base folder, in a subfolder, in a subfolder of a subfolder, etc. The base folder is determined by checking the its own directory; if it cannot find a Dwarf Fortress folder, it will try the parent folder, and continue in this manner until it finds a suitable folder; that folder is considered the base folder.
@@ -323,6 +324,10 @@ If this version of PyLNP has not yet been run on the selected DF installation, a
 Graphics
 --------
 This folder contains graphics packs, consisting of data and raw folders.
+
+Tilesets
+--------
+This folder contains tilesets; individual image files that the user can use for the FONT and GRAPHICS_FONT settings (and their fullscreen counterparts).
 
 Keybinds
 --------
