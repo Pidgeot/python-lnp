@@ -83,6 +83,8 @@ def install_graphics(pack):
             dir_util.copy_tree(
                 os.path.join(gfx_dir, 'data', 'art'),
                 os.path.join(paths.get('data'), 'art'))
+            for tiles in glob.glob(os.path.join(paths.get('tilesets'), '*')):
+                shutil.copy(tiles, os.path.join(paths.get('data'), 'art'))
 
             patch_inits(gfx_dir)
 
@@ -111,16 +113,14 @@ def install_graphics(pack):
                 dir_util.remove_tree(gfx_dir)
             return False
         else:
+            df.load_params()
             if os.path.isdir(gfx_dir):
                 dir_util.remove_tree(gfx_dir)
             return True
-    else:
-        if os.path.isdir(gfx_dir):
-            dir_util.remove_tree(gfx_dir)
-        return None
     if os.path.isdir(gfx_dir):
         dir_util.remove_tree(gfx_dir)
     df.load_params()
+    return None
 
 def validate_pack(pack):
     """Checks for presence of all required files for a pack install."""

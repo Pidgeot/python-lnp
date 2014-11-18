@@ -331,6 +331,10 @@ Graphics
 --------
 This folder contains graphics packs, consisting of data and raw folders.  Any raws identical to vanilla files will be discarded; when installing a graphics pack the remaining files will be copied over a set of vanilla raws and the combination installed.
 
+Tilesets
+--------
+This folder contains tilesets; individual image files that the user can use for the FONT and GRAPHICS_FONT settings (and their fullscreen counterparts).  Tilesets can be installed through the graphics customisation tab, as they are added to each graphics pack as the pack is installed.
+
 Mods
 ----
 This folder contains mods, consisting of a modified raw folder.  They use the same reduced format for raws as graphics packs.
