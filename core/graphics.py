@@ -229,9 +229,10 @@ def simplify_pack(pack):
 
 def savegames_to_update():
     """Returns a list of savegames that will be updated."""
-    return [
-        o for o in glob.glob(os.path.join(paths.get('save'), '*'))
-        if os.path.isdir(o) and not o.endswith('current')]
+    saves = [o for o in glob.glob(os.path.join(paths.get('save'), '*'))
+             if os.path.isdir(o) and not o.endswith('current')]
+    return [s for s in saves if not os.path.isfile(os.path.join(
+                                    s, 'raw', 'installed_raws.txt'))]
 
 def update_savegames():
     """Update save games with current raws."""
