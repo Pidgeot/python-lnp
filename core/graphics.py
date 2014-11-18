@@ -8,6 +8,7 @@ import distutils.dir_util as dir_util
 from .launcher import open_folder
 from .lnp import lnp
 from . import colors, df, paths
+from .dfraw import DFRaw
 
 def open_graphics():
     """Opens the graphics pack folder."""
@@ -40,8 +41,7 @@ def read_graphics():
         if not validate_pack(p):
             continue
         init_path = os.path.join(graphics_path, p, 'data', 'init', 'init.txt')
-        font, graphics = lnp.settings.read_values(
-            init_path, 'FONT', 'GRAPHICS_FONT')
+        font, graphics = DFRaw(init_path).get_values('FONT', 'GRAPHICS_FONT')
         result.append((p, font, graphics))
     return tuple(result)
 
@@ -295,3 +295,40 @@ def update_savegames():
                 os.path.join(save, 'raw'))
     return count
 
+def open_tilesets():
+    """Opens the tilesets folder."""
+    open_folder(paths.get('tilesets'))
+
+def read_tilesets():
+    """Returns a list of tileset files."""
+    files = glob.glob(os.path.join(paths.get('tilesets'), '*.bmp'))
+    if 'legacy' not in lnp.df_info.variations:
+        files += glob.glob(os.path.join(paths.get('tilesets'), '*.png'))
+    return tuple([os.path.basename(o) for o in files])
+
+def current_tilesets():
+    """Returns the current tilesets as a tuple (FONT, GRAPHICS_FONT)."""
+    if lnp.settings.version_has_option('GRAPHICS_FONT'):
+        return (lnp.settings.FONT, lnp.settings.GRAPHICS_FONT)
+    return (lnp.settings.FONT, None)
+
+def install_tilesets(font, graphicsfont):
+    """
+    Installs the provided tilesets as [FULL]FONT and GRAPHICS_[FULL]FONT.
+    To skip either option, use None as the parameter.
+    """
+    if font is not None and os.path.isfile(
+            os.path.join(paths.get('tilesets'), font)):
+        shutil.copyfile(
+            os.path.join(paths.get('tilesets'), font),
+            os.path.join(paths.get('data'), 'art', font))
+        df.set_option('FONT', font)
+        df.set_option('FULLFONT', font)
+    if (lnp.settings.version_has_option('GRAPHICS_FONT') and
+            graphicsfont is not None and os.path.isfile(
+            os.path.join(paths.get('tilesets'), graphicsfont))):
+        shutil.copyfile(
+            os.path.join(paths.get('tilesets'), graphicsfont),
+            os.path.join(paths.get('data'), 'art', graphicsfont))
+        df.set_option('GRAPHICS_FONT', graphicsfont)
+        df.set_option('GRAPHICS_FULLFONT', graphicsfont)

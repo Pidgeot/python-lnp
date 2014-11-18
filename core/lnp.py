@@ -9,7 +9,7 @@ from . import errorlog
 
 from .json_config import JSONConfiguration
 
-VERSION = '0.7.1'
+VERSION = '0.8'
 
 lnp = None
 class PyLNP(object):
@@ -52,6 +52,7 @@ class PyLNP(object):
         paths.register('utilities', paths.get('lnp'), 'Utilities')
         paths.register('colors', paths.get('lnp'), 'Colors')
         paths.register('embarks', paths.get('lnp'), 'Embarks')
+        paths.register('tilesets', paths.get('lnp'), 'Tilesets')
 
         self.df_info = None
         self.folders = []

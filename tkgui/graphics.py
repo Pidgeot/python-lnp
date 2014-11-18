@@ -30,44 +30,136 @@ class GraphicsTab(Tab):
     def create_variables(self):
         self.graphics = Variable()
         self.colors = Variable()
+        self.tilesets = Variable()
 
     def read_data(self):
         self.read_graphics()
         self.read_colors()
+        self.read_tilesets()
 
     def create_controls(self):
+        n = Notebook(self)
+        n.pack(side=TOP, fill=BOTH, expand=Y, padx=4, pady=4)
+
+        #First tab
+        change_graphics_tab = Frame(self)
+        change_graphics_tab.pack(side=TOP, fill=BOTH, expand=Y)
+        n.add(change_graphics_tab, text="Change Graphics")
+
         change_graphics = controls.create_control_group(
-            self, 'Change Graphics', True)
-        Grid.rowconfigure(change_graphics, 1, weight=1)
+            change_graphics_tab, 'Change Graphics', True)
+        Grid.rowconfigure(change_graphics, 0, weight=1)
         change_graphics.pack(side=TOP, fill=BOTH, expand=Y)
 
         grid = GridLayouter(2)
-        curr_pack = Label(change_graphics, text='Current Graphics')
-        grid.add(curr_pack, 2)
-        binding.bind(curr_pack, 'FONT', lambda x: graphics.current_pack())
-
         listframe = Frame(change_graphics)
         grid.add(listframe, 2, pady=4)
-        _, graphicpacks = controls.create_file_list(
+        _, self.graphicpacks = controls.create_file_list(
             listframe, None, self.graphics, height=8)
-        self.graphicpacks = graphicpacks
-        graphicpacks.bind(
-            '<<ListboxSelect>>',
-            lambda e: self.select_graphics(graphicpacks))
+        self.graphicpacks.bind(
+            '<<ListboxSelect>>', lambda e: self.select_graphics())
 
         grid.add(controls.create_trigger_button(
             change_graphics, 'Install Graphics',
             'Install selected graphics pack',
-            lambda: self.install_graphics(graphicpacks)))
+            self.install_graphics))
         grid.add(controls.create_trigger_button(
             change_graphics, 'Update Savegames',
             'Install current graphics pack in all savegames',
             self.update_savegames))
+        grid.add(controls.create_trigger_button(
+            change_graphics, 'Refresh List', 'Refresh list of graphics packs',
+            self.read_graphics), 2)
+
+        advanced = controls.create_control_group(
+            change_graphics_tab, 'Advanced', True)
+        advanced.pack(fill=X, expand=N)
+
+        grid = GridLayouter(2)
         if 'legacy' not in lnp.df_info.variations:
             grid.add(controls.create_option_button(
-                change_graphics, 'TrueType Fonts',
+                advanced, 'Print Mode',
+                'Changes how Dwarf Fortress draws to the screen. "2D" allows '
+                'Truetype fonts, "standard" enables advanced graphics tools. '
+                'Certain modifications may use other values.',
+                'printmode'), 2)
+            grid.add(controls.create_option_button(
+                advanced, 'TrueType Fonts',
                 'Toggles whether to use TrueType fonts or tileset for text. '
-                'Only works with Print Mode set to 2D.', 'truetype'))
+                'Only works with Print Mode set to 2D.', 'truetype'), 2)
+        grid.add(controls.create_trigger_button(
+            advanced, 'Open Graphics Folder',
+            'Add your own graphics packs here!', graphics.open_graphics), 2)
+        grid.add(controls.create_trigger_button(
+            advanced, 'Simplify Graphic Folders',
+            'Deletes unnecessary files from graphics packs '
+            '(saves space, useful for re-packaging)',
+            self.simplify_graphics))
+
+        # Customization tab
+        customize_tab = Frame(self)
+        customize_tab.pack(side=TOP, fill=BOTH, expand=Y)
+        n.add(customize_tab, text="Customization")
+
+        customize = controls.create_control_group(
+            customize_tab, 'Change Tilesets', True)
+        Grid.rowconfigure(customize, 0, weight=1)
+        customize.pack(side=TOP, fill=BOTH, expand=Y)
+
+        grid = GridLayouter(2)
+        tempframe = Frame(customize)
+        _, self.fonts = controls.create_file_list(
+            tempframe, 'FONT', self.tilesets, height=8)
+        if lnp.settings.version_has_option('GRAPHICS_FONT'):
+            grid.add(tempframe, pady=4)
+            tempframe = Frame(customize)
+            grid.add(tempframe, pady=4)
+            _, self.graphicsfonts = controls.create_file_list(
+                tempframe, 'GRAPHICS_FONT', self.tilesets, height=8)
+        else:
+            grid.add(tempframe, 2, pady=4)
+
+        grid.add(controls.create_trigger_button(
+            customize, 'Install Tilesets',
+            'Install selected tilesets', self.install_tilesets), 2)
+        grid.add(controls.create_trigger_button(
+            customize, 'Refresh List', 'Refresh list of tilesets',
+            self.read_tilesets))
+
+        advanced = controls.create_control_group(
+            customize_tab, 'Advanced', True)
+        advanced.pack(fill=X, expand=N)
+
+        # Outside tab
+        grid = GridLayouter(2)
+        if 'legacy' not in lnp.df_info.variations:
+            grid.add(controls.create_option_button(
+                advanced, 'Print Mode',
+                'Changes how Dwarf Fortress draws to the screen. "2D" allows '
+                'Truetype fonts, "standard" enables advanced graphics tools. '
+                'Certain modifications may use other values.',
+                'printmode'), 2)
+            grid.add(controls.create_option_button(
+                advanced, 'TrueType Fonts',
+                'Toggles whether to use TrueType fonts or tileset for text. '
+                'Only works with Print Mode set to 2D.', 'truetype'), 2)
+        grid.add(controls.create_trigger_button(
+            advanced, 'Open Tilesets Folder',
+            'Add your own tilesets here!', graphics.open_tilesets), 2)
+
+        colorframe, self.color_files, buttons = \
+            controls.create_file_list_buttons(
+                self, 'Color schemes', self.colors, self.load_colors,
+                self.read_colors, self.save_colors, self.delete_colors)
+        colorframe.pack(side=BOTTOM, fill=BOTH, expand=Y, anchor="s")
+        buttons.grid(rowspan=3)
+        self.color_files.bind(
+            '<<ListboxSelect>>', lambda e: self.select_colors())
+
+        self.color_preview = Canvas(
+            colorframe, width=128, height=32, highlightthickness=0,
+            takefocus=False)
+        self.color_preview.grid(column=0, row=2)
 
         display = controls.create_control_group(self, 'Display Options', True)
         display.pack(side=TOP, fill=BOTH, expand=N)
@@ -82,53 +174,18 @@ class GraphicsTab(Tab):
             'If ground tiles use a variety of punctuation, or only periods',
             'variedGround'))
 
-        advanced = controls.create_control_group(
-            self, 'Advanced', True)
-        advanced.pack(fill=X, expand=N)
-
-        grid = GridLayouter(2)
-        if 'legacy' not in lnp.df_info.variations:
-            grid.add(controls.create_option_button(
-                advanced, 'Print Mode',
-                'Changes how Dwarf Fortress draws to the screen. "2D" allows '
-                'Truetype fonts, "standard" enables advanced graphics tools. '
-                'Certain modifications may use other values.',
-                'printmode'), 2)
-        grid.add(controls.create_trigger_button(
-            advanced, 'Open Graphics Folder',
-            'Add your own graphics packs here!', graphics.open_graphics), 2)
-        grid.add(controls.create_trigger_button(
-            advanced, 'Refresh List', 'Refresh list of graphics packs',
-            self.read_graphics))
-        grid.add(controls.create_trigger_button(
-            advanced, 'Simplify Graphic Folders',
-            'Deletes unnecessary files from graphics packs '
-            '(saves space, useful for re-packaging)',
-            self.simplify_graphics))
-
-        colorframe, color_files, buttons = \
-            controls.create_file_list_buttons(
-                self, 'Color schemes', self.colors,
-                lambda: self.load_colors(color_files),
-                self.read_colors, self.save_colors,
-                lambda: self.delete_colors(color_files))
-        colorframe.pack(side=BOTTOM, fill=BOTH, expand=Y, anchor="s")
-        buttons.grid(rowspan=3)
-
-        self.color_files = color_files
-        color_files.bind(
-            '<<ListboxSelect>>',
-            lambda e: self.select_colors(color_files))
-
-        self.color_preview = Canvas(
-            colorframe, width=128, height=32, highlightthickness=0,
-            takefocus=False)
-        self.color_preview.grid(column=0, row=2)
-
     def read_graphics(self):
         """Reads list of graphics packs."""
-        self.graphics.set(tuple([p[0] for p in graphics.read_graphics()]))
-        self.select_graphics(self.graphicpacks)
+        packs = [p[0] for p in graphics.read_graphics()]
+        self.graphics.set(tuple(packs))
+        current = graphics.current_pack()
+        for i, p in enumerate(packs):
+            if p == current:
+                self.graphicpacks.itemconfig(i, fg='red')
+            else:
+                self.graphicpacks.itemconfig(i, fg='black')
+
+        self.select_graphics()
 
     def install_graphics(self, listbox):
         """
@@ -169,7 +226,7 @@ class GraphicsTab(Tab):
                         'Folder does not exist or does not have required files '
                         'or folders:\n'+str(gfx_dir))
             binding.update()
-            self.read_colors()
+            self.read_data()
 
     @staticmethod
     def update_savegames():
@@ -215,18 +272,13 @@ class GraphicsTab(Tab):
             else:
                 self.color_files.itemconfig(i, fg='black')
 
-        self.select_colors(self.color_files)
+        self.select_colors()
 
-    def load_colors(self, listbox):
-        """
-        Replaces color scheme  with selected file.
-
-        Params:
-            listbox
-                Listbox containing the list of color schemes.
-        """
-        if len(listbox.curselection()) != 0:
-            colors.load_colors(listbox.get(listbox.curselection()[0]))
+    def load_colors(self):
+        """Replaces color scheme with the selected file."""
+        if len(self.color_files.curselection()) != 0:
+            colors.load_colors(self.color_files.get(
+                self.color_files.curselection()[0]))
             self.read_colors()
 
     def save_colors(self):
@@ -240,27 +292,21 @@ class GraphicsTab(Tab):
                 colors.save_colors(v)
                 self.read_colors()
 
-    def delete_colors(self, listbox):
-        """
-        Deletes a color scheme.
-
-        Params:
-            listbox
-                Listbox containing the list of color schemes.
-        """
-        if len(listbox.curselection()) != 0:
-            filename = listbox.get(listbox.curselection()[0])
+    def delete_colors(self):
+        """Deletes the selected color scheme."""
+        if len(self.color_files.curselection()) != 0:
+            filename = self.color_files.get(self.color_files.curselection()[0])
             if messagebox.askyesno(
                     'Delete file?',
                     'Are you sure you want to delete {0}?'.format(filename)):
                 colors.delete_colors(filename)
             self.read_colors()
 
-    def select_graphics(self, listbox):
+    def select_graphics(self):
         """Event handler for selecting a graphics pack."""
         colorscheme = None
-        if len(listbox.curselection()) != 0:
-            pack = listbox.get(listbox.curselection()[0])
+        if len(self.graphicpacks.curselection()) != 0:
+            pack = self.graphicpacks.get(self.graphicpacks.curselection()[0])
             if lnp.df_info.version >= '0.31.04':
                 colorscheme = os.path.join(
                     paths.get('graphics'), pack, 'data', 'init', 'colors.txt')
@@ -269,11 +315,12 @@ class GraphicsTab(Tab):
                     paths.get('graphics'), pack, 'data', 'init', 'init.txt')
         self.paint_color_preview(colorscheme)
 
-    def select_colors(self, listbox):
+    def select_colors(self):
         """Event handler for selecting a colorscheme."""
         colorscheme = None
-        if len(listbox.curselection()) != 0:
-            colorscheme = listbox.get(listbox.curselection()[0])
+        if len(self.color_files.curselection()) != 0:
+            colorscheme = self.color_files.get(
+                self.color_files.curselection()[0])
         self.paint_color_preview(colorscheme)
 
     def paint_color_preview(self, colorscheme):
@@ -298,3 +345,31 @@ class GraphicsTab(Tab):
                 self.color_preview.create_rectangle(
                     col*16, row*16, (col+1)*16, (row+1)*16,
                     fill="#%02x%02x%02x" % c, width=0)
+
+    def read_tilesets(self):
+        """Reads list of graphics packs."""
+        files = graphics.read_tilesets()
+        self.tilesets.set(files)
+        current = graphics.current_tilesets()
+        for i, f in enumerate(files):
+            if f == current[0]:
+                self.fonts.itemconfig(i, fg='red')
+            else:
+                self.fonts.itemconfig(i, fg='black')
+            if f == current[1]:
+                self.graphicsfonts.itemconfig(i, fg='red')
+            else:
+                self.graphicsfonts.itemconfig(i, fg='black')
+
+    def install_tilesets(self):
+        """Installs selected tilesets."""
+        font = None
+        graphicsfont = None
+        if len(self.fonts.curselection()) != 0:
+            font = self.fonts.get(self.fonts.curselection()[0])
+        if len(self.graphicsfonts.curselection()) != 0:
+            graphicsfont = self.graphicsfonts.get(
+                self.graphicsfonts.curselection()[0])
+        graphics.install_tilesets(font, graphicsfont)
+        binding.update()
+        self.read_data()
