@@ -253,14 +253,16 @@ def update_savegames():
 
 def open_tilesets():
     """Opens the tilesets folder."""
-    open_folder(paths.get('tilesets'))
+    open_folder(os.path.join(paths.get('data'), 'art'))
 
 def read_tilesets():
     """Returns a list of tileset files."""
-    files = glob.glob(os.path.join(paths.get('tilesets'), '*.bmp'))
+    files = glob.glob(os.path.join(paths.get('data'), 'art', '*.bmp'))
     if 'legacy' not in lnp.df_info.variations:
-        files += glob.glob(os.path.join(paths.get('tilesets'), '*.png'))
-    return tuple([os.path.basename(o) for o in files])
+        files += glob.glob(os.path.join(paths.get('data'), 'art', '*.png'))
+    return tuple([os.path.basename(o) for o in files if not (
+        o.endswith('mouse.png') or o.endswith('mouse.bmp')
+        or o.endswith('shadows.png'))])
 
 def current_tilesets():
     """Returns the current tilesets as a tuple (FONT, GRAPHICS_FONT)."""
@@ -274,17 +276,11 @@ def install_tilesets(font, graphicsfont):
     To skip either option, use None as the parameter.
     """
     if font is not None and os.path.isfile(
-            os.path.join(paths.get('tilesets'), font)):
-        shutil.copyfile(
-            os.path.join(paths.get('tilesets'), font),
-            os.path.join(paths.get('data'), 'art', font))
+            os.path.join(paths.get('data'), 'art', font)):
         df.set_option('FONT', font)
         df.set_option('FULLFONT', font)
     if (lnp.settings.version_has_option('GRAPHICS_FONT') and
             graphicsfont is not None and os.path.isfile(
-            os.path.join(paths.get('tilesets'), graphicsfont))):
-        shutil.copyfile(
-            os.path.join(paths.get('tilesets'), graphicsfont),
-            os.path.join(paths.get('data'), 'art', graphicsfont))
+            os.path.join(paths.get('data'), 'art', graphicsfont))):
         df.set_option('GRAPHICS_FONT', graphicsfont)
         df.set_option('GRAPHICS_FULLFONT', graphicsfont)
