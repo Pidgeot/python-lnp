@@ -10,8 +10,6 @@ from . import paths
 from . import update
 from .lnp import lnp
 
-paths.register('baselines', paths.get('lnp'), 'baselines')
-
 def find_vanilla_raws(version=None):
     """Finds vanilla raws for the requested version.
     If required, unzip a DF release to create the folder in LNP/Baselines/.
@@ -99,9 +97,10 @@ def simplify_pack(pack, folder):
         if not folder=='mods':
             os.makedirs(os.path.join(pack, 'data', 'init'))
             os.makedirs(os.path.join(pack, 'data', 'art'))
-            dir_util.copy_tree(
-                os.path.join(tmp, 'data', 'art'),
-                os.path.join(pack, 'data', 'art'))
+            if os.path.exists(os.path.join(tmp, 'data', 'art')):
+                dir_util.copy_tree(
+                    os.path.join(tmp, 'data', 'art'),
+                    os.path.join(pack, 'data', 'art'))
             for filename in ('colors.txt', 'init.txt',
                              'd_init.txt', 'overrides.txt'):
                 if os.path.isfile(os.path.join(tmp, 'data', 'init', filename)):

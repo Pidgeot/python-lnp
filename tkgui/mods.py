@@ -132,7 +132,13 @@ class ModsTab(Tab):
     def create_from_installed(self):
         m = simpledialog.askstring("Create Mod", "New mod name:")
         if m is not None and m != '':
-            mods.make_mod_from_installed_raws(m)
+            if mods.make_mod_from_installed_raws(m):
+                messagebox.showinfo('Mod extracted',
+                            'Your custom mod was extracted as '+m+'.')
+            else:
+                messagebox.showinfo('Error',
+                            'There is already a mod with that name, '
+                            'or only pre-existing mods were found.')
             self.read_data()
 
     def add_to_installed(self):
@@ -165,7 +171,7 @@ class ModsTab(Tab):
         for i, _ in enumerate(self.installed_list.get(0, END)):
             self.installed_list.itemconfig(i, bg='white')
         status = 3
-        colors = ['green', 'yellow', 'orange', 'red']
+        colors = ['limegreen', 'yellow', 'orange', 'red']
         for i, mod in enumerate(self.installed_list.get(0, END)):
             status = mods.merge_a_mod(mod)
             self.installed_list.itemconfig(i, bg=colors[status])

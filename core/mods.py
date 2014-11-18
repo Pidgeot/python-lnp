@@ -4,8 +4,6 @@ import difflib, sys, time
 from . import paths
 from . import baselines
 
-paths.register('mods', paths.get('lnp'), 'mods')
-
 def read_mods():
     """Returns a list of mod packs"""
     # should go in tkgui/mods.py later
@@ -37,14 +35,14 @@ def do_merge_seq (mod_text, vanilla_text, gen_text):
             The lines of the previously merged file.
 
     Returns:
-        Merged lines if no changes in mod and gen files overlap.
-        Empty string otherwise.
+        tuple(status, lines); status is 0/'ok' or 2/'overlap merged'
     """
+    status = 0
     # special cases - where merging is not required because two are equal
     if vanilla_text == gen_text:
-        return mod_text
+        return 0, mod_text
     if vanilla_text == mod_text:
-        return gen_text
+        return 0, gen_text
 
     # returns list of 5-tuples describing how to turn vanilla into mod or gen lines
     # each specifies an operation, and start+end line nums for each change
@@ -96,10 +94,20 @@ def do_merge_seq (mod_text, vanilla_text, gen_text):
                     van_gen_ops.pop(0)
             # if the changes would overlap, we can't handle that yet
             else:
-                # we'll revisit this later, to allow overlapping merges
-                # (important for graphics pack inclusion)
-                # probably have to return (status, lines) tuple.
-                return ''
+                # this is the rare over-write merge.
+                # changes status, use caution
+                status = 2
+                # append the shorter block to new genned lines
+                if mod_i2 < gen_i2:
+                    output_file_temp += mod_text[cur_v:mod_i2]
+                    cur_v = mod_i2
+                    van_mod_ops.pop(0)
+                else:
+                    output_file_temp += mod_text[cur_v:gen_i2]
+                    cur_v = gen_i2
+                    van_gen_ops.pop(0)
+                    if mod_i2 == gen_i2 :
+                        van_mod_ops.pop(0)
     # clean up trailing opcodes, to avoid dropping the end of the file
     if van_mod_ops:
         mod_tag, mod_i1, mod_i2, mod_j1, mod_j2 = van_mod_ops[0]
@@ -107,7 +115,7 @@ def do_merge_seq (mod_text, vanilla_text, gen_text):
     if van_gen_ops:
         gen_tag, gen_i1, gen_i2, gen_j1, gen_j2 = van_gen_ops[0]
         output_file_temp += gen_text[gen_j1:gen_j2]
-    return output_file_temp
+    return status, output_file_temp
 
 def get_lines_from_file(filename):
     """Get lines from a file, managing encoding.
@@ -131,14 +139,11 @@ def do_merge_files(mod_file_name, van_file_name, gen_file_name):
     if os.path.isfile(gen_file_name):
         gen_lines = get_lines_from_file(gen_file_name)        
 
-    gen_lines = do_merge_seq(mod_lines, van_lines, gen_lines)
-    if gen_lines:
-        gen_file = open(gen_file_name,"w")
-        for line in gen_lines:
-            gen_file.write(line)
-        return True
-    else:
-        return False
+    status, gen_lines = do_merge_seq(mod_lines, van_lines, gen_lines)
+    gen_file = open(gen_file_name,"w")
+    for line in gen_lines:
+        gen_file.write(line)
+    return status
 
 def merge_a_mod(mod):
     '''Merges the specified mod, and returns status (0|1|2|3) like an exit code.
@@ -151,7 +156,7 @@ def merge_a_mod(mod):
     if not os.path.isdir(mod_raw_folder):
         return 2
     status = merge_raw_folders(mod_raw_folder, vanilla_raw_folder)
-    if status < 2:
+    if status < 3:
         with open(os.path.join(mixed_raw_folder, 'installed_raws.txt'), 'a') as log:
             log.write(mod + '\n')
     return status
@@ -163,17 +168,17 @@ def merge_raw_folders(mod_raw_folder, vanilla_raw_folder):
         for item in file_tuple[2]:
             file = os.path.join(file_tuple[0], item)
             file = os.path.relpath(file, mod_raw_folder)
-            if os.path.isfile(os.path.join(vanilla_raw_folder, file)):
-                if not do_merge_files(os.path.join(mod_raw_folder, file), 
-                                      os.path.join(vanilla_raw_folder, file), 
-                                      os.path.join(mixed_raw_folder, file)):
-                    return 3
-            elif os.path.isfile(os.path.join(mixed_raw_folder, file)):
-                return 3
+            if not file.endswith('.txt'):
+                continue
+            if (os.path.isfile(os.path.join(vanilla_raw_folder, file)) or
+                os.path.isfile(os.path.join(mixed_raw_folder, file))):
+                status = max(do_merge_files(os.path.join(mod_raw_folder, file),
+                                            os.path.join(vanilla_raw_folder, file),
+                                            os.path.join(mixed_raw_folder, file)),
+                             status)
             else:
                 shutil.copy(os.path.join(mod_raw_folder, file), 
                             os.path.join(mixed_raw_folder, file))
-                status = 1
     return status
 
 def clear_temp():
@@ -196,13 +201,14 @@ def make_mod_from_installed_raws(name):
         * If `installed_raws.txt` is not present, compare to vanilla
         * Otherwise, rebuild as much as possible then compare installed and rebuilt
         * Harder than I first thought... but not impossible'''
+    if os.path.isdir(os.path.join(paths.get('mods'), name)):
+        return False
     if get_installed_mods_from_log():
         clear_temp()
         for mod in get_installed_mods_from_log():
             merge_a_mod(mod)
         reconstruction = os.path.join(paths.get('baselines'), 'temp2', 'raw')
-        shutil.copytree(os.path.join(paths.get('baselines'), 'temp', 'raw'),
-                        os.path.join(paths.get('baselines'), 'temp2', 'raw'))
+        shutil.copytree(mixed_raw_folder, reconstruction)
     else:
         reconstruction = baselines.find_vanilla_raws()
 
@@ -219,9 +225,8 @@ def make_mod_from_installed_raws(name):
     if os.path.isdir(os.path.join(paths.get('baselines'), 'temp')):
         shutil.copytree(os.path.join(paths.get('baselines'), 'temp'), 
                         os.path.join(paths.get('mods'), name))
-    else:
-        # No unique mods, or graphics packs, were installed
-        pass
+        return True
+    return False
 
 def get_installed_mods_from_log():
     '''Return best possible mod load order to recreate installed with available'''
