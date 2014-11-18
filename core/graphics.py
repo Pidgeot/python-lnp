@@ -7,7 +7,7 @@ import sys, os, shutil, glob, tempfile
 import distutils.dir_util as dir_util
 from .launcher import open_folder
 from .lnp import lnp
-from . import colors, df, paths
+from . import colors, df, paths, baselines
 from .dfraw import DFRaw
 
 def open_graphics():
@@ -58,7 +58,10 @@ def install_graphics(pack):
         False if an exception occured
         None if required files are missing (raw/graphics, data/init)
     """
-    gfx_dir = os.path.join(paths.get('graphics'), pack)
+    gfx_dir = tempfile.mkdtemp()
+    dir_util.copy_tree(baselines.find_vanilla_raws(), gfx_dir)
+    dir_util.copy_tree(os.path.join(paths.get('graphics'), pack), gfx_dir)
+
     if (os.path.isdir(gfx_dir) and
             os.path.isdir(os.path.join(gfx_dir, 'raw', 'graphics')) and
             os.path.isdir(os.path.join(gfx_dir, 'data', 'init'))):
@@ -104,13 +107,20 @@ def install_graphics(pack):
                 pass
         except Exception:
             sys.excepthook(*sys.exc_info())
-            result = False
+            if os.path.isdir(gfx_dir):
+                dir_util.remove_tree(gfx_dir)
+            return False
         else:
-            result = True
-        df.load_params()
-        return result
+            if os.path.isdir(gfx_dir):
+                dir_util.remove_tree(gfx_dir)
+            return True
     else:
+        if os.path.isdir(gfx_dir):
+            dir_util.remove_tree(gfx_dir)
         return None
+    if os.path.isdir(gfx_dir):
+        dir_util.remove_tree(gfx_dir)
+    df.load_params()
 
 def validate_pack(pack):
     """Checks for presence of all required files for a pack install."""
@@ -212,64 +222,10 @@ def simplify_graphics():
         simplify_pack(pack)
 
 def simplify_pack(pack):
-    """
-    Removes unnecessary files from LNP/Graphics/<pack>.
-
-    Params:
-        pack
-            The pack to simplify.
-
-    Returns:
-        The number of files removed if successful
-        False if an exception occurred
-        None if folder is empty
-    """
-    pack = os.path.join(paths.get('graphics'), pack)
-    files_before = sum(len(f) for (_, _, f) in os.walk(pack))
-    if files_before == 0:
-        return None
-    tmp = tempfile.mkdtemp()
-    try:
-        dir_util.copy_tree(pack, tmp)
-        if os.path.isdir(pack):
-            dir_util.remove_tree(pack)
-
-        os.makedirs(pack)
-        os.makedirs(os.path.join(pack, 'data', 'art'))
-        os.makedirs(os.path.join(pack, 'raw', 'graphics'))
-        os.makedirs(os.path.join(pack, 'raw', 'objects'))
-        os.makedirs(os.path.join(pack, 'data', 'init'))
-
-        dir_util.copy_tree(
-            os.path.join(tmp, 'data', 'art'),
-            os.path.join(pack, 'data', 'art'))
-        dir_util.copy_tree(
-            os.path.join(tmp, 'raw', 'graphics'),
-            os.path.join(pack, 'raw', 'graphics'))
-        dir_util.copy_tree(
-            os.path.join(tmp, 'raw', 'objects'),
-            os.path.join(pack, 'raw', 'objects'))
-        shutil.copyfile(
-            os.path.join(tmp, 'data', 'init', 'colors.txt'),
-            os.path.join(pack, 'data', 'init', 'colors.txt'))
-        shutil.copyfile(
-            os.path.join(tmp, 'data', 'init', 'init.txt'),
-            os.path.join(pack, 'data', 'init', 'init.txt'))
-        shutil.copyfile(
-            os.path.join(tmp, 'data', 'init', 'd_init.txt'),
-            os.path.join(pack, 'data', 'init', 'd_init.txt'))
-        shutil.copyfile(
-            os.path.join(tmp, 'data', 'init', 'overrides.txt'),
-            os.path.join(pack, 'data', 'init', 'overrides.txt'))
-    except IOError:
-        sys.excepthook(*sys.exc_info())
-        retval = False
-    else:
-        files_after = sum(len(f) for (_, _, f) in os.walk(pack))
-        retval = files_after - files_before
-    if os.path.isdir(tmp):
-        dir_util.remove_tree(tmp)
-    return retval
+    """Removes unnecessary files from one graphics pack."""
+    baselines.simplify_pack(pack, 'graphics')
+    baselines.remove_vanilla_raws_from_pack(pack, 'graphics')
+    baselines.remove_empty_dirs(pack, 'graphics')
 
 def savegames_to_update():
     """Returns a list of savegames that will be updated."""
