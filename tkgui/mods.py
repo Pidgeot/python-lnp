@@ -74,10 +74,10 @@ class ModsTab(Tab):
         f = controls.create_control_group(self, None, True)
         controls.create_trigger_button(
             f, 'Simplify Mods', 'Simplify Mods',
-            mods.simplify_mods()).grid(
+            self.simplify_mods).grid(
                 row=0, column=0, sticky="nsew")
         controls.create_trigger_button(
-            f, 'Install Mods', 'Copy "installed" mods to DF folder.  '
+            f, 'Install Mods', 'Copy merged mods to DF folder.  '
             'WARNING: do not combine with graphics.  May be unstable.',
             self.install_mods).grid(row=0, column=1, sticky="nsew")
         controls.create_trigger_button(
@@ -180,6 +180,19 @@ class ModsTab(Tab):
 
     def install_mods(self):
         """Replaces <df>/raw with the contents LNP/Baselines/temp/raw"""
-        shutil.rmtree(os.path.join(paths.get('df'), 'raw'))
-        shutil.copytree(os.path.join(paths.get('baselines'), 'temp', 'raw'),
-                        os.path.join(paths.get('df'), 'raw'))
+        if messagebox.askokcancel(
+                message='Your graphics and raws will be changed.\n\n'
+                        'The mod merging function is still in beta.  This could '
+                        'break new worlds, or even cause crashes.\n\n'
+                        '',
+                title='Are you sure?'):
+            shutil.rmtree(os.path.join(paths.get('df'), 'raw'))
+            shutil.copytree(os.path.join(paths.get('baselines'), 'temp', 'raw'),
+                            os.path.join(paths.get('df'), 'raw'))
+            messagebox.showinfo(
+                'Mods installed',
+                'The selected mods were installed.\nGenerate a new world to '
+                'start playing with them!')
+        
+    def simplify_mods(self):
+        mods.simplify_mods()

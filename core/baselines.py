@@ -26,7 +26,6 @@ def find_vanilla_raws(version=None):
         None if no version was available.
     """
     # TODO: handle other DF versions; esp. small pack and non-SDL releases
-    # and non-zip files?  Folder size minimisation?
     zipped = glob.glob(os.path.join(paths.get('baselines'), 'df_??_?*.zip'))
     for item in zipped:
         version = os.path.basename(item)[0:8]

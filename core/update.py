@@ -3,8 +3,7 @@
 """Update handling."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, re, time, os
-from threading import Thread
+import sys, re, time, os, threading
 
 try:  # Python 2
     # pylint:disable=import-error
@@ -28,7 +27,7 @@ def check_update():
     if lnp.userconfig.get_number('updateDays') == -1:
         return
     if lnp.userconfig.get_number('nextUpdate') < time.time():
-        t = Thread(target=perform_update_check)
+        t = threading.Thread(target=perform_update_check)
         t.daemon = True
         t.start()
 
@@ -79,15 +78,16 @@ def download_df_version_to_baselines(version='invalid_string'):
     if not re.match('df_\d\d_\d\d', version):
         return None
     filename = version + '_win.zip'
-    # thread seems to block return, which nullifies time saving...
-    t = Thread(target=download_df_zip_from_bay12(filename))
-    t.daemon = True
-    t.start()
+    if not 'download_'+version in (t.name for t in threading.enumerate()):
+        t = threading.Thread(target=download_df_zip_from_bay12,
+                             args=(filename,), name='download_'+version)
+        t.daemon = True
+        t.start()
     return True
 
 def download_df_zip_from_bay12(filename):
     """Downloads a zipped version of DF from Bay12 Games.
-    'filename' is yhe full name of the file to retrieve,
+    'filename' is the full name of the file to retrieve,
     eg 'df_40_07_win.zip'    """
     url = 'http://www.bay12games.com/dwarves/' + filename
     req = Request(url, headers={'User-Agent':'PyLNP'})
