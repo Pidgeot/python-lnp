@@ -123,7 +123,7 @@ def program_is_running(path, nonchild=False):
         ps = subprocess.Popen(['ps', 'axww'], stdout=subprocess.PIPE)
         s = ps.stdout.read()
         ps.wait()
-        return path in s
+        return path in str(s)
     else:
         if path not in lnp.running:
             return False
