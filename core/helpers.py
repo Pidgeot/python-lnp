@@ -93,4 +93,4 @@ def get_resource(filename):
         # pylint: disable=protected-access, no-member, maybe-no-member
         return os.path.join(sys._MEIPASS, filename)
     else:
-        return filename
+        return os.path.abspath(filename)

@@ -6,7 +6,6 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys
 import os
 import subprocess
-import distutils.spawn
 
 from .helpers import get_resource
 from .lnp import lnp
@@ -65,11 +64,6 @@ def get_terminal_launcher():
     if sys.platform == 'darwin':
         return ['open', '-a', 'Terminal.app']
     elif sys.platform.startswith('linux'):
-        # prefer distribution provided terminal launchers
-        if distutils.spawn.find_executable('x-terminal-emulator'):
-            return ['x-terminal-emulator', '-e']
-        if distutils.spawn.find_executable('xdg-terminal'):
-            return ['xdg-terminal']
         return [get_resource('xdg-terminal')]
     raise Exception('No terminal launcher for platform: ' + sys.platform)
 
