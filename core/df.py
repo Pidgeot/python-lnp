@@ -212,6 +212,7 @@ class Version(object):
         #Known errors in release notes
         if version == "0.23.125.23a":
             version = "0.23.130.23a"
+        self.version_str = version
         s = ""
         data = []
         for c in version:
@@ -241,11 +242,4 @@ class Version(object):
         return self.data == other.data
 
     def __str__(self):
-        result = ""
-        last = None
-        for d in self.data:
-            if result != "" and type(d) == type(last):
-                result += '.'
-            result += str(d)
-            last = d
-        return result
+        return self.version_str
