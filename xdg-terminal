@@ -335,9 +335,9 @@ terminal_kde()
 
     if [ -x "$terminal_exec" ]; then
         if [ x"$1" == x"" ]; then
-            $terminal_exec
+            nohup $terminal_exec > /dev/null &
         else
-            $terminal_exec -e "$1"
+            nohup $terminal_exec -e "$1" > /dev/null &
         fi
 
         if [ $? -eq 0 ]; then
@@ -362,12 +362,12 @@ terminal_gnome()
 
     if [ -x "$terminal_exec" ]; then
         if [ x"$1" == x"" ]; then
-            $terminal_exec
+            nohup $terminal_exec > /dev/null &
         else
             if [ x"$term_exec_arg" == x"" ]; then
-                $terminal_exec "$1"
+                nohup $terminal_exec "$1" > /dev/null &
             else
-                $terminal_exec "$term_exec_arg" "$1"
+                nohup $terminal_exec "$term_exec_arg" "$1" > /dev/null &
             fi
         fi
 
@@ -384,9 +384,9 @@ terminal_gnome()
 terminal_xfce()
 {
     if [ x"$1" == x"" ]; then
-        exo-open --launch TerminalEmulator
+        nohup exo-open --launch TerminalEmulator  > /dev/null &
     else
-        exo-open --launch TerminalEmulator "$1"
+        nohup exo-open --launch TerminalEmulator "$1" > /dev/null &
     fi
 
     if [ $? -eq 0 ]; then
@@ -407,9 +407,9 @@ terminal_generic()
 
     if [ -x "$terminal_exec" ]; then
 			  if [ x"$1" == x"" ]; then
-            $terminal_exec
+            nohup $terminal_exec > /dev/null &
         else
-            $terminal_exec "-e" "$1"
+            nohup $terminal_exec "-e" "$1" > /dev/null &
         fi
 
         if [ $? -eq 0 ]; then
@@ -426,9 +426,9 @@ terminal_lxde()
 {
     if which lxterminal &>/dev/null; then
         if [ x"$1" == x"" ]; then
-            lxterminal
+            nohup lxterminal > /dev/null &
         else
-            lxterminal -e "$1"
+            nohup lxterminal -e "$1" > /dev/null &
         fi
     else
         terminal_generic "$1"
@@ -443,9 +443,9 @@ terminal_mate()
 
     if [ -x "$terminal_exec" ]; then
         if [ x"$1" == x"" ]; then
-            $terminal_exec
+            nohup $terminal_exec > /dev/null &
         else
-            $terminal_exec "$term_exec_arg" "$1"
+            nohup $terminal_exec "$term_exec_arg" "$1" > /dev/null &
         fi
 
         if [ $? -eq 0 ]; then
