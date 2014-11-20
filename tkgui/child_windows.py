@@ -205,7 +205,7 @@ class SelectDF(ChildWindow):
 
 class UpdateWindow(ChildWindow):
     """Notification of a new update."""
-    def __init__(self, parent, parentVar):
+    def __init__(self, parent):
         """
         Constructor for UpdateWindow.
 
@@ -266,6 +266,7 @@ class ConfirmRun(ChildWindow):
         """
         self.parent = parent
         self.path = path
+        self.is_df = is_df
         super(ConfirmRun, self).__init__(parent, 'Program already running')
         self.make_modal(self.close)
 

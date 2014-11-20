@@ -172,8 +172,7 @@ class TkGui(object):
         root.bind("<Configure>", self.on_resize)
 
         binding.update()
-        root.bind('<<UpdateAvailable>>', lambda e: UpdateWindow(
-            self.root, self.updateDays))
+        root.bind('<<UpdateAvailable>>', lambda e: UpdateWindow(self.root))
 
     def on_resize(self, e):
         """Called when the window is resized."""
