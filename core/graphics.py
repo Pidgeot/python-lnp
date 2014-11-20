@@ -231,8 +231,8 @@ def savegames_to_update():
     """Returns a list of savegames that will be updated."""
     saves = [o for o in glob.glob(os.path.join(paths.get('save'), '*'))
              if os.path.isdir(o) and not o.endswith('current')]
-    return [s for s in saves if not os.path.isfile(os.path.join(
-                                    s, 'raw', 'installed_raws.txt'))]
+    return [s for s in saves if not
+            os.path.isfile(os.path.join(s, 'raw', 'installed_raws.txt'))]
 
 def update_savegames():
     """Update save games with current raws."""
@@ -254,7 +254,7 @@ def update_savegames():
 
 def open_tilesets():
     """Opens the tilesets folder."""
-    open_folder(paths.get('tilesets')
+    open_folder(paths.get('tilesets'))
 
 def read_tilesets():
     """Returns a list of tileset files."""
@@ -282,6 +282,6 @@ def install_tilesets(font, graphicsfont):
         df.set_option('FULLFONT', font)
     if (lnp.settings.version_has_option('GRAPHICS_FONT') and
             graphicsfont is not None and os.path.isfile(
-            os.path.join(paths.get('data'), 'art', graphicsfont))):
+                os.path.join(paths.get('data'), 'art', graphicsfont))):
         df.set_option('GRAPHICS_FONT', graphicsfont)
         df.set_option('GRAPHICS_FULLFONT', graphicsfont)

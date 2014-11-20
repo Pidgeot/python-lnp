@@ -75,7 +75,7 @@ def download_df_version_to_baselines(version='invalid_string'):
         False if the download did not start
         None if the version string was invalid
     """
-    if not re.match('df_\d\d_\d\d', version):
+    if not re.match(r'df_\d\d_\d\d', version):
         return None
     filename = version + '_win.zip'
     if not 'download_'+version in (t.name for t in threading.enumerate()):

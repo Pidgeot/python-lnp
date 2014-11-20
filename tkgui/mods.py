@@ -29,7 +29,7 @@ class ModsTab(Tab):
         self.available = Variable()
 
     def read_data(self):
-        mods.init_paths()
+        mods.clear_temp()
         available = mods.read_mods()
         installed = mods.get_installed_mods_from_log()
         available = [m for m in available if m not in installed]
@@ -130,15 +130,16 @@ class ModsTab(Tab):
         self.perform_merge()
 
     def create_from_installed(self):
+        """Extracts a mod from the currently installed raws."""
         m = simpledialog.askstring("Create Mod", "New mod name:")
         if m is not None and m != '':
             if mods.make_mod_from_installed_raws(m):
                 messagebox.showinfo('Mod extracted',
-                            'Your custom mod was extracted as '+m+'.')
+                                    'Your custom mod was extracted as ' + m)
             else:
                 messagebox.showinfo('Error',
-                            'There is already a mod with that name, '
-                            'or only pre-existing mods were found.')
+                                    'There is already a mod with that name, '
+                                    'or only pre-existing mods were found.')
             self.read_data()
 
     def add_to_installed(self):
@@ -181,11 +182,10 @@ class ModsTab(Tab):
     def install_mods(self):
         """Replaces <df>/raw with the contents LNP/Baselines/temp/raw"""
         if messagebox.askokcancel(
-                message='Your graphics and raws will be changed.\n\n'
-                        'The mod merging function is still in beta.  This could '
-                        'break new worlds, or even cause crashes.\n\n'
-                        '',
-                title='Are you sure?'):
+            message = ('Your graphics and raws will be changed.\n\n'
+                       'The mod merging function is still in beta.  This '
+                       'could break new worlds, or even cause crashes.\n\n'),
+            title='Are you sure?'):
             shutil.rmtree(os.path.join(paths.get('df'), 'raw'))
             shutil.copytree(os.path.join(paths.get('baselines'), 'temp', 'raw'),
                             os.path.join(paths.get('df'), 'raw'))
@@ -193,6 +193,7 @@ class ModsTab(Tab):
                 'Mods installed',
                 'The selected mods were installed.\nGenerate a new world to '
                 'start playing with them!')
-        
+
     def simplify_mods(self):
+        """Simplify mods; runs on startup if called directly by button."""
         mods.simplify_mods()

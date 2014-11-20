@@ -338,7 +338,7 @@ This folder contains tilesets; individual image files that the user can use for 
 
 Mods
 ----
-This folder contains mods, consisting of a modified raw folder.  They use the same reduced format for raws as graphics packs.
+This folder contains mods for Dwarf Fortress, in the form of changes to the defining raws (which define the content DF uses).  Mods use the same reduced format for raws as graphics packs.
 
 Keybinds
 --------
