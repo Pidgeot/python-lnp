@@ -254,7 +254,7 @@ def update_savegames():
 
 def open_tilesets():
     """Opens the tilesets folder."""
-    open_folder(os.path.join(paths.get('data'), 'art'))
+    open_folder(paths.get('tilesets')
 
 def read_tilesets():
     """Returns a list of tileset files."""

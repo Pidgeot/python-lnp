@@ -279,6 +279,7 @@ PyLNP expects to see the following directory structure::
       Graphics
       Keybinds
       Mods
+      Tilesets
       Utilities
 
 PyLNP itself may be placed anywhere, so long as it is somewhere inside the base folder. It can be placed directly in the base folder, in a subfolder, in a subfolder of a subfolder, etc. The base folder is determined by checking the its own directory; if it cannot find a Dwarf Fortress folder, it will try the parent folder, and continue in this manner until it finds a suitable folder; that folder is considered the base folder.
