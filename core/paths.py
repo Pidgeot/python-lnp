@@ -28,6 +28,4 @@ def get(name):
 
 def clear():
     """Clears the path cache."""
-    # pylint:disable=global-statement
-    global paths
-    paths = {}
+    paths.clear()
