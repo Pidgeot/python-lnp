@@ -10,7 +10,7 @@ from . import paths
 from . import update
 from .lnp import lnp
 
-def find_vanilla_raws(version=None):
+def find_vanilla_raws():
     """Finds vanilla raws for the requested version.
     If required, unzip a DF release to create the folder in LNP/Baselines/.
 
@@ -37,12 +37,12 @@ def find_vanilla_raws(version=None):
 
     available = [os.path.basename(item) for item in glob.glob(os.path.join(
         paths.get('baselines'), 'df_??_?*')) if os.path.isdir(item)]
-    if version == None:
-        version = 'df_' + str(lnp.df_info.version)[2:].replace('.', '_')
-        if lnp.df_info.source == "init detection":
-            # WARNING: likley to be much too early in this case
-            # User should restore 'release notes.txt'
-            pass
+
+    version = 'df_' + str(lnp.df_info.version)[2:].replace('.', '_')
+    if lnp.df_info.source == "init detection":
+        # WARNING: likley to be much too early in this case
+        # User should restore 'release notes.txt'
+        pass
     if version not in available:
         update.download_df_version_to_baselines(version)
         version = available[-1]
@@ -128,15 +128,15 @@ def remove_vanilla_raws_from_pack(pack, folder):
     """
     raw_folder = os.path.join(paths.get(folder), pack, 'raw')
     vanilla_raw_folder = find_vanilla_raws()
-    for root, dirs, files in os.walk(raw_folder):
+    for root, _, files in os.walk(raw_folder):
         for f in files:
             f = os.path.join(root, f)
             # silently clean up so empty dirs can be removed
             silently_kill = ('Thumbs.db', 'installed_mods.txt')
-            if any(file.endswith(k) for k in silently_kill):
+            if any(f.endswith(k) for k in silently_kill):
                 os.remove(file)
                 continue
-            f = os.path.relpath(file, raw_folder)
+            f = os.path.relpath(f, raw_folder)
             # if there's an identical vanilla file, remove the mod file
             if os.path.isfile(os.path.join(vanilla_raw_folder, f)):
                 if filecmp.cmp(os.path.join(vanilla_raw_folder, f),
@@ -153,7 +153,7 @@ def remove_empty_dirs(pack, folder):
             The parent folder of the pack (either 'mods' or 'graphics')
     """
     pack = os.path.join(paths.get(folder), pack)
-    for n in range(3):
+    for _ in range(3):
         # only catches the lowest level each iteration
         for root, dirs, files in os.walk(pack):
             if not dirs and not files:

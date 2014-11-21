@@ -15,11 +15,13 @@ if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
     from tkinter.ttk import *
+    import tkinter.messagebox as messagebox
     import tkinter.simpledialog as simpledialog
 else:
     # pylint:disable=import-error
     from Tkinter import *
     from ttk import *
+    import tkMessageBox as messagebox
     import tkSimpleDialog as simpledialog
 
 class ModsTab(Tab):
@@ -88,6 +90,7 @@ class ModsTab(Tab):
         f.grid(row=3, column=0, sticky="ew")
 
     def move_up(self):
+        """Moves the selected item/s up in the merge order and re-merges."""
         if len(self.installed_list.curselection()) == 0:
             return
         selection = [int(i) for i in self.installed_list.curselection()]
@@ -109,6 +112,7 @@ class ModsTab(Tab):
         self.perform_merge()
 
     def move_down(self):
+        """Moves the selected item/s down in the merge order and re-merges."""
         if len(self.installed_list.curselection()) == 0:
             return
         selection = [int(i) for i in self.installed_list.curselection()]
@@ -137,12 +141,13 @@ class ModsTab(Tab):
                 messagebox.showinfo('Mod extracted',
                                     'Your custom mod was extracted as ' + m)
             else:
-                messagebox.showinfo('Error',
-                                    'There is already a mod with that name, '
-                                    'or only pre-existing mods were found.')
+                messagebox.showinfo(
+                    'Error', ('There is already a mod with that name, '
+                              'or only pre-existing mods were found.'))
             self.read_data()
 
     def add_to_installed(self):
+        """Move selected mod/s from available to merged list and re-merge."""
         if len(self.available_list.curselection()) == 0:
             return
         for i in self.available_list.curselection():
@@ -152,6 +157,7 @@ class ModsTab(Tab):
         self.perform_merge()
 
     def remove_from_installed(self):
+        """Move selected mod/s from merged to available list and re-merge."""
         if len(self.installed_list.curselection()) == 0:
             return
         for i in self.installed_list.curselection()[::-1]:
@@ -167,6 +173,7 @@ class ModsTab(Tab):
         self.perform_merge()
 
     def perform_merge(self):
+        """Merge the selected mods, with background color for user feedback."""
         mods.clear_temp()
         # Set status to unknown before merging
         for i, _ in enumerate(self.installed_list.get(0, END)):
@@ -179,13 +186,14 @@ class ModsTab(Tab):
             if status == 3:
                 return
 
-    def install_mods(self):
+    @staticmethod
+    def install_mods():
         """Replaces <df>/raw with the contents LNP/Baselines/temp/raw"""
         if messagebox.askokcancel(
-            message = ('Your graphics and raws will be changed.\n\n'
-                       'The mod merging function is still in beta.  This '
-                       'could break new worlds, or even cause crashes.\n\n'),
-            title='Are you sure?'):
+                message=('Your graphics and raws will be changed.\n\n'
+                         'The mod merging function is still in beta.  This '
+                         'could break new worlds, or even cause crashes.\n\n'),
+                title='Are you sure?'):
             shutil.rmtree(os.path.join(paths.get('df'), 'raw'))
             shutil.copytree(os.path.join(paths.get('baselines'), 'temp', 'raw'),
                             os.path.join(paths.get('df'), 'raw'))
@@ -194,6 +202,7 @@ class ModsTab(Tab):
                 'The selected mods were installed.\nGenerate a new world to '
                 'start playing with them!')
 
-    def simplify_mods(self):
+    @staticmethod
+    def simplify_mods():
         """Simplify mods; runs on startup if called directly by button."""
         mods.simplify_mods()

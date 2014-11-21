@@ -46,8 +46,7 @@ def read_graphics():
     return tuple(result)
 
 def install_graphics(pack):
-    """
-    Installs the graphics pack located in LNP/Graphics/<pack>.
+    """Installs the graphics pack located in LNP/Graphics/<pack>.
 
     Params:
         pack

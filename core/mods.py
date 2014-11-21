@@ -3,14 +3,14 @@
 """<description of the module>"""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import os, shutil, glob, difflib, sys
+import os, shutil, glob
+from difflib import SequenceMatcher
 from io import open
 
 from . import paths, baselines
 
 def read_mods():
     """Returns a list of mod packs"""
-    # should go in tkgui/mods.py later
     return [os.path.basename(o) for o in
             glob.glob(os.path.join(paths.get('mods'), '*'))
             if os.path.isdir(o)]
@@ -48,23 +48,19 @@ def do_merge_seq(mod_text, vanilla_text, gen_text):
     if vanilla_text == mod_text:
         return 0, gen_text
 
-    # Returns list of 5-tuples describing how to turn vanilla into mod or gen
+    # Get a list of 5-tuples describing how to turn vanilla into mod or gen
     # lines.  Each specifies an operation, and start+end lines for each change.
-    # We then compose a text from these by concatenation, returning
-    # false if the mod changes lines which have already been changed.
-    van_mod_match = difflib.SequenceMatcher(None, vanilla_text, mod_text)
-    van_gen_match = difflib.SequenceMatcher(None, vanilla_text, gen_text)
-    van_mod_ops = van_mod_match.get_opcodes()
-    van_gen_ops = van_gen_match.get_opcodes()
+    van_mod_ops = SequenceMatcher(None, vanilla_text, mod_text).get_opcodes()
+    van_gen_ops = SequenceMatcher(None, vanilla_text, gen_text).get_opcodes()
 
-    output_file_temp = []
-    # holds the line we're up to, effectively truncates blocks which were
+    # cur_v holds the line we're up to, effectively truncates blocks which were
     # partially covered in the previous iteration.
-    cur_v = 0
+    output_file_temp, cur_v = [], 0
+    
     while van_mod_ops and van_gen_ops:
         # get names from the next set of opcodes
-        mod_tag, mod_i1, mod_i2, mod_j1, mod_j2 = van_mod_ops[0]
-        gen_tag, gen_i1, gen_i2, gen_j1, gen_j2 = van_gen_ops[0]
+        mod_tag, _, mod_i2, mod_j1, mod_j2 = van_mod_ops[0]
+        gen_tag, _, gen_i2, gen_j1, gen_j2 = van_gen_ops[0]
         # if the mod is vanilla for these lines
         if mod_tag == 'equal':
             # if the gen lines are also vanilla
@@ -96,10 +92,8 @@ def do_merge_seq(mod_text, vanilla_text, gen_text):
                 van_mod_ops.pop(0)
                 if mod_i2 == gen_i2:
                     van_gen_ops.pop(0)
-            # if the changes would overlap, we can't handle that yet
             else:
-                # this is the rare over-write merge.
-                # changes status, use caution
+                # An over-write merge. Changes status to warn the user.
                 status = 2
                 # append the shorter block to new genned lines
                 if mod_i2 < gen_i2:
@@ -113,6 +107,7 @@ def do_merge_seq(mod_text, vanilla_text, gen_text):
                     if mod_i2 == gen_i2:
                         van_mod_ops.pop(0)
     # clean up trailing opcodes, to avoid dropping the end of the file
+    # TODO: check these are insertions, handle non-insertions appropriately.
     if van_mod_ops:
         mod_tag, mod_i1, mod_i2, mod_j1, mod_j2 = van_mod_ops[0]
         output_file_temp += mod_text[mod_j1:mod_j2]
@@ -169,13 +164,13 @@ def merge_raw_folders(mod_raw_folder, vanilla_raw_folder):
             if not f.endswith('.txt'):
                 continue
             if (os.path.isfile(os.path.join(vanilla_raw_folder, f)) or
-                os.path.isfile(os.path.join(mixed_raw_folder, f))):
+                    os.path.isfile(os.path.join(mixed_raw_folder, f))):
                 status = max(do_merge_files(os.path.join(mod_raw_folder, f),
                                             os.path.join(vanilla_raw_folder, f),
                                             os.path.join(mixed_raw_folder, f)),
                              status)
             else:
-                shutil.copy(os.path.join(mod_raw_folder, f), 
+                shutil.copy(os.path.join(mod_raw_folder, f),
                             os.path.join(mixed_raw_folder, f))
     return status
 
@@ -187,7 +182,7 @@ def clear_temp():
                     os.path.join(paths.get('baselines'), 'temp', 'raw'))
     with open(os.path.join(paths.get('baselines'), 'temp', 'raw',
                            'installed_raws.txt'), 'w') as log:
-        log.write('# List of raws merged by PyLNP:\n' + 
+        log.write('# List of raws merged by PyLNP:\n' +
                   os.path.basename(baselines.find_vanilla_raws()) + '\n')
 
 def make_mod_from_installed_raws(name):
@@ -221,7 +216,7 @@ def make_mod_from_installed_raws(name):
         shutil.rmtree(os.path.join(paths.get('baselines'), 'temp2'))
 
     if os.path.isdir(os.path.join(paths.get('baselines'), 'temp')):
-        shutil.copytree(os.path.join(paths.get('baselines'), 'temp'), 
+        shutil.copytree(os.path.join(paths.get('baselines'), 'temp'),
                         os.path.join(paths.get('mods'), name))
         return True
     return False
