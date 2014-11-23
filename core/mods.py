@@ -26,6 +26,12 @@ def simplify_pack(pack):
     baselines.remove_vanilla_raws_from_pack(pack, 'mods')
     baselines.remove_empty_dirs(pack, 'mods')
 
+def install_mods():
+    """Deletes installed raw folder, and copies over installed raws."""
+    shutil.rmtree(os.path.join(paths.get('df'), 'raw'))
+    shutil.copytree(os.path.join(paths.get('baselines'), 'temp', 'raw'),
+                    os.path.join(paths.get('df'), 'raw'))
+
 def do_merge_seq(mod_text, vanilla_text, gen_text):
     """Merges sequences of lines.  Returns empty string if a line changed by
     the mod has been changed by a previous mod, or merged lines otherwise.
@@ -56,7 +62,7 @@ def do_merge_seq(mod_text, vanilla_text, gen_text):
     # cur_v holds the line we're up to, effectively truncates blocks which were
     # partially covered in the previous iteration.
     output_file_temp, cur_v = [], 0
-    
+
     while van_mod_ops and van_gen_ops:
         # get names from the next set of opcodes
         mod_tag, _, mod_i2, mod_j1, mod_j2 = van_mod_ops[0]
@@ -107,12 +113,11 @@ def do_merge_seq(mod_text, vanilla_text, gen_text):
                     if mod_i2 == gen_i2:
                         van_mod_ops.pop(0)
     # clean up trailing opcodes, to avoid dropping the end of the file
-    # TODO: check these are insertions, handle non-insertions appropriately.
-    if van_mod_ops:
-        mod_tag, mod_i1, mod_i2, mod_j1, mod_j2 = van_mod_ops[0]
+    while van_mod_ops:
+        mod_tag, _, mod_i2, mod_j1, mod_j2 = van_mod_ops.pop(0)
         output_file_temp += mod_text[mod_j1:mod_j2]
-    if van_gen_ops:
-        gen_tag, gen_i1, gen_i2, gen_j1, gen_j2 = van_gen_ops[0]
+    while van_gen_ops:
+        gen_tag, _, gen_i2, gen_j1, gen_j2 = van_gen_ops.pop(0)
         output_file_temp += gen_text[gen_j1:gen_j2]
     return status, output_file_temp
 
@@ -124,15 +129,16 @@ def do_merge_files(mod_file_name, van_file_name, gen_file_name):
                      errors='replace').readlines()
     mod_lines = open(mod_file_name, mode='r', encoding='cp437',
                      errors='replace').readlines()
-    gen_lines = []
-    if os.path.isfile(gen_file_name):
-        gen_lines = open(gen_file_name, mode='r', encoding='cp437',
-                         errors='replace').readlines()
+    gen_lines = open(gen_file_name, mode='r', encoding='cp437',
+                     errors='replace').readlines()
 
     status, gen_lines = do_merge_seq(mod_lines, van_lines, gen_lines)
     gen_file = open(gen_file_name, "w")
     for line in gen_lines:
-        gen_file.write(line)
+        try:
+            gen_file.write(line)
+        except UnicodeEncodeError:
+            return 3 # invalid character for DF encoding
     return status
 
 def merge_a_mod(mod):
@@ -163,7 +169,7 @@ def merge_raw_folders(mod_raw_folder, vanilla_raw_folder):
             f = os.path.relpath(f, mod_raw_folder)
             if not f.endswith('.txt'):
                 continue
-            if (os.path.isfile(os.path.join(vanilla_raw_folder, f)) or
+            if (os.path.isfile(os.path.join(vanilla_raw_folder, f)) and
                     os.path.isfile(os.path.join(mixed_raw_folder, f))):
                 status = max(do_merge_files(os.path.join(mod_raw_folder, f),
                                             os.path.join(vanilla_raw_folder, f),
@@ -227,10 +233,10 @@ def get_installed_mods_from_log():
                                                 'raw', 'installed_raws.txt'))
     return [mod for mod in logged if mod in read_mods()]
 
-def read_installation_log(fl):
+def read_installation_log(log):
     """Read an 'installed_raws.txt' and return it's full contents."""
     try:
-        with open(fl) as f:
+        with open(log) as f:
             file_contents = list(f.readlines())
     except IOError:
         return []

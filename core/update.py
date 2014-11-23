@@ -72,18 +72,22 @@ def download_df_version_to_baselines(version='invalid_string'):
 
     Returns:
         True if the download was started (in a thread, for availability later)
-        False if the download did not start
+        False if the download did not start (eg because of another thread)
         None if the version string was invalid
     """
     if not re.match(r'df_\d\d_\d\d', version):
         return None
+    # Windows is always OK; we discard OS-specific files and .zips are easier.
+    # TODO:  Download the small version when it exists, to save bandwidth.
     filename = version + '_win.zip'
     if not 'download_'+version in (t.name for t in threading.enumerate()):
         t = threading.Thread(target=download_df_zip_from_bay12,
                              args=(filename,), name='download_'+version)
         t.daemon = True
         t.start()
-    return True
+        return True
+    else:
+        return False
 
 def download_df_zip_from_bay12(filename):
     """Downloads a zipped version of DF from Bay12 Games.

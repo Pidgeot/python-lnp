@@ -25,7 +25,7 @@ def find_vanilla_raws():
         If requested version unavailable, path to latest version
         None if no version was available.
     """
-    # TODO: handle other DF versions; esp. small pack and non-SDL releases
+    # TODO: also transparently extract *nix releases (*.tar.bz2)
     zipped = glob.glob(os.path.join(paths.get('baselines'), 'df_??_?*.zip'))
     for item in zipped:
         version = os.path.basename(item)[0:8]
@@ -134,7 +134,7 @@ def remove_vanilla_raws_from_pack(pack, folder):
             # silently clean up so empty dirs can be removed
             silently_kill = ('Thumbs.db', 'installed_mods.txt')
             if any(f.endswith(k) for k in silently_kill):
-                os.remove(file)
+                os.remove(f)
                 continue
             f = os.path.relpath(f, raw_folder)
             # if there's an identical vanilla file, remove the mod file
