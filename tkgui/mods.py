@@ -194,9 +194,7 @@ class ModsTab(Tab):
                          'The mod merging function is still in beta.  This '
                          'could break new worlds, or even cause crashes.\n\n'),
                 title='Are you sure?'):
-            shutil.rmtree(os.path.join(paths.get('df'), 'raw'))
-            shutil.copytree(os.path.join(paths.get('baselines'), 'temp', 'raw'),
-                            os.path.join(paths.get('df'), 'raw'))
+            mods.install_mods()
             messagebox.showinfo(
                 'Mods installed',
                 'The selected mods were installed.\nGenerate a new world to '
