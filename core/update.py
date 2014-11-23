@@ -70,10 +70,7 @@ def download_df_baseline():
     Returns:
         True if the download was started (in a thread, for availability later)
         False if the download did not start (eg because of another thread)
-        None if the version string was invalid
     """
-    if not re.match(r'df_\d\d_\d\d\w*', version):
-        return None
     filename = DFInstall.get_archive_name()
     if not 'download_' + version in (t.name for t in threading.enumerate()):
         t = threading.Thread(target=download_df_zip_from_bay12,
@@ -81,8 +78,7 @@ def download_df_baseline():
         t.daemon = True
         t.start()
         return True
-    else:
-        return False
+    return False
 
 def download_df_zip_from_bay12(filename):
     """Downloads a zipped version of DF from Bay12 Games.
