@@ -189,7 +189,8 @@ def clear_temp():
     with open(os.path.join(paths.get('baselines'), 'temp', 'raw',
                            'installed_raws.txt'), 'w') as log:
         log.write('# List of raws merged by PyLNP:\n' +
-                  os.path.basename(baselines.find_vanilla_raws()) + '\n')
+                  os.path.basename(
+                      os.path.dirname(baselines.find_vanilla_raws())) + '\n')
 
 def make_mod_from_installed_raws(name):
     """Capture whatever unavailable mods a user currently has installed
@@ -197,7 +198,6 @@ def make_mod_from_installed_raws(name):
 
         * If `installed_raws.txt` is not present, compare to vanilla
         * Otherwise, rebuild as much as possible then compare to installed
-        * Harder than I first thought... but not impossible.
     """
     if os.path.isdir(os.path.join(paths.get('mods'), name)):
         return False

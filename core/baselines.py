@@ -11,43 +11,41 @@ from . import update
 from .lnp import lnp
 
 def find_vanilla_raws():
-    """Finds vanilla raws for the requested version.
-    If required, unzip a DF release to create the folder in LNP/Baselines/.
-
-    Params:
-        version
-            String indicating version in format 'df_40_15'
-            None returns the latest available raws.
+    """Finds vanilla raws for the current version.
+    Starts by unzipping any DF releases in baselines and preprocessing them.
 
     Returns:
         The path to the requested vanilla 'raw' folder
             eg: 'LNP/Baselines/df_40_15/raw'
-        If requested version unavailable, path to latest version
+        If requested version unavailable, path to latest available version
         None if no version was available.
     """
-    # TODO: also transparently extract *nix releases (*.tar.bz2)
+    prepare_baselines()
+    available = [os.path.basename(item) for item in glob.glob(os.path.join(
+        paths.get('baselines'), 'df_??_??')) if os.path.isdir(item)]
+    if not available:
+        return None
+    version = 'df_' + str(lnp.df_info.version)[2:].replace('.', '_')
+    if lnp.df_info.source == "init detection":
+        # WARNING: probably the wrong version!  Restore 'release notes.txt'.
+        pass
+    if version not in available:
+        update.download_df_baseline()
+        version = available[-1]
+    return os.path.join(paths.get('baselines'), version, 'raw')
+
+def prepare_baselines():
+    """Unzip any DF releases found, and discard non-universial files."""
     zipped = glob.glob(os.path.join(paths.get('baselines'), 'df_??_?*.zip'))
     for item in zipped:
-        version = os.path.basename(item)[0:8]
+        version = os.path.basename(item)
+        for s in ['_win', '_legacy', '_s', '.zip']:
+            version = version.replace(s, '')
         f = os.path.join(paths.get('baselines'), version)
         if not os.path.isdir(f):
             zipfile.ZipFile(item).extractall(f)
             simplify_pack(version, 'baselines')
         os.remove(item)
-
-    available = [os.path.basename(item) for item in glob.glob(os.path.join(
-        paths.get('baselines'), 'df_??_?*')) if os.path.isdir(item)]
-
-    version = 'df_' + str(lnp.df_info.version)[2:].replace('.', '_')
-    if lnp.df_info.source == "init detection":
-        # WARNING: likley to be much too early in this case
-        # User should restore 'release notes.txt'
-        pass
-    if version not in available:
-        update.download_df_version_to_baselines(version)
-        version = available[-1]
-
-    return os.path.join(paths.get('baselines'), version, 'raw')
 
 def simplify_pack(pack, folder):
     """Removes unnecessary files from LNP/<folder>/<pack>.

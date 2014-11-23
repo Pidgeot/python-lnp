@@ -205,6 +205,23 @@ class DFInstall(object):
             result.append('legacy')
         return result
 
+    def get_archive_name(self):
+        """Return the filename of the download for this version.
+        Always windows, for comparison of raws in baselines.
+        Prefer small and SDL releases when available."""
+        base = 'df_' + self.version[2:].replace('.', '_')
+        if self.version >= '0.31.13':
+            return base + '_win_s.zip'
+        if self.version >= '0.31.05':
+            return base + '_legacy_s.zip'
+        if self.version == '0.31.04':
+            return base + '_legacy.zip'
+        if self.version == '0.31.01':
+            return base + '.zip'
+        if self.version >= '0.21.104.19b':
+            return base + '_s.zip'
+        return base + '.zip'
+
 @total_ordering
 class Version(object):
     """Container for a version number for easy comparisons."""

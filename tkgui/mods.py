@@ -4,12 +4,11 @@
 """Mods tab for the TKinter GUI."""
 from __future__ import print_function, unicode_literals, absolute_import
 
+import sys
+
 from . import controls
 from .tab import Tab
-import sys, os, shutil
-
 from core import mods
-from core import paths
 
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error

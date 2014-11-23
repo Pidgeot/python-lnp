@@ -14,6 +14,7 @@ except ImportError:  # Python 3
     from urllib.error import URLError
 
 from .lnp import lnp
+from .df import DFInstall
 from . import launcher, paths
 
 def updates_configured():
@@ -62,27 +63,21 @@ def start_update():
     """Launches a webbrowser to the specified update URL."""
     launcher.open_url(lnp.config.get_string('updates/downloadURL'))
 
-def download_df_version_to_baselines(version='invalid_string'):
-    """Download the specified version of DF from Bay12 Games
-    to serve as a baseline, in LNP/Baselines/
-
-    Params:
-        version
-            The requested version of DF
+def download_df_baseline():
+    """Download the current version of DF from Bay12 Games to serve as a
+    baseline, in LNP/Baselines/
 
     Returns:
         True if the download was started (in a thread, for availability later)
         False if the download did not start (eg because of another thread)
         None if the version string was invalid
     """
-    if not re.match(r'df_\d\d_\d\d', version):
+    if not re.match(r'df_\d\d_\d\d\w*', version):
         return None
-    # Windows is always OK; we discard OS-specific files and .zips are easier.
-    # TODO:  Download the small version when it exists, to save bandwidth.
-    filename = version + '_win.zip'
-    if not 'download_'+version in (t.name for t in threading.enumerate()):
+    filename = DFInstall.get_archive_name()
+    if not 'download_' + version in (t.name for t in threading.enumerate()):
         t = threading.Thread(target=download_df_zip_from_bay12,
-                             args=(filename,), name='download_'+version)
+                             args=(filename,), name='download_' + version)
         t.daemon = True
         t.start()
         return True
