@@ -200,7 +200,7 @@ class DFInstall(object):
             if glob(os.path.join(
                     self.df_dir, 'hack', 'plugins', 'twbt.plug.*')):
                 result.append('twbt')
-        if self.version < '0.31.12' or not DFConfiguration.has_field(
+        if self.version <= '0.31.12' or not DFConfiguration.has_field(
                 os.path.join(self.init_dir, 'init.txt'), 'PRINT_MODE'):
             result.append('legacy')
         return result
