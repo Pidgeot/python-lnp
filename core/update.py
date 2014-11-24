@@ -72,9 +72,9 @@ def download_df_baseline():
         False if the download did not start (eg because of another thread)
     """
     filename = DFInstall.get_archive_name()
-    if not 'download_' + version in (t.name for t in threading.enumerate()):
+    if not 'download_' + filename in (t.name for t in threading.enumerate()):
         t = threading.Thread(target=download_df_zip_from_bay12,
-                             args=(filename,), name='download_' + version)
+                             args=(filename,), name='download_' + filename)
         t.daemon = True
         t.start()
         return True
