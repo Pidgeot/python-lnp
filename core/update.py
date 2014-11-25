@@ -15,7 +15,7 @@ except ImportError:  # Python 3
 
 from .lnp import lnp
 from .df import DFInstall
-from . import launcher, paths
+from . import launcher, paths, download
 
 def updates_configured():
     """Returns True if update checking have been configured."""
@@ -65,28 +65,8 @@ def start_update():
 
 def download_df_baseline():
     """Download the current version of DF from Bay12 Games to serve as a
-    baseline, in LNP/Baselines/
-
-    Returns:
-        True if the download was started (in a thread, for availability later)
-        False if the download did not start (eg because of another thread)
-    """
-    filename = DFInstall.get_archive_name()
-    if not 'download_' + filename in (t.name for t in threading.enumerate()):
-        t = threading.Thread(target=download_df_zip_from_bay12,
-                             args=(filename,), name='download_' + filename)
-        t.daemon = True
-        t.start()
-        return True
-    return False
-
-def download_df_zip_from_bay12(filename):
-    """Downloads a zipped version of DF from Bay12 Games.
-    'filename' is the full name of the file to retrieve,
-    eg 'df_40_07_win.zip'    """
+    baseline, in LNP/Baselines/"""
+    filename = lnp.df_info.get_archive_name()
     url = 'http://www.bay12games.com/dwarves/' + filename
-    req = Request(url, headers={'User-Agent':'PyLNP'})
-    archive = urlopen(req, timeout=3).read()
-    with open(os.path.join(paths.get('baselines'), filename), 'wb') as f:
-        f.write(archive)
-        f.close()
+    target = os.path.join(paths.get('baselines'), filename)
+    download.download('baselines', url, target)

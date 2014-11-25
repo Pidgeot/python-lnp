@@ -15,24 +15,19 @@ def find_vanilla_raws():
     Starts by unzipping any DF releases in baselines and preprocessing them.
 
     Returns:
-        The path to the requested vanilla 'raw' folder
-            eg: 'LNP/Baselines/df_40_15/raw'
-        If requested version unavailable, path to latest available version
-        None if no version was available.
+        Path to the vanilla 'raw' folder, eg 'LNP/Baselines/df_40_15/raw'
+        False if baseline not available (and start download)
+        None if version detection is not accurate
     """
-    prepare_baselines()
-    available = [os.path.basename(item) for item in glob.glob(os.path.join(
-        paths.get('baselines'), 'df_??_??')) if os.path.isdir(item)]
-    if not available:
-        return None
-    version = 'df_' + str(lnp.df_info.version)[2:].replace('.', '_')
     if lnp.df_info.source == "init detection":
         # WARNING: probably the wrong version!  Restore 'release notes.txt'.
-        pass
-    if version not in available:
-        update.download_df_baseline()
-        version = available[-1]
-    return os.path.join(paths.get('baselines'), version, 'raw')
+        return None
+    prepare_baselines()
+    version = 'df_' + str(lnp.df_info.version)[2:].replace('.', '_')
+    if os.path.isdir(os.path.join(paths.get('baselines'), version, 'raw')):
+        return os.path.join(paths.get('baselines'), version, 'raw')
+    update.download_df_baseline()
+    return False
 
 def prepare_baselines():
     """Unzip any DF releases found, and discard non-universial files."""

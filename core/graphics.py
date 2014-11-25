@@ -55,8 +55,11 @@ def install_graphics(pack):
     Returns:
         True if successful,
         False if an exception occured
-        None if required files are missing (raw/graphics, data/init)
+        None if baseline vanilla raws are missing
     """
+    if not baselines.find_vanilla_raws():
+        # TODO: add user warning re: missing baseline, download
+        return None
     gfx_dir = tempfile.mkdtemp()
     dir_util.copy_tree(baselines.find_vanilla_raws(), gfx_dir)
     dir_util.copy_tree(os.path.join(paths.get('graphics'), pack), gfx_dir)

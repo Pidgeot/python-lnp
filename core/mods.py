@@ -131,7 +131,6 @@ def do_merge_files(mod_file_name, van_file_name, gen_file_name):
                      errors='replace').readlines()
     gen_lines = open(gen_file_name, mode='r', encoding='cp437',
                      errors='replace').readlines()
-
     status, gen_lines = do_merge_seq(mod_lines, van_lines, gen_lines)
     gen_file = open(gen_file_name, "w")
     for line in gen_lines:
@@ -149,6 +148,8 @@ def merge_a_mod(mod):
         2:  Non-fatal error, overlapping lines or non-existent mod etc
         3:  Fatal error, respond by rebuilding to previous mod
         """
+    if not baselines.find_vanilla_raws():
+        return 3 # no baseline; caught properly earlier
     mod_raw_folder = os.path.join(paths.get('mods'), mod, 'raw')
     if not os.path.isdir(mod_raw_folder):
         return 2
@@ -182,6 +183,9 @@ def merge_raw_folders(mod_raw_folder, vanilla_raw_folder):
 
 def clear_temp():
     """Resets the folder in which raws are mixed."""
+    if not baselines.find_vanilla_raws():
+        # TODO: add user warning re: missing baseline, download
+        return None
     if os.path.exists(os.path.join(paths.get('baselines'), 'temp')):
         shutil.rmtree(os.path.join(paths.get('baselines'), 'temp'))
     shutil.copytree(baselines.find_vanilla_raws(),
@@ -210,6 +214,9 @@ def make_mod_from_installed_raws(name):
                         reconstruction)
     else:
         reconstruction = baselines.find_vanilla_raws()
+        if not reconstruction:
+            # TODO: add user warning re: missing baseline, download
+            return None
 
     clear_temp()
     merge_raw_folders(reconstruction, os.path.join(paths.get('df'), 'raw'))
