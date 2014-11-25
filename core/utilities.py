@@ -27,7 +27,7 @@ def read_metadata():
     for e in entries:
         data = e.split(':', 2)
         if len(data) < 3:
-            data.extend(['',''])
+            data.extend(['', ''])
         metadata[data[0]] = {'title': data[1]}
         metadata[data[0]]['tooltip'] = data[2]
 

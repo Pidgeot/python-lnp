@@ -114,9 +114,8 @@ def delete_colors(filename):
 def get_installed_file():
     """Returns the name of the currently installed color scheme."""
     files = helpers.get_text_files(paths.get('colors'))
-    if lnp.df_info.version <= '0.31.03':
-        current = os.path.join(paths.get('init'), 'init.txt')
-    else:
-        current = os.path.join(paths.get('init'), 'colors.txt')
-    result = helpers.detect_installed_file(current, files)
-    return os.path.splitext(os.path.basename(result))[0]
+    current_scheme = get_colors()
+    for scheme in files:
+        if get_colors(scheme) == current_scheme:
+            return os.path.splitext(os.path.basename(scheme))[0]
+    return None

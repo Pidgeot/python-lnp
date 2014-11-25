@@ -187,16 +187,10 @@ class GraphicsTab(Tab):
 
         self.select_graphics()
 
-    def install_graphics(self, listbox):
-        """
-        Installs a graphics pack.
-
-        Params:
-            listbox
-                Listbox containing the list of graphics packs.
-        """
-        if len(listbox.curselection()) != 0:
-            gfx_dir = listbox.get(listbox.curselection()[0])
+    def install_graphics(self):
+        """Installs a graphics pack."""
+        if len(self.graphicpacks.curselection()) != 0:
+            gfx_dir = self.graphicpacks.get(self.graphicpacks.curselection()[0])
             if messagebox.askokcancel(
                     message='Your graphics, settings and raws will be changed.',
                     title='Are you sure?'):

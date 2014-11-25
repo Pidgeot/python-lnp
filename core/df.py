@@ -200,7 +200,7 @@ class DFInstall(object):
             if glob(os.path.join(
                     self.df_dir, 'hack', 'plugins', 'twbt.plug.*')):
                 result.append('twbt')
-        if self.version < '0.31.12' or not DFConfiguration.has_field(
+        if self.version <= '0.31.12' or not DFConfiguration.has_field(
                 os.path.join(self.init_dir, 'init.txt'), 'PRINT_MODE'):
             result.append('legacy')
         return result
@@ -229,6 +229,7 @@ class Version(object):
         #Known errors in release notes
         if version == "0.23.125.23a":
             version = "0.23.130.23a"
+        self.version_str = version
         s = ""
         data = []
         for c in version:
@@ -258,11 +259,4 @@ class Version(object):
         return self.data == other.data
 
     def __str__(self):
-        result = ""
-        last = None
-        for d in self.data:
-            if result != "" and type(d) == type(last):
-                result += '.'
-            result += str(d)
-            last = d
-        return result
+        return self.version_str
