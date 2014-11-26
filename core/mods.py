@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""<description of the module>"""
+"""Mod Pack management and merging tools."""
 from __future__ import print_function, unicode_literals, absolute_import
 
 import os, shutil, glob
@@ -33,8 +33,7 @@ def install_mods():
                     os.path.join(paths.get('df'), 'raw'))
 
 def do_merge_seq(mod_text, vanilla_text, gen_text):
-    """Merges sequences of lines.  Returns empty string if a line changed by
-    the mod has been changed by a previous mod, or merged lines otherwise.
+    """Merges sequences of lines.
 
     Params:
         mod_text
@@ -42,7 +41,7 @@ def do_merge_seq(mod_text, vanilla_text, gen_text):
         vanilla_text
             The lines of the corresponding vanilla file.
         gen_text
-            The lines of the previously merged file.
+            The lines of the previously merged file or files.
 
     Returns:
         tuple(status, lines); status is 0/'ok' or 2/'overlap merged'

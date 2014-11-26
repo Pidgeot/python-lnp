@@ -10,3 +10,4 @@ stdout.txt
 Dwarf Fortress *
 LNP
 __pycache__
+*.bat

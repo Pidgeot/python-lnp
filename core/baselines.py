@@ -6,8 +6,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 import os, shutil, filecmp, sys, glob, tempfile, zipfile
 import distutils.dir_util as dir_util
 
-from . import paths
-from . import update
+from . import paths, update
 from .lnp import lnp
 
 def find_vanilla_raws():
