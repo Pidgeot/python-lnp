@@ -107,6 +107,5 @@ class UtilitiesTab(Tab):
         """Runs selected utilities."""
         for item in self.proglist.selection():
             utility_path = self.proglist.item(item, 'text')
-            launcher.run_program(os.path.join(
-                paths.get('utilities'), utility_path))
+            launcher.run_program(paths.get('utilities', utility_path))
 

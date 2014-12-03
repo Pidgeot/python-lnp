@@ -302,11 +302,9 @@ class GraphicsTab(Tab):
         if len(self.graphicpacks.curselection()) != 0:
             pack = self.graphicpacks.get(self.graphicpacks.curselection()[0])
             if lnp.df_info.version >= '0.31.04':
-                colorscheme = os.path.join(
-                    paths.get('graphics'), pack, 'data', 'init', 'colors.txt')
+                colorscheme = paths.get('graphics', pack, 'data', 'init', 'colors.txt')
             else:
-                colorscheme = os.path.join(
-                    paths.get('graphics'), pack, 'data', 'init', 'init.txt')
+                colorscheme = paths.get('graphics', pack, 'data', 'init', 'init.txt')
         self.paint_color_preview(colorscheme)
 
     def select_colors(self):

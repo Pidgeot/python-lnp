@@ -61,8 +61,8 @@ class PyLNP(object):
         self.running = {}
 
         config_file = 'PyLNP.json'
-        if os.access(os.path.join(paths.get('lnp'), 'PyLNP.json'), os.F_OK):
-            config_file = os.path.join(paths.get('lnp'), 'PyLNP.json')
+        if os.access(paths.get('lnp', 'PyLNP.json'), os.F_OK):
+            config_file = paths.get('lnp', 'PyLNP.json')
         self.config = JSONConfiguration(config_file)
         self.userconfig = JSONConfiguration('PyLNP.user')
 

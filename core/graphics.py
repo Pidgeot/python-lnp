@@ -31,16 +31,15 @@ def current_pack():
 
 def read_graphics():
     """Returns a list of graphics directories."""
-    graphics_path = paths.get('graphics')
     packs = [
         os.path.basename(o) for o in
-        glob.glob(os.path.join(graphics_path, '*')) if
+        glob.glob(paths.get('graphics', '*')) if
         os.path.isdir(o)]
     result = []
     for p in packs:
         if not validate_pack(p):
             continue
-        init_path = os.path.join(graphics_path, p, 'data', 'init', 'init.txt')
+        init_path = paths.get('graphics', p, 'data', 'init', 'init.txt')
         font, graphics = DFRaw(init_path).get_values('FONT', 'GRAPHICS_FONT')
         result.append((p, font, graphics))
     return tuple(result)
@@ -58,28 +57,27 @@ def install_graphics(pack):
         False if an exception occured
         None if required files are missing (raw/graphics, data/init)
     """
-    gfx_dir = os.path.join(paths.get('graphics'), pack)
+    gfx_dir = paths.get('graphics', pack)
     if (os.path.isdir(gfx_dir) and
             os.path.isdir(os.path.join(gfx_dir, 'raw', 'graphics')) and
             os.path.isdir(os.path.join(gfx_dir, 'data', 'init'))):
         try:
             # Delete old graphics
-            if os.path.isdir(os.path.join(paths.get('df'), 'raw', 'graphics')):
+            if os.path.isdir(paths.get('df', 'raw', 'graphics')):
                 dir_util.remove_tree(
-                    os.path.join(paths.get('df'), 'raw', 'graphics'))
+                    paths.get('df', 'raw', 'graphics'))
 
             # Copy new raws
             dir_util.copy_tree(
                 os.path.join(gfx_dir, 'raw'),
-                os.path.join(paths.get('df'), 'raw'))
+                paths.get('df', 'raw'))
 
             #Copy art
-            if os.path.isdir(os.path.join(paths.get('data'), 'art')):
-                dir_util.remove_tree(
-                    os.path.join(paths.get('data'), 'art'))
+            if os.path.isdir(paths.get('data', 'art')):
+                dir_util.remove_tree(paths.get('data', 'art'))
             dir_util.copy_tree(
                 os.path.join(gfx_dir, 'data', 'art'),
-                os.path.join(paths.get('data'), 'art'))
+                paths.get('data', 'art'))
 
             patch_inits(gfx_dir)
 
@@ -93,13 +91,13 @@ def install_graphics(pack):
 
             # TwbT overrides
             try:
-                os.remove(os.path.join(paths.get('init'), 'overrides.txt'))
+                os.remove(paths.get('init', 'overrides.txt'))
             except:
                 pass
             try:
                 shutil.copyfile(
                     os.path.join(gfx_dir, 'data', 'init', 'overrides.txt'),
-                    os.path.join(paths.get('init'), 'overrides.txt'))
+                    paths.get('init', 'overrides.txt'))
             except:
                 pass
         except Exception:
@@ -115,7 +113,7 @@ def install_graphics(pack):
 def validate_pack(pack):
     """Checks for presence of all required files for a pack install."""
     result = True
-    gfx_dir = os.path.join(paths.get('graphics'), pack)
+    gfx_dir = paths.get('graphics', pack)
     result &= os.path.isdir(gfx_dir)
     result &= os.path.isdir(os.path.join(gfx_dir, 'raw', 'graphics'))
     result &= os.path.isdir(os.path.join(gfx_dir, 'data', 'init'))
@@ -224,7 +222,7 @@ def simplify_pack(pack):
         False if an exception occurred
         None if folder is empty
     """
-    pack = os.path.join(paths.get('graphics'), pack)
+    pack = paths.get('graphics', pack)
     files_before = sum(len(f) for (_, _, f) in os.walk(pack))
     if files_before == 0:
         return None
@@ -274,13 +272,13 @@ def simplify_pack(pack):
 def savegames_to_update():
     """Returns a list of savegames that will be updated."""
     return [
-        o for o in glob.glob(os.path.join(paths.get('save'), '*'))
+        o for o in glob.glob(paths.get('save', '*'))
         if os.path.isdir(o) and not o.endswith('current')]
 
 def update_savegames():
     """Update save games with current raws."""
     saves = [
-        o for o in glob.glob(os.path.join(paths.get('save'), '*'))
+        o for o in glob.glob(paths.get('save', '*'))
         if os.path.isdir(o) and not o.endswith('current')]
     count = 0
     if saves:
@@ -291,7 +289,7 @@ def update_savegames():
                 dir_util.remove_tree(os.path.join(save, 'raw', 'graphics'))
             # Copy new raws
             dir_util.copy_tree(
-                os.path.join(paths.get('df'), 'raw'),
+                paths.get('df', 'raw'),
                 os.path.join(save, 'raw'))
     return count
 
@@ -301,9 +299,9 @@ def open_tilesets():
 
 def read_tilesets():
     """Returns a list of tileset files."""
-    files = glob.glob(os.path.join(paths.get('tilesets'), '*.bmp'))
+    files = glob.glob(paths.get('tilesets', '*.bmp'))
     if 'legacy' not in lnp.df_info.variations:
-        files += glob.glob(os.path.join(paths.get('tilesets'), '*.png'))
+        files += glob.glob(paths.get('tilesets', '*.png'))
     return tuple([os.path.basename(o) for o in files])
 
 def current_tilesets():
@@ -318,17 +316,17 @@ def install_tilesets(font, graphicsfont):
     To skip either option, use None as the parameter.
     """
     if font is not None and os.path.isfile(
-            os.path.join(paths.get('tilesets'), font)):
+            paths.get('tilesets', font)):
         shutil.copyfile(
-            os.path.join(paths.get('tilesets'), font),
-            os.path.join(paths.get('data'), 'art', font))
+            paths.get('tilesets', font),
+            paths.get('data', 'art', font))
         df.set_option('FONT', font)
         df.set_option('FULLFONT', font)
     if (lnp.settings.version_has_option('GRAPHICS_FONT') and
             graphicsfont is not None and os.path.isfile(
-            os.path.join(paths.get('tilesets'), graphicsfont))):
+            paths.get('tilesets', graphicsfont))):
         shutil.copyfile(
-            os.path.join(paths.get('tilesets'), graphicsfont),
-            os.path.join(paths.get('data'), 'art', graphicsfont))
+            paths.get('tilesets', graphicsfont),
+            paths.get('data', 'art', graphicsfont))
         df.set_option('GRAPHICS_FONT', graphicsfont)
         df.set_option('GRAPHICS_FULLFONT', graphicsfont)
