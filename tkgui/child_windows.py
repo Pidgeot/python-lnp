@@ -4,7 +4,7 @@
 """Contains base class used for child windows."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, os
+import sys
 from . import controls
 
 from core import errorlog, launcher, paths, update
