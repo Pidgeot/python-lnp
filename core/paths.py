@@ -27,7 +27,7 @@ def get(name, *paths):
         base = __paths[name]
     except KeyError:
         base = ''
-    return os.path.join(base, paths)
+    return os.path.join(base, *paths)
 
 
 def clear():
