@@ -30,7 +30,6 @@ def read_metadata():
         metadata[data[0]] = {'title': data[1]}
         metadata[data[0]]['tooltip'] = data[2]
 
-
 def get_title(path):
     """
     Returns a title for the given utility. If an non-blank override exists, it
@@ -47,14 +46,12 @@ def get_title(path):
         result = os.path.splitext(result)[0]
     return result
 
-
 def get_tooltip(path):
     """Returns the tooltip for the given utility, or an empty string."""
     try:
         return metadata[os.path.basename(path)]['tooltip']
     except KeyError:
         return ''
-
 
 def read_utility_lists(path):
     """
@@ -71,7 +68,6 @@ def read_utility_lists(path):
     except IOError:
         pass
     return result
-
 
 def read_utilities():
     """Returns a list of utility programs."""
@@ -112,7 +108,6 @@ def read_utilities():
 
     return progs
 
-
 def toggle_autorun(item):
     """
     Toggles autorun for the specified item.
@@ -127,7 +122,6 @@ def toggle_autorun(item):
         lnp.autorun.append(item)
     save_autorun()
 
-
 def load_autorun():
     """Loads autorun settings."""
     lnp.autorun = []
@@ -140,7 +134,6 @@ def load_autorun():
             lnp.autorun.append(line)
     except IOError:
         pass
-
 
 def save_autorun():
     """Saves autorun settings."""
