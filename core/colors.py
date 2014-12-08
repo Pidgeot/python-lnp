@@ -33,12 +33,12 @@ def get_colors(colorscheme=None):
             if not f.endswith('.txt'):
                 f = f + '.txt'
             if os.path.dirname(f) == '':
-                f = os.path.join(paths.get('colors'), f)
+                f = paths.get('colors', f)
         else:
             if lnp.df_info.version <= '0.31.03':
-                f = os.path.join(paths.get('init'), 'init.txt')
+                f = paths.get('init', 'init.txt')
             else:
-                f = os.path.join(paths.get('init'), 'colors.txt')
+                f = paths.get('init', 'colors.txt')
         color_fields = [(c+'_R', c+'_G', c+'_B') for c in _df_colors]
         result = DFRaw(f).get_values(*color_fields)
         return [tuple(map(int, t)) for t in result]
@@ -57,14 +57,14 @@ def load_colors(filename):
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
     if os.path.dirname(filename) == '':
-        filename = os.path.join(paths.get('colors'), filename)
+        filename = paths.get('colors', filename)
     if lnp.df_info.version <= '0.31.03':
         colors = ([c+'_R' for c in _df_colors] + [c+'_G' for c in _df_colors] +
                   [c+'_B' for c in _df_colors])
         lnp.settings.read_file(filename, colors, False)
         lnp.settings.write_settings()
     else:
-        shutil.copyfile(filename, os.path.join(paths.get('init'), 'colors.txt'))
+        shutil.copyfile(filename, paths.get('init', 'colors.txt'))
 
 def save_colors(filename):
     """
@@ -76,7 +76,7 @@ def save_colors(filename):
     """
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
-    filename = os.path.join(paths.get('colors'), filename)
+    filename = paths.get('colors', filename)
     if lnp.df_info.version <= '0.31.03':
         print(
             "Exporting colors is only supported for DF 0.31.04 and later",
@@ -85,7 +85,7 @@ def save_colors(filename):
                   [c+'_B' for c in _df_colors])
         lnp.settings.create_file(filename, colors)
     else:
-        shutil.copyfile(os.path.join(paths.get('init'), 'colors.txt'), filename)
+        shutil.copyfile(paths.get('init', 'colors.txt'), filename)
 
 def color_exists(filename):
     """
@@ -97,7 +97,7 @@ def color_exists(filename):
     """
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
-    return os.access(os.path.join(paths.get('colors'), filename), os.F_OK)
+    return os.access(paths.get('colors', filename), os.F_OK)
 
 def delete_colors(filename):
     """
@@ -109,7 +109,7 @@ def delete_colors(filename):
     """
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
-    os.remove(os.path.join(paths.get('colors'), filename))
+    os.remove(paths.get('colors', filename))
 
 def get_installed_file():
     """Returns the name of the currently installed color scheme."""

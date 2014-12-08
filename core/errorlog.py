@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Framework for logging errors."""
 from __future__ import print_function, unicode_literals, absolute_import
-import sys, os
+import sys
 from io import open
 
 from . import paths
@@ -60,7 +60,7 @@ class CaptureStream(object):
     def redirect(self):
         """Sets up the initial redirection."""
         self.outfile = open(
-            os.path.join(paths.get('root'), self.name+'.txt'), 'w',
+            paths.get('root', self.name+'.txt'), 'w',
             encoding='utf-8')
         self.hook()
 

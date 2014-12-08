@@ -4,7 +4,7 @@
 """Contains base class used for child windows."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, os
+import sys
 from . import controls
 
 from core import errorlog, launcher, paths, update
@@ -139,19 +139,15 @@ class InitEditor(DualTextWindow):
         """Loads configuration data into the text widgets."""
         self.gui.save_params()
         self.left.delete('1.0', END)
-        self.left.insert('1.0', DFRaw.read(
-            os.path.join(paths.get('init'), 'init.txt')))
+        self.left.insert('1.0', DFRaw.read(paths.get('init', 'init.txt')))
         self.right.delete('1.0', END)
-        self.right.insert('1.0', DFRaw.read(
-            os.path.join(paths.get('init'), 'd_init.txt')))
+        self.right.insert('1.0', DFRaw.read(paths.get('init', 'd_init.txt')))
 
     def save(self):
         """Saves configuration data from the text widgets."""
-        DFRaw.write(
-            os.path.join(paths.get('init'), 'init.txt'),
+        DFRaw.write(paths.get('init', 'init.txt'),
             self.left.get('1.0', 'end'))
-        DFRaw.write(
-            os.path.join(paths.get('init'), 'd_init.txt'),
+        DFRaw.write(paths.get('init', 'd_init.txt'),
             self.right.get('1.0', 'end'))
         self.gui.load_params()
 

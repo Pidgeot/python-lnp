@@ -21,14 +21,14 @@ def install_embarks(files):
         files
             List of files to install.
     """
-    with DFRaw.open(os.path.join(paths.get('init'), 'embark_profiles.txt'), 'wt') as out:
+    with DFRaw.open(paths.get('init', 'embark_profiles.txt'), 'wt') as out:
         for f in files:
-            embark = DFRaw.read(os.path.join(paths.get('embarks'), f))
+            embark = DFRaw.read(paths.get('embarks', f))
             out.write(embark+"\n\n")
 
 def get_installed_files():
     """Returns the names of the currently installed embark profiles."""
     files = helpers.get_text_files(paths.get('embarks'))
-    current = os.path.join(paths.get('init'), 'embark_profiles.txt')
+    current = paths.get('init', 'embark_profiles.txt')
     result = helpers.detect_installed_files(current, files)
     return [os.path.basename(r) for r in result]

@@ -18,7 +18,6 @@ def toggle_autoclose():
 
 def get_df_executable():
     """Returns the path of the executable needed to launch Dwarf Fortress."""
-    base_path = paths.get('df')
     spawn_terminal = False
     if sys.platform == 'win32':
         if ('legacy' in lnp.df_info.variations and
@@ -30,7 +29,7 @@ def get_df_executable():
         df_filename = 'Dwarf Fortress.app'
     else:
         # Linux/OSX: Run DFHack if available and enabled
-        if (os.path.isfile(os.path.join(base_path, 'dfhack')) and
+        if (os.path.isfile(paths.get('df', 'dfhack')) and
                 hacks.is_dfhack_enabled()):
             df_filename = 'dfhack'
             spawn_terminal = True
@@ -42,16 +41,14 @@ def get_df_executable():
 def run_df(force=False):
     """Launches Dwarf Fortress."""
     df_filename, spawn_terminal = get_df_executable()
-    base_path = paths.get('df')
 
-    executable = os.path.join(base_path, df_filename)
+    executable = paths.get('df', df_filename)
     result = run_program(executable, force, True, spawn_terminal)
     if (force and not result) or result is False:
         raise Exception('Failed to run Dwarf Fortress.')
 
-    util_path = paths.get('utilities')
     for prog in lnp.autorun:
-        utility = os.path.join(util_path, prog)
+        utility = paths.get('utilities', prog)
         if os.access(utility, os.F_OK):
             run_program(utility)
 

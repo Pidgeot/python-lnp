@@ -57,7 +57,7 @@ def install_extras():
     extras_dir = paths.get('extras')
     if not os.path.isdir(extras_dir):
         return
-    install_file = os.path.join(paths.get('df'), 'PyLNP{0}.txt'.format(VERSION))
+    install_file = paths.get('df', 'PyLNP{0}.txt'.format(VERSION))
     if not os.access(install_file, os.F_OK):
         dir_util.copy_tree(extras_dir, paths.get('df'))
         textfile = open(install_file, 'w', encoding='utf-8')
@@ -105,13 +105,13 @@ def save_params():
 def restore_defaults():
     """Copy default settings into the selected Dwarf Fortress instance."""
     shutil.copy(
-        os.path.join(paths.get('defaults'), 'init.txt'),
-        os.path.join(paths.get('init'), 'init.txt')
+        paths.get('defaults', 'init.txt'),
+        paths.get('init', 'init.txt')
         )
     if lnp.df_info.version > '0.31.03':
         shutil.copy(
-            os.path.join(paths.get('defaults'), 'd_init.txt'),
-            os.path.join(paths.get('init'), 'd_init.txt')
+            paths.get('defaults', 'd_init.txt'),
+            paths.get('init', 'd_init.txt')
         )
     load_params()
 

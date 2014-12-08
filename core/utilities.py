@@ -22,8 +22,7 @@ metadata = {}
 def read_metadata():
     """Read metadata from the utilities directory."""
     metadata.clear()
-    entries = read_utility_lists(
-        os.path.join(paths.get('utilities'), 'utilities.txt'))
+    entries = read_utility_lists(paths.get('utilities', 'utilities.txt'))
     for e in entries:
         data = e.split(':', 2)
         if len(data) < 3:
@@ -73,15 +72,13 @@ def read_utility_lists(path):
 def read_utilities():
     """Returns a list of utility programs."""
     read_metadata()
-    exclusions = read_utility_lists(os.path.join(
-        paths.get('utilities'), 'exclude.txt'))
+    exclusions = read_utility_lists(paths.get('utilities', 'exclude.txt'))
     exclusions.extend(
         [u for u in metadata.keys() if metadata[u]['title'] == 'EXCLUDE'])
     # Allow for an include list of filenames that will be treated as valid
     # utilities. Useful for e.g. Linux, where executables rarely have
     # extensions.
-    inclusions = read_utility_lists(os.path.join(
-        paths.get('utilities'), 'include.txt'))
+    inclusions = read_utility_lists(paths.get('utilities', 'include.txt'))
     inclusions.extend(
         [u for u in metadata.keys() if metadata[u]['title'] != 'EXCLUDE'])
     progs = []
@@ -99,7 +96,7 @@ def read_utilities():
                     # OS X application bundles are really directories
                     progs.append(os.path.relpath(
                         os.path.join(root, dirname),
-                        os.path.join(paths.get('utilities'))))
+                        paths.get('utilities')))
         for filename in filenames:
             if ((
                     any(fnmatch.fnmatch(filename, p) for p in patterns) or
@@ -107,7 +104,7 @@ def read_utilities():
                     filename not in exclusions):
                 progs.append(os.path.relpath(
                     os.path.join(root, filename),
-                    os.path.join(paths.get('utilities'))))
+                    paths.get('utilities')))
 
     return progs
 
@@ -130,7 +127,7 @@ def load_autorun():
     lnp.autorun = []
     try:
         for line in open(
-                os.path.join(paths.get('utilities'), 'autorun.txt'),
+                paths.get('utilities', 'autorun.txt'),
                 encoding='utf-8'):
             if line.endswith('\n'):
                 line = line[:-1]
@@ -140,6 +137,5 @@ def load_autorun():
 
 def save_autorun():
     """Saves autorun settings."""
-    autofile = open(os.path.join(paths.get('utilities'), 'autorun.txt'), 'w')
-    autofile.write("\n".join(lnp.autorun))
-    autofile.close()
+    with open(paths.get('utilities', 'autorun.txt'), 'w') as autofile:
+        autofile.write("\n".join(lnp.autorun))
