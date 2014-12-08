@@ -12,7 +12,7 @@ from . import paths, baselines
 def read_mods():
     """Returns a list of mod packs"""
     return [os.path.basename(o) for o in
-            glob.glob(os.path.join(paths.get('mods'), '*'))
+            glob.glob(paths.get('mods', '*'))
             if os.path.isdir(o)]
 
 def simplify_mods():
@@ -149,19 +149,19 @@ def merge_a_mod(mod):
         """
     if not baselines.find_vanilla_raws():
         return 3 # no baseline; caught properly earlier
-    mod_raw_folder = os.path.join(paths.get('mods'), mod, 'raw')
+    mod_raw_folder = paths.get('mods', mod, 'raw')
     if not os.path.isdir(mod_raw_folder):
         return 2
     status = merge_raw_folders(mod_raw_folder, baselines.find_vanilla_raws())
     if status < 3:
-        with open(os.path.join(paths.get('baselines'), 'temp', 'raw',
-                               'installed_raws.txt'), 'a') as log:
+        with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
+                  'a') as log:
             log.write(mod + '\n')
     return status
 
 def merge_raw_folders(mod_raw_folder, vanilla_raw_folder):
     """Merge the specified folders, output going in LNP/Baselines/temp/raw"""
-    mixed_raw_folder = os.path.join(paths.get('baselines'), 'temp', 'raw')
+    mixed_raw_folder = paths.get('baselines', 'temp', 'raw')
     status = 0
     for file_tuple in os.walk(mod_raw_folder):
         for item in file_tuple[2]:
@@ -185,12 +185,12 @@ def clear_temp():
     if not baselines.find_vanilla_raws():
         # TODO: add user warning re: missing baseline, download
         return None
-    if os.path.exists(os.path.join(paths.get('baselines'), 'temp')):
-        shutil.rmtree(os.path.join(paths.get('baselines'), 'temp'))
+    if os.path.exists(paths.get('baselines', 'temp')):
+        shutil.rmtree(paths.get('baselines', 'temp'))
     shutil.copytree(baselines.find_vanilla_raws(),
-                    os.path.join(paths.get('baselines'), 'temp', 'raw'))
-    with open(os.path.join(paths.get('baselines'), 'temp', 'raw',
-                           'installed_raws.txt'), 'w') as log:
+                    paths.get('baselines', 'temp', 'raw'))
+    with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
+              'w') as log:
         log.write('# List of raws merged by PyLNP:\n' +
                   os.path.basename(
                       os.path.dirname(baselines.find_vanilla_raws())) + '\n')
@@ -202,15 +202,14 @@ def make_mod_from_installed_raws(name):
         * If `installed_raws.txt` is not present, compare to vanilla
         * Otherwise, rebuild as much as possible then compare to installed
     """
-    if os.path.isdir(os.path.join(paths.get('mods'), name)):
+    if os.path.isdir(paths.get('mods', name)):
         return False
     if get_installed_mods_from_log():
         clear_temp()
         for mod in get_installed_mods_from_log():
             merge_a_mod(mod)
-        reconstruction = os.path.join(paths.get('baselines'), 'temp2', 'raw')
-        shutil.copytree(os.path.join(paths.get('baselines'), 'temp', 'raw'),
-                        reconstruction)
+        reconstruction = paths.get('baselines', 'temp2', 'raw')
+        shutil.copytree(paths.get('baselines', 'temp', 'raw'), reconstruction)
     else:
         reconstruction = baselines.find_vanilla_raws()
         if not reconstruction:
@@ -218,25 +217,23 @@ def make_mod_from_installed_raws(name):
             return None
 
     clear_temp()
-    merge_raw_folders(reconstruction, os.path.join(paths.get('df'), 'raw'))
+    merge_raw_folders(reconstruction, paths.get('df', 'raw'))
 
     baselines.simplify_pack('temp', 'baselines')
     baselines.remove_vanilla_raws_from_pack('temp', 'baselines')
     baselines.remove_empty_dirs('temp', 'baselines')
 
-    if os.path.isdir(os.path.join(paths.get('baselines'), 'temp2')):
-        shutil.rmtree(os.path.join(paths.get('baselines'), 'temp2'))
+    if os.path.isdir(paths.get('baselines', 'temp2')):
+        shutil.rmtree(paths.get('baselines', 'temp2'))
 
-    if os.path.isdir(os.path.join(paths.get('baselines'), 'temp')):
-        shutil.copytree(os.path.join(paths.get('baselines'), 'temp'),
-                        os.path.join(paths.get('mods'), name))
+    if os.path.isdir(paths.get('baselines', 'temp')):
+        shutil.copytree(paths.get('baselines', 'temp'), paths.get('mods', name))
         return True
     return False
 
 def get_installed_mods_from_log():
     """Return best mod load order to recreate installed with available."""
-    logged = read_installation_log(os.path.join(paths.get('df'),
-                                                'raw', 'installed_raws.txt'))
+    logged = read_installation_log(paths.get('df', 'raw', 'installed_raws.txt'))
     return [mod for mod in logged if mod in read_mods()]
 
 def read_installation_log(log):

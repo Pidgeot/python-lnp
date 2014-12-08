@@ -23,8 +23,8 @@ def find_vanilla_raws():
         return None
     prepare_baselines()
     version = 'df_' + str(lnp.df_info.version)[2:].replace('.', '_')
-    if os.path.isdir(os.path.join(paths.get('baselines'), version, 'raw')):
-        return os.path.join(paths.get('baselines'), version, 'raw')
+    if os.path.isdir(paths.get('baselines', version, 'raw')):
+        return paths.get('baselines', version, 'raw')
     update.download_df_baseline()
     return False
 
@@ -35,7 +35,7 @@ def prepare_baselines():
         version = os.path.basename(item)
         for s in ['_win', '_legacy', '_s', '.zip']:
             version = version.replace(s, '')
-        f = os.path.join(paths.get('baselines'), version)
+        f = paths.get('baselines', version)
         if not os.path.isdir(f):
             zipfile.ZipFile(item).extractall(f)
             simplify_pack(version, 'baselines')
@@ -62,7 +62,7 @@ def simplify_pack(pack, folder):
     valid_dirs = ('graphics', 'mods', 'baselines')
     if not folder in valid_dirs:
         return False
-    pack = os.path.join(paths.get(folder), pack)
+    pack = paths.get(folder, pack)
     files_before = sum(len(f) for (_, _, f) in os.walk(pack))
     if files_before == 0:
         return None
@@ -118,7 +118,7 @@ def remove_vanilla_raws_from_pack(pack, folder):
         folder
             The parent folder of the pack (either 'mods' or 'graphics')
     """
-    raw_folder = os.path.join(paths.get(folder), pack, 'raw')
+    raw_folder = paths.get(folder, pack, 'raw')
     vanilla_raw_folder = find_vanilla_raws()
     for root, _, files in os.walk(raw_folder):
         for f in files:
@@ -144,9 +144,8 @@ def remove_empty_dirs(pack, folder):
         folder
             The parent folder of the pack (either 'mods' or 'graphics')
     """
-    pack = os.path.join(paths.get(folder), pack)
     for _ in range(3):
         # only catches the lowest level each iteration
-        for root, dirs, files in os.walk(pack):
+        for root, dirs, files in os.walk(paths.get(folder, pack)):
             if not dirs and not files:
                 os.rmdir(root)

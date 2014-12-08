@@ -74,12 +74,12 @@ class ModsTab(Tab):
 
         f = controls.create_control_group(self, None, True)
         controls.create_trigger_button(
-            f, 'Simplify Mods', 'Simplify Mods',
+            f, 'Simplify Mods', 'Removes unnecessary  and vanilla files.',
             self.simplify_mods).grid(
                 row=0, column=0, sticky="nsew")
         controls.create_trigger_button(
             f, 'Install Mods', 'Copy merged mods to DF folder.  '
-            'WARNING: do not combine with graphics.  May be unstable.',
+            'WARNING: do not combine with graphics.  May cause problems.',
             self.install_mods).grid(row=0, column=1, sticky="nsew")
         controls.create_trigger_button(
             f, 'Create Mod from Installed', 'Creates a mod from unique changes '
@@ -189,7 +189,7 @@ class ModsTab(Tab):
     def install_mods():
         """Replaces <df>/raw with the contents LNP/Baselines/temp/raw"""
         if messagebox.askokcancel(
-                message=('Your graphics and raws will be changed.\n\n'
+                message=('Your graphics will be removed and raws changed.\n\n'
                          'The mod merging function is still in beta.  This '
                          'could break new worlds, or even cause crashes.\n\n'),
                 title='Are you sure?'):

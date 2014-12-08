@@ -65,20 +65,20 @@ def install_graphics(pack):
 
     try:
         # Delete old graphics
-        if os.path.isdir(paths.get('df', 'raw', 'graphics'):
-            dir_util.remove_tree(paths.get('df', 'raw', 'graphics')
+        if os.path.isdir(paths.get('df', 'raw', 'graphics')):
+            dir_util.remove_tree(paths.get('df', 'raw', 'graphics'))
 
         # Copy new raws
         dir_util.copy_tree(os.path.join(gfx_dir, 'raw'),
-                           paths.get('df', 'raw')
+                           paths.get('df', 'raw'))
 
         #Copy art
         if os.path.isdir(os.path.join(paths.get('data'), 'art')):
-            dir_util.remove_tree(paths.get('data', 'art')
+            dir_util.remove_tree(paths.get('data', 'art'))
         dir_util.copy_tree(os.path.join(gfx_dir, 'data', 'art'),
-                           paths.get('data', 'art')
-        for tiles in glob.glob(paths.get('tilesets', '*'):
-            shutil.copy(tiles, paths.get('data', 'art')
+                           paths.get('data', 'art'))
+        for tiles in glob.glob(paths.get('tilesets', '*')):
+            shutil.copy(tiles, paths.get('data', 'art'))
 
         patch_inits(gfx_dir)
 
@@ -92,13 +92,13 @@ def install_graphics(pack):
 
         # TwbT overrides
         try:
-            os.remove(paths.get('init', 'overrides.txt')
+            os.remove(paths.get('init', 'overrides.txt'))
         except:
             pass
         try:
             shutil.copyfile(
                 os.path.join(gfx_dir, 'data', 'init', 'overrides.txt'),
-                paths.get('init', 'overrides.txt')
+                paths.get('init', 'overrides.txt'))
         except:
             pass
     except Exception:
@@ -244,9 +244,9 @@ def open_tilesets():
 
 def read_tilesets():
     """Returns a list of tileset files."""
-    files = glob.glob(paths.get('data', 'art', '*.bmp')
+    files = glob.glob(paths.get('data', 'art', '*.bmp'))
     if 'legacy' not in lnp.df_info.variations:
-        files += glob.glob(paths.get('data', 'art', '*.png')
+        files += glob.glob(paths.get('data', 'art', '*.png'))
     return tuple([os.path.basename(o) for o in files if not (
         o.endswith('mouse.png') or o.endswith('mouse.bmp')
         or o.endswith('shadows.png'))])
@@ -261,11 +261,11 @@ def install_tilesets(font, graphicsfont):
     """Installs the provided tilesets as [FULL]FONT and GRAPHICS_[FULL]FONT.
     To skip either option, use None as the parameter.
     """
-    if font is not None and os.path.isfile(paths.get('data', 'art', font):
+    if font is not None and os.path.isfile(paths.get('data', 'art', font)):
         df.set_option('FONT', font)
         df.set_option('FULLFONT', font)
     if (lnp.settings.version_has_option('GRAPHICS_FONT') and
             graphicsfont is not None and os.path.isfile(
-                paths.get('data', 'art', graphicsfont)):
+                paths.get('data', 'art', graphicsfont))):
         df.set_option('GRAPHICS_FONT', graphicsfont)
         df.set_option('GRAPHICS_FULLFONT', graphicsfont)
