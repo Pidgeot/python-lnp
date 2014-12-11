@@ -39,11 +39,12 @@ class PyLNP(object):
         else:
             os.chdir(os.path.join(os.path.dirname(__file__), '..'))
         self.detect_basedir()
-        errorlog.start()
 
         from . import df, paths, update, utilities
 
         paths.register('root', self.BASEDIR)
+        errorlog.start()
+
         paths.register('lnp', self.BASEDIR, 'LNP')
         if not os.path.isdir(paths.get('lnp')):
             print('WARNING: LNP folder is missing!', file=sys.stderr)
