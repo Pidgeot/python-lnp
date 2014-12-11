@@ -23,8 +23,10 @@ def find_df_folders():
             o, 'data', 'init', 'init.txt'))])
 
 def find_df_folder():
-    """Locates all suitable Dwairf Fortress installations (folders starting
-    with "Dwarf Fortress" or "df")"""
+    """Tries to select a Dwarf Fortress folder. The set of valid folders is
+    first detected. If a folder name is passed as the first argument to the
+    script, that folder will be used. Otherwise, if only one valid folder was
+    detected, that one will be selected."""
     find_df_folders()
     if len(lnp.folders) == 1:
         set_df_folder(lnp.folders[0])
