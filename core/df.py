@@ -209,7 +209,7 @@ class DFInstall(object):
         """Return the filename of the download for this version.
         Always windows, for comparison of raws in baselines.
         Prefer small and SDL releases when available."""
-        base = 'df_' + self.version[2:].replace('.', '_')
+        base = 'df_' + str(self.version)[2:].replace('.', '_')
         if self.version >= '0.31.13':
             return base + '_win_s.zip'
         if self.version >= '0.31.05':

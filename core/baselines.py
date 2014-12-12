@@ -41,6 +41,11 @@ def prepare_baselines():
             simplify_pack(version, 'baselines')
         os.remove(item)
 
+def set_auto_download(value):
+    """Sets the option for auto-download of baselines."""
+    lnp.userconfig['downloadBaselines'] = value
+    lnp.userconfig.save_data()
+
 def simplify_pack(pack, folder):
     """Removes unnecessary files from LNP/<folder>/<pack>.
     Necessary files means:
