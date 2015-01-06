@@ -54,6 +54,8 @@ class PyLNP(object):
         paths.register('colors', paths.get('lnp'), 'Colors')
         paths.register('embarks', paths.get('lnp'), 'Embarks')
         paths.register('tilesets', paths.get('lnp'), 'Tilesets')
+        paths.register('baselines', paths.get('lnp'), 'Baselines')
+        paths.register('mods', paths.get('lnp'), 'Mods')
 
         self.df_info = None
         self.folders = []

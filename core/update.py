@@ -3,8 +3,7 @@
 """Update handling."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, re, time
-from threading import Thread
+import sys, re, time, os, threading
 
 try:  # Python 2
     # pylint:disable=import-error
@@ -15,7 +14,8 @@ except ImportError:  # Python 3
     from urllib.error import URLError
 
 from .lnp import lnp
-from . import launcher
+from .df import DFInstall
+from . import launcher, paths, download
 
 def updates_configured():
     """Returns True if update checking have been configured."""
@@ -28,7 +28,7 @@ def check_update():
     if lnp.userconfig.get_number('updateDays') == -1:
         return
     if lnp.userconfig.get_number('nextUpdate') < time.time():
-        t = Thread(target=perform_update_check)
+        t = threading.Thread(target=perform_update_check)
         t.daemon = True
         t.start()
 
@@ -63,4 +63,10 @@ def start_update():
     """Launches a webbrowser to the specified update URL."""
     launcher.open_url(lnp.config.get_string('updates/downloadURL'))
 
-
+def download_df_baseline():
+    """Download the current version of DF from Bay12 Games to serve as a
+    baseline, in LNP/Baselines/"""
+    filename = lnp.df_info.get_archive_name()
+    url = 'http://www.bay12games.com/dwarves/' + filename
+    target = os.path.join(paths.get('baselines'), filename)
+    download.download('baselines', url, target)

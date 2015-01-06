@@ -278,6 +278,7 @@ PyLNP expects to see the following directory structure::
       Extras
       Graphics
       Keybinds
+      Mods
       Tilesets
       Utilities
 
@@ -296,6 +297,12 @@ In all folders containing .txt files, any filename starting with ``README`` (arb
 PyLNP.user
 ----------
 This file, found in the base folder, contains user settings such as window width and height. It should not be distributed if you make a pack.
+
+Baselines
+---------
+This folder contains full unmodified raws for various versions of DF, and the settings and images relevant to graphics packs.  These are used to rebuild the reduced raws used by graphics packs and mods, and should not be modified or removed - any new graphics or mod install would break.  Extra tilesets added to a /data/art/ folder will be available to all graphics packs (useful for TwbT text options).
+
+Add versions by downloading the windows SDL edition of that version and placing it in the folder (eg "df_40_15_win.zip").  
 
 Colors
 ------
@@ -323,11 +330,15 @@ If this version of PyLNP has not yet been run on the selected DF installation, a
 
 Graphics
 --------
-This folder contains graphics packs, consisting of data and raw folders.
+This folder contains graphics packs, consisting of data and raw folders.  Any raws identical to vanilla files will be discarded; when installing a graphics pack the remaining files will be copied over a set of vanilla raws and the combination installed.
 
 Tilesets
 --------
-This folder contains tilesets; individual image files that the user can use for the FONT and GRAPHICS_FONT settings (and their fullscreen counterparts).
+This folder contains tilesets; individual image files that the user can use for the FONT and GRAPHICS_FONT settings (and their fullscreen counterparts).  Tilesets can be installed through the graphics customisation tab, as they are added to each graphics pack as the pack is installed.
+
+Mods
+----
+This folder contains mods for Dwarf Fortress, in the form of changes to the defining raws (which define the content DF uses).  Mods use the same reduced format for raws as graphics packs.
 
 Keybinds
 --------
@@ -384,3 +395,13 @@ If DFHack is detected in the Dwarf Fortress folder, a DFHack tab is added to the
 This tab includes a list where preconfigured hacks can be turned on or off. See the respective section in the description of PyLNP.json for information on how to configure these hacks.
 
 All active hacks are written to a file named ``PyLNP_dfhack_onload.init`` in the Dwarf Fortress folder. This file must be loaded by your standard ``onload.init`` file to take effect.
+
+Mods
+====
+If mods are present in LNP/Mods/, a mods tab is added to the launcher.
+
+Multiple mods can be merged, in the order shown in the 'installed' pane.  Those shown in green merged OK; in yellow with minor issues.  Orange signifies an overlapping merge or other serious issue, and red could not be merged.  Once you are happy with the combination, you can install them to the DF folder and generate a new world to start playing.
+
+Note that even an all-green combination might be broken in subtle (or non-subtle) ways.  Mods are not currently compatible with graphics!  Never update graphics on savegames with installed mods - they will break.
+
+For mod authors:  note that the reduced raw format is equivalent to copying over a vanilla install - missing files are taken to be vanilla.  Modifying existing files instead of adding new files decreases the chance of producing conflicting raws without a merge conflict.

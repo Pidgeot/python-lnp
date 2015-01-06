@@ -7,7 +7,7 @@ import sys, os, shutil, glob, tempfile
 import distutils.dir_util as dir_util
 from .launcher import open_folder
 from .lnp import lnp
-from . import colors, df, paths
+from . import colors, df, paths, baselines
 from .dfraw import DFRaw
 
 def open_graphics():
@@ -15,8 +15,7 @@ def open_graphics():
     open_folder(paths.get('graphics'))
 
 def current_pack():
-    """
-    Returns the currently installed graphics pack.
+    """Returns the currently installed graphics pack.
     If the pack cannot be identified, returns "FONT/GRAPHICS_FONT".
     """
     packs = read_graphics()
@@ -45,8 +44,7 @@ def read_graphics():
     return tuple(result)
 
 def install_graphics(pack):
-    """
-    Installs the graphics pack located in LNP/Graphics/<pack>.
+    """Installs the graphics pack located in LNP/Graphics/<pack>.
 
     Params:
         pack
@@ -55,67 +53,69 @@ def install_graphics(pack):
     Returns:
         True if successful,
         False if an exception occured
-        None if required files are missing (raw/graphics, data/init)
+        None if baseline vanilla raws are missing
     """
-    gfx_dir = paths.get('graphics', pack)
-    if (os.path.isdir(gfx_dir) and
-            os.path.isdir(os.path.join(gfx_dir, 'raw', 'graphics')) and
-            os.path.isdir(os.path.join(gfx_dir, 'data', 'init'))):
-        try:
-            # Delete old graphics
-            if os.path.isdir(paths.get('df', 'raw', 'graphics')):
-                dir_util.remove_tree(
-                    paths.get('df', 'raw', 'graphics'))
-
-            # Copy new raws
-            dir_util.copy_tree(
-                os.path.join(gfx_dir, 'raw'),
-                paths.get('df', 'raw'))
-
-            #Copy art
-            if os.path.isdir(paths.get('data', 'art')):
-                dir_util.remove_tree(paths.get('data', 'art'))
-            dir_util.copy_tree(
-                os.path.join(gfx_dir, 'data', 'art'),
-                paths.get('data', 'art'))
-
-            patch_inits(gfx_dir)
-
-            # Install colorscheme
-            if lnp.df_info.version >= '0.31.04':
-                colors.load_colors(os.path.join(
-                    gfx_dir, 'data', 'init', 'colors.txt'))
-            else:
-                colors.load_colors(os.path.join(
-                    gfx_dir, 'data', 'init', 'init.txt'))
-
-            # TwbT overrides
-            try:
-                os.remove(paths.get('init', 'overrides.txt'))
-            except:
-                pass
-            try:
-                shutil.copyfile(
-                    os.path.join(gfx_dir, 'data', 'init', 'overrides.txt'),
-                    paths.get('init', 'overrides.txt'))
-            except:
-                pass
-        except Exception:
-            sys.excepthook(*sys.exc_info())
-            result = False
-        else:
-            result = True
-        df.load_params()
-        return result
-    else:
+    retval = None
+    if not baselines.find_vanilla_raws():
+        # TODO: add user warning re: missing baseline, download
         return None
+    gfx_dir = tempfile.mkdtemp()
+    dir_util.copy_tree(baselines.find_vanilla_raws(), gfx_dir)
+    dir_util.copy_tree(os.path.join(paths.get('graphics'), pack), gfx_dir)
+
+    try:
+        # Delete old graphics
+        if os.path.isdir(paths.get('df', 'raw', 'graphics')):
+            dir_util.remove_tree(paths.get('df', 'raw', 'graphics'))
+
+        # Copy new raws
+        dir_util.copy_tree(os.path.join(gfx_dir, 'raw'),
+                           paths.get('df', 'raw'))
+
+        #Copy art
+        if os.path.isdir(os.path.join(paths.get('data'), 'art')):
+            dir_util.remove_tree(paths.get('data', 'art'))
+        dir_util.copy_tree(os.path.join(gfx_dir, 'data', 'art'),
+                           paths.get('data', 'art'))
+        for tiles in glob.glob(paths.get('tilesets', '*')):
+            shutil.copy(tiles, paths.get('data', 'art'))
+
+        patch_inits(gfx_dir)
+
+        # Install colorscheme
+        if lnp.df_info.version >= '0.31.04':
+            colors.load_colors(os.path.join(
+                gfx_dir, 'data', 'init', 'colors.txt'))
+        else:
+            colors.load_colors(os.path.join(
+                gfx_dir, 'data', 'init', 'init.txt'))
+
+        # TwbT overrides
+        try:
+            os.remove(paths.get('init', 'overrides.txt'))
+        except:
+            pass
+        try:
+            shutil.copyfile(
+                os.path.join(gfx_dir, 'data', 'init', 'overrides.txt'),
+                paths.get('init', 'overrides.txt'))
+        except:
+            pass
+    except Exception:
+        sys.excepthook(*sys.exc_info())
+        retval = False
+    else:
+        retval = True
+    if os.path.isdir(gfx_dir):
+        dir_util.remove_tree(gfx_dir)
+    df.load_params()
+    return retval
 
 def validate_pack(pack):
     """Checks for presence of all required files for a pack install."""
     result = True
     gfx_dir = paths.get('graphics', pack)
     result &= os.path.isdir(gfx_dir)
-    result &= os.path.isdir(os.path.join(gfx_dir, 'raw', 'graphics'))
     result &= os.path.isdir(os.path.join(gfx_dir, 'data', 'init'))
     result &= os.path.isdir(os.path.join(gfx_dir, 'data', 'art'))
     result &= os.path.isfile(os.path.join(gfx_dir, 'data', 'init', 'init.txt'))
@@ -127,10 +127,8 @@ def validate_pack(pack):
     return result
 
 def patch_inits(gfx_dir):
-    """
-    Installs init files from a graphics pack by selectively changing
-    specific fields. All settings outside of the mentioned fields are
-    preserved.
+    """Installs init files from a graphics pack by selectively changing
+    specific fields. All settings but the mentioned fields are preserved.
     """
     d_init_fields = [
         'WOUND_COLOR_NONE', 'WOUND_COLOR_MINOR',
@@ -210,70 +208,17 @@ def simplify_graphics():
         simplify_pack(pack)
 
 def simplify_pack(pack):
-    """
-    Removes unnecessary files from LNP/Graphics/<pack>.
-
-    Params:
-        pack
-            The pack to simplify.
-
-    Returns:
-        The number of files removed if successful
-        False if an exception occurred
-        None if folder is empty
-    """
-    pack = paths.get('graphics', pack)
-    files_before = sum(len(f) for (_, _, f) in os.walk(pack))
-    if files_before == 0:
-        return None
-    tmp = tempfile.mkdtemp()
-    try:
-        dir_util.copy_tree(pack, tmp)
-        if os.path.isdir(pack):
-            dir_util.remove_tree(pack)
-
-        os.makedirs(pack)
-        os.makedirs(os.path.join(pack, 'data', 'art'))
-        os.makedirs(os.path.join(pack, 'raw', 'graphics'))
-        os.makedirs(os.path.join(pack, 'raw', 'objects'))
-        os.makedirs(os.path.join(pack, 'data', 'init'))
-
-        dir_util.copy_tree(
-            os.path.join(tmp, 'data', 'art'),
-            os.path.join(pack, 'data', 'art'))
-        dir_util.copy_tree(
-            os.path.join(tmp, 'raw', 'graphics'),
-            os.path.join(pack, 'raw', 'graphics'))
-        dir_util.copy_tree(
-            os.path.join(tmp, 'raw', 'objects'),
-            os.path.join(pack, 'raw', 'objects'))
-        shutil.copyfile(
-            os.path.join(tmp, 'data', 'init', 'colors.txt'),
-            os.path.join(pack, 'data', 'init', 'colors.txt'))
-        shutil.copyfile(
-            os.path.join(tmp, 'data', 'init', 'init.txt'),
-            os.path.join(pack, 'data', 'init', 'init.txt'))
-        shutil.copyfile(
-            os.path.join(tmp, 'data', 'init', 'd_init.txt'),
-            os.path.join(pack, 'data', 'init', 'd_init.txt'))
-        shutil.copyfile(
-            os.path.join(tmp, 'data', 'init', 'overrides.txt'),
-            os.path.join(pack, 'data', 'init', 'overrides.txt'))
-    except IOError:
-        sys.excepthook(*sys.exc_info())
-        retval = False
-    else:
-        files_after = sum(len(f) for (_, _, f) in os.walk(pack))
-        retval = files_after - files_before
-    if os.path.isdir(tmp):
-        dir_util.remove_tree(tmp)
-    return retval
+    """Removes unnecessary files from one graphics pack."""
+    baselines.simplify_pack(pack, 'graphics')
+    baselines.remove_vanilla_raws_from_pack(pack, 'graphics')
+    baselines.remove_empty_dirs(pack, 'graphics')
 
 def savegames_to_update():
     """Returns a list of savegames that will be updated."""
-    return [
-        o for o in glob.glob(paths.get('save', '*'))
-        if os.path.isdir(o) and not o.endswith('current')]
+    saves = [o for o in glob.glob(paths.get('save', '*'))
+             if os.path.isdir(o) and not o.endswith('current')]
+    return [s for s in saves if not
+            os.path.isfile(os.path.join(s, 'raw', 'installed_raws.txt'))]
 
 def update_savegames():
     """Update save games with current raws."""
@@ -299,10 +244,12 @@ def open_tilesets():
 
 def read_tilesets():
     """Returns a list of tileset files."""
-    files = glob.glob(paths.get('tilesets', '*.bmp'))
+    files = glob.glob(paths.get('data', 'art', '*.bmp'))
     if 'legacy' not in lnp.df_info.variations:
-        files += glob.glob(paths.get('tilesets', '*.png'))
-    return tuple([os.path.basename(o) for o in files])
+        files += glob.glob(paths.get('data', 'art', '*.png'))
+    return tuple([os.path.basename(o) for o in files if not (
+        o.endswith('mouse.png') or o.endswith('mouse.bmp')
+        or o.endswith('shadows.png'))])
 
 def current_tilesets():
     """Returns the current tilesets as a tuple (FONT, GRAPHICS_FONT)."""
@@ -311,22 +258,14 @@ def current_tilesets():
     return (lnp.settings.FONT, None)
 
 def install_tilesets(font, graphicsfont):
-    """
-    Installs the provided tilesets as [FULL]FONT and GRAPHICS_[FULL]FONT.
+    """Installs the provided tilesets as [FULL]FONT and GRAPHICS_[FULL]FONT.
     To skip either option, use None as the parameter.
     """
-    if font is not None and os.path.isfile(
-            paths.get('tilesets', font)):
-        shutil.copyfile(
-            paths.get('tilesets', font),
-            paths.get('data', 'art', font))
+    if font is not None and os.path.isfile(paths.get('data', 'art', font)):
         df.set_option('FONT', font)
         df.set_option('FULLFONT', font)
     if (lnp.settings.version_has_option('GRAPHICS_FONT') and
             graphicsfont is not None and os.path.isfile(
-            paths.get('tilesets', graphicsfont))):
-        shutil.copyfile(
-            paths.get('tilesets', graphicsfont),
-            paths.get('data', 'art', graphicsfont))
+                paths.get('data', 'art', graphicsfont))):
         df.set_option('GRAPHICS_FONT', graphicsfont)
         df.set_option('GRAPHICS_FULLFONT', graphicsfont)
