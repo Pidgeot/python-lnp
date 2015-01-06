@@ -6,6 +6,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import os
 import sys
+from threading import Semaphore
 
 from . import controls, binding
 from .child_windows import LogWindow, InitEditor, SelectDF, UpdateWindow
@@ -20,7 +21,7 @@ from .dfhack import DFHackTab
 from .mods import ModsTab
 
 from core.lnp import lnp
-from core import df, launcher, paths, update, mods
+from core import df, launcher, paths, update, mods, download, baselines
 
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
@@ -111,6 +112,7 @@ class TkGui(object):
         """
         self.root = root = Tk()
         self.updateDays = IntVar()
+        self.downloadBaselines = BooleanVar()
         controls.init(self)
         binding.init(lnp)
 
@@ -137,6 +139,16 @@ class TkGui(object):
         self.logo = logo = get_image(get_resource('LNPSMALL'))
         Label(root, image=logo, anchor=CENTER).pack(fill=X)
         main.pack(side=TOP, fill=BOTH, expand=Y)
+
+        self.download_panel = controls.create_control_group(
+            main, 'Download status')
+        self.download_text = StringVar()
+        self.download_status = Label(
+            self.download_panel, textvariable=self.download_text)
+        self.download_panel.pack(fill=X, expand=N, side=BOTTOM)
+        self.download_status.pack(side=BOTTOM)
+        self.download_status.grid(row=0, column=0)
+
         self.n = n = Notebook(main)
 
         self.create_tab(OptionsTab, 'Options')
@@ -169,13 +181,32 @@ class TkGui(object):
         self.save_size = None
         root.update()
         root.minsize(width=root.winfo_width(), height=root.winfo_height())
+        self.download_panel.pack_forget()
+        root.update()
         root.geometry('{}x{}'.format(
             lnp.userconfig.get_number('tkgui_width'),
             lnp.userconfig.get_number('tkgui_height')))
         root.bind("<Configure>", self.on_resize)
 
+        queue = download.get_queue('baselines')
+        queue.register_start_queue(self.start_download_queue)
+        queue.register_begin_download(self.start_download)
+        queue.register_progress(self.download_progress)
+        queue.register_end_download(self.end_download)
+        queue.register_end_queue(self.end_download_queue)
+
         binding.update()
         root.bind('<<UpdateAvailable>>', lambda e: UpdateWindow(self.root))
+
+        # Used for cross-thread signaling and communication during downloads
+        self.update_pending = Semaphore(1)
+        self.cross_thread_data = None
+        self.reply_semaphore = Semaphore(0)
+        self.download_text_string = ''
+        root.bind('<<ConfirmDownloads>>', lambda e: self.confirm_downloading())
+        root.bind('<<ForceUpdate>>', lambda e: self.update_download_text())
+        root.bind(
+            '<<HideDLPanel>>', lambda e: self.download_panel.pack_forget())
 
     def on_resize(self, e):
         """Called when the window is resized."""
@@ -282,6 +313,11 @@ class TkGui(object):
                 menu_updates.add_radiobutton(
                     label=o, value=daylist[i], variable=self.updateDays,
                     command=lambda i=i: self.configure_updates(daylist[i]))
+        self.downloadBaselines.set(lnp.userconfig.get_bool('downloadBaselines'))
+        menu_file.add_checkbutton(
+            label='Allow auto-download of baselines', onvalue=True,
+            offvalue=False, variable=self.downloadBaselines,
+            command=self.set_downloads)
 
         if sys.platform != 'darwin':
             menu_file.add_command(
@@ -317,6 +353,10 @@ class TkGui(object):
         """Sets the number of days until next update check."""
         self.updateDays.set(days)
         update.next_update(days)
+
+    def set_downloads(self):
+        """Sets the option for auto-download of baselines."""
+        baselines.set_auto_download(self.downloadBaselines.get())
 
     @staticmethod
     def populate_menu(collection, menu, method):
@@ -439,4 +479,100 @@ class TkGui(object):
     def show_df_info():
         """Shows basic information about the current DF install."""
         messagebox.showinfo(title='DF info', message=str(lnp.df_info))
+
+    def confirm_downloading(self):
+        """Ask the user if downloading may proceed."""
+        if self.cross_thread_data == 'baselines':
+            message = (
+                'PyLNP needs to download a copy of Dwarf Fortress to '
+                'complete this action. Is this OK?\n\nPlease note: You will '
+                'need to retry the action after the download completes.')
+        else:
+            message = (
+                'PyLNP needs to download data to process this action. '
+                'Is this OK?\n\nPlease note: You will need to retry the action '
+                'after the download completes.')
+        self.cross_thread_data = messagebox.askyesno(
+            message=message, title='Download data?', icon='question')
+        self.reply_semaphore.release()
+
+    def start_download_queue(self, queue):
+        """Event handler for starting a download queue."""
+        result = True
+        if not lnp.userconfig.get_bool('downloadBaselines'):
+            self.cross_thread_data = queue
+            self.root.event_generate('<<ConfirmDownloads>>', when='tail')
+            self.reply_semaphore.acquire()
+            result = self.cross_thread_data
+        if result:
+            self.download_panel.pack(fill=X, expand=N, side=BOTTOM)
+            self.send_update_event()
+        return result
+
+    def send_update_event(self, force=False):
+        """Schedules an update for the download text, if not already pending."""
+        if self.update_pending.acquire(force):
+            self.root.event_generate('<<ForceUpdate>>', when='tail')
+
+    def start_download(self, queue, url, target):
+        """Event handler for the start of a download."""
+        self.download_text_string = "Downloading %s..." % os.path.basename(url)
+        self.send_update_event(True)
+
+    def update_download_text(self):
+        """Updates the text in the download information."""
+        s = self.download_text_string
+        self.download_text.set(s)
+        # Delay to prevent crash from event flood
+        self.root.after(200, self.update_pending.release)
+
+    def download_progress(self, queue, url, progress, total):
+        """Event handler for download progress."""
+        if total != -1:
+            self.download_text_string = "Downloading %s... (%s/%s)" % (
+                os.path.basename(url), progress, total)
+        else:
+            self.download_text_string = (
+                "Downloading %s... (%s bytes downloaded)" % (
+                    os.path.basename(url), progress))
+        self.send_update_event(True)
+
+    def end_download(self, queue, url, target, success):
+        """Event handler for the end of a download."""
+        if success:
+            self.download_text_string = "Download finished"
+        else:
+            self.download_text_string = "Download failed"
+        self.send_update_event(True)
+
+    def end_download_queue(self, queue):
+        """Event handler for the end of a download queue."""
+        self.root.after(5000, lambda: self.root.event_generate(
+            '<<HideDLPanel>>', when='tail'))
+        self.send_update_event()
+
+    @staticmethod
+    def check_vanilla_raws():
+        """Validates status of vanilla raws are ready."""
+        if not download.get_queue('baselines').empty():
+            return False
+        raw_status = baselines.find_vanilla_raws()
+        if raw_status is None:
+            messagebox.showerror(
+                message='Your Dwarf Fortress version could not be detected '
+                'accurately, which is necessary to process this request.'
+                '\n\nYou will need to restore the file "release notes.txt" in '
+                'order to use this launcher feature.', title='Cannot continue')
+            return False
+        if raw_status is False:
+            if lnp.userconfig.get_bool('downloadBaselines'):
+                messagebox.showinfo(
+                    message='A copy of Dwarf Fortress needs to be '
+                    'downloaded in order to use this. It will start when '
+                    'you close this dialog.\n\nPlease note: You '
+                    'will need to retry the action after the download '
+                    'completes.', title='Download required')
+            return False
+        return True
+
 # vim:expandtab

@@ -9,7 +9,7 @@ from .layout import GridLayouter
 from .tab import Tab
 import sys, os
 
-from core import colors, graphics, paths
+from core import colors, graphics, paths, download, baselines
 from core.lnp import lnp
 
 if sys.version_info[0] == 3:  # Alternate import names
@@ -190,6 +190,9 @@ class GraphicsTab(Tab):
     def install_graphics(self):
         """Installs a graphics pack."""
         if len(self.graphicpacks.curselection()) != 0:
+            from .tkgui import TkGui
+            if not TkGui.check_vanilla_raws():
+                return
             gfx_dir = self.graphicpacks.get(self.graphicpacks.curselection()[0])
             if messagebox.askokcancel(
                     message='Your graphics, settings and raws will be changed.',
@@ -236,6 +239,9 @@ class GraphicsTab(Tab):
 
     def simplify_graphics(self):
         """Removes unnecessary files from graphics packs."""
+        from .tkgui import TkGui
+        if not TkGui.check_vanilla_raws():
+            return
         self.read_graphics()
         for pack in self.graphics.get():
             result = graphics.simplify_pack(pack)

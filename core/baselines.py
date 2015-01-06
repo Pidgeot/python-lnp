@@ -9,9 +9,10 @@ import distutils.dir_util as dir_util
 from . import paths, update
 from .lnp import lnp
 
-def find_vanilla_raws():
+def find_vanilla_raws(download_missing=True):
     """Finds vanilla raws for the current version.
     Starts by unzipping any DF releases in baselines and preprocessing them.
+    If download_missing is set to True, missing baselines will be downloaded.
 
     Returns:
         Path to the vanilla 'raw' folder, eg 'LNP/Baselines/df_40_15/raw'
@@ -25,7 +26,8 @@ def find_vanilla_raws():
     version = 'df_' + str(lnp.df_info.version)[2:].replace('.', '_')
     if os.path.isdir(paths.get('baselines', version, 'raw')):
         return paths.get('baselines', version, 'raw')
-    update.download_df_baseline()
+    if download_missing:
+        update.download_df_baseline()
     return False
 
 def prepare_baselines():

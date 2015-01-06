@@ -182,7 +182,7 @@ def merge_raw_folders(mod_raw_folder, vanilla_raw_folder):
 
 def clear_temp():
     """Resets the folder in which raws are mixed."""
-    if not baselines.find_vanilla_raws():
+    if not baselines.find_vanilla_raws(False):
         # TODO: add user warning re: missing baseline, download
         return None
     if os.path.exists(paths.get('baselines', 'temp')):

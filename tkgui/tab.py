@@ -20,6 +20,7 @@ class Tab(Frame):
     def __init__(self, parent):
         #pylint:disable=super-init-not-called
         Frame.__init__(self, parent)
+        self.parent = parent
         self.pack(side=TOP, fill=BOTH, expand=Y)
         self.create_variables()
         self.create_controls()

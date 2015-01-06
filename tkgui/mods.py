@@ -173,6 +173,9 @@ class ModsTab(Tab):
 
     def perform_merge(self):
         """Merge the selected mods, with background color for user feedback."""
+        from .tkgui import TkGui
+        if not TkGui.check_vanilla_raws():
+            return
         mods.clear_temp()
         # Set status to unknown before merging
         for i, _ in enumerate(self.installed_list.get(0, END)):
@@ -202,4 +205,7 @@ class ModsTab(Tab):
     @staticmethod
     def simplify_mods():
         """Simplify mods; runs on startup if called directly by button."""
+        from .tkgui import TkGui
+        if not TkGui.check_vanilla_raws():
+            return
         mods.simplify_mods()
