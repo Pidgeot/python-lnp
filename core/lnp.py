@@ -9,7 +9,7 @@ from . import errorlog
 
 from .json_config import JSONConfiguration
 
-VERSION = '0.8b'
+VERSION = '0.9'
 
 lnp = None
 class PyLNP(object):
