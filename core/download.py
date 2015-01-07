@@ -144,7 +144,10 @@ class DownloadQueue(object):
                     break
             url, target, end_callback = self.queue[0]
             self.__process_callbacks(self.on_begin_download, url, target)
-            outhandle, outpath = tempfile.mkstemp(dir=os.path.dirname(target))
+            dirname = os.path.dirname(target)
+            if not os.path.isdir(dirname):
+                os.makedirs(dirname)
+            outhandle, outpath = tempfile.mkstemp(dir=dirname)
             outfile = os.fdopen(outhandle, 'w')
             try:
                 req = Request(url, headers={'User-Agent':'PyLNP/'+VERSION})
