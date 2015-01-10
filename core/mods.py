@@ -9,6 +9,9 @@ from io import open
 
 from . import paths, baselines
 
+# TODO:  include graphics raws in mods install
+# TODO:  assume raw folder is not reduced when not simplified and create blanks
+
 def read_mods():
     """Returns a list of mod packs"""
     return [os.path.basename(o) for o in
@@ -148,7 +151,7 @@ def merge_a_mod(mod):
         3:  Fatal error, respond by rebuilding to previous mod
         """
     if not baselines.find_vanilla_raws():
-        return 3 # no baseline; caught properly earlier
+        return 3
     mod_raw_folder = paths.get('mods', mod, 'raw')
     if not os.path.isdir(mod_raw_folder):
         return 2
@@ -161,6 +164,8 @@ def merge_a_mod(mod):
 
 def merge_raw_folders(mod_raw_folder, vanilla_raw_folder):
     """Merge the specified folders, output going in LNP/Baselines/temp/raw"""
+    # TODO:  handle 'data/speech/'; raws refer to it and mods change it
+    #            this includes changing simplify_pack for all types
     mixed_raw_folder = paths.get('baselines', 'temp', 'raw')
     status = 0
     for file_tuple in os.walk(mod_raw_folder):
@@ -183,7 +188,6 @@ def merge_raw_folders(mod_raw_folder, vanilla_raw_folder):
 def clear_temp():
     """Resets the folder in which raws are mixed."""
     if not baselines.find_vanilla_raws(False):
-        # TODO: add user warning re: missing baseline, download
         return None
     if os.path.exists(paths.get('baselines', 'temp')):
         shutil.rmtree(paths.get('baselines', 'temp'))
@@ -213,7 +217,6 @@ def make_mod_from_installed_raws(name):
     else:
         reconstruction = baselines.find_vanilla_raws()
         if not reconstruction:
-            # TODO: add user warning re: missing baseline, download
             return None
 
     clear_temp()
