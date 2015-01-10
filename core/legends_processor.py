@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""A module to compress and sort legends exports.
-Run in the DF directory.
+"""A module to compress and sort legends exports from DF 0.40.09 and later.
 
 .bmp converted to .png where possible.
 Archive for Legends Viewer created if possible, or just

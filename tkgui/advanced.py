@@ -9,7 +9,7 @@ from .layout import GridLayouter
 from .tab import Tab
 import sys
 
-from core import launcher
+from core import launcher, legends_processor
 from core.lnp import lnp
 
 if sys.version_info[0] == 3:  # Alternate import names
@@ -118,6 +118,19 @@ class AdvancedTab(Tab):
             'Whether this GUI should close when Dwarf Fortress is launched',
             self.toggle_autoclose, 'autoClose', lambda v: ('NO', 'YES')[
                 lnp.userconfig.get_bool('autoClose')]), 2)
+
+        # TODO: make this not stop the launcher opening
+        if lnp.df_info.version >= '0.40.09':
+            main_grid.add(controls.create_option_button(
+                self, 'Process Legends Exports',
+                'Compress and sort files exported from legends mode',
+                self.process_legends))
+
+    @staticmethod
+    def process_legends():
+        """Process legends exports."""
+        # TODO:  add user feedback like graphics 'processed \n sets of legends'
+        legends_processor.process_legends()
 
     @staticmethod
     def toggle_autoclose():
