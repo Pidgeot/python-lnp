@@ -157,8 +157,7 @@ class DownloadQueue(object):
                     chunk = response.read(8192)
                     if not chunk:
                         break
-                    total = response.info().getheader(
-                        'Content-Length')
+                    total = response.info().get('Content-Length')
                     data += len(chunk)
                     outfile.write(chunk)
                     self.__process_callbacks(self.on_progress, url, data, total)
