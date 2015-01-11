@@ -8,13 +8,14 @@ import os, filecmp, glob, zipfile, fnmatch
 from . import paths, update
 from .lnp import lnp
 
-def find_vanilla_raws(download_missing=True):
-    """Finds vanilla raws for the current version.
+def find_vanilla(download_missing=True):
+    """Finds the vanilla baseline for the current version.
+
     Starts by unzipping any DF releases in baselines and preprocessing them.
     If download_missing is set to True, missing baselines will be downloaded.
 
     Returns:
-        Path to the vanilla 'raw' folder, eg 'LNP/Baselines/df_40_15/raw'
+        Path to the vanilla folder, eg 'LNP/Baselines/df_40_15'
         False if baseline not available (and start download)
         None if version detection is not accurate
     """
@@ -23,11 +24,18 @@ def find_vanilla_raws(download_missing=True):
         return None
     prepare_baselines()
     version = 'df_' + str(lnp.df_info.version)[2:].replace('.', '_')
-    if os.path.isdir(paths.get('baselines', version, 'raw')):
-        return paths.get('baselines', version, 'raw')
+    if os.path.isdir(paths.get('baselines', version)):
+        return paths.get('baselines', version)
     if download_missing:
         update.download_df_baseline()
     return False
+
+def find_vanilla_raws(download_missing=True):
+    """Finds vanilla raws for the current version."""
+    retval = find_vanilla(download_missing)
+    if retval:
+        return os.path.join(retval, 'raw')
+    return retval
 
 def prepare_baselines():
     """Unzip any DF releases found, and discard non-universial files."""
@@ -95,22 +103,21 @@ def remove_vanilla_raws_from_pack(pack, folder):
         The number of files removed
     """
     files_before = sum(len(f) for (_, _, f) in os.walk(paths.get(folder, pack)))
-    raw_folder = paths.get(folder, pack, 'raw')
-    vanilla_raw_folder = find_vanilla_raws()
-    for root, _, files in os.walk(raw_folder):
-        for f in files:
-            f = os.path.join(root, f)
-            # silently clean up so empty dirs can be removed
-            silently_kill = ('Thumbs.db', 'installed_raws.txt')
-            if any(f.endswith(k) for k in silently_kill):
-                os.remove(f)
-                continue
-            f = os.path.relpath(f, raw_folder)
-            # if there's an identical vanilla file, remove the mod file
-            if os.path.isfile(os.path.join(vanilla_raw_folder, f)):
-                if filecmp.cmp(os.path.join(vanilla_raw_folder, f),
-                               os.path.join(raw_folder, f)):
-                    os.remove(os.path.join(raw_folder, f))
+    for folder, van_folder in (
+            [paths.get(folder, pack, 'raw'), find_vanilla_raws()],
+            [paths.get(folder, pack, 'data', 'speech'),
+             paths.get('baselines', pack, 'data', 'speech')]):
+        for root, _, files in os.walk(folder):
+            for k in files:
+                f = os.path.join(root, k)
+                silently_kill = ('Thumbs.db', 'installed_raws.txt')
+                if any(f.endswith(x) for x in silently_kill):
+                    os.remove(f)
+                    continue
+                van_f = os.path.join(van_folder, os.path.relpath(f, folder))
+                if os.path.isfile(van_f):
+                    if filecmp.cmp(f, van_f):
+                        os.remove(f)
     files_after = sum(len(f) for (_, _, f) in os.walk(paths.get(folder, pack)))
     return files_after - files_before
 

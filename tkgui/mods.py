@@ -42,7 +42,7 @@ class ModsTab(Tab):
         Grid.rowconfigure(self, 0, weight=1)
         Grid.rowconfigure(self, 2, weight=1)
 
-        f = controls.create_control_group(self, 'Installed')
+        f = controls.create_control_group(self, 'Merged')
         install_frame, self.installed_list = controls.create_file_list(
             f, None, self.installed, selectmode='multiple')
         self.installed_list.bind(
@@ -208,4 +208,7 @@ class ModsTab(Tab):
         from .tkgui import TkGui
         if not TkGui.check_vanilla_raws():
             return
-        mods.simplify_mods()
+        m, f = mods.simplify_mods()
+        messagebox.showinfo(
+            str(m) + ' mods simplified',
+            str(f) + ' files were removed from ' + str(m) + ' mods.')
