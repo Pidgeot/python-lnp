@@ -57,7 +57,6 @@ def install_graphics(pack):
     """
     retval = None
     if not baselines.find_vanilla_raws():
-        # TODO: add user warning re: missing baseline, download
         return None
     gfx_dir = tempfile.mkdtemp()
     dir_util.copy_tree(baselines.find_vanilla_raws(), gfx_dir)
@@ -222,13 +221,13 @@ def savegames_to_update():
 
 def update_savegames():
     """Update save games with current raws."""
-    saves = [
-        o for o in glob.glob(paths.get('save', '*'))
-        if os.path.isdir(o) and not o.endswith('current')]
+    # TODO: migrate this to merge logic instead of delete and copy
+    saves = [o for o in glob.glob(paths.get('save', '*'))
+             if os.path.isdir(o) and not o.endswith('current')]
     count = 0
     if saves:
         for save in saves:
-            count = count + 1
+            count += 1
             # Delete old graphics
             if os.path.isdir(os.path.join(save, 'raw', 'graphics')):
                 dir_util.remove_tree(os.path.join(save, 'raw', 'graphics'))

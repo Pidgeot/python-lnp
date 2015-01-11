@@ -73,22 +73,25 @@ def simplify_pack(pack, folder):
     files_before = sum(len(f) for (_, _, f) in os.walk(paths.get(folder, pack)))
     if files_before == 0:
         return None
-    keep = [os.path.join('raw', 'objects', '*'),
-            os.path.join('raw', 'graphics', '*')]
+    keep = [os.path.join('raw', 'graphics', '*')]
     if not folder == 'graphics':
-        keep += [os.path.join('data', 'speech', '*')]
+        keep += [os.path.join('raw', 'objects', '*'),
+                 os.path.join('data', 'speech', '*')]
     if not folder == 'mods':
         keep += [os.path.join('data', 'art', '*'),
-                 os.path.join('data', 'init' 'colors.txt'),
-                 os.path.join('data', 'init' 'd_init.txt'),
-                 os.path.join('data', 'init' 'init.txt'),
-                 os.path.join('data', 'init' 'overrides.txt')]
+                 os.path.join('data', 'init' '*')]
     for root, _, files in os.walk(paths.get(folder, pack)):
         d = paths.get(folder, pack)
         for k in files:
             f = os.path.join(root, k)
             if not any(fnmatch.fnmatch(f, os.path.join(d, p)) for p in keep):
                 os.remove(f)
+    if not folder == 'mods':
+        init_files = ('colors', 'd_init', 'init', 'overrides')
+        init_dir = paths.join(folder, pack, 'data', 'init')
+        for f in os.listdir(init_dir):
+            if not any(p in f for p in init_files):
+                os.remove(os.path.join(init_dir, f))
     files_after = sum(len(f) for (_, _, f) in os.walk(paths.get(folder, pack)))
     return files_after - files_before
 
