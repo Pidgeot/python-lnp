@@ -16,10 +16,12 @@ if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
     from tkinter.ttk import *
+    import tkinter.messagebox as messagebox
 else:
     # pylint:disable=import-error
     from Tkinter import *
     from ttk import *
+    import tkMessageBox as messagebox
 
 class AdvancedTab(Tab):
     """Advanced tab for the TKinter GUI."""
@@ -130,7 +132,14 @@ class AdvancedTab(Tab):
     def process_legends():
         """Process legends exports."""
         # TODO:  add user feedback like graphics 'processed \n sets of legends'
-        legends_processor.process_legends()
+        i = legends_processor.process_legends()
+        if not i:
+            messagebox.showinfo('No legends exports',
+                                'There were no legends exports to process.')
+        else:
+            messagebox.showinfo(str(i) + ' regions processed',
+                                'Legends exported from ' + str(i) + ' regions'
+                                'were found and processed')
 
     @staticmethod
     def toggle_autoclose():

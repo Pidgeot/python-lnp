@@ -8,6 +8,9 @@ Archive for Legends Viewer created if possible, or just
 Sort files into region folder, with maps subfolders,
     and move to user content folder if found.
 """
+
+# TODO:  support legends exports from before 40.09 (best-effort)
+
 from __future__ import print_function, unicode_literals, absolute_import
 
 import os, zipfile, glob, subprocess
@@ -27,8 +30,11 @@ def compress_bitmaps():
     try:
         from PIL import Image
     except ImportError:
-        print('Please install PIL or Pillow to compress bitmaps.')
-        call_optipng()
+        try:
+            import Image
+        except ImportError:
+            print('Please install PIL or Pillow to compress bitmaps.')
+            call_optipng()
     else:
         for fname in glob.glob(paths.get(
                 'df', '-'.join(get_region_info()) + '-*.bmp')):
@@ -98,7 +104,10 @@ def move_files():
 
 def process_legends():
     """Process all legends exports in sets."""
+    i = 0
     while get_region_info():
         compress_bitmaps()
         create_archive()
         move_files()
+        i += 1
+    return i
