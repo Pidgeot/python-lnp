@@ -9,8 +9,6 @@ Sort files into region folder, with maps subfolders,
     and move to user content folder if found.
 """
 
-# TODO:  support legends exports from before 40.09 (best-effort)
-
 from __future__ import print_function, unicode_literals, absolute_import
 
 import os, zipfile, glob, subprocess
@@ -23,7 +21,12 @@ def get_region_info():
     if glob.glob(paths.get('df', 'region*-*')):
         fname = os.path.basename(glob.glob(paths.get('df', 'region*-*'))[0])
         idx = fname.index('-')
-        return (fname[:idx], fname[idx+1:idx+12])
+        date = fname[idx+1:idx+12]
+        if date[6] == '-':
+            date = fname[idx+1:idx+13]
+        elif date[7] == '-':
+            date = fname[idx+1:idx+14]
+        return (fname[:idx], date)
 
 def compress_bitmaps():
     """Compresses all bitmap maps."""
@@ -104,10 +107,14 @@ def move_files():
 
 def process_legends():
     """Process all legends exports in sets."""
-    i = 0
-    while get_region_info():
-        compress_bitmaps()
-        create_archive()
-        move_files()
-        i += 1
-    return i
+    if lnp.df_info.version >= '0.40.09':
+        i = 0
+        while get_region_info():
+            compress_bitmaps()
+            create_archive()
+            move_files()
+            i += 1
+        return i
+    else:
+        # TODO:  support legends exports from before 40.09 (best-effort)
+        pass
