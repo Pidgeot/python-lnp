@@ -5,12 +5,12 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import os, shutil, glob
 from difflib import SequenceMatcher
+# pylint:disable=redefined-builtin
 from io import open
 
 from . import paths, baselines
 
 # TODO:  include graphics raws in mods install
-# TODO:  assume raw folder is not reduced when not simplified and create blanks
 
 def read_mods():
     """Returns a list of mod packs"""
@@ -24,10 +24,46 @@ def simplify_mods():
         simplify_pack(pack)
 
 def simplify_pack(pack):
-    """Removes unnecessary files from one mod."""
-    baselines.simplify_pack(pack, 'mods')
-    baselines.remove_vanilla_raws_from_pack(pack, 'mods')
-    baselines.remove_empty_dirs(pack, 'mods')
+    """Removes unnecessary files from one mod.
+
+    Params:
+        pack
+            path segment in './LNP/folder/pack/' as strings
+
+    Returns:
+        The sum of files affected by the operations
+    """
+    # Here we use the heuristic that mods which are bundled with other files
+    # contain a complete set of raws, and vanilla files which are missing
+    # should not be inserted.  We thus add empty files to fill out the set in
+    # cases where several files are removed.
+    i = baselines.simplify_pack(pack, 'mods')
+    if i > 10:
+        i += make_blank_files(pack)
+    i += baselines.remove_vanilla_raws_from_pack(pack, 'mods')
+    i += baselines.remove_empty_dirs(pack, 'mods')
+    return i
+
+def make_blank_files(pack):
+    """Create blank files where vanilla files are missing.
+
+    Params:
+        pack
+            path segment in './LNP/folder/pack/' as strings
+
+    Returns:
+        The number fo blank files created
+    """
+    i = 0
+    vanilla_raws = baselines.find_vanilla_raws()
+    for root, _, files in os.walk(vanilla_raws):
+        for k in files:
+            f = os.path.relpath(os.path.join(root, k), vanilla_raws)
+            if not os.path.isfile(paths.get('mods', pack, f)):
+                with open(paths.get('mods', pack, f), 'w') as blank:
+                    blank.write('')
+                    i += 1
+    return i
 
 def install_mods():
     """Deletes installed raw folder, and copies over installed raws."""
@@ -49,6 +85,7 @@ def do_merge_seq(mod_text, vanilla_text, gen_text):
     Returns:
         tuple(status, lines); status is 0/'ok' or 2/'overlap merged'
     """
+    # pylint:disable=too-many-locals,too-many-branches
     status = 0
     # special cases - where merging is not required because two are equal
     if vanilla_text == gen_text:
@@ -165,13 +202,11 @@ def merge_a_mod(mod):
 def merge_raw_folders(mod_raw_folder, vanilla_raw_folder):
     """Merge the specified folders, output going in LNP/Baselines/temp/raw"""
     # TODO:  handle 'data/speech/'; raws refer to it and mods change it
-    #            this includes changing simplify_pack for all types
     mixed_raw_folder = paths.get('baselines', 'temp', 'raw')
     status = 0
-    for file_tuple in os.walk(mod_raw_folder):
-        for item in file_tuple[2]:
-            f = os.path.join(file_tuple[0], item)
-            f = os.path.relpath(f, mod_raw_folder)
+    for root, _, files in os.walk(mod_raw_folder):
+        for k in files:
+            f = os.path.relpath(os.path.join(root, k), mod_raw_folder)
             if not f.endswith('.txt'):
                 continue
             if (os.path.isfile(os.path.join(vanilla_raw_folder, f)) and
