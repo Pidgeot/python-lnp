@@ -8,7 +8,7 @@ import sys
 
 from . import controls
 from .tab import Tab
-from core import mods
+from core import mods, graphics
 
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
@@ -42,7 +42,7 @@ class ModsTab(Tab):
         Grid.rowconfigure(self, 0, weight=1)
         Grid.rowconfigure(self, 2, weight=1)
 
-        f = controls.create_control_group(self, 'Installed')
+        f = controls.create_control_group(self, 'Merged')
         install_frame, self.installed_list = controls.create_file_list(
             f, None, self.installed, selectmode='multiple')
         self.installed_list.bind(
@@ -177,6 +177,7 @@ class ModsTab(Tab):
         if not TkGui.check_vanilla_raws():
             return
         mods.clear_temp()
+        graphics.add_to_mods_merge()
         # Set status to unknown before merging
         for i, _ in enumerate(self.installed_list.get(0, END)):
             self.installed_list.itemconfig(i, bg='white')
@@ -192,9 +193,11 @@ class ModsTab(Tab):
     def install_mods():
         """Replaces <df>/raw with the contents LNP/Baselines/temp/raw"""
         if messagebox.askokcancel(
-                message=('Your graphics will be removed and raws changed.\n\n'
+                message=('Your raws will be changed.\n\n'
                          'The mod merging function is still in beta.  This '
-                         'could break new worlds, or even cause crashes.\n\n'),
+                         'could break new worlds, or even cause crashes.\n\n'
+                         'Changing mods or graphics later might break a save, '
+                         'so keep backups of everything you care about!'),
                 title='Are you sure?'):
             mods.install_mods()
             messagebox.showinfo(
@@ -208,4 +211,7 @@ class ModsTab(Tab):
         from .tkgui import TkGui
         if not TkGui.check_vanilla_raws():
             return
-        mods.simplify_mods()
+        m, f = mods.simplify_mods()
+        messagebox.showinfo(
+            str(m) + ' mods simplified',
+            str(f) + ' files were removed from ' + str(m) + ' mods.')
