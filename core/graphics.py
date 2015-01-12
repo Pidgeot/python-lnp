@@ -35,10 +35,8 @@ def current_pack():
 
 def read_graphics():
     """Returns a list of graphics directories."""
-    packs = [
-        os.path.basename(o) for o in
-        glob.glob(paths.get('graphics', '*')) if
-        os.path.isdir(o)]
+    packs = [os.path.basename(o) for o in
+             glob.glob(paths.get('graphics', '*')) if os.path.isdir(o)]
     result = []
     for p in packs:
         if not validate_pack(p):
@@ -228,6 +226,8 @@ def update_graphics_raws(raw_dir, gfx_dir=None):
         gfx_dir = current_pack()
         if '/' in gfx_dir:
             return False
+    if not gfx_dir in read_graphics():
+        return False
     mods_list = mods.read_installation_log(
         os.path.join(raw_dir, 'installed_raws.txt'))
     if not mods_list:
@@ -237,20 +237,41 @@ def update_graphics_raws(raw_dir, gfx_dir=None):
         dir_util.copy_tree(paths.get('graphics', gfx_dir, 'raw'), raw_dir)
         return True
     else:
-        # Rebuild logged mods on top of selected graphics
-        mods.clear_temp(gfx_dir)
+        mods.clear_temp()
+        add_to_mods_merge(gfx_dir)
         for m in mods_list:
             if mods.merge_a_mod(m) > 2:
                 return False
         dir_util.copy_tree(paths.get('baselines', 'temp', 'raw'), raw_dir)
         return True
 
+def add_to_mods_merge(gfx_dir=None):
+    """Adds graphics to the mod merge in baselines/temp."""
+    if gfx_dir is None:
+        gfx_dir = current_pack()
+    g_folder = paths.get('graphics', gfx_dir, 'raw')
+    b_folder = paths.get('baselines', 'temp', 'raw')
+    for root, _, files in os.walk(g_folder):
+        for k in files:
+            f = os.path.relpath(os.path.join(root, k), g_folder)
+            if os.path.isfile(os.path.join(b_folder, f)):
+                os.remove(os.path.join(b_folder, f))
+            shutil.copyfile(k, os.path.join(b_folder, f))
+    with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
+              'a') as log:
+        log.write('graphics/' + gfx_dir)
+
 def update_savegames():
     """Update save games with current raws."""
     count, saves = 0, savegames_to_update()
     if saves:
         for save in saves:
-            update_graphics_raws(os.path.join(save, 'raw'))
+            temp_dir = tempfile.mkdtemp()
+            shutil.copytree(os.path.join(save, 'raw'), temp_dir)
+            if update_graphics_raws(temp_dir):
+                shutil.rmtree(os.path.join(save, 'raw'))
+                shutil.copytree(temp_dir, os.path.join(save, 'raw'))
+            shutil.rmtree(temp_dir)
             count += 1
     return count
 

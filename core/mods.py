@@ -8,7 +8,7 @@ from difflib import SequenceMatcher
 # pylint:disable=redefined-builtin
 from io import open
 
-from . import paths, baselines, graphics
+from . import paths, baselines
 
 def read_mods():
     """Returns a list of mod packs"""
@@ -229,7 +229,7 @@ def merge_folders(mod_folder, vanilla_folder, mixed_folder):
                             os.path.join(mixed_folder, f))
     return status
 
-def clear_temp(g=False):
+def clear_temp():
     """Resets the folder in which raws are mixed."""
     if os.path.exists(paths.get('baselines', 'temp')):
         shutil.rmtree(paths.get('baselines', 'temp'))
@@ -240,17 +240,7 @@ def clear_temp(g=False):
     with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
               'w') as log:
         log.write('# List of raws merged by PyLNP:\nbaselines/' +
-                  os.path.dirname(baselines.find_vanilla()) + '\n')
-    if not g:
-        g = graphics.current_pack()
-        if '/' in g:
-            return
-    if os.path.isdir(paths.get('graphics', g, 'raw')):
-        shutil.copytree(paths.get('graphics', g, 'raw'),
-                        paths.get('baselines', 'temp', 'raw'))
-        with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
-                  'w') as log:
-            log.write('graphics/' + g + '\n')
+                  os.path.basename(baselines.find_vanilla()) + '\n')
 
 def make_mod_from_installed_raws(name):
     """Capture whatever unavailable mods a user currently has installed
