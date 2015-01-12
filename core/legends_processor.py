@@ -13,6 +13,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import os, zipfile, glob, subprocess
 from . import paths
+from .lnp import lnp
 
 def get_region_info():
     """Returns a tuple of strings for an available region and date.

@@ -121,17 +121,15 @@ class AdvancedTab(Tab):
             self.toggle_autoclose, 'autoClose', lambda v: ('NO', 'YES')[
                 lnp.userconfig.get_bool('autoClose')]), 2)
 
-        # TODO: make this not stop the launcher opening
         if lnp.df_info.version >= '0.40.09':
-            main_grid.add(controls.create_option_button(
+            main_grid.add(controls.create_trigger_button(
                 self, 'Process Legends Exports',
                 'Compress and sort files exported from legends mode',
-                self.process_legends))
+                self.process_legends), 2)
 
     @staticmethod
     def process_legends():
         """Process legends exports."""
-        # TODO:  add user feedback like graphics 'processed \n sets of legends'
         i = legends_processor.process_legends()
         if not i:
             messagebox.showinfo('No legends exports',
