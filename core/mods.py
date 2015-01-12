@@ -8,9 +8,7 @@ from difflib import SequenceMatcher
 # pylint:disable=redefined-builtin
 from io import open
 
-from . import paths, baselines
-
-# TODO:  include graphics raws in mods install
+from . import paths, baselines, graphics
 
 def read_mods():
     """Returns a list of mod packs"""
@@ -209,7 +207,7 @@ def merge_a_mod(mod):
     if status < 3:
         with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
                   'a') as log:
-            log.write(mod + '\n')
+            log.write('mods/' + mod + '\n')
     return status
 
 def merge_folders(mod_folder, vanilla_folder, mixed_folder):
@@ -231,10 +229,8 @@ def merge_folders(mod_folder, vanilla_folder, mixed_folder):
                             os.path.join(mixed_folder, f))
     return status
 
-def clear_temp():
+def clear_temp(g=False):
     """Resets the folder in which raws are mixed."""
-    if not baselines.find_vanilla_raws(False):
-        return None
     if os.path.exists(paths.get('baselines', 'temp')):
         shutil.rmtree(paths.get('baselines', 'temp'))
     shutil.copytree(baselines.find_vanilla_raws(),
@@ -243,9 +239,18 @@ def clear_temp():
                     paths.get('baselines', 'temp', 'data', 'speech'))
     with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
               'w') as log:
-        log.write('# List of raws merged by PyLNP:\n' +
-                  os.path.basename(
-                      os.path.dirname(baselines.find_vanilla_raws())) + '\n')
+        log.write('# List of raws merged by PyLNP:\nbaselines/' +
+                  os.path.dirname(baselines.find_vanilla()) + '\n')
+    if not g:
+        g = graphics.current_pack()
+        if '/' in g:
+            return
+    if os.path.isdir(paths.get('graphics', g, 'raw')):
+        shutil.copytree(paths.get('graphics', g, 'raw'),
+                        paths.get('baselines', 'temp', 'raw'))
+        with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
+                  'w') as log:
+            log.write('graphics/' + g + '\n')
 
 def make_mod_from_installed_raws(name):
     """Capture whatever unavailable mods a user currently has installed
@@ -301,7 +306,6 @@ def read_installation_log(log):
         return []
     mods_list = []
     for line in file_contents:
-        if not line.strip() or line.startswith('#'):
-            continue
-        mods_list.append(line.strip())
+        if line.startswith('mods/'):
+            mods_list.append(line.strip().replace('mods/', ''))
     return mods_list
