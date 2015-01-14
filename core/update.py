@@ -80,6 +80,17 @@ def simple_dffd_config():
     """Reduces the configuration required by maintainers using DFFD.
     Values are generated and saved from known URLs and the 'dffdID' field."""
     dffd_num = lnp.config.get_number('updates/dffdID')
+    if not dffd_num and lnp.config.get_string('updates/downloadURL'
+            '').startswith('http://dffd.wimbli.com/file.php?id='):
+        dffd_num = lnp.config.get_string('updates/downloadURL'
+            '').replace('http://dffd.wimbli.com/file.php?id=', '')
+        lnp.config.save_data()
+    if not dffd_num and lnp.config.get_string('updates/checkURL'
+            '').startswith('http://dffd.wimbli.com/file_version.php?id='):
+        dffd_num = lnp.config.get_string('updates/checkURL'
+            '').replace('http://dffd.wimbli.com/file_version.php?id=', '')
+        lnp.config.save_data()
+
     if dffd_num and not lnp.config.get_string('updates/checkURL'):
         lnp.config['updates/checkURL'] = ('http://dffd.wimbli.com/file_'
                                           'version.php?id=' + dffd_num)
