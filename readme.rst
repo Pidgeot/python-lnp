@@ -272,6 +272,7 @@ PyLNP expects to see the following directory structure::
   <base folder>
     <Dwarf Fortress main folder>
     LNP
+      Baselines
       Colors
       Defaults
       Embarks
@@ -300,9 +301,9 @@ This file, found in the base folder, contains user settings such as window width
 
 Baselines
 ---------
-This folder contains full unmodified raws for various versions of DF, and the settings and images relevant to graphics packs.  These are used to rebuild the reduced raws used by graphics packs and mods, and should not be modified or removed - any new graphics or mod install would break.  Extra tilesets added to a /data/art/ folder will be available to all graphics packs (useful for TwbT text options).
+This folder contains full unmodified raws for various versions of DF, and the settings and images relevant to graphics packs.  These are used to rebuild the reduced raws used by graphics packs and mods, and should not be modified or removed - any new graphics or mod install would break.
 
-Add versions by downloading the windows SDL edition of that version and placing it in the folder (eg "df_40_15_win.zip").  
+Add versions by downloading the windows SDL edition of that version and placing it in the folder (eg "df_40_15_win.zip"), or by attempting an action that would require that baseline - such as installing a graphics pack - and accepting the download.
 
 Colors
 ------
@@ -330,11 +331,11 @@ If this version of PyLNP has not yet been run on the selected DF installation, a
 
 Graphics
 --------
-This folder contains graphics packs, consisting of data and raw folders.  Any raws identical to vanilla files will be discarded; when installing a graphics pack the remaining files will be copied over a set of vanilla raws and the combination installed.
+This folder contains graphics packs, consisting of data and raw folders.  Any raws identical to vanilla files will be discarded; when installing a graphics pack the remaining files will be copied over a set of vanilla raws and the combination installed.  Through more complex merge logic, graphics can also be used with mods and changed on most modded saves.
 
 Tilesets
 --------
-This folder contains tilesets; individual image files that the user can use for the FONT and GRAPHICS_FONT settings (and their fullscreen counterparts).  Tilesets can be installed through the graphics customisation tab, as they are added to each graphics pack as the pack is installed.
+This folder contains tilesets; individual image files that the user can use for the FONT and GRAPHICS_FONT settings (and their fullscreen counterparts).  Tilesets can be installed through the graphics customisation tab, which reads from <df>/data/art, as they are added to each graphics pack as the pack is installed - especially useful for TwbT text tiles.
 
 Mods
 ----
@@ -402,6 +403,8 @@ If mods are present in LNP/Mods/, a mods tab is added to the launcher.
 
 Multiple mods can be merged, in the order shown in the 'installed' pane.  Those shown in green merged OK; in yellow with minor issues.  Orange signifies an overlapping merge or other serious issue, and red could not be merged.  Once you are happy with the combination, you can install them to the DF folder and generate a new world to start playing.
 
-Note that even an all-green combination might be broken in subtle (or non-subtle) ways.  Mods are not currently compatible with graphics!  Never update graphics on savegames with installed mods - they will break.
+Note that even an all-green combination might be broken in subtle (or non-subtle) ways.
 
-For mod authors:  note that the reduced raw format is equivalent to copying over a vanilla install - missing files are taken to be vanilla.  Modifying existing files instead of adding new files decreases the chance of producing conflicting raws without a merge conflict.
+Graphics packs are generally compatible with mods.  When combining mods, the current graphics pack is merged first followed by the selected mods.  Because the PyLNP logs the installed raws, it can also update the graphics on modded savegames.  This is done by recreating the logged merge with new graphics at the base, and replacing the savegame raws, if nothing worse than overlapping changes was found and the previous set (including graphics) could be rebuilt exactly.  
+
+For mod authors:  note that the reduced raw format is equivalent to copying over a vanilla install - missing files are taken to be vanilla.  Modifying existing files instead of adding new files decreases the chance of producing conflicting raws without a merge conflict.  The merge logic handles raw/*.txt, and data/speech/*.txt
