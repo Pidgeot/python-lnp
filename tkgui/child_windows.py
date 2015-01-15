@@ -7,7 +7,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys
 from . import controls
 
-from core import errorlog, launcher, paths, update, lnp
+from core import errorlog, launcher, paths, update
 from core.dfraw import DFRaw
 from core.lnp import lnp
 
