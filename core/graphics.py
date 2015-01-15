@@ -3,7 +3,7 @@
 """Graphics pack management."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, os, shutil, glob, tempfile
+import sys, os, shutil, glob, tempfile, filecmp
 import distutils.dir_util as dir_util
 from .launcher import open_folder
 from .lnp import lnp
@@ -268,12 +268,42 @@ def update_savegames():
         for save in saves:
             temp_dir = tempfile.mkdtemp()
             shutil.copytree(os.path.join(save, 'raw'), temp_dir)
-            if update_graphics_raws(temp_dir):
+            rebuild = can_rebuild(paths.get('baselines', 'temp',
+                                            'raw', 'installed_raws.txt'))
+            if update_graphics_raws(temp_dir) and rebuild:
                 shutil.rmtree(os.path.join(save, 'raw'))
                 shutil.copytree(temp_dir, os.path.join(save, 'raw'))
             shutil.rmtree(temp_dir)
             count += 1
     return count
+
+def can_rebuild(log_file):
+    """Test if user can exactly rebuild a raw folder, returning a bool."""
+    mods.clear_temp()
+    try:
+        with open(log_file) as f:
+            file_contents = list(f.readlines())
+    except IOError:
+        return False
+    mods_list = []
+    for line in file_contents:
+        if line.startswith('graphics/'):
+            add_to_mods_merge(gfx_dir = line.replace('graphics/', ''))
+        if line.startswith('mods/'):
+            mods_list.append(line.strip().replace('mods/', ''))
+    for m in mods_list:
+        merge_a_mod(m)
+    save_raws = os.path.dirname(log_file)
+    gen_raws = paths.get('baselines', 'raw')
+    for root, _, files in os.walk(save_raws):
+        for k in files:
+            f = os.path.relpath(os.path.join(root, k), save_raws)
+            if filecmp.cmp(k, os.path.join(gen_raws, f), shallow=False):
+                os.remove(os.path.join(b_folder, f))
+    baselines.remove_empty_dirs('temp', 'baselines')
+    if os.listdir('temp', 'baselines'):
+        return False
+    return True
 
 def open_tilesets():
     """Opens the tilesets folder."""
