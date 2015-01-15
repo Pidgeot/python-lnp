@@ -3,7 +3,7 @@
 """Update handling."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, re, time, os, threading
+import sys, re, time, os, threading, zipfile, tarfile
 
 try:  # Python 2
     # pylint:disable=import-error
@@ -14,7 +14,6 @@ except ImportError:  # Python 3
     from urllib.error import URLError
 
 from .lnp import lnp
-from .df import DFInstall
 from . import launcher, paths, download
 
 def updates_configured():
@@ -40,7 +39,7 @@ def perform_update_check():
             lnp.config.get_string('updates/checkURL'),
             headers={'User-Agent':'PyLNP'})
         version_text = urlopen(req, timeout=3).read()
-        # Note: versionRegex must capture the version number in a group
+        # Note: versionRegex must capture the version string in a group
         new_version = re.search(
             lnp.config.get_string('updates/versionRegex'),
             version_text).group(1)
@@ -76,19 +75,61 @@ def download_df_baseline():
     target = os.path.join(paths.get('baselines'), filename)
     download.download('baselines', url, target)
 
+def direct_download_pack():
+    """Directly download a new version of the pack to the current BASEDIR"""
+    fname = 'new_pack.txt'
+    url = lnp.config.get_string('updates/directURL')
+    target = os.path.join(lnp.BASEDIR, fname)
+    # TODO:  confirm this callback works
+    download.download(lnp.BASEDIR, url, target,
+                      end_callback=update.extract_new_pack)
+
+def extract_new_pack():
+    """Extract a downloaded new pack to a sibling dir of the current pack."""
+    exts = ('.zip', '.bz2', '.gzip', '.7z')
+    pack = [f for f in os.listdir(lnp.BASEDIR) if os.path.isfile(f) and
+            any((f.endswith(i) for i in exts))]
+    if len(pack) == 1:
+        zipname = pack[0]
+    elif len(pack) > 1:
+        zipname = pack[0]
+        for p in pack:
+            # TODO:  compare file age
+            if p is 'newer than zipname':
+                zipname = p
+    else:
+        return
+    # TODO:  condition 'top level of archive is a single dir'
+    if False:
+        target = os.path.join(lnp.BASEDIR, '..')
+    else:
+        target = os.path.join(lnp.BASEDIR, '..', zipname.split('.')[0])
+    if fname.endswith('.zip'):
+        zipfile.ZipFile(fname).extractall(target)
+        os.remove(fname)
+        return True
+    if fname.endswith('.bz2') or fname.endswith('.gzip'):
+        tarfile.TarFile(fname).extractall(target)
+        os.remove(fname)
+        return True
+    if fname.endswith('.7z'):
+        # TODO:  implement .7z support
+        return False
+    return False
+
 def simple_dffd_config():
     """Reduces the configuration required by maintainers using DFFD.
     Values are generated and saved from known URLs and the 'dffdID' field."""
     dffd_num = lnp.config.get_number('updates/dffdID')
-    if not dffd_num and lnp.config.get_string('updates/downloadURL'
-            '').startswith('http://dffd.wimbli.com/file.php?id='):
-        dffd_num = lnp.config.get_string('updates/downloadURL'
-            '').replace('http://dffd.wimbli.com/file.php?id=', '')
+    if not dffd_num and lnp.config.get_string('updates/downloadURL')\
+       .startswith('http://dffd.wimbli.com/file.php?id='):
+        dffd_num = lnp.config.get_string('updates/downloadURL')\
+                   .replace('http://dffd.wimbli.com/file.php?id=', '')
         lnp.config.save_data()
-    if not dffd_num and lnp.config.get_string('updates/checkURL'
-            '').startswith('http://dffd.wimbli.com/file_version.php?id='):
-        dffd_num = lnp.config.get_string('updates/checkURL'
-            '').replace('http://dffd.wimbli.com/file_version.php?id=', '')
+    if not dffd_num and lnp.config.get_string('updates/checkURL')\
+       .startswith('http://dffd.wimbli.com/file_version.php?id='):
+        dffd_num = lnp.config.get_string('updates/checkURL')\
+                   .replace('http://dffd.wimbli.com/file_version.php?id=', '')
         lnp.config.save_data()
 
     if dffd_num and not lnp.config.get_string('updates/checkURL'):
@@ -100,10 +141,10 @@ def simple_dffd_config():
         lnp.config.save_data()
     if dffd_num and lnp.config.get_string('updates/downloadURL'):
         lnp.config['updates/downloadURL'] = ('http://dffd.wimbli.com/file'
-                                             '.php?id=' + dffd_num)            
+                                             '.php?id=' + dffd_num)
         lnp.config.save_data()
     if dffd_num and lnp.config.get_string('updates/directURL'):
-        # TODO: improve pack name handling; this works but isn't great
+        # TODO:  improve pack name handling; this works but isn't great
         fname = 'new_pack.zip'
         lnp.config['updates/directURL'] = ('http://dffd.wimbli.com/download.'
                                            'php?id=' + dffd_num + '&f=' + fname)
