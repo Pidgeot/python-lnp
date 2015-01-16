@@ -82,39 +82,47 @@ def direct_download_pack():
     target = os.path.join(lnp.BASEDIR, fname)
     # TODO:  confirm this callback works
     download.download(lnp.BASEDIR, url, target,
-                      end_callback=update.extract_new_pack)
+                      end_callback=extract_new_pack)
 
 def extract_new_pack():
     """Extract a downloaded new pack to a sibling dir of the current pack."""
-    exts = ('.zip', '.bz2', '.gzip', '.7z')
+    exts = ('.zip', '.bz2', '.gz', '.7z', '.xz')
     pack = [f for f in os.listdir(lnp.BASEDIR) if os.path.isfile(f) and
             any((f.endswith(i) for i in exts))]
     if len(pack) == 1:
-        zipname = pack[0]
+        fname = pack[0]
     elif len(pack) > 1:
-        zipname = pack[0]
+        fname = pack[0]
         for p in pack:
-            # TODO:  compare file age
-            if p is 'newer than zipname':
-                zipname = p
-    else:
-        return
-    # TODO:  condition 'top level of archive is a single dir'
-    if False:
+            if (os.path.getmtime(os.path.join(lnp.BASEDIR, p)) >
+                    os.path.getmtime(os.path.join(lnp.BASEDIR, fname))):
+                fname = p
+    if fname:
+        archive = os.path.join(lnp.BASEDIR, fname)
         target = os.path.join(lnp.BASEDIR, '..')
-    else:
-        target = os.path.join(lnp.BASEDIR, '..', zipname.split('.')[0])
+        extract_archive(archive, target)
+
+def extract_archive(fname, target):
+    """Extract the archive fname to dir target, avoiding explosions."""
     if fname.endswith('.zip'):
-        zipfile.ZipFile(fname).extractall(target)
+        zf = zipfile.ZipFile(fname)
+        namelist = zf.namelist()
+        topdir = namelist[0].split(os.path.sep)[0]
+        if not all(f.startswith(topdir) for f in namelist):
+            target = os.path.join(target, fname.split('.')[0])
+        zf.extractall(target)
         os.remove(fname)
         return True
-    if fname.endswith('.bz2') or fname.endswith('.gzip'):
-        tarfile.TarFile(fname).extractall(target)
+    if fname.endswith('.bz2') or fname.endswith('.gz'):
+        tf = tarfile.open(fname)
+        namelist = tf.getmembers()
+        topdir = namelist[0].split(os.path.sep)[0]
+        if not all(f.startswith(topdir) for f in namelist):
+            target = os.path.join(target, fname.split('.')[0])
+        tf.extractall(target)
         os.remove(fname)
         return True
-    if fname.endswith('.7z'):
-        # TODO:  implement .7z support
-        return False
+    # TODO:  support '*.xz' and '*.7z' files.
     return False
 
 def simple_dffd_config():
