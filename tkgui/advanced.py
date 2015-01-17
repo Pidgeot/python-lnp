@@ -136,7 +136,7 @@ class AdvancedTab(Tab):
                                 'There were no legends exports to process.')
         else:
             messagebox.showinfo(str(i) + ' regions processed',
-                                'Legends exported from ' + str(i) + ' regions'
+                                'Legends exported from ' + str(i) + ' regions '
                                 'were found and processed')
 
     @staticmethod

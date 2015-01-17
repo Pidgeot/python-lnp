@@ -19,8 +19,10 @@ def get_region_info():
     """Returns a tuple of strings for an available region and date.
     Eg: ('region1', '00250-01-01')
     """
-    if glob.glob(paths.get('df', 'region*-*')):
-        fname = os.path.basename(glob.glob(paths.get('df', 'region*-*'))[0])
+    files = [f for f in glob.glob(paths.get('df', 'region*-*')) if
+             os.path.isfile(f)]
+    if files:
+        fname = files[0]
         idx = fname.index('-')
         date = fname[idx+1:idx+12]
         if date[6] == '-':
@@ -76,7 +78,7 @@ def create_archive():
         with zipfile.ZipFile(pattern[:-1] + '_legends_archive.zip',
                              'w', zipfile.ZIP_DEFLATED) as zipped:
             for f in l:
-                zipped.write(f)
+                zipped.write(f, os.path.basename(f))
                 os.remove(f)
     elif os.path.isfile(pattern + 'legends.xml'):
         with zipfile.ZipFile(pattern[:-1] + '_legends_xml.zip',
@@ -91,20 +93,24 @@ def move_files():
     dirname = get_region_info()[0] + '_legends_exports'
     if os.path.isdir(os.path.join('..', 'User Generated Content')):
         dirname = os.path.join('..', 'User Generated Content', dirname)
-    else: dirname = paths.get('df', dirname)
+    else:
+        dirname = paths.get('df', dirname)
     for site_map in glob.glob(pattern + '-site_map-*'):
-        os.renames(site_map, os.path.join(dirname, 'site_maps', site_map))
+        os.renames(site_map, os.path.join(dirname, 'site_maps',
+                                          os.path.basename(site_map)))
     maps = ('world_map', 'bm', 'detailed', 'dip', 'drn', 'el', 'elw',
             'evil', 'hyd', 'nob', 'rain', 'sal', 'sav', 'str', 'tmp',
             'trd', 'veg', 'vol')
     for m in maps:
         m = glob.glob(pattern + '-' + m + '.???')
         if m:
-            os.renames(m[0], os.path.join(dirname, 'region_maps', m[0]))
-    files = (glob.glob(pattern + '*') +
-             [get_region_info()[0] + '-world_gen_param.txt'])
-    for file in files:
-        os.renames(file, os.path.join(dirname, file))
+            os.renames(m[0], os.path.join(dirname, 'region_maps',
+                                          os.path.basename(m[0])))
+    for file in glob.glob(paths.get('df', get_region_info()[0] + '*')):
+        if os.path.isfile(file):
+            os.renames(file, os.path.join(dirname, os.path.basename(file)))
+    for f in glob.glob(paths.get('df', '*color_key.txt')):
+        os.remove(f)
 
 def process_legends():
     """Process all legends exports in sets."""
