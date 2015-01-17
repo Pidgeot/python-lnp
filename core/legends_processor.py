@@ -19,10 +19,10 @@ def get_region_info():
     """Returns a tuple of strings for an available region and date.
     Eg: ('region1', '00250-01-01')
     """
-    files = [f for f in glob.glob(paths.get('df', 'region*-*')) if
+    files = [f for f in glob.glob(paths.get('df', 'region*-*-??-??-*')) if
              os.path.isfile(f)]
     if files:
-        fname = files[0]
+        fname = os.path.basename(files[0])
         idx = fname.index('-')
         date = fname[idx+1:idx+12]
         if date[6] == '-':
@@ -122,6 +122,3 @@ def process_legends():
             move_files()
             i += 1
         return i
-    else:
-        # TODO:  support legends exports from before 40.09 (best-effort)
-        pass
