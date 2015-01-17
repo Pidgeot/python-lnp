@@ -96,19 +96,29 @@ def move_files():
     else:
         dirname = paths.get('df', dirname)
     for site_map in glob.glob(pattern + '-site_map-*'):
-        os.renames(site_map, os.path.join(dirname, 'site_maps',
-                                          os.path.basename(site_map)))
+        target = os.path.join(dirname, 'site_maps', os.path.basename(site_map))
+        if os.path.isfile(target):
+                os.remove(site_map)
+            else:
+                os.renames(site_map, target)
     maps = ('world_map', 'bm', 'detailed', 'dip', 'drn', 'el', 'elw',
             'evil', 'hyd', 'nob', 'rain', 'sal', 'sav', 'str', 'tmp',
             'trd', 'veg', 'vol')
     for m in maps:
         m = glob.glob(pattern + '-' + m + '.???')
         if m:
-            os.renames(m[0], os.path.join(dirname, 'region_maps',
-                                          os.path.basename(m[0])))
+            t = os.path.join(dirname, 'region_maps', os.path.basename(m[0]))
+            if os.path.isfile(t):
+                os.remove(m[0])
+            else:
+                os.renames(m[0], t)
     for file in glob.glob(paths.get('df', get_region_info()[0] + '*')):
         if os.path.isfile(file):
-            os.renames(file, os.path.join(dirname, os.path.basename(file)))
+            target = os.path.join(dirname, os.path.basename(file))
+            if os.path.isfile(target):
+                os.remove(file)
+            else:
+                os.renames(file, target)
     for f in glob.glob(paths.get('df', '*color_key.txt')):
         os.remove(f)
 
