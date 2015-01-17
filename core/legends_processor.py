@@ -91,8 +91,8 @@ def move_files():
     that dir exists."""
     pattern = paths.get('df', '-'.join(get_region_info()))
     dirname = get_region_info()[0] + '_legends_exports'
-    if os.path.isdir(os.path.join('..', 'User Generated Content')):
-        dirname = os.path.join('..', 'User Generated Content', dirname)
+    if os.path.isdir(os.path.join(lnp.BASEDIR, 'User Generated Content')):
+        dirname = os.path.join(lnp.BASEDIR, 'User Generated Content', dirname)
     else:
         dirname = paths.get('df', dirname)
     for site_map in glob.glob(pattern + '-site_map-*'):
