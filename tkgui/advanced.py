@@ -130,14 +130,22 @@ class AdvancedTab(Tab):
     @staticmethod
     def process_legends():
         """Process legends exports."""
-        i = legends_processor.process_legends()
-        if not i:
+        if not legends_processor.get_region_info():
             messagebox.showinfo('No legends exports',
                                 'There were no legends exports to process.')
         else:
-            messagebox.showinfo(str(i) + ' regions processed',
-                                'Legends exported from ' + str(i) + ' regions '
-                                'were found and processed')
+            messagebox.showinfo('Exports will be compressed',
+                                'Maps exported from legends mode will be '
+                                'converted to .png format, a compressed archive'
+                                ' will be made, and files will be sorted and '
+                                'moved to a subfolder.  Please wait...')
+            i = legends_processor.process_legends()
+            string = str(i) + ' region'
+            if i > 1:
+                string += 's'
+            messagebox.showinfo(string + ' processed',
+                                'Legends exported from ' + string +
+                                ' were found and processed')
 
     @staticmethod
     def toggle_autoclose():

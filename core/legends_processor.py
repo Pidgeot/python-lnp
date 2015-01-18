@@ -75,21 +75,23 @@ def create_archive():
     l = [pattern + 'legends.xml', pattern + 'world_history.txt',
          choose_region_map(), pattern + 'world_sites_and_pops.txt']
     if all([os.path.isfile(f) for f in l]):
-        with zipfile.ZipFile(pattern[:-1] + '_legends_archive.zip',
+        with zipfile.ZipFile(pattern + 'legends_archive.zip',
                              'w', zipfile.ZIP_DEFLATED) as zipped:
             for f in l:
                 zipped.write(f, os.path.basename(f))
                 os.remove(f)
     elif os.path.isfile(pattern + 'legends.xml'):
-        with zipfile.ZipFile(pattern[:-1] + '_legends_xml.zip',
+        with zipfile.ZipFile(pattern + 'legends_xml.zip',
                              'w', zipfile.ZIP_DEFLATED) as zipped:
-            zipped.write(pattern + 'legends.xml')
+            zipped.write(pattern + 'legends.xml',
+                         os.path.basename(pattern + 'legends.xml'))
             os.remove(pattern + 'legends.xml')
 
 def move_files():
     """Moves files to a subdir, and subdir to ../User Generated Content if
     that dir exists."""
     pattern = paths.get('df', '-'.join(get_region_info()))
+    region = get_region_info()[0]
     dirname = get_region_info()[0] + '_legends_exports'
     if os.path.isdir(os.path.join(lnp.BASEDIR, 'User Generated Content')):
         dirname = os.path.join(lnp.BASEDIR, 'User Generated Content', dirname)
@@ -98,9 +100,9 @@ def move_files():
     for site_map in glob.glob(pattern + '-site_map-*'):
         target = os.path.join(dirname, 'site_maps', os.path.basename(site_map))
         if os.path.isfile(target):
-                os.remove(site_map)
-            else:
-                os.renames(site_map, target)
+            os.remove(site_map)
+        else:
+            os.renames(site_map, target)
     maps = ('world_map', 'bm', 'detailed', 'dip', 'drn', 'el', 'elw',
             'evil', 'hyd', 'nob', 'rain', 'sal', 'sav', 'str', 'tmp',
             'trd', 'veg', 'vol')
@@ -112,14 +114,14 @@ def move_files():
                 os.remove(m[0])
             else:
                 os.renames(m[0], t)
-    for file in glob.glob(paths.get('df', get_region_info()[0] + '*')):
+    for file in glob.glob(paths.get('df', region + '-*')):
         if os.path.isfile(file):
             target = os.path.join(dirname, os.path.basename(file))
             if os.path.isfile(target):
                 os.remove(file)
             else:
                 os.renames(file, target)
-    for f in glob.glob(paths.get('df', '*color_key.txt')):
+    for f in glob.glob(paths.get('df', '*_color_key.txt')):
         os.remove(f)
 
 def process_legends():
