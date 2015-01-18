@@ -130,30 +130,32 @@ def simple_dffd_config():
     Values are generated and saved from known URLs and the 'dffdID' field."""
     dffd_num = lnp.config.get_number('updates/dffdID')
     if not dffd_num and lnp.config.get_string('updates/downloadURL')\
-       .startswith('http://dffd.wimbli.com/file.php?id='):
+       .startswith('http://dffd.bay12games.com/file.php?id='):
         dffd_num = lnp.config.get_string('updates/downloadURL')\
-                   .replace('http://dffd.wimbli.com/file.php?id=', '')
+                   .replace('http://dffd.bay12games.com/file.php?id=', '')
         lnp.config.save_data()
     if not dffd_num and lnp.config.get_string('updates/checkURL')\
-       .startswith('http://dffd.wimbli.com/file_version.php?id='):
+       .startswith('http://dffd.bay12games.com/file_version.php?id='):
         dffd_num = lnp.config.get_string('updates/checkURL')\
-                   .replace('http://dffd.wimbli.com/file_version.php?id=', '')
+                   .replace('http://dffd.bay12games.com'
+                            '/file_version.php?id=', '')
         lnp.config.save_data()
 
     if dffd_num and not lnp.config.get_string('updates/checkURL'):
-        lnp.config['updates/checkURL'] = ('http://dffd.wimbli.com/file_'
+        lnp.config['updates/checkURL'] = ('http://dffd.bay12games.com/file_'
                                           'version.php?id=' + dffd_num)
         lnp.config.save_data()
     if dffd_num and not lnp.config.get_string('updates/versionRegex'):
         lnp.config['updates/versionRegex'] = 'Version: (.+)'
         lnp.config.save_data()
     if dffd_num and lnp.config.get_string('updates/downloadURL'):
-        lnp.config['updates/downloadURL'] = ('http://dffd.wimbli.com/file'
+        lnp.config['updates/downloadURL'] = ('http://dffd.bay12games.com/file'
                                              '.php?id=' + dffd_num)
         lnp.config.save_data()
     if dffd_num and lnp.config.get_string('updates/directURL'):
         # TODO:  improve pack name handling; this works but isn't great
         fname = 'new_pack.zip'
-        lnp.config['updates/directURL'] = ('http://dffd.wimbli.com/download.'
-                                           'php?id=' + dffd_num + '&f=' + fname)
+        lnp.config['updates/directURL'] = ('http://dffd.bay12games.com/'
+                                           'download.php?id=' + dffd_num +
+                                           '&f=' + fname)
         lnp.config.save_data()
