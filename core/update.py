@@ -83,27 +83,26 @@ def direct_download_pack():
     download.download(lnp.BASEDIR, url, target,
                       end_callback=extract_new_pack)
 
-def extract_new_pack(url, fname, bool_val):
+def extract_new_pack(_, fname, bool_val):
     """Extract a downloaded new pack to a sibling dir of the current pack."""
     exts = ('.zip', '.bz2', '.gz', '.7z', '.xz')
-    if not any(fname.endswith(ext) for ext in exts):
+    if not bool_val or not any(fname.endswith(ext) for ext in exts):
         return None
     archive = os.path.join(lnp.BASEDIR, os.path.basename(fname))
     return extract_archive(archive, os.path.join(lnp.BASEDIR, '..'))
 
 def extract_archive(fname, target):
     """Extract the archive fname to dir target, avoiding explosions."""
-    if fname.endswith('.zip'):
+    if zipfile.is_zipfile(fname):
         zf = zipfile.ZipFile(fname)
         namelist = zf.namelist()
         topdir = namelist[0].split(os.path.sep)[0]
         if not all(f.startswith(topdir) for f in namelist):
             target = os.path.join(target, os.path.basename(fname).split('.')[0])
         zf.extractall(target)
-        # PermissionError - being used by another process...
         os.remove(fname)
         return True
-    if fname.endswith('.bz2') or fname.endswith('.gz'):
+    if tarfile.is_tarfile(fname):
         tf = tarfile.open(fname)
         namelist = tf.getmembers()
         topdir = namelist[0].split(os.path.sep)[0]
@@ -121,7 +120,6 @@ def simple_dffd_config():
     updates = lnp.config.get_dict('updates')
     download_patt = 'http://dffd.bay12games.com/file.php?id='
     check_patt = 'http://dffd.bay12games.com/file_version.php?id='
-    regexp = 'Version: (.+)'
     direct = ('http://dffd.bay12games.com/download.php?id=', '&f=new_pack.zip')
     if (not updates['dffdID'] and
             updates['downloadURL'].startswith(download_patt)):

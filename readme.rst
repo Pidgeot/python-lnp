@@ -239,7 +239,8 @@ For further customization of displayed utility titles, see "Relabeling utilites"
 -----------
 This object contains up to six strings, used to check for pack updates.
 
-If you are using http://dffd.wimbli.com/ for file hosting, ``dffdID`` must be set, ``packVersion`` may be set, and others should not be set (ie set to ``""``) - they'll be filled automatically.
+If you are using http://dffd.bay12games.com/ for file hosting, ``dffdID`` must be set, ``packVersion`` may be set, and others should not be set (ie set to ``""``) - they'll be filled automatically.  
+Note that any file can be downloaded from DFFD as `new_pack.zip`; the extraction method is chosen based on file properties not extension, and if the archive extracts to a single directory that will be used instead of the filename.
 
 If you are using a different site, you must not set ``dffdID``, may set ``directURL``, and must set all other fields.
 
