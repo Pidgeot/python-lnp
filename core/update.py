@@ -27,7 +27,7 @@ def check_update():
     if lnp.userconfig.get_number('updateDays') == -1:
         return
     if lnp.userconfig.get_number('nextUpdate') < time.time():
-        simple_dffd_config()
+        #simple_dffd_config()
         t = threading.Thread(target=perform_update_check)
         t.daemon = True
         t.start()
@@ -38,7 +38,7 @@ def perform_update_check():
         req = Request(
             lnp.config.get_string('updates/checkURL'),
             headers={'User-Agent':'PyLNP'})
-        version_text = urlopen(req, timeout=3).read()
+        version_text = str(urlopen(req, timeout=3).read())
         # Note: versionRegex must capture the version string in a group
         new_version = re.search(
             lnp.config.get_string('updates/versionRegex'),
@@ -77,30 +77,22 @@ def download_df_baseline():
 
 def direct_download_pack():
     """Directly download a new version of the pack to the current BASEDIR"""
-    fname = 'new_pack.txt'
     url = lnp.config.get_string('updates/directURL')
+    fname = os.path.basename(url).split('=')[-1]
+    if lnp.bundle == 'win' and lnp.config.get_string('updates/directURL').\
+           startswith('http://dffd.bay12games.com/download.php?id='):
+        fname = fname.replace('+', ' ')
     target = os.path.join(lnp.BASEDIR, fname)
-    # TODO:  confirm this callback works
     download.download(lnp.BASEDIR, url, target,
                       end_callback=extract_new_pack)
 
-def extract_new_pack():
+def extract_new_pack(url, fname, bool_val):
     """Extract a downloaded new pack to a sibling dir of the current pack."""
     exts = ('.zip', '.bz2', '.gz', '.7z', '.xz')
-    pack = [f for f in os.listdir(lnp.BASEDIR) if os.path.isfile(f) and
-            any((f.endswith(i) for i in exts))]
-    if len(pack) == 1:
-        fname = pack[0]
-    elif len(pack) > 1:
-        fname = pack[0]
-        for p in pack:
-            if (os.path.getmtime(os.path.join(lnp.BASEDIR, p)) >
-                    os.path.getmtime(os.path.join(lnp.BASEDIR, fname))):
-                fname = p
-    if fname:
-        archive = os.path.join(lnp.BASEDIR, fname)
-        target = os.path.join(lnp.BASEDIR, '..')
-        extract_archive(archive, target)
+    if not any(fname.endswith(ext) for ext in exts):
+        return None
+    archive = os.path.join(lnp.BASEDIR, os.path.basename(fname))
+    return extract_archive(archive, os.path.join(lnp.BASEDIR, '..'))
 
 def extract_archive(fname, target):
     """Extract the archive fname to dir target, avoiding explosions."""
@@ -109,8 +101,9 @@ def extract_archive(fname, target):
         namelist = zf.namelist()
         topdir = namelist[0].split(os.path.sep)[0]
         if not all(f.startswith(topdir) for f in namelist):
-            target = os.path.join(target, fname.split('.')[0])
+            target = os.path.join(target, os.path.basename(fname).split('.')[0])
         zf.extractall(target)
+        # PermissionError - being used by another process...
         os.remove(fname)
         return True
     if fname.endswith('.bz2') or fname.endswith('.gz'):
@@ -128,6 +121,8 @@ def extract_archive(fname, target):
 def simple_dffd_config():
     """Reduces the configuration required by maintainers using DFFD.
     Values are generated and saved from known URLs and the 'dffdID' field."""
+    # Needs to set dict instead of individual keys
+    # also needs to rework formatting of the dump (more compact)
     dffd_num = lnp.config.get_number('updates/dffdID')
     if not dffd_num and lnp.config.get_string('updates/downloadURL')\
        .startswith('http://dffd.bay12games.com/file.php?id='):
@@ -153,9 +148,7 @@ def simple_dffd_config():
                                              '.php?id=' + dffd_num)
         lnp.config.save_data()
     if dffd_num and lnp.config.get_string('updates/directURL'):
-        # TODO:  improve pack name handling; this works but isn't great
-        fname = 'new_pack.zip'
         lnp.config['updates/directURL'] = ('http://dffd.bay12games.com/'
                                            'download.php?id=' + dffd_num +
-                                           '&f=' + fname)
+                                           '&f=new_pack.zip')
         lnp.config.save_data()
