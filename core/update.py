@@ -22,12 +22,12 @@ def updates_configured():
 
 def check_update():
     """Checks for updates using the URL specified in PyLNP.json."""
+    simple_dffd_config()
     if not updates_configured():
         return
     if lnp.userconfig.get_number('updateDays') == -1:
         return
     if lnp.userconfig.get_number('nextUpdate') < time.time():
-        #simple_dffd_config()
         t = threading.Thread(target=perform_update_check)
         t.daemon = True
         t.start()
@@ -38,13 +38,13 @@ def perform_update_check():
         req = Request(
             lnp.config.get_string('updates/checkURL'),
             headers={'User-Agent':'PyLNP'})
-        version_text = str(urlopen(req, timeout=3).read())
+        version_text = urlopen(req, timeout=3).read().decode('utf-8')
         # Note: versionRegex must capture the version string in a group
         new_version = re.search(
             lnp.config.get_string('updates/versionRegex'),
             version_text).group(1)
         if not lnp.config.get_string('updates/packVersion'):
-            lnp.config['updates/packVersion'] = new_version
+            lnp.config.get_dict('updates')['packVersion'] = new_version
             lnp.config.save_data()
             return
         if new_version != lnp.config.get_string('updates/packVersion'):
@@ -79,9 +79,6 @@ def direct_download_pack():
     """Directly download a new version of the pack to the current BASEDIR"""
     url = lnp.config.get_string('updates/directURL')
     fname = os.path.basename(url).split('=')[-1]
-    if lnp.bundle == 'win' and lnp.config.get_string('updates/directURL').\
-           startswith('http://dffd.bay12games.com/download.php?id='):
-        fname = fname.replace('+', ' ')
     target = os.path.join(lnp.BASEDIR, fname)
     download.download(lnp.BASEDIR, url, target,
                       end_callback=extract_new_pack)
@@ -121,34 +118,23 @@ def extract_archive(fname, target):
 def simple_dffd_config():
     """Reduces the configuration required by maintainers using DFFD.
     Values are generated and saved from known URLs and the 'dffdID' field."""
-    # Needs to set dict instead of individual keys
-    # also needs to rework formatting of the dump (more compact)
-    dffd_num = lnp.config.get_number('updates/dffdID')
-    if not dffd_num and lnp.config.get_string('updates/downloadURL')\
-       .startswith('http://dffd.bay12games.com/file.php?id='):
-        dffd_num = lnp.config.get_string('updates/downloadURL')\
-                   .replace('http://dffd.bay12games.com/file.php?id=', '')
-        lnp.config.save_data()
-    if not dffd_num and lnp.config.get_string('updates/checkURL')\
-       .startswith('http://dffd.bay12games.com/file_version.php?id='):
-        dffd_num = lnp.config.get_string('updates/checkURL')\
-                   .replace('http://dffd.bay12games.com'
-                            '/file_version.php?id=', '')
-        lnp.config.save_data()
-
-    if dffd_num and not lnp.config.get_string('updates/checkURL'):
-        lnp.config['updates/checkURL'] = ('http://dffd.bay12games.com/file_'
-                                          'version.php?id=' + dffd_num)
-        lnp.config.save_data()
-    if dffd_num and not lnp.config.get_string('updates/versionRegex'):
-        lnp.config['updates/versionRegex'] = 'Version: (.+)'
-        lnp.config.save_data()
-    if dffd_num and lnp.config.get_string('updates/downloadURL'):
-        lnp.config['updates/downloadURL'] = ('http://dffd.bay12games.com/file'
-                                             '.php?id=' + dffd_num)
-        lnp.config.save_data()
-    if dffd_num and lnp.config.get_string('updates/directURL'):
-        lnp.config['updates/directURL'] = ('http://dffd.bay12games.com/'
-                                           'download.php?id=' + dffd_num +
-                                           '&f=new_pack.zip')
+    updates = lnp.config.get_dict('updates')
+    download_patt = 'http://dffd.bay12games.com/file.php?id='
+    check_patt = 'http://dffd.bay12games.com/file_version.php?id='
+    regexp = 'Version: (.+)'
+    direct = ('http://dffd.bay12games.com/download.php?id=', '&f=new_pack.zip')
+    if (not updates['dffdID'] and
+            updates['downloadURL'].startswith(download_patt)):
+        updates['dffdID'] = updates['downloadURL'].replace(download_patt, '')
+    if not updates['dffdID'] and updates['checkURL'].startswith(check_patt):
+        updates['dffdID'] = updates['checkURL'].replace(check_patt, '')
+    if updates['dffdID'] and not updates['checkURL']:
+        updates['checkURL'] = check_patt + updates['dffdID']
+    if updates['dffdID'] and not updates['versionRegex']:
+        updates['versionRegex'] = 'Version: (.+)'
+    if updates['dffdID'] and not updates['downloadURL']:
+        updates['downloadURL'] = download_patt + updates['dffdID']
+    if updates['dffdID'] and not updates['directURL']:
+        updates['directURL'] = direct[0] + updates['dffdID'] + direct[1]
+    if updates != lnp.config.get_dict('updates'):
         lnp.config.save_data()
