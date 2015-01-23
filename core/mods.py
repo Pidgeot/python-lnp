@@ -93,6 +93,8 @@ def do_merge_seq(mod_text, vanilla_text, gen_text):
         return 0, mod_text
     if vanilla_text == mod_text:
         return 0, gen_text
+    if gen_text == mod_text:
+        return 0, gen_text
 
     # Get a list of 5-tuples describing how to turn vanilla into mod or gen
     # lines.  Each specifies an operation, and start+end lines for each change.
@@ -169,14 +171,24 @@ def do_merge_files(mod_file_name, van_file_name, gen_file_name):
         2:  Non-fatal error, overlapping lines or non-existent mod etc
         3:  Fatal error, respond by rebuilding to previous mod
     """
-    van_lines = open(van_file_name, mode='r', encoding='cp437',
-                     errors='replace').readlines()
-    mod_lines = open(mod_file_name, mode='r', encoding='cp437',
-                     errors='replace').readlines()
-    gen_lines = open(gen_file_name, mode='r', encoding='cp437',
-                     errors='replace').readlines()
+    try:
+        van_lines = open(van_file_name, mode='r', encoding='cp437',
+                         errors='replace').readlines()
+    except FileNotFoundError:
+        van_lines = []
+    try:
+        mod_lines = open(mod_file_name, mode='r', encoding='cp437',
+                         errors='replace').readlines()
+    except FileNotFoundError:
+        mod_lines = []
+    try:
+        gen_lines = open(gen_file_name, mode='r', encoding='cp437',
+                         errors='replace').readlines()
+    except FileNotFoundError:
+        gen_lines = []
+
     status, gen_lines = do_merge_seq(mod_lines, van_lines, gen_lines)
-    gen_file = open(gen_file_name, "w")
+    gen_file = open(gen_file_name, "w", encoding='cp437')
     for line in gen_lines:
         try:
             gen_file.write(line)
@@ -212,21 +224,16 @@ def merge_a_mod(mod):
 
 def merge_folders(mod_folder, vanilla_folder, mixed_folder):
     """Merge the specified folders, output going in LNP/Baselines/temp"""
-    status = 0
+    status, exts = 0, ('.txt', '.init', '.lua', '.rb')
     for root, _, files in os.walk(mod_folder):
         for k in files:
             f = os.path.relpath(os.path.join(root, k), mod_folder)
-            if not f.endswith('.txt'):
+            if not any([f.endswith(a) for a in exts]):
                 continue
-            if (os.path.isfile(os.path.join(vanilla_folder, f)) and
-                    os.path.isfile(os.path.join(mixed_folder, f))):
-                status = max(do_merge_files(os.path.join(mod_folder, f),
-                                            os.path.join(vanilla_folder, f),
-                                            os.path.join(mixed_folder, f)),
-                             status)
-            else:
-                shutil.copy(os.path.join(mod_folder, f),
-                            os.path.join(mixed_folder, f))
+            ret = do_merge_files(os.path.join(mod_folder, f),
+                                 os.path.join(vanilla_folder, f),
+                                 os.path.join(mixed_folder, f))
+            status = max(ret, status)
     return status
 
 def clear_temp():

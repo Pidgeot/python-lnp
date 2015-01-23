@@ -1,24 +1,36 @@
 =====
 PyLNP
 =====
-------------------------------------------------
-A Pack for Lazy and/or Newb-y dwarves everywhere
-------------------------------------------------
+-----------------------------------------
+An Extensible Launcher for Dwarf Fortress
+-----------------------------------------
 
-PyLNP is an enhanced port of LucasUP and tolyK's Lazy Newb Pack to Python, making it possible to run the program on all platforms DF runs on.
+The PyLNP is a third-party launcher for Dwarf Fortress.
+
+It has a variety of useful features to manage settings and configure the base game.  It can also manage, configure, install, and run a wide variety of related content - from graphics to color schemes, and utility programs to content-repacing mods.
+
+It forms the core of various bundles for new, lazy, or impatient players - such as the old "Lazy Newb Pack".  While this project is just the launcher, you can download a complete bundle for your platform at http://lazynewbpack.com/
 
 The forum thread for PyLNP is located at http://www.bay12forums.com/smf/index.php?topic=140808 - if you have a question that is not answered here, go ahead and ask it there.
 
-Differences
-===========
-There are a few user-visible differences and enhancements compared to v16, such as:
+Usage Instructions
+==================
+There's not much to it:  run the launcher (see below) then click the buttons to configure your DF install, change settings or graphics, merge and install mods, run utility programs, start DF, and more.
+
+This section should probably be larger, but it should be clear how things work from the tooltips if you hover over a button.  If not, ask in the forum thread linked above!  The customisation section below, intended for advanced users and those compiling a custom package, may also be helpful.
+
+History
+=======
+PyLNP started as a port of LucasUP and tolyK's Lazy Newb Pack Launcher to Python, making a launcher available on all the same platforms as Dwarf Fortress.
+
+The new edition includes many new and improved features; some of the non-obvious ones including:
 
 - Dwarf Fortress can be placed in an arbitrarily-named folder.
-- If multiple valid DF folders are detected, you will be asked to select the desired instance. This allows you to manage multiple installs separately. (Similar feature exists in v17.2 by daveralph1234)
+- If multiple valid DF folders are detected, you will be asked to select the desired instance. This allows you to manage multiple installs separately with the same launcher, though this is not recommended.
 - A new menu item, File > Output log has been added. This opens a window containing various messages captured while executing the launcher. If errors occur, they will show up here, and are also written to a file.
 - In addition to excluding specific file names from utilities, you can also *include* specific file names, if they're found. Simply create a file include.txt in the Utilities folder and fill it in with the same syntax as exclude.txt.
 - Multiple utilities can be selected and launched simultaneously.
-- Utilities may be automatically started at the same time as Dwarf Fortress. (Also seen in v16.1 by daveralph1234, although with a different interface)
+- Utilities may be automatically started at the same time as Dwarf Fortress.
 - Color scheme installation and preview.
 - Installing graphics sets by patching instead of replacing init.txt and d_init.txt. This preserves all options not strictly related to graphics sets.
 
@@ -407,4 +419,4 @@ Note that even an all-green combination might be broken in subtle (or non-subtle
 
 Graphics packs are generally compatible with mods.  When combining mods, the current graphics pack is merged first followed by the selected mods.  Because the PyLNP logs the installed raws, it can also update the graphics on modded savegames.  This is done by recreating the logged merge with new graphics at the base, and replacing the savegame raws, if nothing worse than overlapping changes was found and the previous set (including graphics) could be rebuilt exactly.  
 
-For mod authors:  note that the reduced raw format is equivalent to copying over a vanilla install - missing files are taken to be vanilla.  Modifying existing files instead of adding new files decreases the chance of producing conflicting raws without a merge conflict.  The merge logic handles raw/*.txt, and data/speech/*.txt
+For mod authors:  note that the reduced raw format is equivalent to copying over a vanilla install - missing files are taken to be vanilla.  Modifying existing files instead of adding new files decreases the chance of producing conflicting raws without a merge conflict.  The merge logic handles "raw/*.txt", and "data/speech/*.txt".  All scripts and inits which may be added to the raw folder by mods reliant on DFHack should also be handled correctly.
