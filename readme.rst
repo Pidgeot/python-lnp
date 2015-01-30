@@ -157,14 +157,12 @@ Windows:
   really want Python 3 - the program should work with both, but I'm testing
   it under 2.7, so that might be the simplest version to use.
 
-  To get a better looking logo in Python 2.7, first install setuptools__
-
-.. __: https://pypi.python.org/pypi/setuptools/0.9.8#windows
-
-  Next, open a command-line to the Scripts directory in your Python
-  installation and run the command ``easy_install pillow``.
+  To get a better looking logo in Python 2.7, first install setuptools__, then
+  open a command-line to the Scripts directory in your Python installation and
+  run the command ``easy_install pillow``.  In Python 3.4+, just run the
+  command ``pip install pillow``.
   
-  In Python 3.4+, just run the command ``pip install pillow``
+.. __: https://pypi.python.org/pypi/setuptools/0.9.8#windows
 
 Linux:
   Virtually all Linux distributions these days include Python, although
@@ -244,13 +242,13 @@ Windows
 -------
 Installing prerequisites:
   You'll need PyInstaller_, preferably version 2.0 or later.  The best way I've
-  found to install that is to first `install setuptools`_, manually
-  `install pywin32`_, and then run ``easy_install pyinstaller`` from the
-  Scripts directory in your Python installation.
+  found to install that is to first install setuptools_, manually install
+  pywin32_, and then run ``easy_install pyinstaller`` from the ``Scripts``
+  directory in your Python installation.
 
 .. _PyInstaller: http://www.pyinstaller.org/
-.. _`install setuptools`: https://pypi.python.org/pypi/setuptools/0.9.8#windows
-.. _`install setuptools`: http://sourceforge.net/projects/pywin32/files/pywin32
+.. _setuptools: https://pypi.python.org/pypi/setuptools/0.9.8#windows
+.. _pywin32: http://sourceforge.net/projects/pywin32/files/pywin32
 
 Building:
   Open the LNP directory in a Command Prompt and type "pyinstaller lnp.spec".
@@ -416,7 +414,7 @@ Example::
         },
         "Performance Tweaks": {
             "command": "repeat -time 3 months -command cleanowned x",
-            "tooltip": "regularly confiscates worn clothes and old items)"
+            "tooltip": "regularly confiscates worn clothes and old items"
         }
     }
 
@@ -550,11 +548,11 @@ Utilities
 Each platform will auto-detect different file types in the Utilities pane.
 
 Windows:
-  \*.exe, \*.jar, \*.bat
+  ``*.exe``, ``*.jar``, ``*.bat``
 Linux:
-  \*.jar, \*.sh
+  ``*.jar``, ``*.sh``
 OS X:
-  \*.app, \*.jar, \*.sh
+  ``*.app``, ``*.jar``, ``*.sh``
 
 Correcting the auto-detection
 -----------------------------
@@ -614,7 +612,7 @@ on how to configure these hacks.
 
 All active hacks are written to a file named ``PyLNP_dfhack_onload.init`` in
 the Dwarf Fortress folder. This file must be loaded by your standard
-``onload.init`` file to take effect.
+``dfhack.init`` or ``onload.init`` file to take effect.
 
 Mods
 ====
