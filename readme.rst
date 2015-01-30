@@ -417,6 +417,70 @@ Multiple mods can be merged, in the order shown in the 'installed' pane.  Those 
 
 Note that even an all-green combination might be broken in subtle (or non-subtle) ways.
 
-Graphics packs are generally compatible with mods.  When combining mods, the current graphics pack is merged first followed by the selected mods.  Because the PyLNP logs the installed raws, it can also update the graphics on modded savegames.  This is done by recreating the logged merge with new graphics at the base, and replacing the savegame raws, if nothing worse than overlapping changes was found and the previous set (including graphics) could be rebuilt exactly.  
+Graphics packs are generally compatible with minor mods.  When combining mods, the current graphics pack is merged first followed by the selected mods - so it's best to start without graphics, for maximum compatibility.
 
-For mod authors:  note that the reduced raw format is equivalent to copying over a vanilla install - missing files are taken to be vanilla.  Modifying existing files instead of adding new files decreases the chance of producing conflicting raws without a merge conflict.  The merge logic handles "raw/*.txt", and "data/speech/*.txt".  All scripts and inits which may be added to the raw folder by mods reliant on DFHack should also be handled correctly.
+Because the PyLNP logs the installed raws, it can also update the graphics on modded savegames.  This is done by recreating the logged merge with new graphics at the base, and replacing the savegame raws, if nothing worse than overlapping changes was found and the previous set (including graphics) could be rebuilt exactly.
+
+Notes for Mod Creators
+======================
+
+Storage and distribution format
+-------------------------------
+The raws for mods (and ``data/speech``) are stored, and should be distributed,
+in "reduced raw format".
+
+Reduced raw format was designed to maximise ease of installation, compatibility
+across DF versions and with other mods, and to minimise file size for storage
+and distribution.  It is quite simply a complete ``raw`` folder, identically
+structured to vanilla DF, with all unmodified files removed.  It can thus be
+installed simply by overwriting a vanilla install of DF, and mods that change
+little will have tiny filesizes.  The ``data/speech`` folder is installed as if
+it was part of the raws, but should be included in the usual place (ie ``data``
+and ``raw`` as sibling dirs) if any files there have been changed.
+
+In all cases, file which are not present are assumed to be identical to the
+vanilla file, NOT deleted.  To delete a file, only remove the file contents to
+ensure that merging will overwrite with an empty string.  When the 'simplify
+mod' option is used, PyLNP uses the presence of more than ten files outside the
+raws or ``data/speech`` as a heuristic to indicate that this is a complete raw
+folder, and will use this method to preserve deletions.
+
+Only files ending in ``.txt``, ``.init``, ``.lua``, ``.rb`` will be copied or
+merged.  This is intended to cover the raws themselves, and also DFHack files
+which can be stored in the raw folder.
+
+Merge logic limitations
+-----------------------
+While the merge logic strives to fit as large a subset of mods as possible,
+there are some cases that are not covered.
+
+Due to the narrow scope for filetype mentioned above, images are not handled -
+so mods distributed with integrated graphics may behave oddly.  For minor mods,
+PyLNP's capability to combine mods and vanilla graphics should suffice; a
+solution for major mods is a priority for further development.
+
+Mods are not handled if they require:
+
+* Custom graphics for mod creatures
+* Non-standard DFHack scripts outside the raw folder
+* Custom worldgen, init, embark, or other settings
+* Pre-generated worlds
+* User configuration of the raws
+
+Using other aspects of the PyLNP can cover most of there limitations, but would
+also impact unmodded saves.
+
+Maximising compatibility
+------------------------
+This section lists tips for maximising compatibility with other mods.  They
+also increase the chance that a merge warning will be raised when the
+combination is problematic - instead of merging correctly into invalid raws.
+
+* Modify vanilla files, rather than adding new files, where your changes might
+  clash with another mod
+* Avoid using a graphics pack as your baseline - vanilla raws are more widely
+  compatible
+* A mod should have a single purpose; if the user wants general tweaks as well
+  as new content (or vice versa), that can be a separate mod
+* Make minimal changes to achieve the purpose of your mod; decreasing the
+  distance to vanilla increases mod compatibility for combinations.

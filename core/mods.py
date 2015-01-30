@@ -141,14 +141,18 @@ def do_merge_seq(mod_text, vanilla_text, gen_text):
                 if mod_i2 == gen_i2:
                     van_gen_ops.pop(0)
             else:
-                # An over-write merge. Changes status to warn the user.
-                status = 2
-                # append the shorter block to new genned lines
+                # An over-write merge. Change status to warn the user, unless
+                # we're overwriting with an identical change, and append the
+                # shorter block to new genned lines
                 if mod_i2 < gen_i2:
+                    if gen_text[cur_v:mod_i2] != mod_text[cur_v:mod_i2]:
+                        status = 2
                     output_file_temp += mod_text[cur_v:mod_i2]
                     cur_v = mod_i2
                     van_mod_ops.pop(0)
                 else:
+                    if gen_text[cur_v:gen_i2] != mod_text[cur_v:gen_i2]:
+                        status = 2
                     output_file_temp += mod_text[cur_v:gen_i2]
                     cur_v = gen_i2
                     van_gen_ops.pop(0)
