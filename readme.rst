@@ -5,6 +5,8 @@ PyLNP
 An Extensible Launcher for Dwarf Fortress
 -----------------------------------------
 
+.. contents::
+
 The PyLNP is a third-party launcher for Dwarf Fortress.
 
 It has a variety of useful features to manage settings and configure the base
@@ -75,6 +77,7 @@ particularly if the launcher is closed while DF is running.
 
 The script should work as intended with any of the following desktop
 environments and window managers:
+
  - GNOME
  - KDE
  - MATE
