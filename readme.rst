@@ -106,7 +106,7 @@ slightly less pretty logo.
   you most likely need to install the `Microsoft Visual C++ 2008
   redistributable package`__
 
-__http://www.microsoft.com/en-us/download/details.aspx?id=29
+.. __: http://www.microsoft.com/en-us/download/details.aspx?id=29
 
 Running from source
 ===================
@@ -120,7 +120,7 @@ Python 2.6 or 3.0 do not include the necessary Ttk library. It *may* work if
 you install python-ttk__, but you should probably upgrade your Python version,
 or use a pre-built executable.
 
-__http://code.google.com/p/python-ttk/
+.. __: http://code.google.com/p/python-ttk/
 
 If you already have Python, but don't know which version you're using, open a
 command-line or terminal and type "python --version". If this gives you Python
@@ -159,7 +159,7 @@ Windows:
 
   To get a better looking logo in Python 2.7, first install setuptools__
 
-__https://pypi.python.org/pypi/setuptools/0.9.8#windows
+.. __: https://pypi.python.org/pypi/setuptools/0.9.8#windows
 
   Next, open a command-line to the Scripts directory in your Python
   installation and run the command ``easy_install pillow``.
@@ -248,9 +248,9 @@ Installing prerequisites:
   `install pywin32`_, and then run ``easy_install pyinstaller`` from the
   Scripts directory in your Python installation.
 
-.. PyInstaller_: http://www.pyinstaller.org/
-.. `install setuptools`_: https://pypi.python.org/pypi/setuptools/0.9.8#windows
-.. `install setuptools`_: http://sourceforge.net/projects/pywin32/files/pywin32
+.. _PyInstaller: http://www.pyinstaller.org/
+.. _`install setuptools`: https://pypi.python.org/pypi/setuptools/0.9.8#windows
+.. _`install setuptools`: http://sourceforge.net/projects/pywin32/files/pywin32
 
 Building:
   Open the LNP directory in a Command Prompt and type "pyinstaller lnp.spec".
@@ -262,7 +262,7 @@ Linux
 Installing prerequisites:
   You'll need PyInstaller__, preferably version 2.0 or later:
 
-__http://www.pyinstaller.org/
+.. __: http://www.pyinstaller.org/
 
   The easiest way to install it is to use your package manager to install it
   directly (if available), or first install python-pip from your package
@@ -278,7 +278,7 @@ OS X
 Installing prerequisites:
   You'll need PyInstaller__, preferably version 2.0 or later:
 
-__http://www.pyinstaller.org/
+.. __: http://www.pyinstaller.org/
 
   A simple way to install it is to open a terminal and type ``sudo
   easy_install pyinstaller``.
