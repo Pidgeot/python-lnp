@@ -1,27 +1,24 @@
 =====
 PyLNP
 =====
------------------------------------------
-An Extensible Launcher for Dwarf Fortress
------------------------------------------
-
-.. contents::
-
 The PyLNP is a third-party launcher for Dwarf Fortress.
 
 It has a variety of useful features to manage settings and configure the base
 game.  It can also manage, configure, install, and run a wide variety of
 related content - from graphics to color schemes, and utility programs to
-content-repacing mods.
+content-replacing mods.
 
 It forms the core of various bundles for new, lazy, or impatient players -
 such as the old "Lazy Newb Pack".  While this project is just the launcher,
-you can download a complete bundle for your platform at
+you can download a complete bundle for Windows, OSX, or Linux at
 http://lazynewbpack.com/
 
-The forum thread for PyLNP is located at
-http://www.bay12forums.com/smf/index.php?topic=140808 - if you have a
-question that is not answered here, go ahead and ask it there.
+If you have a question that is not answered here, go ahead and ask it in the
+`Bay12 forum thread for the PyLNP.`__
+
+.. __: http://www.bay12forums.com/smf/index.php?topic=140808
+
+.. contents::
 
 Usage Instructions
 ==================
