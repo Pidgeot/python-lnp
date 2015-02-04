@@ -181,9 +181,9 @@ class GraphicsTab(Tab):
         current = graphics.current_pack()
         for i, p in enumerate(packs):
             if p == current:
-                self.graphicpacks.itemconfig(i, fg='red')
+                self.graphicpacks.itemconfig(i, bg='pale green')
             else:
-                self.graphicpacks.itemconfig(i, fg='black')
+                self.graphicpacks.itemconfig(i, bg='white')
 
         self.select_graphics()
 
@@ -268,9 +268,9 @@ class GraphicsTab(Tab):
         current = colors.get_installed_file()
         for i, f in enumerate(files):
             if f == current:
-                self.color_files.itemconfig(i, fg='red')
+                self.color_files.itemconfig(i, bg='pale green')
             else:
-                self.color_files.itemconfig(i, fg='black')
+                self.color_files.itemconfig(i, bg='white')
 
         self.select_colors()
 
@@ -308,9 +308,11 @@ class GraphicsTab(Tab):
         if len(self.graphicpacks.curselection()) != 0:
             pack = self.graphicpacks.get(self.graphicpacks.curselection()[0])
             if lnp.df_info.version >= '0.31.04':
-                colorscheme = paths.get('graphics', pack, 'data', 'init', 'colors.txt')
+                colorscheme = paths.get('graphics', pack, 'data', 'init',
+                                        'colors.txt')
             else:
-                colorscheme = paths.get('graphics', pack, 'data', 'init', 'init.txt')
+                colorscheme = paths.get('graphics', pack, 'data', 'init',
+                                        'init.txt')
         self.paint_color_preview(colorscheme)
 
     def select_colors(self):
@@ -351,13 +353,13 @@ class GraphicsTab(Tab):
         current = graphics.current_tilesets()
         for i, f in enumerate(files):
             if f == current[0]:
-                self.fonts.itemconfig(i, fg='red')
+                self.fonts.itemconfig(i, bg='pale green')
             else:
-                self.fonts.itemconfig(i, fg='black')
+                self.fonts.itemconfig(i, bg='white')
             if f == current[1]:
-                self.graphicsfonts.itemconfig(i, fg='red')
+                self.graphicsfonts.itemconfig(i, bg='pale green')
             else:
-                self.graphicsfonts.itemconfig(i, fg='black')
+                self.graphicsfonts.itemconfig(i, bg='white')
 
     def install_tilesets(self):
         """Installs selected tilesets."""
