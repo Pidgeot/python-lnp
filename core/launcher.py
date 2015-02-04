@@ -120,7 +120,11 @@ def program_is_running(path, nonchild=False):
         ps = subprocess.Popen(['ps', 'axww'], stdout=subprocess.PIPE)
         s = ps.stdout.read()
         ps.wait()
-        return path in s.decode(sys.getfilesystemencoding())
+        encoding = sys.getfilesystemencoding()
+        if encoding is None:
+            #Encoding was not detected, assume UTF-8
+            encoding = 'UTF-8'
+        return path in s.decode(sys.getfilesystemencoding(), 'replace')
     else:
         if path not in lnp.running:
             return False
