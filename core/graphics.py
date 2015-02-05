@@ -78,9 +78,14 @@ def install_graphics(pack):
         if lnp.df_info.version >= '0.31.04':
             colors.load_colors(os.path.join(
                 gfx_dir, 'data', 'init', 'colors.txt'))
+            shutil.copyfile(os.path.join(gfx_dir, 'data', 'init', 'colors.txt'),
+                            paths.get('colors', '_Current graphics pack.txt'))
         else:
             colors.load_colors(os.path.join(
                 gfx_dir, 'data', 'init', 'init.txt'))
+            if os.path.isfile(paths.get('colors',
+                                        '_Current graphics pack.txt')):
+                os.remove(paths.get('colors', '_Current graphics pack.txt'))
         # TwbT overrides
         try:
             os.remove(paths.get('init', 'overrides.txt'))
@@ -288,18 +293,18 @@ def can_rebuild(log_file):
     mods_list = []
     for line in file_contents:
         if line.startswith('graphics/'):
-            add_to_mods_merge(gfx_dir = line.replace('graphics/', ''))
+            add_to_mods_merge(gfx_dir=line.replace('graphics/', ''))
         if line.startswith('mods/'):
             mods_list.append(line.strip().replace('mods/', ''))
     for m in mods_list:
-        merge_a_mod(m)
+        mods.merge_a_mod(m)
     save_raws = os.path.dirname(log_file)
     gen_raws = paths.get('baselines', 'raw')
     for root, _, files in os.walk(save_raws):
         for k in files:
             f = os.path.relpath(os.path.join(root, k), save_raws)
             if filecmp.cmp(k, os.path.join(gen_raws, f), shallow=False):
-                os.remove(os.path.join(b_folder, f))
+                os.remove(os.path.join(gen_raws, f))
     baselines.remove_empty_dirs('temp', 'baselines')
     if os.listdir('temp', 'baselines'):
         return False
