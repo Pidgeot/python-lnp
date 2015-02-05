@@ -231,6 +231,9 @@ def merge_folders(mod_folder, vanilla_folder, mixed_folder):
 
 def clear_temp():
     """Resets the folder in which raws are mixed."""
+    if not baselines.find_vanilla_raws(False):
+        # Baselines are not ready; abort silently
+        return None
     if os.path.exists(paths.get('baselines', 'temp')):
         shutil.rmtree(paths.get('baselines', 'temp'))
     shutil.copytree(baselines.find_vanilla_raws(),
