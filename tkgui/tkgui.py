@@ -28,11 +28,13 @@ if sys.version_info[0] == 3:  # Alternate import names
     from tkinter import *
     from tkinter.ttk import *
     import tkinter.messagebox as messagebox
+    import tkinter.simpledialog as simpledialog
 else:
     # pylint:disable=import-error
     from Tkinter import *
     from ttk import *
     import tkMessageBox as messagebox
+    import tkSimpleDialog as simpledialog
 
 # Workaround to use Pillow in PyInstaller
 import pkg_resources  # pylint:disable=unused-import
@@ -319,6 +321,10 @@ class TkGui(object):
             offvalue=False, variable=self.downloadBaselines,
             command=self.set_downloads)
 
+        if sys.platform.startswith('linux'):
+            menu_file.add_command(
+                label="Configure terminal...", command=self.configure_terminal)
+
         if sys.platform != 'darwin':
             menu_file.add_command(
                 label='Exit', command=self.exit_program, accelerator='Alt+F4')
@@ -348,6 +354,22 @@ class TkGui(object):
         root.bind_all('<F1>', lambda e: self.show_help())
         root.bind_all('<Alt-F1>', lambda e: self.show_about())
         root.createcommand('tkAboutDialog', self.show_about)
+
+    @staticmethod
+    def configure_terminal():
+        """Configures the command used to launch a terminal on Linux."""
+        v = simpledialog.askstring(
+            "Terminal", "When using DFHack, PyLNP must be able to spawn an "
+            "independent terminal.\nThis is normally done using a shell "
+            "script, xdg-terminal.\nIf this doesn't work for you, you can "
+            "provide an alternate command to do this here.\nUse $ as a"
+            "placeholder for the command to run inside the terminal; if"
+            "omitted, the command will simply be appended.\n"
+            "To use the default script, leave this blank.\n"
+            "See the PyLNP readme for more information.",
+            initialvalue=lnp.userconfig['terminal'])
+        if v is not None:
+            launcher.configure_terminal(v)
 
     def configure_updates(self, days):
         """Sets the number of days until next update check."""

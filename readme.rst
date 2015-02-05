@@ -84,10 +84,24 @@ environments and window managers:
 - lxde
 - i3wm
 
-For other setups, the script will attempt a fallback, but it is not
-guaranteed to work. If it does not work for you, you will not be able to
-launch DFHack from the launcher before the script is adapted to fit your
-system.
+For other setups, the script will attempt a fallback, but it is not guaranteed
+to work. If it does not work for you, you can configure an alternate command
+using File > Configure terminal. As an example, xterm requires the following
+syntax::
+
+  xterm -e <command>
+
+When entering this, only put ``xterm -e`` - the command will be automatically
+appended. If you need the command to be placed elsewhere, use ``$`` as a
+placeholder for the command.
+
+It may also be necessary to use ``nohup`` with the command, e.g. ``nohup xterm
+-e``.
+
+To verify if your command works as intended, launch Dwarf Fortress with DFHack
+installed and enabled. A working command will cause a new terminal window to
+appear, PyLNP itself will remain responsive, and everything will continue to
+work correctly even if you close PyLNP while Dwarf Fortress is running.
 
 Pre-built executables
 =====================

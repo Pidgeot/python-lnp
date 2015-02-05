@@ -11,6 +11,15 @@ from .helpers import get_resource
 from .lnp import lnp
 from . import hacks, paths
 
+def get_configured_terminal():
+    """Retrieves the configured terminal command."""
+    return lnp.userconfig.get_string('terminal')
+
+def configure_terminal(new_path):
+    """Configures the command used to launch a terminal on Linux."""
+    lnp.userconfig['terminal'] = new_path
+    lnp.userconfig.save_data()
+
 def toggle_autoclose():
     """Toggle automatic closing of the UI when launching DF."""
     lnp.userconfig['autoClose'] = not lnp.userconfig.get_bool('autoClose')
@@ -61,6 +70,9 @@ def get_terminal_launcher():
     if sys.platform == 'darwin':
         return ['open', '-a', 'Terminal.app']
     elif sys.platform.startswith('linux'):
+        override = get_configured_terminal()
+        if override:
+            return override.split(' ')
         return [get_resource('xdg-terminal')]
     raise Exception('No terminal launcher for platform: ' + sys.platform)
 
@@ -90,7 +102,11 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
         run_args = path
         if spawn_terminal and not sys.platform.startswith('win'):
             term = get_terminal_launcher()
-            retcode = subprocess.call(term + [path], cwd=workdir)
+            if "$" in term:
+                cmd = [path if x == '$' else x for x in term]
+            else:
+                cmd = term + [path]
+            retcode = subprocess.call(cmd, cwd=workdir)
             return retcode == 0
         elif path.endswith('.jar'):  # Explicitly launch JAR files with Java
             run_args = ['java', '-jar', os.path.basename(path)]
