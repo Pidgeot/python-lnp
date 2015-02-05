@@ -1,7 +1,9 @@
 =====
 PyLNP
 =====
-The PyLNP is a third-party launcher for Dwarf Fortress.
+------------------------------------------
+A third-party launcher for Dwarf Fortress.
+------------------------------------------
 
 It has a variety of useful features to manage settings and configure the base
 game.  It can also manage, configure, install, and run a wide variety of
@@ -14,7 +16,7 @@ you can download a complete bundle for Windows, OSX, or Linux at
 http://lazynewbpack.com/
 
 If you have a question that is not answered here, go ahead and ask it in the
-`Bay12 forum thread for the PyLNP.`__
+`Bay12 forum thread for PyLNP.`__
 
 .. __: http://www.bay12forums.com/smf/index.php?topic=140808
 
@@ -631,7 +633,7 @@ Graphics packs are generally compatible with minor mods.  When combining
 mods, the current graphics pack is merged first followed by the selected mods
 - so it's best to start without graphics, for maximum compatibility.
 
-Because the PyLNP logs the installed raws, it can also update the graphics on
+Because PyLNP logs the installed raws, it can also update the graphics on
 modded savegames.  This is done by recreating the logged merge with new
 graphics at the base, and replacing the savegame raws, if nothing worse than
 overlapping changes was found and the previous set (including graphics) could
@@ -683,7 +685,7 @@ Mods are not handled if they require:
 * Pre-generated worlds
 * User configuration of the raws
 
-Using other aspects of the PyLNP can cover most of there limitations, but would
+Using other aspects of PyLNP can cover most of there limitations, but would
 also impact unmodded saves.
 
 Maximising compatibility
