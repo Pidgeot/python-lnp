@@ -105,6 +105,8 @@ class OptionsTab(Tab):
                 self.read_keybinds, self.save_keybinds,
                 lambda: self.delete_keybinds(self.keybinding_files))
         keybindings.pack(side=BOTTOM, fill=BOTH, expand=Y)
+        self.keybinding_files.bind(
+            "<Double-1>", lambda e: self.load_keybinds(self.keybinding_files))
 
         if lnp.df_info.version >= '0.28.181.40a':
             embarkframe, self.embark_files, _ = \

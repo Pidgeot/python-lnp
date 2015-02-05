@@ -58,6 +58,8 @@ class GraphicsTab(Tab):
             listframe, None, self.graphics, height=8)
         self.graphicpacks.bind(
             '<<ListboxSelect>>', lambda e: self.select_graphics())
+        self.graphicpacks.bind(
+            "<Double-1>", lambda e: self.install_graphics())
 
         grid.add(controls.create_trigger_button(
             change_graphics, 'Install Graphics',
@@ -110,12 +112,16 @@ class GraphicsTab(Tab):
         tempframe = Frame(customize)
         _, self.fonts = controls.create_file_list(
             tempframe, 'FONT', self.tilesets, height=8)
+        self.fonts.bind(
+            "<Double-1>", lambda e: self.install_tilesets(1))
         if lnp.settings.version_has_option('GRAPHICS_FONT'):
             grid.add(tempframe, pady=4)
             tempframe = Frame(customize)
             grid.add(tempframe, pady=4)
             _, self.graphicsfonts = controls.create_file_list(
                 tempframe, 'GRAPHICS_FONT', self.tilesets, height=8)
+            self.graphicsfonts.bind(
+                "<Double-1>", lambda e: self.install_tilesets(2))
         else:
             grid.add(tempframe, 2, pady=4)
 
@@ -155,6 +161,8 @@ class GraphicsTab(Tab):
         buttons.grid(rowspan=3)
         self.color_files.bind(
             '<<ListboxSelect>>', lambda e: self.select_colors())
+        self.color_files.bind(
+            "<Double-1>", lambda e: self.load_colors())
 
         self.color_preview = Canvas(
             colorframe, width=128, height=32, highlightthickness=0,
@@ -361,13 +369,19 @@ class GraphicsTab(Tab):
             else:
                 self.graphicsfonts.itemconfig(i, bg='white')
 
-    def install_tilesets(self):
-        """Installs selected tilesets."""
+    def install_tilesets(self, mode=3):
+        """
+        Installs selected tilesets.
+
+        Params:
+            mode
+                If mode & 1, installs FONT. If mode & 2, installs GRAPHICS_FONT.
+        """
         font = None
         graphicsfont = None
-        if len(self.fonts.curselection()) != 0:
+        if len(self.fonts.curselection()) != 0 and (mode & 1):
             font = self.fonts.get(self.fonts.curselection()[0])
-        if len(self.graphicsfonts.curselection()) != 0:
+        if len(self.graphicsfonts.curselection()) != 0 and (mode & 2):
             graphicsfont = self.graphicsfonts.get(
                 self.graphicsfonts.curselection()[0])
         graphics.install_tilesets(font, graphicsfont)
