@@ -237,14 +237,21 @@ For further customization of displayed utility titles, see "Relabeling utilites"
 
 ``updates``
 -----------
-This object contains 4 strings, all used to check for pack updates.
+This object contains up to six strings, used to check for pack updates.
 
-``checkURL`` must point to a URL containing the latest version of your pack.
-``versionRegex`` must be a regular expression that extracts the latest version from the page contents of the aforementioned URL. If you don't understand regular expressions, ask on the forums.
-``downloadURL`` should point to the URL the user should be sent to if he wants to update. Note that updating is not automatic: the user must take care of the actual download and unpacking.
-``packVersion`` contains the current version of your pack.
+If you are using http://dffd.bay12games.com/ for file hosting, ``dffdID`` must be set, ``packVersion`` may be set, and others should not be set (ie set to ``""``) - they'll be filled automatically.  
+Note that any file can be downloaded from DFFD as `new_pack.zip`; the extraction method is chosen based on file properties not extension, and if the archive extracts to a single directory that will be used instead of the filename.
 
-The pack is considered updated if the pack version does not match the version extracted using the regular expression.
+If you are using a different site, you must not set ``dffdID``, may set ``directURL``, and must set all other fields.
+
+``dffdID`` is the four-digit ID of your file on DFFD if applicable
+``packVersion`` contains the current version string of your pack.
+``checkURL`` must be a URL to a page containing the latest version string of your pack.
+``versionRegex`` must be a regular expression that extracts the latest version from the page contents of the aforementioned URL. If you don't understand regular expressions, ask on the forums or use DFFD for hosting.
+``downloadURL`` is the URL of the pack's download webpage; this is opened in a browser.
+``directURL`` is the URL of the (future) package for direct download.
+
+The pack is considered updated if the pack version matches the version extracted using the regular expression.
 
 ``dfhack``
 ----------
@@ -254,7 +261,7 @@ Each individual hack consists of three elements: a title, a command to be execut
 
 Example::
 
-	"dfhack": {
+    "dfhack": {
         "Partial Mouse Control": {
             "command": "mousequery edge enable",
             "tooltip": "allows scrolling by hovering near edge of map; conflicts with isometric view; may cause trouble with levers or macros"

@@ -3,7 +3,7 @@
 """Update handling."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, re, time, os, threading
+import sys, re, time, os, threading, zipfile, tarfile
 
 try:  # Python 2
     # pylint:disable=import-error
@@ -14,7 +14,6 @@ except ImportError:  # Python 3
     from urllib.error import URLError
 
 from .lnp import lnp
-from .df import DFInstall
 from . import launcher, paths, download
 
 def updates_configured():
@@ -23,6 +22,7 @@ def updates_configured():
 
 def check_update():
     """Checks for updates using the URL specified in PyLNP.json."""
+    simple_dffd_config()
     if not updates_configured():
         return
     if lnp.userconfig.get_number('updateDays') == -1:
@@ -38,11 +38,15 @@ def perform_update_check():
         req = Request(
             lnp.config.get_string('updates/checkURL'),
             headers={'User-Agent':'PyLNP'})
-        version_text = urlopen(req, timeout=3).read()
-        # Note: versionRegex must capture the version number in a group
+        version_text = urlopen(req, timeout=3).read().decode('utf-8')
+        # Note: versionRegex must capture the version string in a group
         new_version = re.search(
             lnp.config.get_string('updates/versionRegex'),
             version_text).group(1)
+        if not lnp.config.get_string('updates/packVersion'):
+            lnp.config.get_dict('updates')['packVersion'] = new_version
+            lnp.config.save_data()
+            return
         if new_version != lnp.config.get_string('updates/packVersion'):
             lnp.new_version = new_version
             lnp.ui.on_update_available()
@@ -70,3 +74,65 @@ def download_df_baseline():
     url = 'http://www.bay12games.com/dwarves/' + filename
     target = os.path.join(paths.get('baselines'), filename)
     download.download('baselines', url, target)
+
+def direct_download_pack():
+    """Directly download a new version of the pack to the current BASEDIR"""
+    url = lnp.config.get_string('updates/directURL')
+    fname = os.path.basename(url).split('=')[-1]
+    target = os.path.join(lnp.BASEDIR, fname)
+    download.download(lnp.BASEDIR, url, target,
+                      end_callback=extract_new_pack)
+
+def extract_new_pack(_, fname, bool_val):
+    """Extract a downloaded new pack to a sibling dir of the current pack."""
+    exts = ('.zip', '.bz2', '.gz', '.7z', '.xz')
+    if not bool_val or not any(fname.endswith(ext) for ext in exts):
+        return None
+    archive = os.path.join(lnp.BASEDIR, os.path.basename(fname))
+    return extract_archive(archive, os.path.join(lnp.BASEDIR, '..'))
+
+def extract_archive(fname, target):
+    """Extract the archive fname to dir target, avoiding explosions."""
+    if zipfile.is_zipfile(fname):
+        zf = zipfile.ZipFile(fname)
+        namelist = zf.namelist()
+        topdir = namelist[0].split(os.path.sep)[0]
+        if not all(f.startswith(topdir) for f in namelist):
+            target = os.path.join(target, os.path.basename(fname).split('.')[0])
+        zf.extractall(target)
+        os.remove(fname)
+        return True
+    if tarfile.is_tarfile(fname):
+        tf = tarfile.open(fname)
+        namelist = tf.getmembers()
+        topdir = namelist[0].split(os.path.sep)[0]
+        if not all(f.startswith(topdir) for f in namelist):
+            target = os.path.join(target, fname.split('.')[0])
+        tf.extractall(target)
+        os.remove(fname)
+        return True
+    # TODO:  support '*.xz' and '*.7z' files.
+    return False
+
+def simple_dffd_config():
+    """Reduces the configuration required by maintainers using DFFD.
+    Values are generated and saved from known URLs and the 'dffdID' field."""
+    updates = lnp.config.get_dict('updates')
+    download_patt = 'http://dffd.bay12games.com/file.php?id='
+    check_patt = 'http://dffd.bay12games.com/file_version.php?id='
+    direct = ('http://dffd.bay12games.com/download.php?id=', '&f=new_pack.zip')
+    if (not updates['dffdID'] and
+            updates['downloadURL'].startswith(download_patt)):
+        updates['dffdID'] = updates['downloadURL'].replace(download_patt, '')
+    if not updates['dffdID'] and updates['checkURL'].startswith(check_patt):
+        updates['dffdID'] = updates['checkURL'].replace(check_patt, '')
+    if updates['dffdID'] and not updates['checkURL']:
+        updates['checkURL'] = check_patt + updates['dffdID']
+    if updates['dffdID'] and not updates['versionRegex']:
+        updates['versionRegex'] = 'Version: (.+)'
+    if updates['dffdID'] and not updates['downloadURL']:
+        updates['downloadURL'] = download_patt + updates['dffdID']
+    if updates['dffdID'] and not updates['directURL']:
+        updates['directURL'] = direct[0] + updates['dffdID'] + direct[1]
+    if updates != lnp.config.get_dict('updates'):
+        lnp.config.save_data()
