@@ -140,7 +140,7 @@ def program_is_running(path, nonchild=False):
         if encoding is None:
             #Encoding was not detected, assume UTF-8
             encoding = 'UTF-8'
-        return path in s.decode(sys.getfilesystemencoding(), 'replace')
+        return path in s.decode(encoding, 'replace')
     else:
         if path not in lnp.running:
             return False
