@@ -66,7 +66,33 @@ class PyLNP(object):
         config_file = 'PyLNP.json'
         if os.access(paths.get('lnp', 'PyLNP.json'), os.F_OK):
             config_file = paths.get('lnp', 'PyLNP.json')
-        self.config = JSONConfiguration(config_file)
+
+        default_config = {
+            "folders": [
+                ["Savegame folder", "<df>/data/save"],
+                ["Utilities folder", "LNP/Utilities"],
+                ["Graphics folder", "LNP/Graphics"],
+                ["-", "-"],
+                ["Main folder", ""],
+                ["LNP folder", "LNP"],
+                ["Dwarf Fortress folder", "<df>"],
+                ["Init folder", "<df>/data/init"]
+            ],
+            "links": [
+                ["DF Homepage", "http://www.bay12games.com/dwarves/"],
+                ["DF Wiki", "http://dwarffortresswiki.org/"],
+                ["DF Forums", "http://www.bay12forums.com/smf/"]
+            ],
+            "hideUtilityPath": False,
+            "hideUtilityExt": False,
+            "updates": {
+                "checkURL": "",
+                "versionRegex": "",
+                "downloadURL": "",
+                "packVersion": ""
+            }
+        }
+        self.config = JSONConfiguration(config_file, default_config)
         self.userconfig = JSONConfiguration('PyLNP.user')
 
         df.find_df_folder()

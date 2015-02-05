@@ -13,13 +13,15 @@ else:
 class JSONConfiguration(object):
     """Proxy for JSON-based configuration files."""
 
-    def __init__(self, filename):
+    def __init__(self, filename, default=None):
         """
         Constructor for JSONConfiguration.
 
         Params:
             filename
                 JSON filename to load data from.
+            default
+                Default value to use in case loading fails.
         """
         self.filename = filename
         self.data = {}
