@@ -362,8 +362,8 @@ class TkGui(object):
             "Terminal", "When using DFHack, PyLNP must be able to spawn an "
             "independent terminal.\nThis is normally done using a shell "
             "script, xdg-terminal.\nIf this doesn't work for you, you can "
-            "provide an alternate command to do this here.\nUse $ as a"
-            "placeholder for the command to run inside the terminal; if"
+            "provide an alternate command to do this here.\nUse $ as a "
+            "placeholder for the command to run inside the terminal; if "
             "omitted, the command will simply be appended.\n"
             "To use the default script, leave this blank.\n"
             "See the PyLNP readme for more information.",

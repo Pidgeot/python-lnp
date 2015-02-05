@@ -86,16 +86,17 @@ environments and window managers:
 
 For other setups, the script will attempt a fallback, but it is not guaranteed
 to work. If it does not work for you, you can configure an alternate command
-using File > Configure terminal. As an example, xterm requires the following
-syntax::
+using File > Configure terminal. For example, if your terminal can be spawned
+using:
 
-  xterm -e <command>
+  term -e <command>
 
-When entering this, only put ``xterm -e`` - the command will be automatically
+then you should write this as ``term -e`` - the command will be automatically
 appended. If you need the command to be placed elsewhere, use ``$`` as a
 placeholder for the command.
 
-It may also be necessary to use ``nohup`` with the command, e.g. ``nohup xterm
+Depending on your choice of terminal, desktop environment, etc., it may also be
+necessary to use ``nohup`` with the command, e.g. ``nohup term
 -e``.
 
 To verify if your command works as intended, launch Dwarf Fortress with DFHack
