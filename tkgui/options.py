@@ -168,9 +168,9 @@ class OptionsTab(Tab):
         current = keybinds.get_installed_file()
         for i, f in enumerate(files):
             if f == current:
-                self.keybinding_files.itemconfig(i, fg='red')
+                self.keybinding_files.itemconfig(i, bg='pale green')
             else:
-                self.keybinding_files.itemconfig(i, fg='black')
+                self.keybinding_files.itemconfig(i, bg='white')
 
     def load_keybinds(self, listbox):
         """
@@ -220,9 +220,9 @@ class OptionsTab(Tab):
         current = embarks.get_installed_files()
         for i, f in enumerate(files):
             if f in current:
-                self.embark_files.itemconfig(i, fg='red')
+                self.embark_files.itemconfig(i, bg='pale green')
             else:
-                self.embark_files.itemconfig(i, fg='black')
+                self.embark_files.itemconfig(i, bg='white')
 
     def install_embarks(self, listbox):
         """

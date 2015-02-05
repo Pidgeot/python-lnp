@@ -237,14 +237,21 @@ For further customization of displayed utility titles, see "Relabeling utilites"
 
 ``updates``
 -----------
-This object contains 4 strings, all used to check for pack updates.
+This object contains up to six strings, used to check for pack updates.
 
-``checkURL`` must point to a URL containing the latest version of your pack.
-``versionRegex`` must be a regular expression that extracts the latest version from the page contents of the aforementioned URL. If you don't understand regular expressions, ask on the forums.
-``downloadURL`` should point to the URL the user should be sent to if he wants to update. Note that updating is not automatic: the user must take care of the actual download and unpacking.
-``packVersion`` contains the current version of your pack.
+If you are using http://dffd.bay12games.com/ for file hosting, ``dffdID`` must be set, ``packVersion`` may be set, and others should not be set (ie set to ``""``) - they'll be filled automatically.  
+Note that any file can be downloaded from DFFD as `new_pack.zip`; the extraction method is chosen based on file properties not extension, and if the archive extracts to a single directory that will be used instead of the filename.
 
-The pack is considered updated if the pack version does not match the version extracted using the regular expression.
+If you are using a different site, you must not set ``dffdID``, may set ``directURL``, and must set all other fields.
+
+``dffdID`` is the four-digit ID of your file on DFFD if applicable
+``packVersion`` contains the current version string of your pack.
+``checkURL`` must be a URL to a page containing the latest version string of your pack.
+``versionRegex`` must be a regular expression that extracts the latest version from the page contents of the aforementioned URL. If you don't understand regular expressions, ask on the forums or use DFFD for hosting.
+``downloadURL`` is the URL of the pack's download webpage; this is opened in a browser.
+``directURL`` is the URL of the (future) package for direct download.
+
+The pack is considered updated if the pack version matches the version extracted using the regular expression.
 
 ``dfhack``
 ----------
@@ -254,7 +261,7 @@ Each individual hack consists of three elements: a title, a command to be execut
 
 Example::
 
-	"dfhack": {
+    "dfhack": {
         "Partial Mouse Control": {
             "command": "mousequery edge enable",
             "tooltip": "allows scrolling by hovering near edge of map; conflicts with isometric view; may cause trouble with levers or macros"
@@ -272,6 +279,7 @@ PyLNP expects to see the following directory structure::
   <base folder>
     <Dwarf Fortress main folder>
     LNP
+      Baselines
       Colors
       Defaults
       Embarks
@@ -300,9 +308,9 @@ This file, found in the base folder, contains user settings such as window width
 
 Baselines
 ---------
-This folder contains full unmodified raws for various versions of DF, and the settings and images relevant to graphics packs.  These are used to rebuild the reduced raws used by graphics packs and mods, and should not be modified or removed - any new graphics or mod install would break.  Extra tilesets added to a /data/art/ folder will be available to all graphics packs (useful for TwbT text options).
+This folder contains full unmodified raws for various versions of DF, and the settings and images relevant to graphics packs.  These are used to rebuild the reduced raws used by graphics packs and mods, and should not be modified or removed - any new graphics or mod install would break.
 
-Add versions by downloading the windows SDL edition of that version and placing it in the folder (eg "df_40_15_win.zip").  
+Add versions by downloading the windows SDL edition of that version and placing it in the folder (eg "df_40_15_win.zip"), or by attempting an action that would require that baseline - such as installing a graphics pack - and accepting the download.
 
 Colors
 ------
@@ -330,11 +338,11 @@ If this version of PyLNP has not yet been run on the selected DF installation, a
 
 Graphics
 --------
-This folder contains graphics packs, consisting of data and raw folders.  Any raws identical to vanilla files will be discarded; when installing a graphics pack the remaining files will be copied over a set of vanilla raws and the combination installed.
+This folder contains graphics packs, consisting of data and raw folders.  Any raws identical to vanilla files will be discarded; when installing a graphics pack the remaining files will be copied over a set of vanilla raws and the combination installed.  Through more complex merge logic, graphics can also be used with mods and changed on most modded saves.
 
 Tilesets
 --------
-This folder contains tilesets; individual image files that the user can use for the FONT and GRAPHICS_FONT settings (and their fullscreen counterparts).  Tilesets can be installed through the graphics customisation tab, as they are added to each graphics pack as the pack is installed.
+This folder contains tilesets; individual image files that the user can use for the FONT and GRAPHICS_FONT settings (and their fullscreen counterparts).  Tilesets can be installed through the graphics customisation tab, which reads from <df>/data/art, as they are added to each graphics pack as the pack is installed - especially useful for TwbT text tiles.
 
 Mods
 ----
@@ -402,6 +410,8 @@ If mods are present in LNP/Mods/, a mods tab is added to the launcher.
 
 Multiple mods can be merged, in the order shown in the 'installed' pane.  Those shown in green merged OK; in yellow with minor issues.  Orange signifies an overlapping merge or other serious issue, and red could not be merged.  Once you are happy with the combination, you can install them to the DF folder and generate a new world to start playing.
 
-Note that even an all-green combination might be broken in subtle (or non-subtle) ways.  Mods are not currently compatible with graphics!  Never update graphics on savegames with installed mods - they will break.
+Note that even an all-green combination might be broken in subtle (or non-subtle) ways.
 
-For mod authors:  note that the reduced raw format is equivalent to copying over a vanilla install - missing files are taken to be vanilla.  Modifying existing files instead of adding new files decreases the chance of producing conflicting raws without a merge conflict.
+Graphics packs are generally compatible with mods.  When combining mods, the current graphics pack is merged first followed by the selected mods.  Because the PyLNP logs the installed raws, it can also update the graphics on modded savegames.  This is done by recreating the logged merge with new graphics at the base, and replacing the savegame raws, if nothing worse than overlapping changes was found and the previous set (including graphics) could be rebuilt exactly.  
+
+For mod authors:  note that the reduced raw format is equivalent to copying over a vanilla install - missing files are taken to be vanilla.  Modifying existing files instead of adding new files decreases the chance of producing conflicting raws without a merge conflict.  The merge logic handles raw/*.txt, and data/speech/*.txt

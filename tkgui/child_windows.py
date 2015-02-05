@@ -146,9 +146,9 @@ class InitEditor(DualTextWindow):
     def save(self):
         """Saves configuration data from the text widgets."""
         DFRaw.write(paths.get('init', 'init.txt'),
-            self.left.get('1.0', 'end'))
+                    self.left.get('1.0', 'end'))
         DFRaw.write(paths.get('init', 'd_init.txt'),
-            self.right.get('1.0', 'end'))
+                    self.right.get('1.0', 'end'))
         self.gui.load_params()
 
 class SelectDF(ChildWindow):
@@ -227,17 +227,27 @@ class UpdateWindow(ChildWindow):
         f.pack(fill=BOTH, expand=Y)
 
         buttons = Frame(container)
-        Button(
-            buttons, text='Download', command=self.yes
-            ).pack(side=LEFT)
+        if lnp.config.get_string('updates/directURL'):
+            Button(
+                buttons, text='Direct Download', command=self.download
+                ).pack(side=LEFT)
+        if lnp.config.get_string('updates/downloadURL'):
+            Button(
+                buttons, text='Open in Browser', command=self.browser
+                ).pack(side=LEFT)
         Button(
             buttons, text='Not now', command=self.close
             ).pack(side=LEFT)
         buttons.pack(side=BOTTOM)
 
-    def yes(self):
-        """Called when the Yes button is clicked."""
+    def browser(self):
+        """Called when the browser button is clicked."""
         update.start_update()
+        self.close()
+
+    def download(self):
+        """Called when the download button is clicked."""
+        update.direct_download_pack()
         self.close()
 
     def close(self):

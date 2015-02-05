@@ -88,7 +88,7 @@ def simplify_pack(pack, folder):
                 os.remove(f)
     if not folder == 'mods':
         init_files = ('colors', 'd_init', 'init', 'overrides')
-        init_dir = paths.join(folder, pack, 'data', 'init')
+        init_dir = paths.get(folder, pack, 'data', 'init')
         for f in os.listdir(init_dir):
             if not any(p in f for p in init_files):
                 os.remove(os.path.join(init_dir, f))
