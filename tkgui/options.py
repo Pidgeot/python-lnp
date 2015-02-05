@@ -42,7 +42,8 @@ class OptionsTab(Tab):
 
         grid = GridLayouter(2)
         grid.add(controls.create_trigger_option_button(
-            options, 'Population Cap', 'Maximum population in your fort',
+            options, 'Population Cap', 'Maximum population in your fort. '
+            'Setting this too low may disable certain gameplay features.',
             self.set_pop_cap, 'popcap'))
         grid.add(controls.create_trigger_option_button(
             options, 'Child Cap', 'Maximum children in your fort',
