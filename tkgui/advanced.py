@@ -9,17 +9,19 @@ from .layout import GridLayouter
 from .tab import Tab
 import sys
 
-from core import launcher
+from core import launcher, legends_processor
 from core.lnp import lnp
 
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
     from tkinter.ttk import *
+    import tkinter.messagebox as messagebox
 else:
     # pylint:disable=import-error
     from Tkinter import *
     from ttk import *
+    import tkMessageBox as messagebox
 
 class AdvancedTab(Tab):
     """Advanced tab for the TKinter GUI."""
@@ -118,6 +120,32 @@ class AdvancedTab(Tab):
             'Whether this GUI should close when Dwarf Fortress is launched',
             self.toggle_autoclose, 'autoClose', lambda v: ('NO', 'YES')[
                 lnp.userconfig.get_bool('autoClose')]), 2)
+
+        if lnp.df_info.version >= '0.40.09':
+            main_grid.add(controls.create_trigger_button(
+                self, 'Process Legends Exports',
+                'Compress and sort files exported from legends mode',
+                self.process_legends), 2)
+
+    @staticmethod
+    def process_legends():
+        """Process legends exports."""
+        if not legends_processor.get_region_info():
+            messagebox.showinfo('No legends exports',
+                                'There were no legends exports to process.')
+        else:
+            messagebox.showinfo('Exports will be compressed',
+                                'Maps exported from legends mode will be '
+                                'converted to .png format, a compressed archive'
+                                ' will be made, and files will be sorted and '
+                                'moved to a subfolder.  Please wait...')
+            i = legends_processor.process_legends()
+            string = str(i) + ' region'
+            if i > 1:
+                string += 's'
+            messagebox.showinfo(string + ' processed',
+                                'Legends exported from ' + string +
+                                ' were found and processed')
 
     @staticmethod
     def toggle_autoclose():
