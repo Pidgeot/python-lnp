@@ -86,10 +86,12 @@ class PyLNP(object):
             "hideUtilityPath": False,
             "hideUtilityExt": False,
             "updates": {
+                "dffdID": "",
+                "packVersion": "",
                 "checkURL": "",
                 "versionRegex": "",
                 "downloadURL": "",
-                "packVersion": ""
+                "directURL": ""
             }
         }
         self.config = JSONConfiguration(config_file, default_config)
