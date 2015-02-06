@@ -207,9 +207,12 @@ def simplify_graphics():
 
 def simplify_pack(pack):
     """Removes unnecessary files from one graphics pack."""
-    baselines.simplify_pack(pack, 'graphics')
-    baselines.remove_vanilla_raws_from_pack(pack, 'graphics')
-    baselines.remove_empty_dirs(pack, 'graphics')
+    a = baselines.simplify_pack(pack, 'graphics')
+    b = baselines.remove_vanilla_raws_from_pack(pack, 'graphics')
+    c = baselines.remove_empty_dirs(pack, 'graphics')
+    if not all(isinstance(n, int) for n in (a, b, c)):
+        return False
+    return a + b + c
 
 def savegames_to_update():
     """Returns a list of savegames that will be updated."""

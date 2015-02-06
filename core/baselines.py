@@ -93,7 +93,7 @@ def simplify_pack(pack, folder):
             if not any(p in f for p in init_files):
                 os.remove(os.path.join(init_dir, f))
     files_after = sum(len(f) for (_, _, f) in os.walk(paths.get(folder, pack)))
-    return files_after - files_before
+    return files_before - files_after
 
 def remove_vanilla_raws_from_pack(pack, folder):
     """Remove files identical to vanilla raws, return files removed
@@ -105,7 +105,7 @@ def remove_vanilla_raws_from_pack(pack, folder):
     Returns:
         The number of files removed
     """
-    files_before = sum(len(f) for (_, _, f) in os.walk(paths.get(folder, pack)))
+    i = 1
     for folder, van_folder in (
             [paths.get(folder, pack, 'raw'), find_vanilla_raws()],
             [paths.get(folder, pack, 'data', 'speech'),
@@ -121,8 +121,8 @@ def remove_vanilla_raws_from_pack(pack, folder):
                 if os.path.isfile(van_f):
                     if filecmp.cmp(f, van_f):
                         os.remove(f)
-    files_after = sum(len(f) for (_, _, f) in os.walk(paths.get(folder, pack)))
-    return files_after - files_before
+                        i += 1
+    return i
 
 def remove_empty_dirs(pack, folder):
     """Removes empty subdirs in a mods or graphics pack.
