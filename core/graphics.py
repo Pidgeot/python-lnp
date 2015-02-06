@@ -65,27 +65,29 @@ def install_graphics(pack):
         # Update raws
         if not update_graphics_raws(os.path.join(gfx_dir, 'raw'), pack):
             return False
+        shutil.rmtree(paths.get('df', 'raw'))
+        shutil.copytree(os.path.join(gfx_dir, 'raw'), paths.get('df', 'raw'))
         # Copy art
-        if os.path.isdir(os.path.join(paths.get('data'), 'art')):
-            dir_util.remove_tree(paths.get('data', 'art'))
-        dir_util.copy_tree(os.path.join(gfx_dir, 'data', 'art'),
-                           paths.get('data', 'art'))
+        shutil.rmtree(paths.get('data', 'art'))
+        shutil.copytree(paths.get('graphics', pack, 'data', 'art'),
+                        paths.get('data', 'art'))
         for tiles in glob.glob(paths.get('tilesets', '*')):
             shutil.copy(tiles, paths.get('data', 'art'))
         # Handle init files
-        patch_inits(gfx_dir)
+        patch_inits(paths.get('graphics', pack))
         # Install colorscheme
         if lnp.df_info.version >= '0.31.04':
-            colors.load_colors(os.path.join(
-                gfx_dir, 'data', 'init', 'colors.txt'))
-            shutil.copyfile(os.path.join(gfx_dir, 'data', 'init', 'colors.txt'),
-                            paths.get('colors', '_Current graphics pack.txt'))
+            colors.load_colors(paths.get('graphics', pack, 'data', 'init',
+                                         'colors.txt'))
+            shutil.copyfile(paths.get('graphics', pack, 'data', 'init',
+                                      'colors.txt'),
+                            paths.get('colors', ' Current graphics pack.txt'))
         else:
-            colors.load_colors(os.path.join(
-                gfx_dir, 'data', 'init', 'init.txt'))
+            colors.load_colors(paths.get('graphics', pack, 'data', 'init',
+                                         'init.txt'))
             if os.path.isfile(paths.get('colors',
-                                        '_Current graphics pack.txt')):
-                os.remove(paths.get('colors', '_Current graphics pack.txt'))
+                                        ' Current graphics pack.txt')):
+                os.remove(paths.get('colors', ' Current graphics pack.txt'))
         # TwbT overrides
         try:
             os.remove(paths.get('init', 'overrides.txt'))
@@ -93,7 +95,7 @@ def install_graphics(pack):
             pass
         try:
             shutil.copyfile(
-                os.path.join(gfx_dir, 'data', 'init', 'overrides.txt'),
+                paths.get('graphics', pack, 'data', 'init', 'overrides.txt'),
                 paths.get('init', 'overrides.txt'))
         except FileNotFoundError:
             pass
@@ -219,19 +221,20 @@ def update_graphics_raws(raw_dir, gfx_dir=None):
 
     Params:
         raw_dir
-            Full path to the dir to update
+            Full path to the dir to update; should be a tempdir as errors
+            are handled olny be returning False
         gfx_dir
             The name of the graphics pack to add (eg 'Phoebus')
 
     Returns:
         True if successful,
-        False if an exception occured
+        False if an error or exception occured
     """
     if gfx_dir is None:
         gfx_dir = current_pack()
         if '/' in gfx_dir:
             return False
-    if not gfx_dir in read_graphics():
+    if not gfx_dir in [k[0] for k in read_graphics()]:
         return False
     mods_list = mods.read_installation_log(
         os.path.join(raw_dir, 'installed_raws.txt'))
