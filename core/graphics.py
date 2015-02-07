@@ -3,7 +3,7 @@
 """Graphics pack management."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, os, shutil, glob, tempfile, filecmp
+import sys, os, shutil, glob, tempfile
 import distutils.dir_util as dir_util
 from .launcher import open_folder
 from .lnp import lnp
@@ -60,13 +60,10 @@ def install_graphics(pack):
     """
     if not baselines.find_vanilla_raws():
         return None
-    gfx_dir = tempfile.mkdtemp()
     try:
         # Update raws
-        if not update_graphics_raws(os.path.join(gfx_dir, 'raw'), pack):
+        if not update_graphics_raws(paths.get('df', 'raw'), pack):
             return False
-        shutil.rmtree(paths.get('df', 'raw'))
-        shutil.copytree(os.path.join(gfx_dir, 'raw'), paths.get('df', 'raw'))
         # Copy art
         shutil.rmtree(paths.get('data', 'art'))
         shutil.copytree(paths.get('graphics', pack, 'data', 'art'),
@@ -101,13 +98,10 @@ def install_graphics(pack):
             pass
     except Exception:
         sys.excepthook(*sys.exc_info())
-        retval = False
-    else:
-        retval = True
-    if os.path.isdir(gfx_dir):
-        dir_util.remove_tree(gfx_dir)
+        df.load_params()
+        return False
     df.load_params()
-    return retval
+    return True
 
 def validate_pack(pack):
     """Checks for presence of all required files for a pack install."""
@@ -219,55 +213,49 @@ def savegames_to_update():
     return [o for o in glob.glob(paths.get('save', '*'))
             if os.path.isdir(o) and not o.endswith('current')]
 
-def update_graphics_raws(raw_dir, gfx_dir=None):
-    """Updates raws for a new graphics pack.
+def update_graphics_raws(raw_dir, pack=None):
+    """Updates raws in place for a new graphics pack.
 
     Params:
         raw_dir
-            Full path to the dir to update; should be a tempdir as errors
-            are handled olny be returning False
+            Full path to the dir to update
         gfx_dir
             The name of the graphics pack to add (eg 'Phoebus')
 
     Returns:
         True if successful,
-        False if an error or exception occured
+        False if aborted
     """
-    if gfx_dir is None:
-        gfx_dir = current_pack()
-        if '/' in gfx_dir:
-            return False
-    if not gfx_dir in [k[0] for k in read_graphics()]:
+    if pack is None:
+        pack = current_pack()
+    if not pack in [k[0] for k in read_graphics()]:
         return False
+    tmp = tempfile.mkdtemp()
     mods_list = mods.read_installation_log(
         os.path.join(raw_dir, 'installed_raws.txt'))
     if not mods_list:
-        if os.path.isdir(raw_dir):
-            dir_util.remove_tree(raw_dir)
-        dir_util.copy_tree(baselines.find_vanilla_raws(), raw_dir)
-        dir_util.copy_tree(paths.get('graphics', gfx_dir, 'raw'), raw_dir)
-        return True
+        dir_util.copy_tree(baselines.find_vanilla_raws(), tmp)
+        shutil.rmtree(os.path.join(tmp, 'graphics'))
+        dir_util.copy_tree(paths.get('graphics', pack, 'raw'), tmp)
     else:
         mods.clear_temp()
-        add_to_mods_merge(gfx_dir)
+        add_to_mods_merge(pack)
         for m in mods_list:
             if mods.merge_a_mod(m) > 2:
+                shutil.rmtree(tmp)
                 return False
-        dir_util.copy_tree(paths.get('baselines', 'temp', 'raw'), raw_dir)
-        return True
+        dir_util.copy_tree(paths.get('baselines', 'temp', 'raw'), tmp)
+    shutil.rmtree(raw_dir)
+    shutil.copytree(tmp, raw_dir)
+    shutil.rmtree(tmp)
+    return True
 
 def add_to_mods_merge(gfx_dir=None):
     """Adds graphics to the mod merge in baselines/temp."""
     if gfx_dir is None:
         gfx_dir = current_pack()
-    g_folder = paths.get('graphics', gfx_dir, 'raw')
-    b_folder = paths.get('baselines', 'temp', 'raw')
-    for root, _, files in os.walk(g_folder):
-        for k in files:
-            f = os.path.relpath(os.path.join(root, k), g_folder)
-            if os.path.isfile(os.path.join(b_folder, f)):
-                os.remove(os.path.join(b_folder, f))
-            shutil.copyfile(k, os.path.join(b_folder, f))
+    dir_util.copy_tree(paths.get('graphics', gfx_dir, 'raw'),
+                       paths.get('baselines', 'temp', 'raw'))
     with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
               'a') as log:
         log.write('graphics/' + gfx_dir)
@@ -275,45 +263,39 @@ def add_to_mods_merge(gfx_dir=None):
 def update_savegames():
     """Update save games with current raws."""
     count, saves = 0, savegames_to_update()
-    if saves:
-        for save in saves:
-            temp_dir = tempfile.mkdtemp()
-            shutil.copytree(os.path.join(save, 'raw'), temp_dir)
-            rebuild = can_rebuild(paths.get('baselines', 'temp',
-                                            'raw', 'installed_raws.txt'))
-            if update_graphics_raws(temp_dir) and rebuild:
-                shutil.rmtree(os.path.join(save, 'raw'))
-                shutil.copytree(temp_dir, os.path.join(save, 'raw'))
-            shutil.rmtree(temp_dir)
-            count += 1
+    for save_raws in [paths.get('saves', s, 'raw') for s in saves]:
+        r = can_rebuild(os.path.join(save_raws, 'installed_raws.txt'))
+        if r:
+            if update_graphics_raws(save_raws):
+                count += 1
     return count
 
 def can_rebuild(log_file):
     """Test if user can exactly rebuild a raw folder, returning a bool."""
+    if not os.path.isfile(log_file):
+        return True
     mods.clear_temp()
-    try:
-        with open(log_file) as f:
-            file_contents = list(f.readlines())
-    except IOError:
-        return False
-    mods_list = []
-    for line in file_contents:
-        if line.startswith('graphics/'):
-            add_to_mods_merge(gfx_dir=line.replace('graphics/', ''))
-        if line.startswith('mods/'):
-            mods_list.append(line.strip().replace('mods/', ''))
+    mods_list = mods.read_installation_log(log_file)
+    with open(log_file) as f:
+        for l in f.readlines():
+            if l.startswith('graphics/'):
+                add_to_mods_merge(l.replace('graphics/', ''))
+                break
     for m in mods_list:
         mods.merge_a_mod(m)
     save_raws = os.path.dirname(log_file)
     gen_raws = paths.get('baselines', 'raw')
     for root, _, files in os.walk(save_raws):
         for k in files:
+            if not k.endswith('.txt'):
+                continue
             f = os.path.relpath(os.path.join(root, k), save_raws)
-            if filecmp.cmp(k, os.path.join(gen_raws, f), shallow=False):
-                os.remove(os.path.join(gen_raws, f))
-    baselines.remove_empty_dirs('temp', 'baselines')
-    if os.listdir('temp', 'baselines'):
-        return False
+            if not os.path.isfile(os.path.join(gen_raws, f)):
+                return False
+            with open(os.path.join(gen_raws, f)) as a:
+                with open(os.path.join(root, k)) as b:
+                    if a.read() != b.read():
+                        return False
     return True
 
 def open_tilesets():

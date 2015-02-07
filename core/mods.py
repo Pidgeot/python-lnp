@@ -249,6 +249,7 @@ def clear_temp():
         shutil.rmtree(paths.get('baselines', 'temp'))
     shutil.copytree(baselines.find_vanilla_raws(),
                     paths.get('baselines', 'temp', 'raw'))
+    shutil.rmtree(paths.get('baselines', 'temp', 'raw', 'graphics'))
     shutil.copytree(os.path.join(baselines.find_vanilla(), 'data', 'speech'),
                     paths.get('baselines', 'temp', 'data', 'speech'))
     with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
