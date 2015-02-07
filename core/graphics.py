@@ -234,8 +234,10 @@ def update_graphics_raws(raw_dir, pack=None):
     mods_list = mods.read_installation_log(
         os.path.join(raw_dir, 'installed_raws.txt'))
     if not mods_list:
+        dir_util._path_created = {}
         dir_util.copy_tree(baselines.find_vanilla_raws(), tmp)
         shutil.rmtree(os.path.join(tmp, 'graphics'))
+        dir_util._path_created = {}
         dir_util.copy_tree(paths.get('graphics', pack, 'raw'), tmp)
     else:
         mods.clear_temp()
@@ -244,8 +246,10 @@ def update_graphics_raws(raw_dir, pack=None):
             if mods.merge_a_mod(m) > 2:
                 shutil.rmtree(tmp)
                 return False
+        dir_util._path_created = {}
         dir_util.copy_tree(paths.get('baselines', 'temp', 'raw'), tmp)
     shutil.rmtree(raw_dir)
+    dir_util._path_created = {}
     shutil.copytree(tmp, raw_dir)
     shutil.rmtree(tmp)
     return True
