@@ -18,11 +18,10 @@ def current_pack():
     """Returns the currently installed graphics pack.
     If the pack cannot be identified, returns "FONT/GRAPHICS_FONT".
     """
-    if os.path.isfile(paths.get('df', 'raw', 'installed_raws.txt')):
-        with open(paths.get('df', 'raw', 'installed_raws.txt')) as f:
-            for l in f.readlines():
-                if l.startswith('graphics/'):
-                    return l.replace('graphics/', '')
+    p = paths.get('df', 'raw', 'installed_raws.txt')
+    if os.path.isfile(p):
+        if logged_graphics(p):
+            return logged_graphics(p)
     packs = read_graphics()
     for p in packs:
         if (lnp.settings.FONT == p[1] and
@@ -32,6 +31,15 @@ def current_pack():
     if lnp.settings.version_has_option('GRAPHICS_FONT'):
         result += '/'+str(lnp.settings.GRAPHICS_FONT)
     return result
+
+def logged_graphics(logfile):
+    """Returns the graphics pack from an 'installed_raws.txt' file"""
+    if os.path.isfile(logfile):
+        with open(logfile) as f:
+            for l in f.readlines():
+                if l.startswith('graphics/'):
+                    return l.strip().replace('graphics/', '')
+    return ''
 
 def read_graphics():
     """Returns a list of graphics directories."""
@@ -244,14 +252,14 @@ def update_graphics_raws(raw_dir, pack=None):
 
 def add_to_mods_merge(gfx_dir=None):
     """Adds graphics to the mod merge in baselines/temp."""
-    if gfx_dir is None:
+    if not gfx_dir:
         gfx_dir = current_pack()
     dir_util._path_created = {}
     dir_util.copy_tree(paths.get('graphics', gfx_dir, 'raw'),
                        paths.get('baselines', 'temp', 'raw'))
     with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
               'a') as log:
-        log.write('graphics/' + gfx_dir)
+        log.write('graphics/' + gfx_dir + '\n')
 
 def update_savegames():
     """Update save games with current raws."""
@@ -269,11 +277,7 @@ def can_rebuild(log_file, strict=True):
         return not strict
     mods.clear_temp()
     mods_list = mods.read_installation_log(log_file)
-    with open(log_file) as f:
-        for l in f.readlines():
-            if l.startswith('graphics/'):
-                add_to_mods_merge(l.replace('graphics/', ''))
-                break
+    add_to_mods_merge(logged_graphics(log_file))
     for m in mods_list:
         mods.merge_a_mod(m)
     save_raws = os.path.dirname(log_file)
