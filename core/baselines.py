@@ -3,7 +3,7 @@
 """Advanced raw and data folder management, for mods or graphics packs."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import os, filecmp, glob, zipfile, fnmatch
+import os, glob, zipfile, fnmatch
 
 from . import paths, update
 from .lnp import lnp
@@ -73,13 +73,19 @@ def simplify_pack(pack, folder):
     files_before = sum(len(f) for (_, _, f) in os.walk(paths.get(folder, pack)))
     if files_before == 0:
         return None
-    keep = [os.path.join('raw', 'graphics', '*')]
-    if not folder == 'graphics':
-        keep += [os.path.join('raw', 'objects', '*'),
-                 os.path.join('data', 'speech', '*')]
-    if not folder == 'mods':
-        keep += [os.path.join('data', 'art', '*'),
-                 os.path.join('data', 'init' '*')]
+    if folder == 'baselines':
+        keep = [os.path.join('raw', '*'),
+                os.path.join('data', 'speech', '*'),
+                os.path.join('data', 'art', '*'),
+                os.path.join('data', 'init', '*')]
+    if folder == 'graphics':
+        keep = [os.path.join('raw', 'objects', '*'),
+                os.path.join('raw', 'graphics', '*'),
+                os.path.join('data', 'art', '*'),
+                os.path.join('data', 'init', '*')]
+    if folder == 'mods':
+        keep = [os.path.join('raw', '*'),
+                os.path.join('data', 'speech', '*')]
     for root, _, files in os.walk(paths.get(folder, pack)):
         d = paths.get(folder, pack)
         for k in files:
@@ -119,9 +125,11 @@ def remove_vanilla_raws_from_pack(pack, folder):
                     continue
                 van_f = os.path.join(van_folder, os.path.relpath(f, folder))
                 if os.path.isfile(van_f):
-                    if filecmp.cmp(f, van_f):
-                        os.remove(f)
-                        i += 1
+                    with open(van_f) as v:
+                        with open(f) as m:
+                            if v.read() == m.read():
+                                os.remove(f)
+                                i += 1
     return i
 
 def remove_empty_dirs(pack, folder):

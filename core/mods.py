@@ -53,7 +53,7 @@ def make_blank_files(pack):
             path segment in './LNP/folder/pack/' as strings
 
     Returns:
-        The number fo blank files created
+        The number of blank files created
     """
     i = 0
     vanilla_raws = baselines.find_vanilla_raws()
@@ -178,17 +178,17 @@ def do_merge_files(mod_file_name, van_file_name, gen_file_name):
     try:
         van_lines = open(van_file_name, mode='r', encoding='cp437',
                          errors='replace').readlines()
-    except FileNotFoundError:
+    except:
         van_lines = []
     try:
         mod_lines = open(mod_file_name, mode='r', encoding='cp437',
                          errors='replace').readlines()
-    except FileNotFoundError:
+    except:
         mod_lines = []
     try:
         gen_lines = open(gen_file_name, mode='r', encoding='cp437',
                          errors='replace').readlines()
-    except FileNotFoundError:
+    except:
         gen_lines = []
 
     status, gen_lines = do_merge_seq(mod_lines, van_lines, gen_lines)

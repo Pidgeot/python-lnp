@@ -352,7 +352,8 @@ class GraphicsTab(Tab):
                 col = i % 8
                 self.color_preview.create_rectangle(
                     col*16, row*16, (col+1)*16, (row+1)*16,
-                    fill="#%02x%02x%02x" % tuple([v % 256 for v in c]), width=0)
+                    fill="#%02x%02x%02x" % tuple([int(v % 256) for v in c]),
+                    width=0)
 
     def read_tilesets(self):
         """Reads list of graphics packs."""

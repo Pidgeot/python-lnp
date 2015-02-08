@@ -258,6 +258,7 @@ def add_to_mods_merge(gfx_dir=None):
     """Adds graphics to the mod merge in baselines/temp."""
     if gfx_dir is None:
         gfx_dir = current_pack()
+    dir_util._path_created = {}
     dir_util.copy_tree(paths.get('graphics', gfx_dir, 'raw'),
                        paths.get('baselines', 'temp', 'raw'))
     with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
@@ -276,8 +277,6 @@ def update_savegames():
 
 def can_rebuild(log_file):
     """Test if user can exactly rebuild a raw folder, returning a bool."""
-    if not os.path.isfile(log_file):
-        return True
     mods.clear_temp()
     mods_list = mods.read_installation_log(log_file)
     with open(log_file) as f:
