@@ -3,7 +3,7 @@
 """Graphics pack management."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, os, shutil, glob, tempfile
+import sys, os, shutil, glob
 import distutils.dir_util as dir_util
 from .launcher import open_folder
 from .lnp import lnp
@@ -223,35 +223,23 @@ def update_graphics_raws(raw_dir, pack=None):
             The name of the graphics pack to add (eg 'Phoebus')
 
     Returns:
-        True if successful,
+        True if successful
         False if aborted
     """
     if pack is None:
         pack = current_pack()
     if not pack in [k[0] for k in read_graphics()]:
         return False
-    tmp = tempfile.mkdtemp()
     mods_list = mods.read_installation_log(
         os.path.join(raw_dir, 'installed_raws.txt'))
-    if not mods_list:
-        dir_util._path_created = {}
-        dir_util.copy_tree(baselines.find_vanilla_raws(), tmp)
-        shutil.rmtree(os.path.join(tmp, 'graphics'))
-        dir_util._path_created = {}
-        dir_util.copy_tree(paths.get('graphics', pack, 'raw'), tmp)
-    else:
-        mods.clear_temp()
-        add_to_mods_merge(pack)
-        for m in mods_list:
-            if mods.merge_a_mod(m) > 2:
-                shutil.rmtree(tmp)
-                return False
-        dir_util._path_created = {}
-        dir_util.copy_tree(paths.get('baselines', 'temp', 'raw'), tmp)
+    mods.clear_temp()
+    add_to_mods_merge(pack)
+    for m in mods_list:
+        if mods.merge_a_mod(m) > 2:
+            return False
     shutil.rmtree(raw_dir)
     dir_util._path_created = {}
-    shutil.copytree(tmp, raw_dir)
-    shutil.rmtree(tmp)
+    dir_util.copy_tree(paths.get('baselines', 'temp', 'raw'), raw_dir)
     return True
 
 def add_to_mods_merge(gfx_dir=None):
@@ -275,8 +263,10 @@ def update_savegames():
                 count += 1
     return count
 
-def can_rebuild(log_file):
+def can_rebuild(log_file, strict=True):
     """Test if user can exactly rebuild a raw folder, returning a bool."""
+    if not os.path.isfile(log_file):
+        return not strict
     mods.clear_temp()
     mods_list = mods.read_installation_log(log_file)
     with open(log_file) as f:
