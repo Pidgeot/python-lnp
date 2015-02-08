@@ -91,13 +91,13 @@ def install_graphics(pack):
         # TwbT overrides
         try:
             os.remove(paths.get('init', 'overrides.txt'))
-        except FileNotFoundError:
+        except:
             pass
         try:
             shutil.copyfile(
                 paths.get('graphics', pack, 'data', 'init', 'overrides.txt'),
                 paths.get('init', 'overrides.txt'))
-        except FileNotFoundError:
+        except:
             pass
     except Exception:
         sys.excepthook(*sys.exc_info())
