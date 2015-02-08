@@ -262,12 +262,13 @@ class GraphicsTab(Tab):
                     message='Error simplifying graphics folder. '
                     'It may not have the required files.\n'+str(pack)+'\n'
                     'See the output log for error details.')
-            else:
+            elif result != 0:
                 messagebox.showinfo(
                     title='Success',
                     message='Deleted {0} unnecessary file(s) in: {1}'.format(
                         result, pack))
-        messagebox.showinfo(title='Success', message='Simplification complete!')
+        messagebox.showinfo(title='Success', message='All graphics  {}  '
+                            'are simplified!'.format(self.graphics.get()))
 
     def read_colors(self):
         """Reads list of color schemes."""

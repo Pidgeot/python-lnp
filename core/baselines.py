@@ -111,7 +111,7 @@ def remove_vanilla_raws_from_pack(pack, folder):
     Returns:
         The number of files removed
     """
-    i = 1
+    i = 0
     for folder, van_folder in (
             [paths.get(folder, pack, 'raw'), find_vanilla_raws()],
             [paths.get(folder, pack, 'data', 'speech'),
@@ -125,11 +125,17 @@ def remove_vanilla_raws_from_pack(pack, folder):
                     continue
                 van_f = os.path.join(van_folder, os.path.relpath(f, folder))
                 if os.path.isfile(van_f):
-                    with open(van_f) as v:
-                        with open(f) as m:
-                            if v.read() == m.read():
-                                os.remove(f)
-                                i += 1
+                    with open(van_f, mode='r', encoding='cp437',
+                              errors='replace') as v:
+                        with open(f, mode='r', encoding='cp437',
+                                  errors='replace') as m:
+                            try:
+                                if v.read() == m.read():
+                                    os.remove(f)
+                                    i += 1
+                            except UnicodeDecodeError:
+                                pass
+                    
     return i
 
 def remove_empty_dirs(pack, folder):

@@ -285,9 +285,14 @@ def can_rebuild(log_file, strict=True):
             f = os.path.relpath(os.path.join(root, k), save_raws)
             if not os.path.isfile(os.path.join(gen_raws, f)):
                 return False
-            with open(os.path.join(gen_raws, f)) as a:
-                with open(os.path.join(root, k)) as b:
-                    if a.read() != b.read():
+            with open(os.path.join(gen_raws, f), mode='r', encoding='cp437',
+                      errors='replace') as a:
+                with open(os.path.join(root, k), mode='r', encoding='cp437',
+                          errors='replace') as b:
+                    try:
+                        if a.read() != b.read():
+                            return False
+                    except UnicodeDecodeError:
                         return False
     return True
 
