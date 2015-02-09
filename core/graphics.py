@@ -275,30 +275,11 @@ def can_rebuild(log_file, strict=True):
     """Test if user can exactly rebuild a raw folder, returning a bool."""
     if not os.path.isfile(log_file):
         return not strict
-    mods.clear_temp()
-    mods_list = mods.read_installation_log(log_file)
-    add_to_mods_merge(logged_graphics(log_file))
-    for m in mods_list:
-        mods.merge_a_mod(m)
-    save_raws = os.path.dirname(log_file)
-    gen_raws = paths.get('baselines', 'raw')
-    for root, _, files in os.walk(save_raws):
-        for k in files:
-            if not k.endswith('.txt'):
-                continue
-            f = os.path.relpath(os.path.join(root, k), save_raws)
-            if not os.path.isfile(os.path.join(gen_raws, f)):
-                return False
-            with open(os.path.join(gen_raws, f), mode='r', encoding='cp437',
-                      errors='replace') as a:
-                with open(os.path.join(root, k), mode='r', encoding='cp437',
-                          errors='replace') as b:
-                    try:
-                        if a.read() != b.read():
-                            return False
-                    except UnicodeDecodeError:
-                        return False
-    return True
+    if (logged_graphics(log_file) in [k[0] for k in read_graphics()] and
+            all(m in mods.read_mods() for m in
+                mods.read_installation_log(log_file))):
+        return True
+    return False
 
 def open_tilesets():
     """Opens the tilesets folder."""

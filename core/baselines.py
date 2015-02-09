@@ -4,6 +4,7 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import os, glob, zipfile, fnmatch
+from io import open
 
 from . import paths, update
 from .lnp import lnp
@@ -135,7 +136,6 @@ def remove_vanilla_raws_from_pack(pack, folder):
                                     i += 1
                             except UnicodeDecodeError:
                                 pass
-                    
     return i
 
 def remove_empty_dirs(pack, folder):
