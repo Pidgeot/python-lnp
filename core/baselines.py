@@ -126,16 +126,18 @@ def remove_vanilla_raws_from_pack(pack, folder):
                     continue
                 van_f = os.path.join(van_folder, os.path.relpath(f, folder))
                 if os.path.isfile(van_f):
-                    with open(van_f, mode='r', encoding='cp437',
-                              errors='replace') as v:
+                    try:
+                        with open(van_f, mode='r', encoding='cp437',
+                                  errors='replace') as v:
+                            vtext = v.read()
                         with open(f, mode='r', encoding='cp437',
                                   errors='replace') as m:
-                            try:
-                                if v.read() == m.read():
-                                    os.remove(f)
-                                    i += 1
-                            except UnicodeDecodeError:
-                                pass
+                            mtext = m.read()
+                    except UnicodeDecodeError:
+                        continue
+                    if vtext == mtext:
+                        os.remove(f)
+                        i += 1
     return i
 
 def remove_empty_dirs(pack, folder):
