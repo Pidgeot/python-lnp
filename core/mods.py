@@ -236,17 +236,32 @@ def merge_a_mod(mod):
     return status
 
 def merge_folders(mod_folder, vanilla_folder, mixed_folder):
-    """Merge the specified folders, output going in LNP/Baselines/temp"""
-    status, exts = 0, ('.txt', '.init', '.lua', '.rb')
+    """Merge the specified folders, output going in 'LNP/Baselines/temp'
+    Text files are merged; other files (sprites etc) are copied over."""
+    status = 0
     for root, _, files in os.walk(mod_folder):
         for k in files:
             f = os.path.relpath(os.path.join(root, k), mod_folder)
-            if not any([f.endswith(a) for a in exts]):
-                continue
-            ret = do_merge_files(os.path.join(mod_folder, f),
-                                 os.path.join(vanilla_folder, f),
-                                 os.path.join(mixed_folder, f))
-            status = max(ret, status)
+            mod_f = os.path.join(mod_folder, f)
+            van_f = os.path.join(vanilla_folder, f)
+            gen_f = os.path.join(mixed_folder, f)
+            if any([f.endswith(a) for a in ('.txt', '.init', '.lua', '.rb')]):
+                # merge text and DFHack files 
+                ret = do_merge_files(mod_f, van_f, gen_f)
+                status = max(ret, status)
+            elif any([f.endswith(a) for a in ('.bmp', '.png')]):
+                # copy image files for graphics
+                if not os.path.isfile(gen_f):
+                    shutil.copyfile(mod_f, gen_f)
+                    status = max(1, status)
+                else:
+                    with open(mod_f, 'rb') as m:
+                        mb = m.read()
+                    with open(gen_f, 'rb') as g:
+                        gb = g.read()
+                    if not mb == gb:
+                        shutil.copyfile(mod_f, gen_f)
+                        status = max(2, status)
     return status
 
 def clear_temp():
