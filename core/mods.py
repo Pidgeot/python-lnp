@@ -86,24 +86,33 @@ def do_merge_seq(mod_text, vanilla_text, gen_text):
     Returns:
         tuple(status, lines); status is 0/'ok' or 2/'overlap merged'
     """
-    # pylint:disable=too-many-locals,too-many-branches
-    status = 0
-    # special cases - where merging is not required because two are equal
     if vanilla_text == gen_text:
         return 0, mod_text
     if vanilla_text == mod_text:
         return 0, gen_text
     if gen_text == mod_text:
         return 0, gen_text
+    if mod_text and gen_text and not vanilla_text:
+        return two_way_merge(gen_text, mod_text)
+    return three_way_merge(vanilla_text, gen_text, mod_text)
 
-    # Get a list of 5-tuples describing how to turn vanilla into mod or gen
-    # lines.  Each specifies an operation, and start+end lines for each change.
+def two_way_merge(gen_text, mod_text):
+    """Implements a two-way merge and returns a tuple of (status, result).
+    A simple if rare edge case, which requires quite different handling."""
+    mod_ops = SequenceMatcher(None, gen_text, mod_text).get_opcodes()
+    status, output_file_temp = 0, []
+    while mod_ops:
+        # TODO:  implement the two-way merge additions
+        return 2, mod_text
+    return status, output_file_temp
+
+def three_way_merge(vanilla_text, gen_text, mod_text):
+    """Implements a three-way merge and returns a tuple of (status, result)"""
+    # SequenceMatcher describes how to turn vanilla into mod or gen lines.
+    # cur_v holds the line we're up to, truncating overridden blocks
     van_mod_ops = SequenceMatcher(None, vanilla_text, mod_text).get_opcodes()
     van_gen_ops = SequenceMatcher(None, vanilla_text, gen_text).get_opcodes()
-
-    # cur_v holds the line we're up to, effectively truncates blocks which were
-    # partially covered in the previous iteration.
-    output_file_temp, cur_v = [], 0
+    status, output_file_temp, cur_v = 0, [], 0
 
     while van_mod_ops and van_gen_ops:
         # get names from the next set of opcodes
