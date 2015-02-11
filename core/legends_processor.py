@@ -74,6 +74,8 @@ def create_archive():
     pattern = paths.get('df', '-'.join(get_region_info()) + '-')
     l = [pattern + 'legends.xml', pattern + 'world_history.txt',
          choose_region_map(), pattern + 'world_sites_and_pops.txt']
+    if os.path.isfile(pattern + 'legends_plus.xml'):
+        l.append(pattern + 'legends_plus.xml')
     if all([os.path.isfile(f) for f in l]):
         with zipfile.ZipFile(pattern + 'legends_archive.zip',
                              'w', zipfile.ZIP_DEFLATED) as zipped:
