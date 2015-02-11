@@ -4,7 +4,7 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import os, shutil, glob
-from difflib import SequenceMatcher
+from difflib import ndiff, SequenceMatcher
 # pylint:disable=redefined-builtin
 from io import open
 
@@ -93,18 +93,8 @@ def do_merge_seq(mod_text, vanilla_text, gen_text):
     if gen_text == mod_text:
         return 0, gen_text
     if mod_text and gen_text and not vanilla_text:
-        return two_way_merge(gen_text, mod_text)
+        return 0, [s[2:] for s in ndiff(gen_text, mod_text)]
     return three_way_merge(vanilla_text, gen_text, mod_text)
-
-def two_way_merge(gen_text, mod_text):
-    """Implements a two-way merge and returns a tuple of (status, result).
-    A simple if rare edge case, which requires quite different handling."""
-    mod_ops = SequenceMatcher(None, gen_text, mod_text).get_opcodes()
-    status, output_file_temp = 0, []
-    while mod_ops:
-        # TODO:  implement the two-way merge additions
-        return 2, mod_text
-    return status, output_file_temp
 
 def three_way_merge(vanilla_text, gen_text, mod_text):
     """Implements a three-way merge and returns a tuple of (status, result)"""
