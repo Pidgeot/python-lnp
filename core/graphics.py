@@ -254,9 +254,10 @@ def add_to_mods_merge(gfx_dir=None):
     """Adds graphics to the mod merge in baselines/temp."""
     if not gfx_dir:
         gfx_dir = current_pack()
-    dir_util._path_created = {}
-    dir_util.copy_tree(paths.get('graphics', gfx_dir, 'raw'),
-                       paths.get('baselines', 'temp', 'raw'))
+    if os.path.isdir(paths.get('graphics', gfx_dir, 'raw'):
+        dir_util._path_created = {}
+        dir_util.copy_tree(paths.get('graphics', gfx_dir, 'raw'),
+                           paths.get('baselines', 'temp', 'raw'))
     with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
               'a') as log:
         log.write('graphics/' + gfx_dir + '\n')
