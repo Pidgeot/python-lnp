@@ -28,6 +28,7 @@ class ModsTab(Tab):
     def create_variables(self):
         self.installed = Variable()
         self.available = Variable()
+        self.status = 3
 
     def read_data(self):
         mods.clear_temp()
@@ -181,16 +182,16 @@ class ModsTab(Tab):
         # Set status to unknown before merging
         for i, _ in enumerate(self.installed_list.get(0, END)):
             self.installed_list.itemconfig(i, bg='white')
-        status = 3
-        colors = ['limegreen', 'yellow', 'orange', 'red']
+        status, self.status = 3, 0
+        colors = ['pale green', 'yellow', 'orange', 'red']
         for i, mod in enumerate(self.installed_list.get(0, END)):
             status = mods.merge_a_mod(mod)
+            self.status = max(self.status, status)
             self.installed_list.itemconfig(i, bg=colors[status])
             if status == 3:
                 return
 
-    @staticmethod
-    def install_mods():
+    def install_mods(self):
         """Replaces <df>/raw with the contents LNP/Baselines/temp/raw"""
         if messagebox.askokcancel(
                 message=('Your raws will be changed.\n\n'
@@ -199,11 +200,17 @@ class ModsTab(Tab):
                          'Changing mods or graphics later might break a save, '
                          'so keep backups of everything you care about!'),
                 title='Are you sure?'):
-            mods.install_mods()
-            messagebox.showinfo(
-                'Mods installed',
-                'The selected mods were installed.\nGenerate a new world to '
-                'start playing with them!')
+            if self.status < 2:
+                mods.install_mods()
+                messagebox.showinfo(
+                    'Mods installed',
+                    'The selected mods were installed.\nGenerate a new world '
+                    'to start playing with them!')
+            else:
+                messagebox.showinfo(
+                    'Mods not ready',
+                    'The selected mods have merge confilcts and should not be '
+                    'installed.\n\nResolve merge issues and try again.')
 
     @staticmethod
     def simplify_mods():
