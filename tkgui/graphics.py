@@ -7,9 +7,9 @@ from __future__ import print_function, unicode_literals, absolute_import
 from . import controls, binding
 from .layout import GridLayouter
 from .tab import Tab
-import sys, os
+import sys
 
-from core import colors, graphics, paths, download, baselines
+from core import colors, graphics, paths
 from core.lnp import lnp
 
 if sys.version_info[0] == 3:  # Alternate import names
@@ -236,14 +236,16 @@ class GraphicsTab(Tab):
     @staticmethod
     def update_savegames():
         """Updates saved games with new raws."""
-        count = graphics.update_savegames()
-        if count > 0:
-            messagebox.showinfo(
-                title='Update complete',
-                message="{0} savegames updated!".format(count))
-        else:
+        count, skipped = graphics.update_savegames()
+        if count + skipped == 0:
             messagebox.showinfo(
                 title='Update skipped', message="No savegames to update.")
+        else:
+            msg = "{} savegames updated!\n\n".format(count)
+            if skipped:
+                msg += "{} savegames were skipped (would have broken raws)"\
+                       .format(skipped)
+            messagebox.showinfo('Update complete', msg)
 
     def simplify_graphics(self):
         """Removes unnecessary files from graphics packs."""

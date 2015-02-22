@@ -243,7 +243,7 @@ def update_graphics_raws(raw_dir, pack=None):
     mods.clear_temp()
     add_to_mods_merge(pack)
     for m in mods_list:
-        if mods.merge_a_mod(m) > 2:
+        if mods.merge_a_mod(m) > 1:
             return False
     shutil.rmtree(raw_dir)
     dir_util._path_created = {}
@@ -254,7 +254,7 @@ def add_to_mods_merge(gfx_dir=None):
     """Adds graphics to the mod merge in baselines/temp."""
     if not gfx_dir:
         gfx_dir = current_pack()
-    if os.path.isdir(paths.get('graphics', gfx_dir, 'raw'):
+    if os.path.isdir(paths.get('graphics', gfx_dir, 'raw')):
         dir_util._path_created = {}
         dir_util.copy_tree(paths.get('graphics', gfx_dir, 'raw'),
                            paths.get('baselines', 'temp', 'raw'))
@@ -264,13 +264,15 @@ def add_to_mods_merge(gfx_dir=None):
 
 def update_savegames():
     """Update save games with current raws."""
-    count, saves = 0, savegames_to_update()
+    count, skipped, saves = 0, 0, savegames_to_update()
     for save_raws in [paths.get('saves', s, 'raw') for s in saves]:
         r = can_rebuild(os.path.join(save_raws, 'installed_raws.txt'))
         if r:
             if update_graphics_raws(save_raws):
                 count += 1
-    return count
+            else:
+                skipped +=1
+    return count, skipped
 
 def can_rebuild(log_file, strict=True):
     """Test if user can exactly rebuild a raw folder, returning a bool."""
