@@ -235,12 +235,12 @@ def merge_folders(mod_folder, vanilla_folder, mixed_folder):
             mod_f = os.path.join(mod_folder, f)
             van_f = os.path.join(vanilla_folder, f)
             gen_f = os.path.join(mixed_folder, f)
-            if any([f.endswith(a) for a in ('.txt', '.init', '.lua', '.rb')]):
-                # merge text and DFHack files 
+            if any([f.endswith(a) for a in ('.txt', '.init')]):
+                # merge raws and DFHack init files 
                 ret = do_merge_files(mod_f, van_f, gen_f)
                 status = max(ret, status)
-            elif any([f.endswith(a) for a in ('.bmp', '.png')]):
-                # copy image files for graphics
+            elif any([f.endswith(a) for a in ('.lua', '.rb', '.bmp', '.png')]):
+                # copy DFHack scripts or sprite sheets
                 if not os.path.isfile(gen_f):
                     shutil.copyfile(mod_f, gen_f)
                     status = max(1, status)
