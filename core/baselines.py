@@ -98,7 +98,11 @@ def simplify_pack(pack, folder):
         init_dir = paths.get(folder, pack, 'data', 'init')
         for f in os.listdir(init_dir):
             if not any(p in f for p in init_files):
-                os.remove(os.path.join(init_dir, f))
+                full_path = os.path.join(init_dir, f)
+                if os.path.isdir(full_path):
+                    os.rmdir(full_path)
+                else:
+                    os.remove(full_path)
     files_after = sum(len(f) for (_, _, f) in os.walk(paths.get(folder, pack)))
     return files_before - files_after
 
