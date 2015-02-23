@@ -20,7 +20,7 @@ from .advanced import AdvancedTab
 from .dfhack import DFHackTab
 from .mods import ModsTab
 
-from core.lnp import lnp
+from core.lnp import lnp, VERSION
 from core import df, launcher, paths, update, mods, download, baselines
 
 if sys.version_info[0] == 3:  # Alternate import names
@@ -469,8 +469,8 @@ class TkGui(object):
     def show_about():
         """Shows about dialog for the program."""
         messagebox.showinfo(
-            title='About', message="PyLNP - Lazy Newb Pack Python Edition\n\n"
-            "Port by Pidgeot\n\nOriginal program: LucasUP, TolyK/aTolyK")
+            title='About', message="PyLNP "+VERSION +"- Lazy Newb Pack Python Edition\n\n"
+            "Port by Pidgeot\nContributions by PeridexisErrant, rx80\n\nOriginal program: LucasUP, TolyK/aTolyK")
 
     @staticmethod
     def cycle_option(field):
