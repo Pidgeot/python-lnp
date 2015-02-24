@@ -667,7 +667,7 @@ class DFConfiguration(object):
 
         if option_name[0] == option_name.lower()[0]:
             # Internal name, let it pass by
-            return option_name in self.settings
+            return True
 
         option = _option_version_data[option_name]
         if len(option) == 2:
