@@ -349,8 +349,9 @@ class DFConfiguration(object):
         # init.txt
         boolvals = ("YES", "NO")
         init = (os.path.join(base_dir, 'data', 'init', 'init.txt'),)
-        if 'legacy' not in df_info.variations:
-            self.create_option("truetype", "TRUETYPE", "YES", _force_bool, init)
+        self.create_option(
+            "truetype", "TRUETYPE", "YES", _force_bool, init,
+            'legacy' not in df_info.variations)
         self.create_option("sound", "SOUND", "YES", boolvals, init)
         self.create_option("volume", "VOLUME", "255", None, init)
         self.create_option("introMovie", "INTRO", "YES", boolvals, init)
@@ -365,12 +366,12 @@ class DFConfiguration(object):
                 "IDLE"), init)
         self.create_option(
             "compressSaves", "COMPRESSED_SAVES", "YES", boolvals, init)
-        if 'legacy' not in df_info.variations:
-            printmodes = ["2D", "STANDARD"]
-            if 'twbt' in df_info.variations:
-                printmodes += ["TWBT", "TWBT_LEGACY"]
-            self.create_option(
-                "printmode", "PRINT_MODE", "2D", tuple(printmodes), init)
+        printmodes = ["2D", "STANDARD"]
+        if 'twbt' in df_info.variations:
+            printmodes += ["TWBT", "TWBT_LEGACY"]
+        self.create_option(
+            "printmode", "PRINT_MODE", "2D", tuple(printmodes), init,
+            'legacy' not in df_info.variations)
         # d_init.txt
         dinit = (os.path.join(base_dir, 'data', 'init', 'd_init.txt'),)
         if df_info.version <= '0.31.03':
@@ -420,10 +421,13 @@ class DFConfiguration(object):
         self.create_option("aquifers", "AQUIFER", "NO", _disabled, tuple(
             os.path.join(base_dir, 'raw', 'objects', a) for a in aquifer_files))
 
-    def create_option(self, name, field_name, default, values, files):
+    def create_option(
+            self, name, field_name, default, values, files, cond=True):
         """
         Register an option to write back for changes. If the field_name has
-        been registered before, no changes are made.
+        been registered before, no changes are made. Fields that do not exist in
+        the current DF version are simply registered with a field name mapping,
+        but they will not be expected in the init files.
 
         Params:
           name
@@ -447,6 +451,10 @@ class DFConfiguration(object):
           files
             A tuple of files this value is read from. Used for e.g. aquifer
             toggling, which requires editing multiple files.
+          cond
+            A boolean which must be True in order for the field to be valid.
+            If False, this will merely register the field name mapping.
+            Defaults to True.
         """
 
         # Don't allow re-registration of a known field
@@ -454,7 +462,7 @@ class DFConfiguration(object):
             return
         # Ignore registration if version doesn't have tag
         self.field_names[name] = field_name
-        if not self.version_has_option(field_name):
+        if not (cond and self.version_has_option(field_name)):
             return
         self.settings[name] = default
         self.options[name] = values

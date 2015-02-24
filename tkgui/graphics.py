@@ -138,17 +138,16 @@ class GraphicsTab(Tab):
 
         # Outside tab
         grid = GridLayouter(2)
-        if 'legacy' not in lnp.df_info.variations:
-            grid.add(controls.create_option_button(
-                advanced, 'Print Mode',
-                'Changes how Dwarf Fortress draws to the screen. "2D" allows '
-                'Truetype fonts, "standard" enables advanced graphics tools. '
-                'Certain modifications may use other values.',
-                'printmode'), 2)
-            grid.add(controls.create_option_button(
-                advanced, 'TrueType Fonts',
-                'Toggles whether to use TrueType fonts or tileset for text. '
-                'Only works with Print Mode set to 2D.', 'truetype'), 2)
+        grid.add(controls.create_option_button(
+            advanced, 'Print Mode',
+            'Changes how Dwarf Fortress draws to the screen. "2D" allows '
+            'Truetype fonts, "standard" enables advanced graphics tools. '
+            'Certain modifications may use other values.',
+            'printmode'), 2)
+        grid.add(controls.create_option_button(
+            advanced, 'TrueType Fonts',
+            'Toggles whether to use TrueType fonts or tileset for text. '
+            'Only works with Print Mode set to 2D.', 'truetype'), 2)
         grid.add(controls.create_trigger_button(
             advanced, 'Open Tilesets Folder',
             'Add your own tilesets here!', graphics.open_tilesets), 2)
