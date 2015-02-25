@@ -15,13 +15,6 @@ class _DisableValues(object):
 
 _disabled = _DisableValues()
 
-class _ForceBool(object):
-    """Marker class for DFConfiguration. Values other than YES or NO are
-    interpreted as YES."""
-    pass
-
-_force_bool = _ForceBool()
-
 class _NegatedBool(object):
     """Marker class for DFConfiguration. Swaps YES and NO."""
     pass
@@ -350,7 +343,7 @@ class DFConfiguration(object):
         boolvals = ("YES", "NO")
         init = (os.path.join(base_dir, 'data', 'init', 'init.txt'),)
         self.create_option(
-            "truetype", "TRUETYPE", "YES", _force_bool, init,
+            "truetype", "TRUETYPE", "YES", boolvals, init,
             'legacy' not in df_info.variations)
         self.create_option("sound", "SOUND", "YES", boolvals, init)
         self.create_option("volume", "VOLUME", "255", None, init)
@@ -519,7 +512,7 @@ class DFConfiguration(object):
         """
         if items is None:
             return current
-        if items is _disabled or items is _force_bool or items is _negated_bool:
+        if items is _disabled or items is _negated_bool:
             items = ("YES", "NO")
         if current not in items:
             return items[0]
@@ -563,15 +556,10 @@ class DFConfiguration(object):
                 match = re.search(r'\[{0}:(.+?)\]'.format(
                     self.field_names[field]), text)
                 if match:
-                    if (self.options[field] is _force_bool and
-                            match.group(1) != "NO"):
-                        #Interpret everything other than "NO" as "YES"
-                        self.settings[field] = "YES"
-                    else:
-                        value = match.group(1)
-                        if self.options[field] is _negated_bool:
-                            value = ["YES", "NO"][["NO", "YES"].index(value)]
-                        self.settings[field] = value
+                    value = match.group(1)
+                    if self.options[field] is _negated_bool:
+                        value = ["YES", "NO"][["NO", "YES"].index(value)]
+                    self.settings[field] = value
                 else:
                     self.missing_fields.append(self.field_names[field])
                     print(
