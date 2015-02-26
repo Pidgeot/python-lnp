@@ -480,11 +480,13 @@ folders are present, a selection dialog will be shown at the start of the
 program.
 
 The LNP folder and all subfolders are optional, but certain features will not
-work properly.
+work properly if they do not contain the relevant files. If missing, the LNP
+folder and any missing subfolders will be created automatically, to make it
+easier to create a new setup.
 
-On case-sensitive platforms (Linux, OS X), you must use either this exact
-case, or all-lowercase names for each pre-defined folder name (e.g. ``LNP``
-and ``lnp`` are both okay; ``Lnp`` is not.)
+On case-sensitive platforms and filesystems (Linux, OS X), you must use either
+this exact case, or all-lowercase names for each pre-defined folder name (e.g.
+``LNP`` and ``lnp`` are both okay; ``Lnp`` is not.)
 
 In all folders containing .txt files, any filename starting with ``README``
 (arbitrary case) is ignored.
