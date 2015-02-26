@@ -39,10 +39,10 @@ def set_df_folder(path):
 
     :param path: The path of the Dwarf Fortress instance to use.
     """
-    paths.register('df', lnp.BASEDIR, path)
-    paths.register('data', paths.get('df'), 'data')
-    paths.register('init', paths.get('data'), 'init')
-    paths.register('save', paths.get('data'), 'save')
+    paths.register('df', lnp.BASEDIR, path, allow_create=False)
+    paths.register('data', paths.get('df'), 'data', allow_create=False)
+    paths.register('init', paths.get('data'), 'init', allow_create=False)
+    paths.register('save', paths.get('data'), 'save', allow_create=False)
     paths.register('extras', paths.get('lnp'), 'Extras')
     paths.register('defaults', paths.get('lnp'), 'Defaults')
     lnp.df_info = DFInstall(paths.get('df'))

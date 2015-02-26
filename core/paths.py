@@ -9,15 +9,21 @@ from . import helpers
 __paths = {}
 
 
-def register(name, *path_elms):
+def register(name, *path_elms, **kwargs):
     """Registers a path constructed by <path_elms> under <name>.
     If multiple path elements are given, the last
-    element will undergo case correction (see helpers.identify_folder_name)."""
+    element will undergo case correction (see helpers.identify_folder_name).
+    kwargs:
+        allow_create
+            If True, the registered path will be created if it does not already
+            exist. Defaults to True."""
     if len(path_elms) > 1:
         __paths[name] = helpers.identify_folder_name(os.path.join(
             *path_elms[:-1]), path_elms[-1])
     else:
         __paths[name] = path_elms[0]
+    if kwargs.get('allow_create', True) and not os.path.exists(__paths[name]):
+        os.makedirs(__paths[name])
 
 
 def get(name, *paths):
