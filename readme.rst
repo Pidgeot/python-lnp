@@ -350,8 +350,9 @@ Each entry is a list containing 2 values: the caption for the menu item, and
 the destination to be opened when the menu item is activated. To insert a
 separator, use a dash as a caption (``-``).
 
-Folder paths are relative to the base directory. Use ``<df>`` as a
-placeholder for the actual Dwarf Fortress directory.
+Folder paths are relative to the base directory, meaning the directory
+containing the Dwarf Fortress directory. Use ``<df>`` as a placeholder for the
+actual Dwarf Fortress directory.
 
 Example::
 
