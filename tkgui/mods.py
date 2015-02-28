@@ -201,14 +201,15 @@ class ModsTab(Tab):
                          'so keep backups of everything you care about!'),
                 title='Are you sure?'):
             if self.status < 2:
-                mods.install_mods()
-                messagebox.showinfo(
-                    'Mods installed',
-                    'The selected mods were installed.\nGenerate a new world '
-                    'to start playing with them!')
+                if mods.install_mods():
+                    messagebox.showinfo('Mods installed',
+                        'The selected mods were installed.\nGenerate a new '
+                        'world to start playing with them!')
+                else:
+                    messagebox.showinfo('Mods not installed',
+                                        'No mods were merged to install.')
             else:
-                messagebox.showinfo(
-                    'Mods not ready',
+                messagebox.showinfo('Mods not ready',
                     'The selected mods have merge confilcts and should not be '
                     'installed.\n\nResolve merge issues and try again.')
 

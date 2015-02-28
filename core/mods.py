@@ -67,10 +67,17 @@ def make_blank_files(pack):
     return i
 
 def install_mods():
-    """Deletes installed raw folder, and copies over installed raws."""
-    shutil.rmtree(os.path.join(paths.get('df'), 'raw'))
-    shutil.copytree(os.path.join(paths.get('baselines'), 'temp', 'raw'),
-                    os.path.join(paths.get('df'), 'raw'))
+    """Deletes installed raw folder, and copies over merged raws."""
+    log = paths.get('baselines', 'temp', 'raw', 'installed_raws.txt')
+    if get_installed_mods_from_log(log):
+        shutil.rmtree(paths.get('df', 'raw'))
+        shutil.rmtree(paths.get('df', 'data', 'speech'))
+        shutil.copytree(paths.get('baselines', 'temp', 'raw'),
+                        paths.get('df', 'raw'))
+        shutil.copytree(paths.get('baselines', 'temp', 'data', 'speech'),
+                        paths.get('df', 'data', 'speech'))
+        return True
+    return False
 
 def do_merge_seq(mod_text, vanilla_text, gen_text):
     """Merges sequences of lines.
@@ -86,14 +93,19 @@ def do_merge_seq(mod_text, vanilla_text, gen_text):
     Returns:
         tuple(status, lines); status is 0/'ok' or 2/'overlap merged'
     """
-    if vanilla_text == gen_text:
+    if mod_text and vanilla_text == gen_text:
+        # This is the first time a vanilla file is modified
         return 0, mod_text
-    if vanilla_text == mod_text:
+    if gen_text and vanilla_text == mod_text:
+        # The mod being merged isn't in reduced raw format
         return 0, gen_text
-    if gen_text == mod_text:
+    if gen_text and gen_text == mod_text:
+        # A previous mod made exactly the same changes
         return 0, gen_text
     if mod_text and gen_text and not vanilla_text:
+        # No such vanilla file, so we need a two-way merge (additive only)
         return 0, [s[2:] for s in ndiff(gen_text, mod_text)]
+    # Finally go to the expensive but complete merge logic
     return three_way_merge(vanilla_text, gen_text, mod_text)
 
 def three_way_merge(vanilla_text, gen_text, mod_text):
@@ -174,6 +186,7 @@ def do_merge_files(mod_file_name, van_file_name, gen_file_name):
         2:  Non-fatal error, overlapping lines or non-existent mod etc
         3:  Fatal error, respond by rebuilding to previous mod
     """
+    #pylint:disable=bare-except
     try:
         van_lines = open(van_file_name, mode='r', encoding='cp437',
                          errors='replace').readlines()
@@ -189,14 +202,12 @@ def do_merge_files(mod_file_name, van_file_name, gen_file_name):
                          errors='replace').readlines()
     except:
         gen_lines = []
-
     status, gen_lines = do_merge_seq(mod_lines, van_lines, gen_lines)
-    gen_file = open(gen_file_name, "w", encoding='cp437')
-    for line in gen_lines:
-        try:
-            gen_file.write(line)
-        except UnicodeEncodeError:
-            return 3 # invalid character for DF encoding
+    try:
+        with open(gen_file_name, "w", encoding='cp437') as gen_file:
+            gen_file.writelines(gen_lines)
+    except:
+        return 3
     return status
 
 def merge_a_mod(mod):
@@ -236,7 +247,7 @@ def merge_folders(mod_folder, vanilla_folder, mixed_folder):
             van_f = os.path.join(vanilla_folder, f)
             gen_f = os.path.join(mixed_folder, f)
             if any([f.endswith(a) for a in ('.txt', '.init')]):
-                # merge raws and DFHack init files 
+                # merge raws and DFHack init files
                 ret = do_merge_files(mod_f, van_f, gen_f)
                 status = max(ret, status)
             elif any([f.endswith(a) for a in ('.lua', '.rb', '.bmp', '.png')]):
