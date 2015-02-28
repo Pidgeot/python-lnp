@@ -25,12 +25,14 @@ from core import df, launcher, paths, update, mods, download, baselines
 
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
+    import queue
     from tkinter import *
     from tkinter.ttk import *
     import tkinter.messagebox as messagebox
     import tkinter.simpledialog as simpledialog
 else:
     # pylint:disable=import-error
+    import Queue
     from Tkinter import *
     from ttk import *
     import tkMessageBox as messagebox
@@ -202,13 +204,17 @@ class TkGui(object):
 
         # Used for cross-thread signaling and communication during downloads
         self.update_pending = Semaphore(1)
+        self.queue = Queue.Queue()
         self.cross_thread_data = None
         self.reply_semaphore = Semaphore(0)
         self.download_text_string = ''
         root.bind('<<ConfirmDownloads>>', lambda e: self.confirm_downloading())
         root.bind('<<ForceUpdate>>', lambda e: self.update_download_text())
+        root.bind('<<ShowDLPanel>>', lambda e: self.download_panel.pack(
+            fill=X, expand=N, side=BOTTOM))
         root.bind(
             '<<HideDLPanel>>', lambda e: self.download_panel.pack_forget())
+        self.root.after(100, self.check_cross_thread)
 
     def on_resize(self, e):
         """Called when the window is resized."""
@@ -224,7 +230,7 @@ class TkGui(object):
 
     def on_update_available(self):
         """Called by the main LNP class if an update is available."""
-        self.root.event_generate('<<UpdateAvailable>>', when='tail')
+        self.queue.put('<<UpdateAvailable>>')
 
     def on_program_running(self, path, is_df):
         """Called by the main LNP class if a program is already running."""
@@ -469,8 +475,9 @@ class TkGui(object):
     def show_about():
         """Shows about dialog for the program."""
         messagebox.showinfo(
-            title='About', message="PyLNP "+VERSION +"- Lazy Newb Pack Python Edition\n\n"
-            "Port by Pidgeot\nContributions by PeridexisErrant, rx80\n\nOriginal program: LucasUP, TolyK/aTolyK")
+            title='About', message="PyLNP "+VERSION +" - Lazy Newb Pack Python "
+            "Edition\n\nPort by Pidgeot\nContributions by PeridexisErrant, "
+            "rx80, dricus\n\nOriginal program: LucasUP, TolyK/aTolyK")
 
     @staticmethod
     def cycle_option(field):
@@ -523,23 +530,23 @@ class TkGui(object):
         result = True
         if not lnp.userconfig.get_bool('downloadBaselines'):
             self.cross_thread_data = queue
-            self.root.event_generate('<<ConfirmDownloads>>', when='tail')
+            self.queue.put('<<ConfirmDownloads>>')
             self.reply_semaphore.acquire()
             result = self.cross_thread_data
         if result:
-            self.download_panel.pack(fill=X, expand=N, side=BOTTOM)
-            self.send_update_event()
+            self.queue.put('<<ShowDLPanel>>')
+            self.send_update_event(True)
         return result
 
     def send_update_event(self, force=False):
         """Schedules an update for the download text, if not already pending."""
         if self.update_pending.acquire(force):
-            self.root.event_generate('<<ForceUpdate>>', when='tail')
+            self.queue.put('<<ForceUpdate>>')
 
     def start_download(self, queue, url, target):
         """Event handler for the start of a download."""
         self.download_text_string = "Downloading %s..." % os.path.basename(url)
-        self.send_update_event(True)
+        self.send_update_event()
 
     def update_download_text(self):
         """Updates the text in the download information."""
@@ -557,7 +564,7 @@ class TkGui(object):
             self.download_text_string = (
                 "Downloading %s... (%s bytes downloaded)" % (
                     os.path.basename(url), progress))
-        self.send_update_event(True)
+        self.send_update_event(False)
 
     def end_download(self, queue, url, target, success):
         """Event handler for the end of a download."""
@@ -572,6 +579,17 @@ class TkGui(object):
         self.root.after(5000, lambda: self.root.event_generate(
             '<<HideDLPanel>>', when='tail'))
         self.send_update_event()
+
+    def check_cross_thread(self):
+        """Used to raise cross-thread events in the UI thread."""
+        while True:
+            # pylint:disable=bare-except
+            try:
+                v = self.queue.get(False)
+            except:
+                break
+            self.root.event_generate(v, when='tail')
+        self.root.after(100, self.check_cross_thread)
 
     @staticmethod
     def check_vanilla_raws():
@@ -590,8 +608,8 @@ class TkGui(object):
             if lnp.userconfig.get_bool('downloadBaselines'):
                 messagebox.showinfo(
                     message='A copy of Dwarf Fortress needs to be '
-                    'downloaded in order to use this. It will start when '
-                    'you close this dialog.\n\nPlease note: You '
+                    'downloaded in order to use this. The download is '
+                    'currently in progress.\n\nPlease note: You '
                     'will need to retry the action after the download '
                     'completes.', title='Download required')
             return False
