@@ -4,7 +4,6 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os, shutil, glob
-import distutils.dir_util as dir_util
 from .launcher import open_folder
 from .lnp import lnp
 from . import colors, df, paths, baselines, mods
@@ -250,18 +249,17 @@ def update_graphics_raws(raw_dir, pack=None):
             if mods.merge_a_mod(m) > 1:
                 return False
     shutil.rmtree(raw_dir)
-    dir_util._path_created = {}
-    dir_util.copy_tree(paths.get('baselines', 'temp', 'raw'), raw_dir)
+    shutil.copytree(paths.get('baselines', 'temp', 'raw'), raw_dir)
     return True
 
 def add_to_mods_merge(gfx_dir=None):
     """Adds graphics to the mod merge in baselines/temp."""
     if not gfx_dir:
         gfx_dir = current_pack()
-    if os.path.isdir(paths.get('graphics', gfx_dir, 'raw')):
-        dir_util._path_created = {}
-        dir_util.copy_tree(paths.get('graphics', gfx_dir, 'raw'),
-                           paths.get('baselines', 'temp', 'raw'))
+    for root, _, files in os.walk(paths.get('graphics', gfx_dir, 'raw')):
+        for f in files:
+            shutil.copyfile(os.path.join(root, f),
+                            paths.get('baselines', 'temp', 'raw', f))
     with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
               'a') as log:
         log.write('graphics/' + gfx_dir + '\n')
@@ -275,7 +273,7 @@ def update_savegames():
             if update_graphics_raws(save_raws):
                 count += 1
             else:
-                skipped +=1
+                skipped += 1
     return count, skipped
 
 def can_rebuild(log_file, strict=True):
