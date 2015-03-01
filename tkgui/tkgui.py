@@ -25,7 +25,7 @@ from core import df, launcher, paths, update, mods, download, baselines
 
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
-    import queue
+    import queue as Queue
     from tkinter import *
     from tkinter.ttk import *
     import tkinter.messagebox as messagebox
