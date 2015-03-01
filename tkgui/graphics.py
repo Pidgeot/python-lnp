@@ -211,6 +211,12 @@ class GraphicsTab(Tab):
                         'the graphics folder may be missing important files. '
                         'Graphics may not be installed correctly.\n'
                         'See the output log for error details.')
+                elif result == 0:
+                    messagebox.showerror(
+                        title='Not updatable', message='The graphics raws could'
+                        ' not be updated due to missing graphics files, or '
+                        'your installed mods are incompatible with this '
+                        'graphics pack.')
                 elif result:
                     if len(graphics.savegames_to_update()) != 0:
                         if messagebox.askyesno(

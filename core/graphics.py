@@ -70,7 +70,7 @@ def install_graphics(pack):
     try:
         # Update raws
         if not update_graphics_raws(paths.get('df', 'raw'), pack):
-            return False
+            return 0
         # Copy art
         shutil.rmtree(paths.get('data', 'art'))
         shutil.copytree(paths.get('graphics', pack, 'data', 'art'),
@@ -220,7 +220,7 @@ def savegames_to_update():
     return [o for o in glob.glob(paths.get('save', '*'))
             if os.path.isdir(o) and not o.endswith('current')]
 
-def update_graphics_raws(raw_dir, pack=None):
+def update_graphics_raws(raw_dir, pack):
     """Updates raws in place for a new graphics pack.
 
     Params:
@@ -233,20 +233,21 @@ def update_graphics_raws(raw_dir, pack=None):
         True if successful
         False if aborted
     """
-    if pack is None:
-        pack = current_pack()
-    if not pack in [k[0] for k in read_graphics()]:
-        return False
+    if not validate_pack(pack):
+        return None
     mods_list = mods.read_installation_log(
         os.path.join(raw_dir, 'installed_raws.txt'))
     built_log = paths.get('baselines', 'temp', 'raw', 'installed_raws.txt')
     built_mods = mods.read_installation_log(built_log)
-    build_graphics = logged_graphics(built_log)
-    if mods_list != built_mods or build_graphics != pack:
+    built_graphics = logged_graphics(built_log)
+    if mods_list != built_mods or built_graphics != pack:
         mods.clear_temp()
         add_to_mods_merge(pack)
         for m in mods_list:
-            if mods.merge_a_mod(m) > 1:
+            status = mods.merge_a_mod(m)
+            if status > 1:
+                if status == 3:
+                    mods.clear_temp()
                 return False
     shutil.rmtree(raw_dir)
     shutil.copytree(paths.get('baselines', 'temp', 'raw'), raw_dir)
@@ -270,7 +271,7 @@ def update_savegames():
     for save_raws in [paths.get('saves', s, 'raw') for s in saves]:
         r = can_rebuild(os.path.join(save_raws, 'installed_raws.txt'))
         if r:
-            if update_graphics_raws(save_raws):
+            if update_graphics_raws(save_raws, current_pack()):
                 count += 1
             else:
                 skipped += 1
