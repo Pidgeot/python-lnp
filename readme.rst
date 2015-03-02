@@ -249,11 +249,11 @@ These instructions are tested with Python 2.7, but should work with 3.x as
 well. You may be able to substitute "easy_install" with "pip install".
 
 Note:
-  The resulting executable must be placed in the same directory as the LNP.py
-  script is currently placed (it should be next to your Dwarf Fortress
-  folder, and the LNP data folder). This is because it relies on a specific
-  directory structure in order to find the Dwarf Fortress folder, as well as
-  utilities, graphics packs, etc.
+  The resulting executable must be placed somewhere such that the program can
+  find the folder containing Dwarf Fortress by navigating up the folder tree.
+  For example, if Dwarf Fortress is located in /Games/Dwarf Fortress, the PyLNP
+  executable may be located in /Games, /Games/PyLNP, /Games/Utilities/Launcher,
+  etc.
 
 Windows
 -------
@@ -333,8 +333,9 @@ section details how.
 PyLNP.json
 ==========
 For basic pack customization, a JSON file named PyLNP.json is used. This file
-must be stored in either the base folder, or in the LNP folder (see below).
-If both exist, the one in the LNP folder will be used.
+must be stored in either the base folder (the folder containing the Dwarf
+Fortress folder itself), or in the LNP folder (see below). If both exist, the
+one in the LNP folder will be used.
 
 This file configures several aspects of the launcher. All parts are optional
 in the sense that the launcher will work even if nothing is there.
