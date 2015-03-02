@@ -5,7 +5,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys
 
 import os
-from . import errorlog
+from . import errorlog, log
 
 from .json_config import JSONConfiguration
 
@@ -24,6 +24,8 @@ class PyLNP(object):
         # pylint:disable=global-statement
         global lnp
         lnp = self
+        self.args = self.parse_commandline()
+
         self.BASEDIR = '.'
         self.bundle = ''
         if hasattr(sys, 'frozen'):
@@ -106,6 +108,30 @@ class PyLNP(object):
         self.ui = TkGui()
         update.check_update()
         self.ui.start()
+
+    def parse_commandline(self):
+        """Parses and acts on command line options."""
+        args = self.get_commandline_args()
+        if args.debug:
+            log.set_level(log.DEBUG)
+        log.d(args)
+        return args
+
+    @staticmethod
+    def get_commandline_args():
+        """Responsible for the actual parsing of command line options."""
+        import argparse
+        parser = argparse.ArgumentParser(
+            description="PyLNP " +VERSION)
+        parser.add_argument(
+            '-d', '--debug', action='store_true',
+            help='turn on extra debugging output')
+        parser.add_argument(
+            'df_folder', nargs='?',
+            help='Dwarf Fortress folder to use (if it exists)')
+        parser.add_argument(
+            '--version', action='version', version="PyLNP "+VERSION)
+        return parser.parse_known_args()[0]
 
     def save_config(self):
         """Saves LNP configuration."""

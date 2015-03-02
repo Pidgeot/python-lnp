@@ -30,8 +30,8 @@ def find_df_folder():
     find_df_folders()
     if len(lnp.folders) == 1:
         set_df_folder(lnp.folders[0])
-    if len(sys.argv) > 1 and sys.argv[1] in lnp.folders:
-        set_df_folder(sys.argv[1])
+    if lnp.args.df_folder and lnp.args.df_folder in lnp.folders:
+        set_df_folder(lnp.args.df_folder)
 
 def set_df_folder(path):
     """
