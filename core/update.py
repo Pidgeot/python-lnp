@@ -34,6 +34,7 @@ def check_update():
 
 def perform_update_check():
     """Performs the actual update check. Runs in a thread."""
+    # pylint:disable=bare-except
     try:
         req = Request(
             lnp.config.get_string('updates/checkURL'),

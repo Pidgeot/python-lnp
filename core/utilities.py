@@ -7,6 +7,7 @@ import sys
 import os
 import re
 import fnmatch
+# pylint:disable=redefined-builtin
 from io import open
 
 from . import paths

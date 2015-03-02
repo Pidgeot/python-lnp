@@ -15,6 +15,7 @@ else:
     from Tkinter import TOP, BOTH, Y
     from ttk import Frame
 
+#pylint: disable=too-many-public-methods
 class Tab(Frame):
     """Base class for notebook tabs for the TKinter GUI."""
     def __init__(self, parent):

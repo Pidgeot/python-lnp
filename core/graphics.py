@@ -49,6 +49,7 @@ def read_graphics():
         if not validate_pack(p):
             continue
         init_path = paths.get('graphics', p, 'data', 'init', 'init.txt')
+        #pylint: disable=unbalanced-tuple-unpacking
         font, graphics = DFRaw(init_path).get_values('FONT', 'GRAPHICS_FONT')
         result.append((p, font, graphics))
     return tuple(result)
@@ -93,6 +94,7 @@ def install_graphics(pack):
                                         ' Current graphics pack.txt')):
                 os.remove(paths.get('colors', ' Current graphics pack.txt'))
         # TwbT overrides
+        #pylint: disable=bare-except
         try:
             os.remove(paths.get('init', 'overrides.txt'))
         except:
@@ -103,7 +105,7 @@ def install_graphics(pack):
                 paths.get('init', 'overrides.txt'))
         except:
             pass
-    except Exception:
+    except:
         sys.excepthook(*sys.exc_info())
         df.load_params()
         return False

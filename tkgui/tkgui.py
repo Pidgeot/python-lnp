@@ -190,7 +190,7 @@ class TkGui(object):
         root.geometry('{}x{}'.format(
             lnp.userconfig.get_number('tkgui_width'),
             lnp.userconfig.get_number('tkgui_height')))
-        root.bind("<Configure>", self.on_resize)
+        root.bind("<Configure>", lambda e: self.on_resize())
 
         queue = download.get_queue('baselines')
         queue.register_start_queue(self.start_download_queue)
@@ -216,7 +216,7 @@ class TkGui(object):
             '<<HideDLPanel>>', lambda e: self.download_panel.pack_forget())
         self.root.after(100, self.check_cross_thread)
 
-    def on_resize(self, e):
+    def on_resize(self):
         """Called when the window is resized."""
         lnp.userconfig['tkgui_width'] = self.root.winfo_width()
         lnp.userconfig['tkgui_height'] = self.root.winfo_height()
@@ -543,6 +543,7 @@ class TkGui(object):
         if self.update_pending.acquire(force):
             self.queue.put('<<ForceUpdate>>')
 
+    #pylint: disable=unused-argument
     def start_download(self, queue, url, target):
         """Event handler for the start of a download."""
         self.download_text_string = "Downloading %s..." % os.path.basename(url)

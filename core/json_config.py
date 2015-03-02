@@ -24,13 +24,14 @@ class JSONConfiguration(object):
                 Default value to use in case loading fails.
         """
         self.filename = filename
-        self.data = {}
+        self.data = default if default else {}
         if not os.path.isfile(filename):
             print(
                 "File " + filename + " does not exist",
                 file=sys.stderr)
             return
         try:
+            #pylint: disable=bare-except
             self.data = json.load(open(filename), **enc_dict)
         except:
             print(

@@ -41,7 +41,7 @@ def get_colors(colorscheme=None):
                 f = paths.get('init', 'colors.txt')
         color_fields = [(c+'_R', c+'_G', c+'_B') for c in _df_colors]
         result = DFRaw(f).get_values(*color_fields)
-        return [tuple(map(int, t)) for t in result]
+        return [(int(x) for x in t) for t in result]
     except:
         return []
 

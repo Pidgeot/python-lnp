@@ -33,6 +33,7 @@ def get_region_info():
 
 def compress_bitmaps():
     """Compresses all bitmap maps."""
+    #pylint: disable=import-error, no-name-in-module
     try:
         from PIL import Image
     except ImportError:
@@ -116,13 +117,13 @@ def move_files():
                 os.remove(m[0])
             else:
                 os.renames(m[0], t)
-    for file in glob.glob(paths.get('df', region + '-*')):
-        if os.path.isfile(file):
-            target = os.path.join(dirname, os.path.basename(file))
+    for f in glob.glob(paths.get('df', region + '-*')):
+        if os.path.isfile(f):
+            target = os.path.join(dirname, os.path.basename(f))
             if os.path.isfile(target):
-                os.remove(file)
+                os.remove(f)
             else:
-                os.renames(file, target)
+                os.renames(f, target)
     for f in glob.glob(paths.get('df', '*_color_key.txt')):
         os.remove(f)
 

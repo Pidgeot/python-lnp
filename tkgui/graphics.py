@@ -25,6 +25,7 @@ else:
     import tkMessageBox as messagebox
     import tkSimpleDialog as simpledialog
 
+#pylint: disable=too-many-public-methods
 class GraphicsTab(Tab):
     """Graphics tab for the TKinter GUI."""
     def create_variables(self):

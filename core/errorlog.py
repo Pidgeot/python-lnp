@@ -3,6 +3,7 @@
 """Framework for logging errors."""
 from __future__ import print_function, unicode_literals, absolute_import
 import sys
+# pylint:disable=redefined-builtin
 from io import open
 
 from . import paths

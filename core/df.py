@@ -8,6 +8,7 @@ from datetime import datetime
 from distutils import dir_util
 from glob import glob
 from functools import total_ordering
+# pylint:disable=redefined-builtin
 from io import open
 
 from .settings import DFConfiguration

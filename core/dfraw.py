@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Code used for modifying DF RAW files"""
+"""Modification of Dwarf Fortress raw files."""
 from __future__ import print_function, unicode_literals, absolute_import
 import io
 import re
 import sys
 
 if sys.version_info[0] == 3:
+    #pylint: disable=redefined-builtin
     basestring = str
 
 class DFRaw(object):
+    """Representation of a Dwarf Fortress raw file of reading and writing."""
     _option_disable = ("[{0}]", "!{0}!")
     _option_enable = tuple(reversed(_option_disable))
 

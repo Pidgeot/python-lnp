@@ -6,7 +6,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 from . import controls
 from .tab import Tab
-import sys, os
+import sys
 
 from core import launcher, paths, utilities
 from core.lnp import lnp
@@ -20,6 +20,7 @@ else:
     from Tkinter import *
     from ttk import *
 
+#pylint: disable=too-many-public-methods
 class UtilitiesTab(Tab):
     """Utilities tab for the TKinter GUI."""
     def create_variables(self):

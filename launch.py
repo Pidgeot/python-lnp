@@ -4,6 +4,7 @@
 from __future__ import absolute_import
 import sys, os
 sys.path.insert(0, os.path.dirname(__file__))
+#pylint: disable=redefined-builtin
 __package__ = ""
 
 from core import lnp

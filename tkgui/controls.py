@@ -29,6 +29,7 @@ if sys.platform != 'darwin':  # OS X looks better without patch
 
 # Make Enter on button with focus activate it
 TtkButton = Button
+#pylint: disable=too-many-public-methods
 class Button(TtkButton):  # pylint:disable=function-redefined,missing-docstring
     def __init__(self, master=None, **kw):
         TtkButton.__init__(self, master, **kw)
@@ -43,7 +44,6 @@ class _ToolTip(object):
         self.tipwindow = None
         self.id = None
         self.event = None
-        self.x = self.y = 0
         self.text = text
         self.active = False
 
@@ -97,8 +97,10 @@ _TOOLTIP_DELAY = 500
 
 __ui = None
 
+# pylint:disable=too-few-public-methods
 class _FakeControl(object):
     """Fake control returned if an option doesn't exist."""
+    # pylint:disable=unused-argument
     @staticmethod
     def grid(*args, **kwargs):
         """Prevents breaking for code that tries to layout the control."""
@@ -212,6 +214,7 @@ def create_trigger_button(parent, text, tooltip, command):
     create_tooltip(b, tooltip)
     return b
 
+#pylint: disable=too-many-arguments
 def create_trigger_option_button(
         parent, text, tooltip, command, option, update_func=None):
     """
@@ -315,6 +318,7 @@ def create_readonly_file_list_buttons(
     buttons.grid(column=2, row=0, sticky="n")
     return (lf, lb, buttons)
 
+#pylint: disable=too-many-arguments
 def create_file_list_buttons(
         parent, title, listvar, load_fn, refresh_fn, save_fn,
         delete_fn, **args):

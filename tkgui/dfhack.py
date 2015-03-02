@@ -19,6 +19,7 @@ else:
     from Tkinter import *
     from ttk import *
 
+#pylint: disable=too-many-public-methods
 class DFHackTab(Tab):
     """DFHack tab for the TKinter GUI."""
     def create_variables(self):
