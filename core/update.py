@@ -117,22 +117,25 @@ def extract_archive(fname, target):
 def simple_dffd_config():
     """Reduces the configuration required by maintainers using DFFD.
     Values are generated and saved from known URLs and the 'dffdID' field."""
-    updates = lnp.config.get_dict('updates')
+    c = lnp.config
+    u = lnp.config.get_dict('updates')
     download_patt = 'http://dffd.bay12games.com/file.php?id='
     check_patt = 'http://dffd.bay12games.com/file_version.php?id='
-    direct = ('http://dffd.bay12games.com/download.php?id=', '&f=new_pack.zip')
-    if (not updates['dffdID'] and
-            updates['downloadURL'].startswith(download_patt)):
-        updates['dffdID'] = updates['downloadURL'].replace(download_patt, '')
-    if not updates['dffdID'] and updates['checkURL'].startswith(check_patt):
-        updates['dffdID'] = updates['checkURL'].replace(check_patt, '')
-    if updates['dffdID'] and not updates['checkURL']:
-        updates['checkURL'] = check_patt + updates['dffdID']
-    if updates['dffdID'] and not updates['versionRegex']:
-        updates['versionRegex'] = 'Version: (.+)'
-    if updates['dffdID'] and not updates['downloadURL']:
-        updates['downloadURL'] = download_patt + updates['dffdID']
-    if updates['dffdID'] and not updates['directURL']:
-        updates['directURL'] = direct[0] + updates['dffdID'] + direct[1]
-    if updates != lnp.config.get_dict('updates'):
+    direct = 'http://dffd.bay12games.com/download.php?id={0}&f=new_pack.zip'
+    if (not c['updates/dffdID'] and
+            c.get_string('updates/downloadURL').startswith(download_patt)):
+        u['dffdID'] = c['updates/downloadURL'].replace(download_patt, '')
+    if (not c['updates/dffdID'] and
+            c.get_string('updates/checkURL').startswith(check_patt)):
+        u['dffdID'] = c['updates/checkURL'].replace(check_patt, '')
+    if c['updates/dffdID'] and not c['updates/checkURL']:
+        u['checkURL'] = check_patt + c['updates/dffdID']
+    if c['updates/dffdID'] and not c['updates/versionRegex']:
+        u['versionRegex'] = 'Version: (.+)'
+    if c['updates/dffdID'] and not c['updates/downloadURL']:
+        u['downloadURL'] = download_patt + c['updates/dffdID']
+    if c['updates/dffdID'] and not c['updates/directURL']:
+        u['directURL'] = direct.format(c['updates/dffdID'])
+    if u != lnp.config.get_dict('updates'):
+        lnp.config['updates'] = u
         lnp.config.save_data()
