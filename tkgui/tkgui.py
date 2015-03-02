@@ -257,7 +257,7 @@ class TkGui(object):
                 selector = SelectDF(self.root, lnp.folders)
                 if selector.result == '':
                     messagebox.showerror(
-                        self.root.title(),
+                        'PyLNP',
                         'No Dwarf Fortress install was selected, quitting.')
                     self.root.destroy()
                     return False
@@ -270,7 +270,7 @@ class TkGui(object):
                         return False
             else:
                 messagebox.showerror(
-                    self.root.title(),
+                    'PyLNP',
                     "Could not find Dwarf Fortress, quitting.")
                 self.root.destroy()
                 return False
