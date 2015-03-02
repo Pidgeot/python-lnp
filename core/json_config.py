@@ -3,7 +3,7 @@
 """Proxy to abstract access to JSON configuration and gracefully handle missing
 keys."""
 from __future__ import print_function, unicode_literals, absolute_import
-import sys, os, json
+import sys, os, json, copy
 
 if sys.version_info[0] == 3:  # Alternate import names
     enc_dict = {}
@@ -59,7 +59,7 @@ class JSONConfiguration(object):
             result = self.data
             for p in path:
                 result = result[p]
-            return result
+            return copy.deepcopy(result)
         except KeyError:
             return default
 
@@ -137,4 +137,4 @@ class JSONConfiguration(object):
 
     def __setitem__(self, key, value):
         """Accessor for writing into the configuration with indexing."""
-        self.data[key] = value
+        self.data[key] = copy.deepcopy(value)
