@@ -119,7 +119,8 @@ def simple_dffd_config():
     """Reduces the configuration required by maintainers using DFFD.
     Values are generated and saved from known URLs and the 'dffdID' field."""
     c = lnp.config
-    u = lnp.config.get_dict('updates')
+    import copy
+    u = copy.deepcopy(lnp.config.get_dict('updates'))
     download_patt = 'http://dffd.bay12games.com/file.php?id='
     check_patt = 'http://dffd.bay12games.com/file_version.php?id='
     direct = 'http://dffd.bay12games.com/download.php?id={0}&f=new_pack.zip'

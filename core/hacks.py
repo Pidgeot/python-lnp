@@ -81,6 +81,7 @@ def toggle_hack(name):
             The name of the hack to toggle.
     """
     get_hack(name)['enabled'] = not get_hack(name)['enabled']
+    lnp.config.save_data()
     rebuild_hacks()
 
 def rebuild_hacks():
