@@ -41,7 +41,7 @@ def get_colors(colorscheme=None):
                 f = paths.get('init', 'colors.txt')
         color_fields = [(c+'_R', c+'_G', c+'_B') for c in _df_colors]
         result = DFRaw(f).get_values(*color_fields)
-        return [(int(x) for x in t) for t in result]
+        return [tuple(int(x) for x in t) for t in result]
     except:
         return []
 
@@ -115,7 +115,9 @@ def get_installed_file():
     """Returns the name of the currently installed color scheme."""
     files = helpers.get_text_files(paths.get('colors'))
     current_scheme = get_colors()
+    print(current_scheme)
     for scheme in files:
+        print(scheme, get_colors(scheme))
         if get_colors(scheme) == current_scheme:
             return os.path.splitext(os.path.basename(scheme))[0]
     return None
