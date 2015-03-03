@@ -115,9 +115,7 @@ def get_installed_file():
     """Returns the name of the currently installed color scheme."""
     files = helpers.get_text_files(paths.get('colors'))
     current_scheme = get_colors()
-    print(current_scheme)
     for scheme in files:
-        print(scheme, get_colors(scheme))
         if get_colors(scheme) == current_scheme:
             return os.path.splitext(os.path.basename(scheme))[0]
     return None
