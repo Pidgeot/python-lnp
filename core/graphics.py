@@ -76,8 +76,13 @@ def install_graphics(pack):
         shutil.rmtree(paths.get('data', 'art'))
         shutil.copytree(paths.get('graphics', pack, 'data', 'art'),
                         paths.get('data', 'art'))
-        for tiles in glob.glob(paths.get('tilesets', '*')):
-            shutil.copy(tiles, paths.get('data', 'art'))
+        for item in glob.glob(paths.get('tilesets', '*')):
+            if not os.path.exists(paths.get('data', 'art',
+                                            os.path.basename(item))):
+                if os.path.isfile(item):
+                    shutil.copy2(item, paths.get('data', 'art'))
+                else:
+                    shutil.copytree(item, paths.get('data', 'art'))
         # Handle init files
         patch_inits(paths.get('graphics', pack))
         # Install colorscheme
