@@ -81,7 +81,7 @@ def direct_download_pack():
     url = lnp.config.get_string('updates/directURL')
     fname = os.path.basename(url).split('=')[-1]
     target = os.path.join(lnp.BASEDIR, fname)
-    download.download(lnp.BASEDIR, url, target,
+    download.download('updates', url, target,
                       end_callback=extract_new_pack)
 
 def extract_new_pack(_, fname, bool_val):

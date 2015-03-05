@@ -180,11 +180,16 @@ class TkGui(object):
             main_buttons, 'Defaults', 'Reset everything to default settings',
             self.restore_defaults).grid(column=2, row=0, sticky="nsew")
 
-        self.create_menu(root)
+        self.menubar = self.create_menu(root)
 
         self.save_size = None
         root.update()
-        root.minsize(width=root.winfo_width(), height=root.winfo_height())
+        height = root.winfo_height()
+        if windowing == "x11":
+            # On Linux, the menu bar height isn't being calculated correctly
+            # for minsize
+            height += self.menubar.winfo_reqheight()
+        root.minsize(width=root.winfo_width(), height=height)
         self.download_panel.pack_forget()
         root.update()
         root.geometry('{}x{}'.format(
@@ -279,13 +284,13 @@ class TkGui(object):
 
     def create_menu(self, root):
         """
-        Creates the menu bar.
+        Creates and returns the menu bar.
 
         Params:
             root
                 Root window for the menu bar.
         """
-        menubar = Menu(root)
+        menubar = Menu(root, type='menubar')
         root['menu'] = menubar
 
         menu_file = Menu(menubar)
@@ -360,6 +365,7 @@ class TkGui(object):
         root.bind_all('<F1>', lambda e: self.show_help())
         root.bind_all('<Alt-F1>', lambda e: self.show_about())
         root.createcommand('tkAboutDialog', self.show_about)
+        return menubar
 
     @staticmethod
     def configure_terminal():
@@ -519,7 +525,7 @@ class TkGui(object):
         else:
             message = (
                 'PyLNP needs to download data to process this action. '
-                'Is this OK?\n\nPlease note: You will need to retry the action '
+                'Is this OK?\n\nPlease note: You may need to retry the action '
                 'after the download completes.')
         self.cross_thread_data = messagebox.askyesno(
             message=message, title='Download data?', icon='question')
@@ -528,11 +534,14 @@ class TkGui(object):
     def start_download_queue(self, queue):
         """Event handler for starting a download queue."""
         result = True
-        if not lnp.userconfig.get_bool('downloadBaselines'):
-            self.cross_thread_data = queue
-            self.queue.put('<<ConfirmDownloads>>')
-            self.reply_semaphore.acquire()
-            result = self.cross_thread_data
+        if queue == 'baselines':
+            if not lnp.userconfig.get_bool('downloadBaselines'):
+                self.cross_thread_data = queue
+                self.queue.put('<<ConfirmDownloads>>')
+                self.reply_semaphore.acquire()
+                result = self.cross_thread_data
+        elif queue == 'updates':
+            result = True
         if result:
             self.queue.put('<<ShowDLPanel>>')
             self.send_update_event(True)

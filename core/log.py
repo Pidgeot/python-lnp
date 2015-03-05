@@ -7,7 +7,7 @@ import sys, traceback
 
 _log = None
 
-# Error levels
+# Logging levels
 VERBOSE = 0
 DEBUG = 1
 INFO = 2
