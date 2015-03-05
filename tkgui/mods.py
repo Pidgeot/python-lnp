@@ -196,6 +196,7 @@ class ModsTab(Tab):
             self.installed_list.itemconfig(i, bg='white')
         if self.merge_graphics:
             self.installed_list.insert(0, current_graphics)
+            graphics.add_to_mods_merge()
             self.installed_list.itemconfig(0, bg='pale green')
             n = 1
         status, self.status = 3, 0

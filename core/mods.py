@@ -317,7 +317,6 @@ def make_mod_from_installed_raws(name):
             return False
         shutil.copytree(paths.get('baselines', 'temp'), paths.get('mods', name))
         return True
-        
 
 def get_installed_mods_from_log():
     """Return best mod load order to recreate installed with available."""
