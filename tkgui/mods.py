@@ -30,6 +30,7 @@ class ModsTab(Tab):
         self.installed = Variable()
         self.available = Variable()
         self.status = 3
+        self.merge_graphics = False
 
     def read_data(self):
         mods.clear_temp()
@@ -76,19 +77,27 @@ class ModsTab(Tab):
 
         f = controls.create_control_group(self, None, True)
         controls.create_trigger_button(
-            f, 'Simplify Mods', 'Removes unnecessary  and vanilla files.',
+            f, 'Install Mods', 'Copy merged mods to DF folder.',
+            self.install_mods).grid(row=0, column=0, sticky="nsew")
+        controls.create_trigger_button(
+            f, 'Premerge Graphics',
+            'Whether to start with the current graphics pack, or '
+            'vanilla (ASCII) raws', self.toggle_preload).grid(
+                row=0, column=1, sticky="nsew")
+        controls.create_trigger_button(
+            f, 'Simplify Mods', 'Removes unnecessary files.',
             self.simplify_mods).grid(
-                row=0, column=0, sticky="nsew")
+                row=1, column=0, sticky="nsew")
         controls.create_trigger_button(
-            f, 'Install Mods', 'Copy merged mods to DF folder.  '
-            'WARNING: do not combine with graphics.  May cause problems.',
-            self.install_mods).grid(row=0, column=1, sticky="nsew")
-        controls.create_trigger_button(
-            f, 'Create Mod from Installed', 'Creates a mod from unique changes '
+            f, 'Extract Installed', 'Creates a mod from unique changes '
             'to your installed raws.  Use to preserve custom tweaks.',
             self.create_from_installed).grid(
-                row=1, column=0, sticky="nsew", columnspan=2)
+                row=1, column=1, sticky="nsew")
         f.grid(row=3, column=0, sticky="ew")
+
+    def toggle_preload(self):
+        """Toggles whether to preload graphics before merging mods."""
+        self.merge_graphics = not self.merge_graphics
 
     def move_up(self):
         """Moves the selected item/s up in the merge order and re-merges."""
@@ -164,13 +173,11 @@ class ModsTab(Tab):
         for i in self.installed_list.curselection()[::-1]:
             self.available_list.insert(END, self.installed_list.get(i))
             self.installed_list.delete(i)
-
         #Re-sort items
         temp_list = sorted(list(self.available_list.get(0, END)))
         self.available_list.delete(0, END)
         for item in temp_list:
             self.available_list.insert(END, item)
-
         self.perform_merge()
 
     def perform_merge(self):
@@ -179,16 +186,22 @@ class ModsTab(Tab):
         if not TkGui.check_vanilla_raws():
             return
         mods.clear_temp()
-        graphics.add_to_mods_merge()
-        # Set status to unknown before merging
+        n, current_graphics = 0, graphics.current_pack()
+        for i, m in enumerate(self.installed_list.get(0, END)):
+            if m == current_graphics:
+                self.installed_list.delete(i)
         for i, _ in enumerate(self.installed_list.get(0, END)):
             self.installed_list.itemconfig(i, bg='white')
+        if self.merge_graphics:
+            self.installed_list.insert(0, current_graphics)
+            self.installed_list.itemconfig(0, bg='pale green')
+            n = 1
         status, self.status = 3, 0
         colors = ['pale green', 'yellow', 'orange', 'red']
-        for i, mod in enumerate(self.installed_list.get(0, END)):
+        for i, mod in enumerate(self.installed_list.get(n, END)):
             status = mods.merge_a_mod(mod)
             self.status = max(self.status, status)
-            self.installed_list.itemconfig(i, bg=colors[status])
+            self.installed_list.itemconfig(i+n, bg=colors[status])
             if status == 3:
                 return
 
