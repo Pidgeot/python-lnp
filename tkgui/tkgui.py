@@ -180,11 +180,16 @@ class TkGui(object):
             main_buttons, 'Defaults', 'Reset everything to default settings',
             self.restore_defaults).grid(column=2, row=0, sticky="nsew")
 
-        self.create_menu(root)
+        self.menubar = self.create_menu(root)
 
         self.save_size = None
         root.update()
-        root.minsize(width=root.winfo_width(), height=root.winfo_height())
+        height = root.winfo_height()
+        if windowing == "x11":
+            # On Linux, the menu bar height isn't being calculated correctly
+            # for minsize
+            height += self.menubar.winfo_reqheight()
+        root.minsize(width=root.winfo_width(), height=height)
         self.download_panel.pack_forget()
         root.update()
         root.geometry('{}x{}'.format(
@@ -279,13 +284,13 @@ class TkGui(object):
 
     def create_menu(self, root):
         """
-        Creates the menu bar.
+        Creates and returns the menu bar.
 
         Params:
             root
                 Root window for the menu bar.
         """
-        menubar = Menu(root)
+        menubar = Menu(root, type='menubar')
         root['menu'] = menubar
 
         menu_file = Menu(menubar)
@@ -360,6 +365,7 @@ class TkGui(object):
         root.bind_all('<F1>', lambda e: self.show_help())
         root.bind_all('<Alt-F1>', lambda e: self.show_about())
         root.createcommand('tkAboutDialog', self.show_about)
+        return menubar
 
     @staticmethod
     def configure_terminal():
