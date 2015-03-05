@@ -145,16 +145,18 @@ class ModsTab(Tab):
 
     def create_from_installed(self):
         """Extracts a mod from the currently installed raws."""
-        m = simpledialog.askstring("Create Mod", "New mod name:")
-        if m is not None and m != '':
-            if mods.make_mod_from_installed_raws(m):
-                messagebox.showinfo('Mod extracted',
-                                    'Your custom mod was extracted as ' + m)
-            else:
-                messagebox.showinfo(
-                    'Error', ('There is already a mod with that name, '
-                              'or only pre-existing mods were found.'))
-            self.read_data()
+        if mods.make_mod_from_installed_raws('') is not None:
+            name = simpledialog.askstring("Create Mod", "New mod name:")
+            if name:
+                if mods.make_mod_from_installed_raws(name):
+                    messagebox.showinfo('Mod extracted',
+                                        'Your mod was extracted as ' + name)
+                else:
+                    messagebox.showinfo(
+                        'Error', 'There is already a mod with that name.')
+                self.read_data()
+        else:
+            messagebox.showinfo('Error', 'No unique mods were found.')
 
     def add_to_installed(self):
         """Move selected mod/s from available to merged list and re-merge."""

@@ -290,8 +290,6 @@ def make_mod_from_installed_raws(name):
         * If `installed_raws.txt` is not present, compare to vanilla
         * Otherwise, rebuild as much as possible then compare to installed
     """
-    if os.path.isdir(paths.get('mods', name)):
-        return False
     if get_installed_mods_from_log():
         clear_temp()
         for mod in get_installed_mods_from_log():
@@ -302,7 +300,6 @@ def make_mod_from_installed_raws(name):
         reconstruction = baselines.find_vanilla()
         if not reconstruction:
             return None
-
     clear_temp()
     merge_folders(os.path.join(reconstruction, 'raw'),
                   paths.get('df', 'raw'),
@@ -310,18 +307,17 @@ def make_mod_from_installed_raws(name):
     merge_folders(os.path.join(reconstruction, 'data', 'speech'),
                   paths.get('df', 'data', 'speech'),
                   paths.get('baselines', 'temp', 'data', 'speech'))
-
     baselines.simplify_pack('temp', 'baselines')
     baselines.remove_vanilla_raws_from_pack('temp', 'baselines')
     baselines.remove_empty_dirs('temp', 'baselines')
-
     if os.path.isdir(paths.get('baselines', 'temp2')):
         shutil.rmtree(paths.get('baselines', 'temp2'))
-
-    if os.path.isdir(paths.get('baselines', 'temp')):
+    if name and os.path.isdir(paths.get('baselines', 'temp')):
+        if os.path.isdir(paths.get('mods', name)):
+            return False
         shutil.copytree(paths.get('baselines', 'temp'), paths.get('mods', name))
         return True
-    return False
+        
 
 def get_installed_mods_from_log():
     """Return best mod load order to recreate installed with available."""
