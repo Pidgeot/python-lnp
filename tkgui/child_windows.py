@@ -15,10 +15,12 @@ if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
     from tkinter.ttk import *
+    import tkinter.messagebox as messagebox
 else:
     # pylint:disable=import-error
     from Tkinter import *
     from ttk import *
+    import tkMessageBox as messagebox
 
 class ChildWindow(object):
     """Base class for child windows."""
@@ -248,6 +250,10 @@ class UpdateWindow(ChildWindow):
     def download(self):
         """Called when the download button is clicked."""
         update.direct_download_pack()
+        messagebox.showinfo(
+            message='The updated pack is being downloaded. Once complete, the '
+            'new pack will be extracted automatically.',
+            title='Download in progress')
         self.close()
 
     def close(self):

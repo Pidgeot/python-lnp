@@ -519,7 +519,7 @@ class TkGui(object):
         else:
             message = (
                 'PyLNP needs to download data to process this action. '
-                'Is this OK?\n\nPlease note: You will need to retry the action '
+                'Is this OK?\n\nPlease note: You may need to retry the action '
                 'after the download completes.')
         self.cross_thread_data = messagebox.askyesno(
             message=message, title='Download data?', icon='question')
@@ -528,11 +528,14 @@ class TkGui(object):
     def start_download_queue(self, queue):
         """Event handler for starting a download queue."""
         result = True
-        if not lnp.userconfig.get_bool('downloadBaselines'):
-            self.cross_thread_data = queue
-            self.queue.put('<<ConfirmDownloads>>')
-            self.reply_semaphore.acquire()
-            result = self.cross_thread_data
+        if queue == 'baselines':
+            if not lnp.userconfig.get_bool('downloadBaselines'):
+                self.cross_thread_data = queue
+                self.queue.put('<<ConfirmDownloads>>')
+                self.reply_semaphore.acquire()
+                result = self.cross_thread_data
+        elif queue == 'updates':
+            result = True
         if result:
             self.queue.put('<<ShowDLPanel>>')
             self.send_update_event(True)
