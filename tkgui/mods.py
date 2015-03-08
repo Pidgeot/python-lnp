@@ -187,26 +187,19 @@ class ModsTab(Tab):
         from .tkgui import TkGui
         if not TkGui.check_vanilla_raws():
             return
-        mods.clear_temp()
-        n, current_graphics = 0, graphics.current_pack()
+        colors = ['pale green', 'yellow', 'orange', 'red', 'white']
         for i, m in enumerate(self.installed_list.get(0, END)):
-            if m == current_graphics:
+            if m in [g[0] for g in graphics.read_graphics()]:
                 self.installed_list.delete(i)
-        for i, _ in enumerate(self.installed_list.get(0, END)):
-            self.installed_list.itemconfig(i, bg='white')
+        g_pack = ''
         if self.merge_graphics:
-            self.installed_list.insert(0, current_graphics)
-            graphics.add_to_mods_merge()
-            self.installed_list.itemconfig(0, bg='pale green')
-            n = 1
-        status, self.status = 3, 0
-        colors = ['pale green', 'yellow', 'orange', 'red']
-        for i, mod in enumerate(self.installed_list.get(n, END)):
-            status = mods.merge_a_mod(mod)
-            self.status = max(self.status, status)
-            self.installed_list.itemconfig(i+n, bg=colors[status])
-            if status == 3:
-                return
+            g_pack = graphics.current_pack()
+        result = mods.merge_all_mods(g_pack, self.installed_list.get(0, END))
+        if self.merge_graphics:
+            self.installed_list.insert(0, g_pack)
+        for i, status in enumerate(result):
+            self.installed_list.itemconfig(i, bg=colors[status])
+        self.status = max(result + [0])
 
     def install_mods(self):
         """Replaces <df>/raw with the contents LNP/Baselines/temp/raw"""

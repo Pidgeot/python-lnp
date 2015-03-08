@@ -41,7 +41,7 @@ def logged_graphics(logfile):
     return ''
 
 def read_graphics():
-    """Returns a list of graphics directories."""
+    """Returns a list of tuples of (graphics dir, FONT, GRAPHICS_FONT)."""
     packs = [os.path.basename(o) for o in
              glob.glob(paths.get('graphics', '*')) if os.path.isdir(o)]
     result = []

@@ -78,6 +78,31 @@ def install_mods():
         return True
     return False
 
+def merge_all_mods(graphics, mods):
+    """Merges the specified list of mods, optionally starting with graphics.
+
+    Arguments:
+        graphics
+            the name of the graphics pack to merge, or ""
+        mods
+            a list of the names of mods to merge
+
+    Returns:
+        A list of status ints for each item merged.
+    """
+    ret_list = []
+    clear_temp()
+    if graphics:
+        add_graphics(graphics)
+        ret_list.append(0)
+    for i, mod in enumerate(mods):
+        status = merge_a_mod(mod)
+        ret_list.append(status)
+        if status == 3:
+            merged = merge_all_mods(graphics, mods[:i-1])
+            return merged + [-1 for m in mods[i:]]
+    return ret_list
+
 def do_merge_seq(mod_text, vanilla_text, gen_text):
     """Merges sequences of lines.
 
