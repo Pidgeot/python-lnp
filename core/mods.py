@@ -283,6 +283,50 @@ def clear_temp():
         log.write('# List of raws merged by PyLNP:\nbaselines/' +
                   os.path.basename(baselines.find_vanilla()) + '\n')
 
+def update_raw_dir(path, graphics=('', '')):
+    """Updates a raw dir in place with specified graphics and raws.
+    Returns:
+        True if completed, or False if aborted.
+    Arguments:
+        path
+            the full path to the dir to update
+        graphics
+            Tuple of graphics pack to update to,
+            and pack installed in baselines/temp/
+    """
+    mods_list = read_installation_log(os.path.join(path, 'installed_raws.txt'))
+    built_log = paths.get('baselines', 'temp', 'raw', 'installed_raws.txt')
+    built_mods = read_installation_log(built_log)
+    if mods_list != built_mods or graphics[0] != graphics[1]:
+        clear_temp()
+        add_graphics(graphics[0])
+        for m in mods_list:
+            status = merge_a_mod(m)
+            if status > 1:
+                if status == 3:
+                    clear_temp()
+                return False
+    shutil.rmtree(path)
+    shutil.copytree(paths.get('baselines', 'temp', 'raw'), path)
+    return True
+
+def add_graphics(graphics):
+    """Adds graphics to the mod merge in baselines/temp."""
+    for root, _, files in os.walk(paths.get('graphics', graphics, 'raw')):
+        for f in files:
+            shutil.copyfile(os.path.join(root, f),
+                            paths.get('baselines', 'temp', 'raw', f))
+    with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
+              'a') as log:
+        log.write('graphics/' + graphics + '\n')
+
+def can_rebuild(log_file, strict=True):
+    """Test if user can exactly rebuild a raw folder, returning a bool."""
+    if not os.path.isfile(log_file):
+        return not strict
+    mod_list = read_installation_log(log_file)
+    return all([m in read_mods() for m in mod_list])
+
 def make_mod_from_installed_raws(name):
     """Capture whatever unavailable mods a user currently has installed
     as a mod called $name.
