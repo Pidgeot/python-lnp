@@ -39,7 +39,8 @@ else:
     import tkSimpleDialog as simpledialog
 
 # Workaround to use Pillow in PyInstaller
-import pkg_resources  # pylint:disable=unused-import
+if False:
+    import pkg_resources
 
 try:  # PIL-compatible library (e.g. Pillow); used to load PNG images (optional)
     # pylint:disable=import-error,no-name-in-module
