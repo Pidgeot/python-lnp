@@ -78,29 +78,25 @@ def install_mods():
         return True
     return False
 
-def merge_all_mods(graphics, mods):
+def merge_all_mods(list_of_mods):
     """Merges the specified list of mods, optionally starting with graphics.
 
-    Arguments:
+    Params:
         graphics
             the name of the graphics pack to merge, or ""
         mods
             a list of the names of mods to merge
 
     Returns:
-        A list of status ints for each item merged.
+        A list of status ints for each item merged, with -1 for unmerged items.
     """
     ret_list = []
-    clear_temp()
-    if graphics:
-        add_graphics(graphics)
-        ret_list.append(0)
-    for i, mod in enumerate(mods):
+    for i, mod in enumerate(list_of_mods):
         status = merge_a_mod(mod)
         ret_list.append(status)
         if status == 3:
-            merged = merge_all_mods(graphics, mods[:i-1])
-            return merged + [-1 for m in mods[i:]]
+            merged = merge_all_mods(list_of_mods[:i-1])
+            return merged + [-1 for m in list_of_mods[i:]]
     return ret_list
 
 def do_merge_seq(mod_text, vanilla_text, gen_text):
@@ -134,6 +130,7 @@ def do_merge_seq(mod_text, vanilla_text, gen_text):
 
 def three_way_merge(vanilla_text, gen_text, mod_text):
     """Implements a three-way merge and returns a tuple of (status, result)"""
+    #pylint:disable=too-many-locals,too-many-branches
     # SequenceMatcher describes how to turn vanilla into mod or gen lines.
     # cur_v holds the line we're up to, truncating overridden blocks
     van_mod_ops = SequenceMatcher(None, vanilla_text, mod_text).get_opcodes()
@@ -272,8 +269,7 @@ def merge_folders(mod_folder, vanilla_folder, mixed_folder):
             gen_f = os.path.join(mixed_folder, f)
             if any([f.endswith(a) for a in ('.txt', '.init')]):
                 # merge raws and DFHack init files
-                ret = do_merge_files(mod_f, van_f, gen_f)
-                status = max(ret, status)
+                status = max(status, do_merge_files(mod_f, van_f, gen_f))
             elif any([f.endswith(a) for a in ('.lua', '.rb', '.bmp', '.png')]):
                 # copy DFHack scripts or sprite sheets
                 if not os.path.isdir(os.path.dirname(gen_f)):
@@ -282,10 +278,10 @@ def merge_folders(mod_folder, vanilla_folder, mixed_folder):
                     shutil.copyfile(mod_f, gen_f)
                     status = max(1, status)
                 else:
-                    with open(mod_f, 'rb') as m:
-                        mb = m.read()
-                    with open(gen_f, 'rb') as g:
-                        gb = g.read()
+                    with open(mod_f, 'rb') as f:
+                        mb = f.read()
+                    with open(gen_f, 'rb') as f:
+                        gb = f.read()
                     if not mb == gb:
                         shutil.copyfile(mod_f, gen_f)
                         status = max(2, status)
@@ -325,12 +321,8 @@ def update_raw_dir(path, graphics=('', '')):
     if mods_list != built_mods or graphics[0] != graphics[1]:
         clear_temp()
         add_graphics(graphics[0])
-        for m in mods_list:
-            status = merge_a_mod(m)
-            if status > 1:
-                if status == 3:
-                    clear_temp()
-                return False
+        if -1 in merge_all_mods(mods_list):
+            return False
     shutil.rmtree(path)
     shutil.copytree(paths.get('baselines', 'temp', 'raw'), path)
     return True

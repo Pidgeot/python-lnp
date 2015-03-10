@@ -188,15 +188,10 @@ class ModsTab(Tab):
         if not TkGui.check_vanilla_raws():
             return
         colors = ['pale green', 'yellow', 'orange', 'red', 'white']
-        for i, m in enumerate(self.installed_list.get(0, END)):
-            if m in [g[0] for g in graphics.read_graphics()]:
-                self.installed_list.delete(i)
-        g_pack = ''
+        mods.clear_temp()
         if self.merge_graphics:
-            g_pack = graphics.current_pack()
-        result = mods.merge_all_mods(g_pack, self.installed_list.get(0, END))
-        if self.merge_graphics:
-            self.installed_list.insert(0, g_pack)
+            mods.add_graphics(graphics.current_pack())
+        result = mods.merge_all_mods(self.installed_list.get(0, END))
         for i, status in enumerate(result):
             self.installed_list.itemconfig(i, bg=colors[status])
         self.status = max(result + [0])
