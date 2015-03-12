@@ -41,6 +41,11 @@ def set_df_folder(path):
     :param path: The path of the Dwarf Fortress instance to use.
     """
     paths.register('df', lnp.BASEDIR, path, allow_create=False)
+    if lnp.args.raw_lint:
+        from . import rawlint
+        p, f = rawlint.check_df(paths.get('df'))
+        print("%d files passed, %d files failed check" % (len(p), len(f)))
+        sys.exit(0 if len(f) == 0 else 1)
     paths.register('data', paths.get('df'), 'data', allow_create=False)
     paths.register('init', paths.get('data'), 'init', allow_create=False)
     paths.register('save', paths.get('data'), 'save', allow_create=False)

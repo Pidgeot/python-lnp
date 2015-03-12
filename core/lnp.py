@@ -127,6 +127,9 @@ class PyLNP(object):
             '-d', '--debug', action='store_true',
             help='turn on extra debugging output')
         parser.add_argument(
+            '--raw-lint', action='store_true',
+            help='Verify contents of raw files and exit')
+        parser.add_argument(
             'df_folder', nargs='?',
             help='Dwarf Fortress folder to use (if it exists)')
         parser.add_argument(
