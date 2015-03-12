@@ -9,6 +9,17 @@ from difflib import ndiff, SequenceMatcher
 from io import open
 
 from . import paths, baselines
+from .lnp import lnp
+
+def toggle_premerge_gfx():
+    """Sets the option for pre-merging of graphics."""
+    lnp.userconfig['premerge_graphics'] = not lnp.userconfig.get_bool(
+        'premerge_graphics')
+    lnp.userconfig.save_data()
+
+def will_premerge_gfx():
+    """Returns whether or not graphics will be merged prior to any mods."""
+    return lnp.userconfig.get_bool('premerge_graphics')
 
 def read_mods():
     """Returns a list of mod packs"""
@@ -78,25 +89,37 @@ def install_mods():
         return True
     return False
 
-def merge_all_mods(list_of_mods):
-    """Merges the specified list of mods, optionally starting with graphics.
+def merge_all_mods(list_of_mods, gfx=None):
+    """Merges the specified list of mods, starting with graphics if set to
+    pre-merge (or if a pack is specified explicitly).
 
     Params:
-        graphics
-            the name of the graphics pack to merge, or ""
-        mods
+        list_of_mods
             a list of the names of mods to merge
+        gfx
+            a graphics pack to be merged in
 
     Returns:
-        A list of status ints for each item merged, with -1 for unmerged items.
+        A list of status ints for each mod given:
+            -1: Unmerged
+            0:  Merge was successful, all well
+            1:  Potential compatibility issues, no merge problems
+            2:  Non-fatal error, overlapping lines or non-existent mod etc
+            3:  Fatal error, not returned (rebuilds to previous, rest unmerged)
     """
+    from . import graphics
+    clear_temp()
+    if gfx:
+        add_graphics(gfx)
+    elif will_premerge_gfx():
+        add_graphics(graphics.current_pack())
     ret_list = []
     for i, mod in enumerate(list_of_mods):
         status = merge_a_mod(mod)
         ret_list.append(status)
         if status == 3:
-            merged = merge_all_mods(list_of_mods[:i-1])
-            return merged + [-1 for m in list_of_mods[i:]]
+            merged = merge_all_mods(list_of_mods[:i-1], gfx)
+            return merged + [-1]*len(list_of_mods[i:])
     return ret_list
 
 def do_merge_seq(mod_text, vanilla_text, gen_text):
@@ -279,8 +302,10 @@ def merge_folders(mod_folder, vanilla_folder, mixed_folder):
                     status = max(1, status)
                 else:
                     with open(mod_f, 'rb') as f:
+                        #pylint:disable=maybe-no-member
                         mb = f.read()
                     with open(gen_f, 'rb') as f:
+                        #pylint:disable=maybe-no-member
                         gb = f.read()
                     if not mb == gb:
                         shutil.copyfile(mod_f, gen_f)
@@ -304,38 +329,36 @@ def clear_temp():
         log.write('# List of raws merged by PyLNP:\nbaselines/' +
                   os.path.basename(baselines.find_vanilla()) + '\n')
 
-def update_raw_dir(path, graphics=('', '')):
+def update_raw_dir(path, gfx=('', '')):
     """Updates a raw dir in place with specified graphics and raws.
     Returns:
         True if completed, or False if aborted.
     Arguments:
         path
             the full path to the dir to update
-        graphics
+        gfx
             Tuple of graphics pack to update to,
             and pack installed in baselines/temp/
     """
     mods_list = read_installation_log(os.path.join(path, 'installed_raws.txt'))
     built_log = paths.get('baselines', 'temp', 'raw', 'installed_raws.txt')
     built_mods = read_installation_log(built_log)
-    if mods_list != built_mods or graphics[0] != graphics[1]:
-        clear_temp()
-        add_graphics(graphics[0])
-        if -1 in merge_all_mods(mods_list):
+    if mods_list != built_mods or gfx[0] != gfx[1]:
+        if -1 in merge_all_mods(mods_list, gfx[0]):
             return False
     shutil.rmtree(path)
     shutil.copytree(paths.get('baselines', 'temp', 'raw'), path)
     return True
 
-def add_graphics(graphics):
+def add_graphics(gfx):
     """Adds graphics to the mod merge in baselines/temp."""
-    for root, _, files in os.walk(paths.get('graphics', graphics, 'raw')):
+    for root, _, files in os.walk(paths.get('graphics', gfx, 'raw')):
         for f in files:
             shutil.copyfile(os.path.join(root, f),
                             paths.get('baselines', 'temp', 'raw', f))
     with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
               'a') as log:
-        log.write('graphics/' + graphics + '\n')
+        log.write('graphics/' + gfx + '\n')
 
 def can_rebuild(log_file, strict=True):
     """Test if user can exactly rebuild a raw folder, returning a bool."""

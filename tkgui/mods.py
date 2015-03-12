@@ -7,8 +7,9 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys
 
 from . import controls
+from .layout import GridLayouter
 from .tab import Tab
-from core import mods, graphics
+from core import mods
 
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
@@ -30,7 +31,6 @@ class ModsTab(Tab):
         self.installed = Variable()
         self.available = Variable()
         self.status = 3
-        self.merge_graphics = False
 
     def read_data(self):
         mods.clear_temp()
@@ -41,13 +41,16 @@ class ModsTab(Tab):
         self.installed.set(tuple(installed))
 
     def create_controls(self):
-        Grid.columnconfigure(self, 0, weight=1)
+        Grid.columnconfigure(self, 0, weight=1, uniform="mods")
+        Grid.columnconfigure(self, 1, weight=1, uniform="mods")
         Grid.rowconfigure(self, 0, weight=1)
         Grid.rowconfigure(self, 2, weight=1)
+        main_grid = GridLayouter(2)
 
         f = controls.create_control_group(self, 'Merged')
         install_frame, self.installed_list = controls.create_file_list(
             f, None, self.installed, selectmode='multiple')
+
         self.installed_list.bind(
             "<Double-1>", lambda e: self.remove_from_installed())
         reorder_frame = controls.create_control_group(install_frame, None)
@@ -57,47 +60,40 @@ class ModsTab(Tab):
             reorder_frame, '↓', 'Move down', self.move_down).pack()
         reorder_frame.grid(row=0, column=2, sticky="nse")
 
-        f.grid(row=0, column=0, sticky="nsew")
+        main_grid.add(f, 2)
 
-        f = controls.create_control_group(self, None, True)
-        controls.create_trigger_button(
-            f, '⇑', 'Add', self.add_to_installed).grid(
-                row=0, column=0, sticky="nsew")
-        controls.create_trigger_button(
-            f, '⇓', 'Remove', self.remove_from_installed).grid(
-                row=0, column=1, sticky="nsew")
-        f.grid(row=1, column=0, sticky="ew")
+        main_grid.add(controls.create_trigger_button(
+            self, '⇑', 'Add', self.add_to_installed))
+        main_grid.add(controls.create_trigger_button(
+            self, '⇓', 'Remove', self.remove_from_installed))
 
         f = controls.create_control_group(self, 'Available')
         _, self.available_list = controls.create_file_list(
             f, None, self.available, selectmode='multiple')
         self.available_list.bind(
             "<Double-1>", lambda e: self.add_to_installed())
-        f.grid(row=2, column=0, sticky="nsew")
+        main_grid.add(f, 2)
 
-        f = controls.create_control_group(self, None, True)
-        controls.create_trigger_button(
-            f, 'Install Mods', 'Copy merged mods to DF folder.',
-            self.install_mods).grid(row=0, column=0, sticky="nsew")
-        controls.create_trigger_button(
-            f, 'Premerge Graphics',
+        main_grid.add(controls.create_trigger_button(
+            self, 'Install Mods', 'Copy merged mods to DF folder.',
+            self.install_mods))
+        main_grid.add(controls.create_trigger_option_button(
+            self, 'Premerge Graphics',
             'Whether to start with the current graphics pack, or '
-            'vanilla (ASCII) raws', self.toggle_preload).grid(
-                row=0, column=1, sticky="nsew")
-        controls.create_trigger_button(
-            f, 'Simplify Mods', 'Removes unnecessary files.',
-            self.simplify_mods).grid(
-                row=1, column=0, sticky="nsew")
-        controls.create_trigger_button(
-            f, 'Extract Installed', 'Creates a mod from unique changes '
+            'vanilla (ASCII) raws', self.toggle_preload, 'premerge_graphics',
+            lambda v: ('NO', 'YES')[mods.will_premerge_gfx()]))
+        main_grid.add(controls.create_trigger_button(
+            self, 'Simplify Mods', 'Removes unnecessary files.',
+            self.simplify_mods))
+        main_grid.add(controls.create_trigger_button(
+            self, 'Extract Installed', 'Creates a mod from unique changes '
             'to your installed raws.  Use to preserve custom tweaks.',
-            self.create_from_installed).grid(
-                row=1, column=1, sticky="nsew")
-        f.grid(row=3, column=0, sticky="ew")
+            self.create_from_installed))
 
-    def toggle_preload(self):
+    @staticmethod
+    def toggle_preload():
         """Toggles whether to preload graphics before merging mods."""
-        self.merge_graphics = not self.merge_graphics
+        mods.toggle_premerge_gfx()
 
     def move_up(self):
         """Moves the selected item/s up in the merge order and re-merges."""
@@ -188,9 +184,6 @@ class ModsTab(Tab):
         if not TkGui.check_vanilla_raws():
             return
         colors = ['pale green', 'yellow', 'orange', 'red', 'white']
-        mods.clear_temp()
-        if self.merge_graphics:
-            mods.add_graphics(graphics.current_pack())
         result = mods.merge_all_mods(self.installed_list.get(0, END))
         for i, status in enumerate(result):
             self.installed_list.itemconfig(i, bg=colors[status])
