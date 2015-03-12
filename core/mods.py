@@ -78,6 +78,27 @@ def install_mods():
         return True
     return False
 
+def merge_all_mods(list_of_mods):
+    """Merges the specified list of mods, optionally starting with graphics.
+
+    Params:
+        graphics
+            the name of the graphics pack to merge, or ""
+        mods
+            a list of the names of mods to merge
+
+    Returns:
+        A list of status ints for each item merged, with -1 for unmerged items.
+    """
+    ret_list = []
+    for i, mod in enumerate(list_of_mods):
+        status = merge_a_mod(mod)
+        ret_list.append(status)
+        if status == 3:
+            merged = merge_all_mods(list_of_mods[:i-1])
+            return merged + [-1 for m in list_of_mods[i:]]
+    return ret_list
+
 def do_merge_seq(mod_text, vanilla_text, gen_text):
     """Merges sequences of lines.
 
@@ -109,6 +130,7 @@ def do_merge_seq(mod_text, vanilla_text, gen_text):
 
 def three_way_merge(vanilla_text, gen_text, mod_text):
     """Implements a three-way merge and returns a tuple of (status, result)"""
+    #pylint:disable=too-many-locals,too-many-branches
     # SequenceMatcher describes how to turn vanilla into mod or gen lines.
     # cur_v holds the line we're up to, truncating overridden blocks
     van_mod_ops = SequenceMatcher(None, vanilla_text, mod_text).get_opcodes()
@@ -247,8 +269,7 @@ def merge_folders(mod_folder, vanilla_folder, mixed_folder):
             gen_f = os.path.join(mixed_folder, f)
             if any([f.endswith(a) for a in ('.txt', '.init')]):
                 # merge raws and DFHack init files
-                ret = do_merge_files(mod_f, van_f, gen_f)
-                status = max(ret, status)
+                status = max(status, do_merge_files(mod_f, van_f, gen_f))
             elif any([f.endswith(a) for a in ('.lua', '.rb', '.bmp', '.png')]):
                 # copy DFHack scripts or sprite sheets
                 if not os.path.isdir(os.path.dirname(gen_f)):
@@ -257,10 +278,10 @@ def merge_folders(mod_folder, vanilla_folder, mixed_folder):
                     shutil.copyfile(mod_f, gen_f)
                     status = max(1, status)
                 else:
-                    with open(mod_f, 'rb') as m:
-                        mb = m.read()
-                    with open(gen_f, 'rb') as g:
-                        gb = g.read()
+                    with open(mod_f, 'rb') as f:
+                        mb = f.read()
+                    with open(gen_f, 'rb') as f:
+                        gb = f.read()
                     if not mb == gb:
                         shutil.copyfile(mod_f, gen_f)
                         status = max(2, status)
@@ -283,6 +304,46 @@ def clear_temp():
         log.write('# List of raws merged by PyLNP:\nbaselines/' +
                   os.path.basename(baselines.find_vanilla()) + '\n')
 
+def update_raw_dir(path, graphics=('', '')):
+    """Updates a raw dir in place with specified graphics and raws.
+    Returns:
+        True if completed, or False if aborted.
+    Arguments:
+        path
+            the full path to the dir to update
+        graphics
+            Tuple of graphics pack to update to,
+            and pack installed in baselines/temp/
+    """
+    mods_list = read_installation_log(os.path.join(path, 'installed_raws.txt'))
+    built_log = paths.get('baselines', 'temp', 'raw', 'installed_raws.txt')
+    built_mods = read_installation_log(built_log)
+    if mods_list != built_mods or graphics[0] != graphics[1]:
+        clear_temp()
+        add_graphics(graphics[0])
+        if -1 in merge_all_mods(mods_list):
+            return False
+    shutil.rmtree(path)
+    shutil.copytree(paths.get('baselines', 'temp', 'raw'), path)
+    return True
+
+def add_graphics(graphics):
+    """Adds graphics to the mod merge in baselines/temp."""
+    for root, _, files in os.walk(paths.get('graphics', graphics, 'raw')):
+        for f in files:
+            shutil.copyfile(os.path.join(root, f),
+                            paths.get('baselines', 'temp', 'raw', f))
+    with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
+              'a') as log:
+        log.write('graphics/' + graphics + '\n')
+
+def can_rebuild(log_file, strict=True):
+    """Test if user can exactly rebuild a raw folder, returning a bool."""
+    if not os.path.isfile(log_file):
+        return not strict
+    mod_list = read_installation_log(log_file)
+    return all([m in read_mods() for m in mod_list])
+
 def make_mod_from_installed_raws(name):
     """Capture whatever unavailable mods a user currently has installed
     as a mod called $name.
@@ -290,8 +351,6 @@ def make_mod_from_installed_raws(name):
         * If `installed_raws.txt` is not present, compare to vanilla
         * Otherwise, rebuild as much as possible then compare to installed
     """
-    if os.path.isdir(paths.get('mods', name)):
-        return False
     if get_installed_mods_from_log():
         clear_temp()
         for mod in get_installed_mods_from_log():
@@ -302,7 +361,6 @@ def make_mod_from_installed_raws(name):
         reconstruction = baselines.find_vanilla()
         if not reconstruction:
             return None
-
     clear_temp()
     merge_folders(os.path.join(reconstruction, 'raw'),
                   paths.get('df', 'raw'),
@@ -310,18 +368,16 @@ def make_mod_from_installed_raws(name):
     merge_folders(os.path.join(reconstruction, 'data', 'speech'),
                   paths.get('df', 'data', 'speech'),
                   paths.get('baselines', 'temp', 'data', 'speech'))
-
     baselines.simplify_pack('temp', 'baselines')
     baselines.remove_vanilla_raws_from_pack('temp', 'baselines')
     baselines.remove_empty_dirs('temp', 'baselines')
-
     if os.path.isdir(paths.get('baselines', 'temp2')):
         shutil.rmtree(paths.get('baselines', 'temp2'))
-
-    if os.path.isdir(paths.get('baselines', 'temp')):
+    if name and os.path.isdir(paths.get('baselines', 'temp')):
+        if os.path.isdir(paths.get('mods', name)):
+            return False
         shutil.copytree(paths.get('baselines', 'temp'), paths.get('mods', name))
         return True
-    return False
 
 def get_installed_mods_from_log():
     """Return best mod load order to recreate installed with available."""

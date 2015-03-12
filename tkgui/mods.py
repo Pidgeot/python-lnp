@@ -30,6 +30,7 @@ class ModsTab(Tab):
         self.installed = Variable()
         self.available = Variable()
         self.status = 3
+        self.merge_graphics = False
 
     def read_data(self):
         mods.clear_temp()
@@ -76,19 +77,27 @@ class ModsTab(Tab):
 
         f = controls.create_control_group(self, None, True)
         controls.create_trigger_button(
-            f, 'Simplify Mods', 'Removes unnecessary  and vanilla files.',
+            f, 'Install Mods', 'Copy merged mods to DF folder.',
+            self.install_mods).grid(row=0, column=0, sticky="nsew")
+        controls.create_trigger_button(
+            f, 'Premerge Graphics',
+            'Whether to start with the current graphics pack, or '
+            'vanilla (ASCII) raws', self.toggle_preload).grid(
+                row=0, column=1, sticky="nsew")
+        controls.create_trigger_button(
+            f, 'Simplify Mods', 'Removes unnecessary files.',
             self.simplify_mods).grid(
-                row=0, column=0, sticky="nsew")
+                row=1, column=0, sticky="nsew")
         controls.create_trigger_button(
-            f, 'Install Mods', 'Copy merged mods to DF folder.  '
-            'WARNING: do not combine with graphics.  May cause problems.',
-            self.install_mods).grid(row=0, column=1, sticky="nsew")
-        controls.create_trigger_button(
-            f, 'Create Mod from Installed', 'Creates a mod from unique changes '
+            f, 'Extract Installed', 'Creates a mod from unique changes '
             'to your installed raws.  Use to preserve custom tweaks.',
             self.create_from_installed).grid(
-                row=1, column=0, sticky="nsew", columnspan=2)
+                row=1, column=1, sticky="nsew")
         f.grid(row=3, column=0, sticky="ew")
+
+    def toggle_preload(self):
+        """Toggles whether to preload graphics before merging mods."""
+        self.merge_graphics = not self.merge_graphics
 
     def move_up(self):
         """Moves the selected item/s up in the merge order and re-merges."""
@@ -136,16 +145,18 @@ class ModsTab(Tab):
 
     def create_from_installed(self):
         """Extracts a mod from the currently installed raws."""
-        m = simpledialog.askstring("Create Mod", "New mod name:")
-        if m is not None and m != '':
-            if mods.make_mod_from_installed_raws(m):
-                messagebox.showinfo('Mod extracted',
-                                    'Your custom mod was extracted as ' + m)
-            else:
-                messagebox.showinfo(
-                    'Error', ('There is already a mod with that name, '
-                              'or only pre-existing mods were found.'))
-            self.read_data()
+        if mods.make_mod_from_installed_raws('') is not None:
+            name = simpledialog.askstring("Create Mod", "New mod name:")
+            if name:
+                if mods.make_mod_from_installed_raws(name):
+                    messagebox.showinfo('Mod extracted',
+                                        'Your mod was extracted as ' + name)
+                else:
+                    messagebox.showinfo(
+                        'Error', 'There is already a mod with that name.')
+                self.read_data()
+        else:
+            messagebox.showinfo('Error', 'No unique mods were found.')
 
     def add_to_installed(self):
         """Move selected mod/s from available to merged list and re-merge."""
@@ -164,13 +175,11 @@ class ModsTab(Tab):
         for i in self.installed_list.curselection()[::-1]:
             self.available_list.insert(END, self.installed_list.get(i))
             self.installed_list.delete(i)
-
         #Re-sort items
         temp_list = sorted(list(self.available_list.get(0, END)))
         self.available_list.delete(0, END)
         for item in temp_list:
             self.available_list.insert(END, item)
-
         self.perform_merge()
 
     def perform_merge(self):
@@ -178,19 +187,14 @@ class ModsTab(Tab):
         from .tkgui import TkGui
         if not TkGui.check_vanilla_raws():
             return
+        colors = ['pale green', 'yellow', 'orange', 'red', 'white']
         mods.clear_temp()
-        graphics.add_to_mods_merge()
-        # Set status to unknown before merging
-        for i, _ in enumerate(self.installed_list.get(0, END)):
-            self.installed_list.itemconfig(i, bg='white')
-        status, self.status = 3, 0
-        colors = ['pale green', 'yellow', 'orange', 'red']
-        for i, mod in enumerate(self.installed_list.get(0, END)):
-            status = mods.merge_a_mod(mod)
-            self.status = max(self.status, status)
+        if self.merge_graphics:
+            mods.add_graphics(graphics.current_pack())
+        result = mods.merge_all_mods(self.installed_list.get(0, END))
+        for i, status in enumerate(result):
             self.installed_list.itemconfig(i, bg=colors[status])
-            if status == 3:
-                return
+        self.status = max(result + [0])
 
     def install_mods(self):
         """Replaces <df>/raw with the contents LNP/Baselines/temp/raw"""

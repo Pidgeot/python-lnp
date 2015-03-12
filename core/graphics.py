@@ -41,7 +41,7 @@ def logged_graphics(logfile):
     return ''
 
 def read_graphics():
-    """Returns a list of graphics directories."""
+    """Returns a list of tuples of (graphics dir, FONT, GRAPHICS_FONT)."""
     packs = [os.path.basename(o) for o in
              glob.glob(paths.get('graphics', '*')) if os.path.isdir(o)]
     result = []
@@ -76,8 +76,13 @@ def install_graphics(pack):
         shutil.rmtree(paths.get('data', 'art'))
         shutil.copytree(paths.get('graphics', pack, 'data', 'art'),
                         paths.get('data', 'art'))
-        for tiles in glob.glob(paths.get('tilesets', '*')):
-            shutil.copy(tiles, paths.get('data', 'art'))
+        for item in glob.glob(paths.get('tilesets', '*')):
+            if not os.path.exists(paths.get('data', 'art',
+                                            os.path.basename(item))):
+                if os.path.isfile(item):
+                    shutil.copy2(item, paths.get('data', 'art'))
+                else:
+                    shutil.copytree(item, paths.get('data', 'art'))
         # Handle init files
         patch_inits(paths.get('graphics', pack))
         # Install colorscheme
@@ -228,7 +233,7 @@ def update_graphics_raws(raw_dir, pack):
     Params:
         raw_dir
             Full path to the dir to update
-        gfx_dir
+        pack
             The name of the graphics pack to add (eg 'Phoebus')
 
     Returns:
@@ -237,35 +242,9 @@ def update_graphics_raws(raw_dir, pack):
     """
     if not validate_pack(pack):
         return None
-    mods_list = mods.read_installation_log(
-        os.path.join(raw_dir, 'installed_raws.txt'))
     built_log = paths.get('baselines', 'temp', 'raw', 'installed_raws.txt')
-    built_mods = mods.read_installation_log(built_log)
     built_graphics = logged_graphics(built_log)
-    if mods_list != built_mods or built_graphics != pack:
-        mods.clear_temp()
-        add_to_mods_merge(pack)
-        for m in mods_list:
-            status = mods.merge_a_mod(m)
-            if status > 1:
-                if status == 3:
-                    mods.clear_temp()
-                return False
-    shutil.rmtree(raw_dir)
-    shutil.copytree(paths.get('baselines', 'temp', 'raw'), raw_dir)
-    return True
-
-def add_to_mods_merge(gfx_dir=None):
-    """Adds graphics to the mod merge in baselines/temp."""
-    if not gfx_dir:
-        gfx_dir = current_pack()
-    for root, _, files in os.walk(paths.get('graphics', gfx_dir, 'raw')):
-        for f in files:
-            shutil.copyfile(os.path.join(root, f),
-                            paths.get('baselines', 'temp', 'raw', f))
-    with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
-              'a') as log:
-        log.write('graphics/' + gfx_dir + '\n')
+    return mods.update_raw_dir(raw_dir, graphics=(pack, built_graphics))
 
 def update_savegames():
     """Update save games with current raws."""
@@ -283,9 +262,8 @@ def can_rebuild(log_file, strict=True):
     """Test if user can exactly rebuild a raw folder, returning a bool."""
     if not os.path.isfile(log_file):
         return not strict
-    if (logged_graphics(log_file) in [k[0] for k in read_graphics()] and
-            all(m in mods.read_mods() for m in
-                mods.read_installation_log(log_file))):
+    graphic_ok = logged_graphics(log_file) in [k[0] for k in read_graphics()]
+    if graphic_ok and mods.can_rebuild(log_file, strict=strict):
         return True
     return False
 
