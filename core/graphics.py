@@ -244,7 +244,7 @@ def update_graphics_raws(raw_dir, pack):
         return None
     built_log = paths.get('baselines', 'temp', 'raw', 'installed_raws.txt')
     built_graphics = logged_graphics(built_log)
-    return mods.update_raw_dir(raw_dir, graphics=(pack, built_graphics))
+    return mods.update_raw_dir(raw_dir, gfx=(pack, built_graphics))
 
 def update_savegames():
     """Update save games with current raws."""
