@@ -40,6 +40,7 @@ else:
 
 # Workaround to use Pillow in PyInstaller
 if False:
+    # pylint:disable=unused-import
     import pkg_resources
 
 try:  # PIL-compatible library (e.g. Pillow); used to load PNG images (optional)
