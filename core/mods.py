@@ -8,7 +8,7 @@ from difflib import ndiff, SequenceMatcher
 # pylint:disable=redefined-builtin
 from io import open
 
-from . import paths, baselines
+from . import paths, baselines, log
 from .lnp import lnp
 
 def toggle_premerge_gfx():
@@ -51,6 +51,7 @@ def simplify_pack(pack):
     # cases where several files are removed.
     i = baselines.simplify_pack(pack, 'mods')
     if i > 10:
+        log.w('Reducing "{}": assume vanilla files were omitted deliberately')
         i += make_blank_files(pack)
     i += baselines.remove_vanilla_raws_from_pack(pack, 'mods')
     i += baselines.remove_empty_dirs(pack, 'mods')
@@ -87,6 +88,7 @@ def install_mods():
         shutil.copytree(paths.get('baselines', 'temp', 'data', 'speech'),
                         paths.get('df', 'data', 'speech'))
         return True
+    log.w('To avoid data loss, PyLNP only installs mods if a log exists')
     return False
 
 def merge_all_mods(list_of_mods, gfx=None):
@@ -251,6 +253,7 @@ def do_merge_files(mod_file_name, van_file_name, gen_file_name):
         with open(gen_file_name, "w", encoding='cp437') as gen_file:
             gen_file.writelines(gen_lines)
     except:
+        log.e('Writing to {} failed on encoding error'.format(gen_file_name))
         return 3
     return status
 
@@ -263,9 +266,12 @@ def merge_a_mod(mod):
         3:  Fatal error, respond by rebuilding to previous mod
         """
     if not baselines.find_vanilla_raws():
+        log.e('Could not merge {}: baseline raws unavailable'.format(mod))
         return 3
+    log.d('Starting to merge mod: {}'.format(mod))
     mod_raw_folder = paths.get('mods', mod, 'raw')
     if not os.path.isdir(mod_raw_folder):
+        log.w('Invalid mod: "{}/raw/" is not a dir'.format(mod))
         return 2
     status = merge_folders(mod_raw_folder, baselines.find_vanilla_raws(),
                            paths.get('baselines', 'temp', 'raw'))
@@ -276,8 +282,9 @@ def merge_a_mod(mod):
             paths.get('baselines', 'temp', 'data', 'speech')))
     if status < 3:
         with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
-                  'a') as log:
-            log.write('mods/' + mod + '\n')
+                  'a') as f:
+            f.write('mods/' + mod + '\n')
+    log.i('Merged mod: {}'.format(mod))
     return status
 
 def merge_folders(mod_folder, vanilla_folder, mixed_folder):
@@ -310,12 +317,13 @@ def merge_folders(mod_folder, vanilla_folder, mixed_folder):
                     if not mb == gb:
                         shutil.copyfile(mod_f, gen_f)
                         status = max(2, status)
+    log.d('Merged file "{}" with status {}'.format(mod_f, status))
     return status
 
 def clear_temp():
     """Resets the folder in which raws are mixed."""
     if not baselines.find_vanilla_raws(False):
-        # Baselines are not ready; abort silently
+        log.e('Could not clear temp: baseline raws unavailable')
         return None
     if os.path.exists(paths.get('baselines', 'temp')):
         shutil.rmtree(paths.get('baselines', 'temp'))
@@ -325,9 +333,9 @@ def clear_temp():
     shutil.copytree(os.path.join(baselines.find_vanilla(), 'data', 'speech'),
                     paths.get('baselines', 'temp', 'data', 'speech'))
     with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
-              'w') as log:
-        log.write('# List of raws merged by PyLNP:\nbaselines/' +
-                  os.path.basename(baselines.find_vanilla()) + '\n')
+              'w') as f:
+        f.write('# List of raws merged by PyLNP:\nbaselines/' +
+                os.path.basename(baselines.find_vanilla()) + '\n')
 
 def update_raw_dir(path, gfx=('', '')):
     """Updates a raw dir in place with specified graphics and raws.
@@ -345,6 +353,7 @@ def update_raw_dir(path, gfx=('', '')):
     built_mods = read_installation_log(built_log)
     if mods_list != built_mods or gfx[0] != gfx[1]:
         if -1 in merge_all_mods(mods_list, gfx[0]):
+            log.w('Some mods in {} could not be remerged'.format(path))
             return False
     shutil.rmtree(path)
     shutil.copytree(paths.get('baselines', 'temp', 'raw'), path)
@@ -357,12 +366,15 @@ def add_graphics(gfx):
             shutil.copyfile(os.path.join(root, f),
                             paths.get('baselines', 'temp', 'raw', f))
     with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
-              'a') as log:
-        log.write('graphics/' + gfx + '\n')
+              'a') as f:
+        f.write('graphics/' + gfx + '\n')
+    log.i('{} graphics added (small mod compatibility risk)'.format(gfx))
 
 def can_rebuild(log_file, strict=True):
     """Test if user can exactly rebuild a raw folder, returning a bool."""
     if not os.path.isfile(log_file):
+        guess = not strict
+        log.w('{} not found; assume rebuildable = {}'.format(log_file, guess))
         return not strict
     mod_list = read_installation_log(log_file)
     return all([m in read_mods() for m in mod_list])
@@ -407,10 +419,10 @@ def get_installed_mods_from_log():
     logged = read_installation_log(paths.get('df', 'raw', 'installed_raws.txt'))
     return [mod for mod in logged if mod in read_mods()]
 
-def read_installation_log(log):
+def read_installation_log(fname):
     """Read an 'installed_raws.txt' and return it's full contents."""
     try:
-        with open(log) as f:
+        with open(fname) as f:
             file_contents = list(f.readlines())
     except IOError:
         return []
