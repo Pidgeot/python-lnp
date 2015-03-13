@@ -40,7 +40,7 @@ def simplify_pack(pack):
 
     Params:
         pack
-            path segment in './LNP/folder/pack/' as strings
+            path segment in './LNP/Mods/pack/' as a string
 
     Returns:
         The sum of files affected by the operations
@@ -51,7 +51,8 @@ def simplify_pack(pack):
     # cases where several files are removed.
     i = baselines.simplify_pack(pack, 'mods')
     if i > 10:
-        log.w('Reducing "{}": assume vanilla files were omitted deliberately')
+        log.w('Reducing mod "{}": assume vanilla files were omitted '
+              'deliberately'.format(pack))
         i += make_blank_files(pack)
     i += baselines.remove_vanilla_raws_from_pack(pack, 'mods')
     i += baselines.remove_empty_dirs(pack, 'mods')
