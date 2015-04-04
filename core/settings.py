@@ -622,7 +622,7 @@ class DFConfiguration(object):
             for field in fields:
                 field_name = self.field_names[field]
                 if self.options[field] is _disabled:
-                    raw.toggle(field_name, self.settings[field] != "NO")
+                    raw.set_all(field_name, self.settings[field] != "NO")
                 else:
                     value = self.settings[field]
                     if self.options[field] is _negated_bool:
