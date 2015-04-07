@@ -3,7 +3,7 @@
 """Mod Pack management and merging tools."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import os, shutil, glob, distutils
+import os, shutil, glob
 from difflib import ndiff, SequenceMatcher
 # pylint:disable=redefined-builtin
 from io import open
@@ -362,9 +362,14 @@ def update_raw_dir(path, gfx=('', '')):
 
 def add_graphics(gfx):
     """Adds graphics to the mod merge in baselines/temp."""
-    distutils.dir_util._path_created = {}
-    distutils.dir_util.copy_tree(paths.get('graphics', gfx, 'raw'),
-                                 paths.get('baselines', 'temp', 'raw'))
+    gfx_raws = paths.get('graphics', gfx, 'raw')
+    for root, _, files in os.walk(gfx_raws):
+        dst = paths.get('baselines', 'temp', 'raw',
+                        os.path.relpath(root, gfx_raws))
+        if not os.path.isdir(dst):
+            os.makedirs(dst)
+        for f in files:
+            shutil.copy2(os.path.join(root, f), dst)
     with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
               'a') as f:
         f.write('graphics/' + gfx + '\n')
