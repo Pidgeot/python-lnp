@@ -3,11 +3,11 @@
 """Advanced raw and data folder management, for mods or graphics packs."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import os, glob, zipfile, fnmatch
+import os, glob, zipfile, tarfile, fnmatch, shutil
 # pylint:disable=redefined-builtin
 from io import open
 
-from . import paths, update
+from . import paths, update, log
 from .lnp import lnp
 
 def find_vanilla(download_missing=True):
@@ -22,7 +22,7 @@ def find_vanilla(download_missing=True):
         None if version detection is not accurate
     """
     if lnp.df_info.source == "init detection":
-        # WARNING: probably the wrong version!  Restore 'release notes.txt'.
+        log.w('Baseline DF version from init detection; highly unreliable!')
         return None
     prepare_baselines()
     version = 'df_' + str(lnp.df_info.version)[2:].replace('.', '_')
@@ -41,14 +41,20 @@ def find_vanilla_raws(download_missing=True):
 
 def prepare_baselines():
     """Unzip any DF releases found, and discard non-universial files."""
-    zipped = glob.glob(os.path.join(paths.get('baselines'), 'df_??_?*.zip'))
-    for item in zipped:
+    archives = glob.glob(os.path.join(paths.get('baselines'), 'df_??_?*.???'))
+    for item in archives:
         version = os.path.basename(item)
-        for s in ['_win', '_legacy', '_s', '.zip']:
+        for s in ('_win', '_osx', '_linux', '_legacy', '_s',
+                  '.zip', '.tar.bz2'):
             version = version.replace(s, '')
         f = paths.get('baselines', version)
         if not os.path.isdir(f):
-            zipfile.ZipFile(item).extractall(f)
+            if item.endswith('.zip'):
+                zipfile.ZipFile(item).extractall(f)
+            elif item.endswith('.tar.bz2'):
+                tarfile.TarFile(item).extractall(f)
+                for k in glob.glob(os.path.join(f, 'df_*x', '*')):
+                    shutil.move(k, f)
             simplify_pack(version, 'baselines')
         os.remove(item)
 
@@ -75,11 +81,10 @@ def simplify_pack(pack, folder):
     files_before = sum(len(f) for (_, _, f) in os.walk(paths.get(folder, pack)))
     if files_before == 0:
         return None
-    if folder == 'baselines':
-        keep = [os.path.join('raw', '*'),
-                os.path.join('data', 'speech', '*'),
-                os.path.join('data', 'art', '*'),
-                os.path.join('data', 'init', '*')]
+    keep = [os.path.join('raw', '*'),
+            os.path.join('data', 'speech', '*'),
+            os.path.join('data', 'art', '*'),
+            os.path.join('data', 'init', '*')]
     if folder == 'graphics':
         keep = [os.path.join('raw', 'objects', '*'),
                 os.path.join('raw', 'graphics', '*'),

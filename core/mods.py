@@ -362,10 +362,14 @@ def update_raw_dir(path, gfx=('', '')):
 
 def add_graphics(gfx):
     """Adds graphics to the mod merge in baselines/temp."""
-    for root, _, files in os.walk(paths.get('graphics', gfx, 'raw')):
+    gfx_raws = paths.get('graphics', gfx, 'raw')
+    for root, _, files in os.walk(gfx_raws):
+        dst = paths.get('baselines', 'temp', 'raw',
+                        os.path.relpath(root, gfx_raws))
+        if not os.path.isdir(dst):
+            os.makedirs(dst)
         for f in files:
-            shutil.copyfile(os.path.join(root, f),
-                            paths.get('baselines', 'temp', 'raw', f))
+            shutil.copy2(os.path.join(root, f), dst)
     with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
               'a') as f:
         f.write('graphics/' + gfx + '\n')
