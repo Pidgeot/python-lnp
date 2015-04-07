@@ -525,9 +525,9 @@ class TkGui(object):
                 'complete this action. Is this OK?\n\nPlease note: You will '
                 'need to retry the action after the download completes.')
             if sys.platform != 'win32':
-                message += ('\n\nThe windows_small edition is used to '
-                            'minimise required bandwidth.  Platform-specific '
-                            'files are discarded, so this is OK.')
+                message += ('\n\nThe windows_small edition will be used to '
+                            'minimise required download size. '
+                            'Platform-specific files are discarded.')
         else:
             message = (
                 'PyLNP needs to download data to process this action. '
