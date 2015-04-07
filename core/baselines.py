@@ -3,7 +3,7 @@
 """Advanced raw and data folder management, for mods or graphics packs."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import os, glob, zipfile, tarfile, fnmatch
+import os, glob, zipfile, tarfile, fnmatch, shutil
 # pylint:disable=redefined-builtin
 from io import open
 
@@ -53,6 +53,8 @@ def prepare_baselines():
                 zipfile.ZipFile(item).extractall(f)
             elif item.endswith('.tar.bz2'):
                 tarfile.TarFile(item).extractall(f)
+                for k in glob.glob(os.path.join(f, 'df_*x', '*')):
+                    shutil.move(k, f)
             simplify_pack(version, 'baselines')
         os.remove(item)
 

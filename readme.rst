@@ -505,8 +505,8 @@ settings and images relevant to graphics packs.  These are used to rebuild
 the reduced raws used by graphics packs and mods, and should not be modified
 or removed - any new graphics or mod install would break.
 
-Add versions by downloading the windows SDL edition of that version and
-placing it in the folder (eg "df_40_15_win.zip"), or by attempting an action
+Add versions by downloading any edition of that version and placing it
+in the baselines folder (eg "df_40_15_win.zip"), or by attempting an action
 that would require that baseline - such as installing a graphics pack - and
 accepting the download.
 
