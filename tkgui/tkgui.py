@@ -524,6 +524,10 @@ class TkGui(object):
                 'PyLNP needs to download a copy of Dwarf Fortress to '
                 'complete this action. Is this OK?\n\nPlease note: You will '
                 'need to retry the action after the download completes.')
+            if sys.platform != 'win32':
+                message += ('\n\nThe windows_small edition is used to '
+                            'minimise required bandwidth.  Platform-specific '
+                            'files are discarded, so this is OK.')
         else:
             message = (
                 'PyLNP needs to download data to process this action. '
