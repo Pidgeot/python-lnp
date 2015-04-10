@@ -36,6 +36,18 @@ class Button(TtkButton):  # pylint:disable=function-redefined,missing-docstring
         if 'command' in kw:
             self.bind('<Return>', lambda e: kw['command']())
 
+# http://effbot.org/zone/tkinter-autoscrollbar.htm
+class _AutoScrollbar(Scrollbar):
+    """A scrollbar that hides itself if it's not needed."""
+    # pylint:disable=arguments-differ
+    def set(self, lo, hi):
+        """Only show scrollbar when there's more content than will fit."""
+        if float(lo) <= 0.0 and float(hi) >= 1.0:
+            self.grid_remove()
+        else:
+            self.grid()
+        Scrollbar.set(self, lo, hi)
+
 # http://www.voidspace.org.uk/python/weblog/arch_d7_2006_07_01.shtml#e387
 class _ToolTip(object):
     """Tooltip widget."""
@@ -254,9 +266,10 @@ def create_scrollbar(parent, control, **gridargs):
         gridargs
             Keyword arguments used to apply grid layout to the scrollbar.
     """
-    s = Scrollbar(parent, orient=VERTICAL, command=control.yview)
+    s = _AutoScrollbar(parent, orient=VERTICAL, command=control.yview)
     control['yscrollcommand'] = s.set
     s.grid(sticky="ns", **gridargs)
+    s.grid_remove()
 
 def create_file_list(parent, title, listvar, **args):
     """
