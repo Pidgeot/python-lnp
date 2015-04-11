@@ -88,7 +88,7 @@ def tokenize_raw(text):
 
 class DFRawNode(object):
     """Class representing a node in a raw file."""
-    def __init__(self, parent, node_id, value, node_type):
+    def __init__(self, parent, node_id, value, node_type, **kwargs):
         """Constructor for DFRawNode.
 
         Parameters:
@@ -99,9 +99,16 @@ class DFRawNode(object):
             value
                 The complete string value for this node (no splitting).
             node_type
-                Indicates the node type for queries (e.g. NODE_TAG)"""
+                Indicates the node type for queries (e.g. NODE_TAG)
+
+        Keyword arguments:
+            after
+                If None, the node is inserted as the first child. Otherwise, it
+                is inserted after the child node provided in this argument.
+                If omitted, or if the provided child node does not exist, the
+                child is added as the last child."""
         self.name = node_id
-        self.__parent = parent
+        self.__parent = None
         self.__type = node_type
         if self.is_tag:
             if value:
@@ -112,11 +119,48 @@ class DFRawNode(object):
             self.__value = value
         self.children = []
         if parent:
-            parent.children.append(self)
+            parent.add_child(self, **kwargs)
 
-    def __add_child(self, child):
-        """Adds the node child to the list."""
+    def add_child(self, child, **kwargs):
+        """Adds <child> to the list of child nodes and sets its parent to this
+        node. If <child> already has another parent, it is first removed from
+        that parent. Has no effect if <child> is a root node.
+
+        Params:
+            child
+                The child node to add.
+
+        Keyword arguments:
+            after
+                If None, the node is inserted as the first child. Otherwise, it
+                is inserted after the child node provided in this argument.
+                If omitted, or if the provided child node does not exist, the
+                child is added as the last child."""
+        if self.is_root:
+            return
+        if 'after' in kwargs:
+            if kwargs['after'] is not None:
+                try:
+                    self.children.insert(
+                        self.children.index(kwargs['after']), child)
+                    return
+                except ValueError:
+                    self.children.append(child)
+            else:
+                self.children.insert(0, child)
         self.children.append(child)
+        if child.parent is not self:
+            child.parent.remove_child(child)
+        # pylint: disable=protected-access
+        child.__parent = self
+
+    def remove_child(self, child):
+        """Removes <child> as a child node and sets its parent to None."""
+        if self.is_root:
+            return
+        self.children.remove(child)
+        # pylint: disable=protected-access
+        child.__parent = None
 
     @property
     def is_root(self):
