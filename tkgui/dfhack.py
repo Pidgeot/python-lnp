@@ -22,11 +22,6 @@ else:
 #pylint: disable=too-many-public-methods
 class DFHackTab(Tab):
     """DFHack tab for the TKinter GUI."""
-    def create_variables(self):
-        self.volume_var = StringVar()
-        self.fps_var = StringVar()
-        self.gps_var = StringVar()
-
     def read_data(self):
         self.update_hack_list()
 
