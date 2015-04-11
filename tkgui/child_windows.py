@@ -184,9 +184,10 @@ class SelectDF(ChildWindow):
             f, listvariable=self.listvar, activestyle='dotbox')
         self.folderlist.grid(column=0, row=1, sticky="nsew")
         controls.create_scrollbar(f, self.folderlist, column=1, row=1)
-        Button(
-            f, text='OK', command=self.ok
-            ).grid(column=0, row=2, columnspan=2, sticky="s")
+        self.folderlist.focus()
+        ok = controls.Button(f, text='OK', command=self.ok, default='active')
+        ok.grid(column=0, row=2, columnspan=2, sticky="s")
+        self.top.bind('<Return>', lambda e, b=ok: b.invoke())
         self.folderlist.bind("<Double-1>", lambda e: self.ok())
         f.pack(fill=BOTH, expand=Y)
 
