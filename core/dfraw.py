@@ -86,6 +86,41 @@ def tokenize_raw(text):
         text = text[len(curr_string):]
         yield node_type, curr_string
 
+
+def parse_raw(parent, text):
+    """Parses the raw text contained in <text> and places resulting nodes in a
+    tree under <parent>."""
+    path, fname = os.path.split(os.path.abspath(parent.filename))
+    path = path.split(os.sep)
+    parent_tags = []
+    parent_stack = [parent]
+    # Parent tags for raw/{graphics, objects} are handled later
+    if path[-1] == 'init':
+        parent_tags = init_filename_parents.get(fname, [])
+    for kind, token in tokenize_raw(text):
+        if kind == 'Tag':
+            contents = token[1:-1]
+            if ':' in contents:
+                name, value = contents.split(':', 1)
+            else:
+                name, value = contents, token[0] == '['
+            is_parent = False
+            for g in parent_tags:
+                if fnmatch(name, g):
+                    is_parent = True
+                    while (parent_stack[-1].name in final_level_tags or
+                           any([fnmatch(p.name, g) for p in parent_stack])):
+                        parent_stack.pop()
+            node = DFRawTag(parent_stack[-1], name, value)
+            if is_parent:
+                parent_stack.append(node)
+            if path[-2] == 'raw' and name == 'OBJECT':
+                parent_tags = object_parents[value]
+        elif kind == 'Comment':
+            DFRawComment(parent_stack[-1], token)
+        else:
+            raise Exception('Unknown raw token kind: '+kind)
+
 class DFRawNode(object):
     """Class representing a node in a raw file."""
     def __init__(self, parent, node_id, value, node_type, **kwargs):
@@ -149,7 +184,7 @@ class DFRawNode(object):
             else:
                 self.children.insert(0, child)
         self.children.append(child)
-        if child.parent is not self:
+        if child.parent is not self and child.parent is not None:
             child.parent.remove_child(child)
         # pylint: disable=protected-access
         child.__parent = self
@@ -345,36 +380,7 @@ class DFRaw(DFRawNode):
         #   interface.txt: [BIND] is parent (legacy will be flat)
         #   world_gen.txt: [WORLD_GEN] is parent
         # Non-raw files (unsupported): init/arena.txt, subdirs of raw/objects
-        path, fname = os.path.split(os.path.abspath(self.filename))
-        path = path.split(os.sep)
-        parent_tags = []
-        parent_stack = [self]
-        # Parent tags for raw/{graphics, objects} are handled later
-        if path[-1] == 'init':
-            parent_tags = init_filename_parents.get(fname, [])
-        for kind, token in tokenize_raw(self.read(self.filename)):
-            if kind == 'Tag':
-                contents = token[1:-1]
-                if ':' in contents:
-                    name, value = contents.split(':', 1)
-                else:
-                    name, value = contents, token[0] == '['
-                is_parent = False
-                for g in parent_tags:
-                    if fnmatch(name, g):
-                        is_parent = True
-                        while (parent_stack[-1].name in final_level_tags or
-                               any([fnmatch(p.name, g) for p in parent_stack])):
-                            parent_stack.pop()
-                node = DFRawTag(parent_stack[-1], name, value)
-                if is_parent:
-                    parent_stack.append(node)
-                if path[-2] == 'raw' and name == 'OBJECT':
-                    parent_tags = object_parents[value]
-            elif kind == 'Comment':
-                DFRawComment(parent_stack[-1], token)
-            else:
-                raise Exception('Unknown raw token kind: '+kind)
+        parse_raw(self, self.read(self.filename))
 
     def set_all(self, field, value):
         """Sets all tags named <field> to <value>."""
