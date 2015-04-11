@@ -24,6 +24,10 @@ _negated_bool = _NegatedBool()
 # Format: Key = tag name, value = list of version numbers
 # First value indicates first version with the tag
 # Second value, if present, indicates first version WITHOUT the tag
+# When adding data here, keep the list sorted using the following ordering:
+# 1) First version containing the field
+# 2) Last version containing the field (fields that are still present go last)
+# 3) Field name
 _option_version_data = {
     'EXTENDED_ASCII': ['0.21.93.19a', '0.21.104.19d'],
     'BLACK_B': ['0.21.93.19a', '0.31.04'],
