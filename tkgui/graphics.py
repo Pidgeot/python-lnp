@@ -374,10 +374,11 @@ class GraphicsTab(Tab):
                 self.fonts.itemconfig(i, bg='pale green')
             else:
                 self.fonts.itemconfig(i, bg='white')
-            if f == current[1]:
-                self.graphicsfonts.itemconfig(i, bg='pale green')
-            else:
-                self.graphicsfonts.itemconfig(i, bg='white')
+            if lnp.settings.version_has_option('GRAPHICS_FONT'):
+                if f == current[1]:
+                    self.graphicsfonts.itemconfig(i, bg='pale green')
+                else:
+                    self.graphicsfonts.itemconfig(i, bg='white')
 
     def install_tilesets(self, mode=3):
         """
