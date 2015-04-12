@@ -5,14 +5,6 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, re, time, os, threading, zipfile, tarfile
 
-try:  # Python 2
-    # pylint:disable=import-error
-    from urllib2 import urlopen, URLError, Request
-except ImportError:  # Python 3
-    # pylint:disable=import-error, no-name-in-module
-    from urllib.request import urlopen, Request
-    from urllib.error import URLError
-
 from .lnp import lnp
 from . import launcher, paths, download
 
@@ -35,28 +27,21 @@ def check_update():
 def perform_update_check():
     """Performs the actual update check. Runs in a thread."""
     # pylint:disable=bare-except
-    try:
-        req = Request(
-            lnp.config.get_string('updates/checkURL'),
-            headers={'User-Agent':'PyLNP'})
-        version_text = urlopen(req, timeout=3).read().decode('utf-8')
-        # Note: versionRegex must capture the version string in a group
-        new_version = re.search(
-            lnp.config.get_string('updates/versionRegex'),
-            version_text).group(1)
-        if not lnp.config.get_string('updates/packVersion'):
-            lnp.config.get_dict('updates')['packVersion'] = new_version
-            lnp.config.save_data()
-            return
-        if new_version != lnp.config.get_string('updates/packVersion'):
-            lnp.new_version = new_version
-            lnp.ui.on_update_available()
-    except URLError as ex:
-        print(
-            "Error checking for updates: " + str(ex.reason),
-            file=sys.stderr)
-    except:
-        pass
+    version_text = download.download_str(
+        lnp.config.get_string('updates/checkURL'))
+    if version_text is None:
+        print("Error checking for updates", file=sys.stderr)
+    # Note: versionRegex must capture the version string in a group
+    new_version = re.search(
+        lnp.config.get_string('updates/versionRegex'),
+        version_text).group(1)
+    if not lnp.config.get_string('updates/packVersion'):
+        lnp.config.get_dict('updates')['packVersion'] = new_version
+        lnp.config.save_data()
+        return
+    if new_version != lnp.config.get_string('updates/packVersion'):
+        lnp.new_version = new_version
+        lnp.ui.on_update_available()
 
 def next_update(days):
     """Sets the next update check to occur in <days> days."""
