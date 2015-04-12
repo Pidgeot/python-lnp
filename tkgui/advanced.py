@@ -30,6 +30,10 @@ class AdvancedTab(Tab):
         self.volume_var = StringVar()
         self.fps_var = StringVar()
         self.gps_var = StringVar()
+        self.winX_var = StringVar()
+        self.winY_var = StringVar()
+        self.fullX_var = StringVar()
+        self.fullY_var = StringVar()
 
     def create_controls(self):
         Grid.columnconfigure(self, 0, weight=1)
@@ -81,6 +85,34 @@ class AdvancedTab(Tab):
                 startup, 'Windowed', 'Start windowed or fullscreen',
                 'startWindowed').grid(column=0, row=1, sticky="nsew")
 
+        resolution = controls.create_control_group(self, 'Resolution', True)
+        main_grid.add(resolution, 2)
+
+        grid = GridLayouter(2)
+        grid.add(Label(resolution, text='Windowed X'))
+        grid.add(Label(resolution, text='Windowed Y'))
+        grid.add(controls.create_numeric_entry(
+            resolution, self.winX_var, ('WINDOWEDX', 'GRAPHICS_WINDOWEDX'),
+            'Horizontal resolution in '
+            'windowed mode. Values <= 255 represent number of tiles, values > '
+            '255 represent number of pixels.'))
+        grid.add(controls.create_numeric_entry(
+            resolution, self.winY_var, ('WINDOWEDY', 'GRAPHICS_WINDOWEDY'),
+            'Vertical resolution in '
+            'windowed mode. Values <= 255 represent number of tiles, values > '
+            '255 represent number of pixels.'))
+        grid.add(Label(resolution, text='Fullscreen X'))
+        grid.add(Label(resolution, text='Fullscreen Y'))
+        grid.add(controls.create_numeric_entry(
+            resolution, self.fullX_var, ('FULLSCREENX', 'GRAPHICS_FULLSCREENX'),
+            'Horizontal resolution '
+            'in fullscreen. Values <= 255 represent number of tiles, values > '
+            '255 represent number of pixels.'))
+        grid.add(controls.create_numeric_entry(
+            resolution, self.fullY_var, ('FULLSCREENY', 'GRAPHICS_FULLSCREENY'),
+            'Vertical resolution in '
+            'fullscreen. Values <= 255 represent number of tiles, values > 255 '
+            'represent number of pixels.'))
         saverelated = controls.create_control_group(
             self, 'Save-related', True)
         main_grid.add(saverelated, 2)
