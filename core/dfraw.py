@@ -171,7 +171,7 @@ class DFRawNode(object):
                 is inserted after the child node provided in this argument.
                 If omitted, or if the provided child node does not exist, the
                 child is added as the last child."""
-        if self.is_root:
+        if child.is_root:
             return
         if 'after' in kwargs:
             if kwargs['after'] is not None:
