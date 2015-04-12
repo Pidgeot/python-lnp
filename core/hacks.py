@@ -93,7 +93,7 @@ def rebuild_hacks():
     for k, h in get_hacks().items():
         if h['enabled']:
             f.write('# '+str(k)+'\n')
-            f.write('# '+str(h['tooltip'])+'\n')
+            f.write('# '+str(h['tooltip'].replace('\n', '\n#'))+'\n')
             f.write(h['command']+'\n\n')
     f.flush()
     f.close()
