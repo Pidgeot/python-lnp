@@ -7,7 +7,6 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys
 
 from . import binding
-from core.lnp import lnp
 
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
