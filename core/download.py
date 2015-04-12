@@ -19,6 +19,29 @@ except ImportError:  # Python 3
 
 __download_queues = {}
 
+def download_str(url, **kwargs):
+    """Instantly download a file from <url> and return its contents. Failed
+    downloads return None.
+
+    Keyword arguments:
+        encoding
+            Used to decode the data to text. Defaults to UTF-8.
+        timeout
+            Timeout used for the URL request, in seconds. Defaults to 3.
+    <encoding> is not provided, UTF-8 is used.
+    """
+    # pylint: disable=bare-except
+    try:
+        req = Request(url, headers={'User-Agent':'PyLNP/'+VERSION})
+        return urlopen(
+            req, timeout=kwargs.get('timeout', 3)).read().decode(
+                kwargs.get('encoding', 'utf-8'))
+    except URLError as ex:
+        log.e('Error downloading '+url+': '+ex.reason)
+    except:
+        log.e('Error downloading '+url)
+    return None
+
 def download(queue, url, destination, end_callback=None):
     """Adds a download to the specified queue."""
     return get_queue(queue).add(url, destination, end_callback)
