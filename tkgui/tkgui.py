@@ -425,6 +425,10 @@ class TkGui(object):
             var
                 The variable bound to the control.
         """
+        if hasattr(key, '__iter__'):
+            for k in key:
+                TkGui.change_entry(k, var)
+            return
         if var.get() != '':
             df.set_option(key, var.get())
 
@@ -496,6 +500,10 @@ class TkGui(object):
             field
                 The option to cycle.
         """
+        if hasattr(field, '__iter__'):
+            for f in field:
+                TkGui.cycle_option(f)
+            return
         df.cycle_option(field)
         binding.update()
 
@@ -509,7 +517,11 @@ class TkGui(object):
                 The field name to change. The corresponding value is
                 automatically read.
         """
-        df.set_option(field, binding.get(field))
+        if hasattr(field, '__iter__'):
+            for f in field:
+                df.set_option(f, binding.get(field))
+        else:
+            df.set_option(field, binding.get(field))
         binding.update()
 
     @staticmethod

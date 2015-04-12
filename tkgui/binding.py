@@ -36,6 +36,12 @@ def bind(control, option, update_func=None):
         value = control
     __controls[option].append(value)
 
+def version_has_option(field):
+    o = field
+    if hasattr(field, '__iter__'):
+        o = field[0]
+    return __lnp.settings.version_has_option(o)
+
 def get(field):
     """
     Returns the value of the control known as <field>.
@@ -47,7 +53,10 @@ def update():
     """Updates configuration displays (buttons, etc.)."""
     for key in __controls.keys():
         try:
-            value = getattr(__lnp.settings, key)
+            k = key
+            if hasattr(key, '__iter__'):
+                k = key[0]
+            value = getattr(__lnp.settings, k)
         except KeyError:
             value = None
         for entry in __controls[key]:

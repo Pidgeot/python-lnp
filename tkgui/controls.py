@@ -248,7 +248,7 @@ def create_trigger_option_button(
             If given, a reference to a function that pre-processes the
             given option for display.
     """
-    if not lnp.settings.version_has_option(option):
+    if not binding.version_has_option(option):
         return fake_control
     b = create_trigger_button(parent, text, tooltip, command)
     binding.bind(b, option, update_func)
@@ -410,7 +410,7 @@ def create_numeric_entry(parent, variable, option, tooltip):
         tooltip
             The tooltip for the Entry.
     """
-    if not lnp.settings.version_has_option(option):
+    if not binding.version_has_option(option):
         return fake_control
     e = Entry(
         parent, width=4, validate='key',
