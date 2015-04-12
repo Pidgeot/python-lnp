@@ -42,7 +42,8 @@ class _AutoScrollbar(Scrollbar):
     # pylint:disable=arguments-differ
     def set(self, lo, hi):
         """Only show scrollbar when there's more content than will fit."""
-        if float(lo) <= 0.0 and float(hi) >= 1.0:
+        if (float(lo) <= 0.0 and float(hi) >= 1.0) or (
+                hasattr(self, 'hidden') and self.hidden):
             self.grid_remove()
         else:
             self.grid()
