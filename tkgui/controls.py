@@ -270,6 +270,7 @@ def create_scrollbar(parent, control, **gridargs):
     control['yscrollcommand'] = s.set
     s.grid(sticky="ns", **gridargs)
     s.grid_remove()
+    return s
 
 def create_file_list(parent, title, listvar, **args):
     """
