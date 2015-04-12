@@ -17,11 +17,6 @@
 	"hideUtilityPath": false,
 	"hideUtilityExt": false,
 	"updates": {
-		"dffdID": "",
-		"packVersion": "",
-		"checkURL": "",
-		"versionRegex": "",
-		"downloadURL": "",
-		"directURL": ""
+		"updateMethod": ""
 	}
 }

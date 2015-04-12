@@ -242,11 +242,11 @@ class UpdateWindow(ChildWindow):
         f.pack(fill=BOTH, expand=Y)
 
         buttons = Frame(container)
-        if lnp.config.get_string('updates/directURL'):
+        if lnp.updater.get_direct_url():
             Button(
                 buttons, text='Direct Download', command=self.download
                 ).pack(side=LEFT)
-        if lnp.config.get_string('updates/downloadURL'):
+        if lnp.updater.get_download_url():
             Button(
                 buttons, text='Open in Browser', command=self.browser
                 ).pack(side=LEFT)

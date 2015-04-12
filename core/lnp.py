@@ -64,6 +64,7 @@ class PyLNP(object):
         self.settings = None
         self.autorun = []
         self.running = {}
+        self.updater = None
 
         config_file = 'PyLNP.json'
         if os.access(paths.get('lnp', 'PyLNP.json'), os.F_OK):
@@ -88,12 +89,7 @@ class PyLNP(object):
             "hideUtilityPath": False,
             "hideUtilityExt": False,
             "updates": {
-                "dffdID": "",
-                "packVersion": "",
-                "checkURL": "",
-                "versionRegex": "",
-                "downloadURL": "",
-                "directURL": ""
+                "updateMethod": ""
             }
         }
         self.config = JSONConfiguration(config_file, default_config)

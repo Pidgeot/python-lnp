@@ -400,30 +400,105 @@ utilites" below.
 
 ``updates``
 -----------
-This object contains up to six strings, used to check for pack updates.
+This object contains information used to check for pack updates.
 
-If you are using http://dffd.bay12games.com/ for file hosting, ``dffdID`` must
-be set, ``packVersion`` may be set, and others should not be set (ie set to
-``""``) - they'll be filled automatically.
-Note that any file can be downloaded from DFFD as `new_pack.zip`; the
-extraction method is chosen based on file properties not extension, and if the
-archive extracts to a single directory that will be used instead of the
-filename.
+The most important field in this object is ``updateMethod``, which controls how
+PyLNP checks for updates.
 
-If you are using a different site, you must not set ``dffdID``, may set
-``directURL``, and must set all other fields.
+There are three methods available, ``dffd``, ``regex`` and ``json``, each of
+which require additional fields to be specified. These will be described below.
 
-``dffdID`` is the ID of your file on DFFD (if applicable)
-``packVersion`` contains the current version string of your pack.
-``checkURL`` must be a URL to a page containing the latest version string of your pack.
-``versionRegex`` must be a regular expression that extracts the latest version
-from the page contents of the aforementioned URL. If you don't understand
-regular expressions, ask on the forums or use DFFD for hosting.
-``downloadURL`` is the URL of the pack's download webpage; this is opened in a browser.
-``directURL`` is the URL of the (future) package for direct download.
+If ``updateMethod`` is missing, a warning will be printed when checking for
+updates, and the program will attempt to auto-detect the correct method. *Please
+set this field correctly*, since auto-detection is a temporary measure to
+handle backwards compatibility.
 
-The pack is considered updated if the pack version matches the version
-extracted using the regular expression.
+When checking for updates, the version retrieved online will be compared with
+the ``packVersion`` field. If they are different, PyLNP will show a notice that
+updates are available.
+
+If you do not want update checking, remove the ``updates`` object, or set
+``updateMethod`` to a blank string.
+
+``dffd``
+~~~~~~~~
+For files hosted on http://dffd.bay12games.com/, simply add a field ``dffdId``
+which contains the ID of your hosted file. No other configuration is necessary.
+
+``regex``
+~~~~~~~~~
+This method extracts version information using a regular expression. All regular
+expressions must capture a single group containing the appropriate value.
+
+This method uses five extra values:
+
+* ``checkURL``: A URL to a page containing the latest version string of
+  your pack.
+* ``versionRegex``: A regular expression that extracts the latest version
+  from the page contents of the aforementioned URL. If you do not understand
+  regular expressions, ask on the forums or use DFFD for hosting.
+* ``downloadURL``: the URL of the pack's download webpage, to be opened in a
+  browser **or**
+* ``downloadURLRegex``: A regular expression that extracts the pack's download
+  webpage from the same URL that contained the version string.
+* ``directURL`` is the URL of the (future) package for direct download **or**
+* ``directURLRegex``: A regular expression that extracts the pack's direct
+  download webpage from the same URL that contained the version string.
+* ``directFilename``: Filename to use when downloading directly (optional)
+  **or**
+* ``directFilenameRegex``: A regular expression that extracts the file name to
+  use when downloading directly.
+
+``downloadURL`` and ``directURL`` are both optional, but at least one should be
+provided (or their regular expression counterparts).
+
+When doing direct downloads, the URL's file name will be used as the target file
+name (e.g. ``http://example.com/downloads/my_pack.zip`` gets downloaded as
+``my_pack.zip``) if neither ``directFilename`` or ``directFilenameRegex`` is
+set.
+
+``json``
+~~~~~~~~~
+This method extracts version information from a JSON document.
+
+This method uses *JSON paths*, which are strings which provide a path into the
+JSON object. The path is specified by a slash-separated string of object names.
+Example::
+
+    {
+      "foo": ""       //path is "foo"
+      "bar": {        //path is "bar"
+        "baz": ""     //path is "bar/baz"
+        "quux": {     //path is "bar/quux"
+          "xyzzy": "" //path is "bar/quux/xyzzy"
+        }
+      }
+    }
+
+This method requires four extra values:
+
+* ``checkURL``: A URL to a JSON document containing the necessary information.
+* ``versionJsonPath``: A JSON path that points to the latest version of your
+  pack.
+* ``downloadURL``: the URL of the pack's download webpage, to be opened in a
+  browser **or**
+* ``downloadURLJsonPath``: A JSON path that points to the pack's download
+  webpage.
+* ``directURL`` is the URL of the (future) package for direct download **or**
+* ``directURLJsonPath``: A JSON path that points to the pack's direct download
+  webpage from the same URL that contained the version string.
+* ``directFilename``: Filename to use when downloading directly (optional)
+  **or**
+* ``directFilenameJsonPath``: A JSON path that points to the file name to use
+  when downloading directly
+
+``downloadURL`` and ``directURL`` are both optional, but at least one should be
+provided (or their JSON path counterparts).
+
+When doing direct downloads, the URL's file name will be used as the target file
+name (e.g. ``http://example.com/downloads/my_pack.zip`` gets downloaded as
+``my_pack.zip``) if neither ``directFilename`` or ``directFilenameJsonPath`` is
+set.
 
 ``dfhack``
 ----------
