@@ -4,7 +4,7 @@
 """Contains base class used for child windows."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys
+import sys, os
 from . import controls
 
 from core import errorlog, launcher, paths, update
@@ -70,23 +70,28 @@ class ChildWindow(object):
 class DualTextWindow(ChildWindow):
     """Window containing a row of buttons and two scrollable text fields."""
     def __init__(self, parent, title):
+        self.f = None
         self.left = None
+        self.left_scroll = None
         self.right = None
+        self.right_scroll = None
         super(DualTextWindow, self).__init__(parent, title)
 
     def create_controls(self, container):
         self.create_buttons(container)
 
-        f = Frame(container)
+        self.f = f = Frame(container)
         Grid.rowconfigure(f, 0, weight=1)
         Grid.columnconfigure(f, 0, weight=1)
         Grid.columnconfigure(f, 2, weight=1)
         self.left = Text(f, width=40, height=20, wrap="word")
         self.left.grid(column=0, row=0, sticky="nsew")
-        controls.create_scrollbar(f, self.left, column=1, row=0)
+        self.left_scroll = controls.create_scrollbar(
+            f, self.left, column=1, row=0)
         self.right = Text(f, width=40, height=20, wrap="word")
         self.right.grid(column=2, row=0, sticky="nsew")
-        controls.create_scrollbar(f, self.right, column=3, row=0)
+        self.right_scroll = controls.create_scrollbar(
+            f, self.right, column=3, row=0)
         f.pack(side=BOTTOM, fill=BOTH, expand=Y)
 
     def create_buttons(self, container):
@@ -143,14 +148,21 @@ class InitEditor(DualTextWindow):
         self.left.delete('1.0', END)
         self.left.insert('1.0', DFRaw.read(paths.get('init', 'init.txt')))
         self.right.delete('1.0', END)
-        self.right.insert('1.0', DFRaw.read(paths.get('init', 'd_init.txt')))
+        if os.path.isfile(paths.get('init', 'd_init.txt')):
+            self.right.insert(
+                '1.0', DFRaw.read(paths.get('init', 'd_init.txt')))
+        else:
+            Grid.columnconfigure(self.f, 2, weight=0)
+            self.right.grid_forget()
+            self.right_scroll.hidden = True
 
     def save(self):
         """Saves configuration data from the text widgets."""
-        DFRaw.write(paths.get('init', 'init.txt'),
-                    self.left.get('1.0', 'end'))
-        DFRaw.write(paths.get('init', 'd_init.txt'),
-                    self.right.get('1.0', 'end'))
+        DFRaw.write(
+            paths.get('init', 'init.txt'), self.left.get('1.0', 'end'))
+        if os.path.isfile(paths.get('init', 'd_init.txt')):
+            DFRaw.write(
+                paths.get('init', 'd_init.txt'), self.right.get('1.0', 'end'))
         self.gui.load_params()
 
 class SelectDF(ChildWindow):
