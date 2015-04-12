@@ -19,12 +19,15 @@ class JSONConfiguration(object):
 
         Params:
             filename
-                JSON filename to load data from.
+                JSON filename to load data from. Use None to only use object
+                from default.
             default
                 Default value to use in case loading fails.
         """
         self.filename = filename
         self.data = default if default else {}
+        if filename is None:
+            return
         if not os.path.isfile(filename):
             print(
                 "File " + filename + " does not exist",
@@ -39,12 +42,20 @@ class JSONConfiguration(object):
                 ", ignoring data - error details follow", file=sys.stderr)
             sys.excepthook(*sys.exc_info())
 
-    def save_data(self):
-        """Saves the data to the JSON file."""
-        json.dump(
-            self.data, open(self.filename, 'w'), indent=2, **enc_dict)
+    @staticmethod
+    def from_text(text):
+        """Create a JSONConfiguration object from a string."""
+        return JSONConfiguration(None, json.loads(text))
 
-    def get_value(self, path, default=None):
+    def save_data(self):
+        """Saves the data to the original JSON file. Has no effect if no
+        filename was given during construction."""
+        if self.filename:
+            json.dump(
+                self.data, open(self.filename, 'w'), indent=2, **enc_dict)
+
+
+    def get(self, path, default=None):
         """
         Retrieves a value from the configuration.
         Returns default if the path does not exist.
@@ -63,6 +74,20 @@ class JSONConfiguration(object):
             return result
         except KeyError:
             return default
+
+    def get_value(self, path, default=None):
+        """
+        Retrieves a value from the configuration.
+        Returns default if the path does not exist.
+
+        Params:
+            path
+                /-delimited path to the string.
+            default
+                Value returned if path does not exist.
+        """
+        return self.get(path, default)
+
 
     def get_string(self, path):
         """
