@@ -21,7 +21,8 @@ __download_queues = {}
 
 def download_str(url, **kwargs):
     """Instantly download a file from <url> and return its contents. Failed
-    downloads return None.
+    downloads return None. NOTE: This is a blocking method. Use a download queue
+    for non-blocking downloads.
 
     Keyword arguments:
         encoding
