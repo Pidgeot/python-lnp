@@ -93,26 +93,22 @@ class AdvancedTab(Tab):
         grid.add(Label(resolution, text='Windowed Y'))
         grid.add(controls.create_numeric_entry(
             resolution, self.winX_var, ('WINDOWEDX', 'GRAPHICS_WINDOWEDX'),
-            'Horizontal resolution in '
-            'windowed mode. Values <= 255 represent number of tiles, values > '
-            '255 represent number of pixels.'))
+            'Horizontal resolution in windowed mode. Values <= 255 represent '
+            'number of tiles, values > 255 represent number of pixels.'))
         grid.add(controls.create_numeric_entry(
             resolution, self.winY_var, ('WINDOWEDY', 'GRAPHICS_WINDOWEDY'),
-            'Vertical resolution in '
-            'windowed mode. Values <= 255 represent number of tiles, values > '
-            '255 represent number of pixels.'))
+            'Vertical resolution in windowed mode. Values <= 255 represent '
+            'number of tiles, values > 255 represent number of pixels.'))
         grid.add(Label(resolution, text='Fullscreen X'))
         grid.add(Label(resolution, text='Fullscreen Y'))
         grid.add(controls.create_numeric_entry(
             resolution, self.fullX_var, ('FULLSCREENX', 'GRAPHICS_FULLSCREENX'),
-            'Horizontal resolution '
-            'in fullscreen. Values <= 255 represent number of tiles, values > '
-            '255 represent number of pixels.'))
+            'Horizontal resolution in fullscreen. Values <= 255 represent '
+            'number of tiles, values > 255 represent number of pixels.'))
         grid.add(controls.create_numeric_entry(
             resolution, self.fullY_var, ('FULLSCREENY', 'GRAPHICS_FULLSCREENY'),
-            'Vertical resolution in '
-            'fullscreen. Values <= 255 represent number of tiles, values > 255 '
-            'represent number of pixels.'))
+            'Vertical resolution in fullscreen. Values <= 255 represent '
+            'number of tiles, values > 255 represent number of pixels.'))
         saverelated = controls.create_control_group(
             self, 'Save-related', True)
         main_grid.add(saverelated, 2)
