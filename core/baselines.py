@@ -142,22 +142,11 @@ def remove_vanilla_raws_from_pack(pack, folder):
                     continue
                 van_f = os.path.join(van_folder, os.path.relpath(f, folder))
                 if os.path.isfile(van_f):
-                    vtext = mtext = None
-                    try:
-                        with open(van_f, mode='r', encoding='cp437',
-                                  errors='replace') as v:
-                            vtext = v.read()
-                    except UnicodeDecodeError:
-                        log.w('File encoding error: not cp437: ' + van_f)
-                        continue
-                    try:
-                        with open(f, mode='r', encoding='cp437',
-                                  errors='replace') as m:
-                            mtext = m.read()
-                    except UnicodeDecodeError:
-                        log.w('File encoding error: not cp437: ' + f)
-                        continue
-                    if vtext == mtext and vtext is not None:
+                    with open(van_f, encoding='cp437', errors='replace') as v:
+                        vtext = v.read()
+                    with open(f, encoding='cp437', errors='replace') as m:
+                        mtext = m.read()
+                    if vtext == mtext:
                         os.remove(f)
                         i += 1
     return i
