@@ -67,6 +67,7 @@ def install_extras():
         return
     install_file = paths.get('df', 'PyLNP{0}.txt'.format(VERSION))
     if not os.access(install_file, os.F_OK):
+        log.i('Installing extras content for first time')
         dir_util.copy_tree(extras_dir, paths.get('df'))
         textfile = open(install_file, 'w', encoding='utf-8')
         textfile.write(
@@ -101,9 +102,11 @@ def load_params():
     try:
         lnp.settings.read_settings()
     except IOError:
+        log.e("Failed to read settings, {0} not really a DF dir?".format(
+            paths.get('df')))
         sys.excepthook(*sys.exc_info())
         msg = ("Failed to read settings, "
-               "{0} not really a DF dir?").format(paths.get('df'))
+               "{} not really a DF dir?".format(paths.get('df')))
         raise IOError(msg)
 
 def save_params():
@@ -112,15 +115,12 @@ def save_params():
 
 def restore_defaults():
     """Copy default settings into the selected Dwarf Fortress instance."""
-    shutil.copy(
-        paths.get('defaults', 'init.txt'),
-        paths.get('init', 'init.txt')
-        )
+    log.d('Restoring to default settings.')
+    shutil.copy(paths.get('defaults', 'init.txt'),
+                paths.get('init', 'init.txt'))
     if lnp.df_info.version > '0.31.03':
-        shutil.copy(
-            paths.get('defaults', 'd_init.txt'),
-            paths.get('init', 'd_init.txt')
-        )
+        shutil.copy(paths.get('defaults', 'd_init.txt'),
+                    paths.get('init', 'd_init.txt'))
     load_params()
 
 class DFInstall(object):
@@ -192,7 +192,9 @@ class DFInstall(object):
             (init, 'SOUND', '0.21.100.19a', {})]
         for v in versions:
             if DFConfiguration.has_field(v[0], v[1], **v[3]):
+                log.w('DF version detected based on init analysis; unreliable')
                 return (Version(v[2]), 'init detection')
+        log.e('DF version could not be detected')
         return (Version('0.21.93.19a'), 'fallback')
 
     def detect_variations(self):
@@ -217,6 +219,7 @@ class DFInstall(object):
         """Return the filename of the download for this version.
         Always windows, for comparison of raws in baselines.
         Prefer small and SDL releases when available."""
+        # checked and correct for all versions up to 0.40.24
         base = 'df_' + str(self.version)[2:].replace('.', '_')
         if self.version >= '0.31.13':
             return base + '_win_s.zip'
