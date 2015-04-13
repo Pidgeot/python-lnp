@@ -5,8 +5,9 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import os, glob
 import sys
-from .dfraw import DFRaw
 
+from .dfraw import DFRaw
+from . import log
 
 def identify_folder_name(base, name):
     """
@@ -71,9 +72,10 @@ def detect_installed_files(current_file, test_files):
                 if tested in current:
                     installed.append(f)
             except IOError:
-                pass
+                log.e('Cannot tell if {} is installed; read failed'.format(
+                    f))
     except IOError:
-        pass
+        log.e('Cannot check installs in {}; read failed'.format(current_file))
     return installed
 
 def get_resource(filename):

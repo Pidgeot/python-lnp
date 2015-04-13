@@ -9,7 +9,7 @@ import subprocess
 
 from .helpers import get_resource
 from .lnp import lnp
-from . import hacks, paths
+from . import hacks, paths, log
 
 def get_configured_terminal():
     """Retrieves the configured terminal command."""
@@ -44,7 +44,6 @@ def get_df_executable():
             spawn_terminal = True
         else:
             df_filename = 'df'
-
     return df_filename, spawn_terminal
 
 def run_df(force=False):
@@ -54,6 +53,7 @@ def run_df(force=False):
     executable = paths.get('df', df_filename)
     result = run_program(executable, force, True, spawn_terminal)
     if (force and not result) or result is False:
+        log.e('Could not launch ' + executable)
         raise Exception('Failed to run Dwarf Fortress.')
 
     for prog in lnp.autorun:
@@ -94,6 +94,7 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
 
     is_running = program_is_running(path, check_nonchild)
     if not force and is_running:
+        log.i(path + ' is already running')
         lnp.ui.on_program_running(path, is_df)
         return None
 
@@ -186,4 +187,4 @@ def open_folder(path):
         elif sys.platform in ['windows', 'win32']:
             subprocess.check_call(['explorer', path])
     except:
-        pass
+        log.e('Could not open folder ' + path + ' in native file explorer')
