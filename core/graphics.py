@@ -6,7 +6,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys, os, shutil, glob
 from .launcher import open_folder
 from .lnp import lnp
-from . import colors, df, paths, baselines, mods
+from . import colors, df, paths, baselines, mods, manifest, log
 from .dfraw import DFRaw
 
 def open_graphics():
@@ -19,16 +19,20 @@ def current_pack():
     """
     p = paths.get('df', 'raw', 'installed_raws.txt')
     if os.path.isfile(p):
-        if logged_graphics(p):
-            return logged_graphics(p)
+        p = logged_graphics(p)
+        if p:
+            log.i('Read installed graphics ({}) from log'.format(p))
+            return p
     packs = read_graphics()
     for p in packs:
         if (lnp.settings.FONT == p[1] and
                 lnp.settings.GRAPHICS_FONT == p[2]):
+            log.i('Installed graphics is {} by checking tilesets'.format(p[0]))
             return p[0]
     result = str(lnp.settings.FONT)
     if lnp.settings.version_has_option('GRAPHICS_FONT'):
         result += '/'+str(lnp.settings.GRAPHICS_FONT)
+    log.w('Could not determine installed graphics, tileset is ' + result)
     return result
 
 def logged_graphics(logfile):
@@ -67,6 +71,7 @@ def install_graphics(pack):
         None if baseline vanilla raws are missing
     """
     if not baselines.find_vanilla_raws():
+        log.w('Cannot install graphics when baseline raws are missing!')
         return None
     try:
         # Update raws
@@ -111,6 +116,7 @@ def install_graphics(pack):
         except:
             pass
     except:
+        log.e('Something went wrong while installing graphics')
         sys.excepthook(*sys.exc_info())
         df.load_params()
         return False
@@ -241,10 +247,16 @@ def update_graphics_raws(raw_dir, pack):
         False if aborted
     """
     if not validate_pack(pack):
+        log.w('Cannot update raws to an invalid graphics pack (' + pack + ')')
         return None
     built_log = paths.get('baselines', 'temp', 'raw', 'installed_raws.txt')
     built_graphics = logged_graphics(built_log)
-    return mods.update_raw_dir(raw_dir, gfx=(pack, built_graphics))
+    retval = mods.update_raw_dir(raw_dir, gfx=(pack, built_graphics))
+    if retval:
+        log.i('Safely updated graphics raws ' + raw_dir + ' to ' + pack)
+        return True
+    log.i('Aborted while updating raws ' + raw_dir + ' to ' + pack)
+    return False
 
 def update_savegames():
     """Update save games with current raws."""
@@ -265,6 +277,8 @@ def can_rebuild(log_file, strict=True):
     graphic_ok = logged_graphics(log_file) in [k[0] for k in read_graphics()]
     if graphic_ok and mods.can_rebuild(log_file, strict=strict):
         return True
+    log.i('Components unavialable to rebuild raws in ' +
+          os.path.dirname(log_file))
     return False
 
 def open_tilesets():
