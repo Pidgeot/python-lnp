@@ -116,8 +116,7 @@ def install_graphics(pack):
         except:
             pass
     except:
-        log.e('Something went wrong while installing graphics')
-        sys.excepthook(*sys.exc_info())
+        log.e('Something went wrong while installing graphics', stack=True)
         df.load_params()
         return False
     df.load_params()

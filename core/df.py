@@ -102,11 +102,9 @@ def load_params():
     try:
         lnp.settings.read_settings()
     except IOError:
-        log.e("Failed to read settings, {0} not really a DF dir?".format(
-            paths.get('df')))
-        sys.excepthook(*sys.exc_info())
-        msg = ("Failed to read settings, "
-               "{} not really a DF dir?".format(paths.get('df')))
+        msg = 'Failed to read settings, {} not really a DF dir?'.format(
+            paths.get('df'))
+        log.e(msg, stack=True)
         raise IOError(msg)
 
 def save_params():
