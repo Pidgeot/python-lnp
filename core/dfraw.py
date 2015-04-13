@@ -8,6 +8,8 @@ import sys
 import os
 from fnmatch import fnmatch
 
+from . import log
+
 if sys.version_info[0] == 3:
     #pylint: disable=redefined-builtin
     basestring = str
@@ -119,6 +121,7 @@ def parse_raw(parent, text):
         elif kind == 'Comment':
             DFRawComment(parent_stack[-1], token)
         else:
+            log.e('Unknown raw token while parsing: '+kind)
             raise Exception('Unknown raw token kind: '+kind)
 
 class DFRawNode(object):
@@ -251,6 +254,7 @@ class DFRawNode(object):
             if self.is_tag:
                 value = ':'.join(value)
             else:
+                log.e('Multiple values passed to non-tag node')
                 raise Exception('Multiple values passed to non-tag node')
         if value == self.__value:
             return

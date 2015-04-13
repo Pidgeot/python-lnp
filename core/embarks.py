@@ -4,7 +4,7 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import os
-from . import helpers, paths
+from . import helpers, paths, log
 from .dfraw import DFRaw
 
 def read_embarks():
@@ -22,9 +22,10 @@ def install_embarks(files):
             List of files to install.
     """
     with DFRaw.open(paths.get('init', 'embark_profiles.txt'), 'wt') as out:
+        log.i('Installing embark profiles: ' + str(files))
         for f in files:
             embark = DFRaw.read(paths.get('embarks', f))
-            out.write(embark+"\n\n")
+            out.write(embark + "\n\n")
 
 def get_installed_files():
     """Returns the names of the currently installed embark profiles."""

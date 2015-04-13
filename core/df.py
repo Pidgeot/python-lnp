@@ -12,7 +12,7 @@ from functools import total_ordering
 from io import open
 
 from .settings import DFConfiguration
-from . import hacks, paths
+from . import hacks, paths, log
 from .lnp import lnp, VERSION
 
 def find_df_folders():
