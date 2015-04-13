@@ -43,6 +43,7 @@ def get_colors(colorscheme=None):
         result = DFRaw(f).get_values(*color_fields)
         return [tuple(int(x) for x in t) for t in result]
     except:
+        log.e('Could not get colors for unknown reason.')
         return []
 
 def load_colors(filename):
@@ -54,6 +55,7 @@ def load_colors(filename):
         The name of the new colorscheme to install (extension optional).
         If no path is specified, file is assumed to be in LNP/Colors.
     """
+    log.d('Loading colorscheme ' + filename)
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
     if os.path.dirname(filename) == '':
@@ -72,15 +74,14 @@ def save_colors(filename):
 
     Params:
         filename
-            The name of the new keybindings file.
+            The name of the new color scheme file.
     """
+    log.d('Saving colorscheme ' + filename)
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
     filename = paths.get('colors', filename)
     if lnp.df_info.version <= '0.31.03':
-        print(
-            "Exporting colors is only supported for DF 0.31.04 and later",
-            file=sys.stderr)
+        log.e('Exporting colors is only supported for DF 0.31.04 and later')
         colors = ([c+'_R' for c in _df_colors] + [c+'_G' for c in _df_colors] +
                   [c+'_B' for c in _df_colors])
         lnp.settings.create_file(filename, colors)
@@ -107,6 +108,7 @@ def delete_colors(filename):
         filename
             The filename to delete.
     """
+    log.d('Deleting colorscheme ' + filename)
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
     os.remove(paths.get('colors', filename))

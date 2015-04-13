@@ -40,9 +40,9 @@ def compress_bitmaps():
         try:
             import Image
         except ImportError:
-            print('Please install PIL or Pillow to compress bitmaps.')
             call_optipng()
     else:
+        log.d('Compressing bitmaps with PIL/Pillow')
         for fname in glob.glob(paths.get(
                 'df', '-'.join(get_region_info()) + '-*.bmp')):
             f = Image.open(fname)
@@ -52,7 +52,7 @@ def compress_bitmaps():
 def call_optipng():
     """Calling optipng can work well, but isn't very portable."""
     if os.name == 'nt' and os.path.isfile(paths.get('df', 'optipng.exe')):
-        print('Falling back to optipng for image compression.')
+        log.w('Falling to optipng for image compression, install PIL.')
         for fname in glob.glob(paths.get(
                 'df', '-'.join(get_region_info()) + '-*.bmp')):
             ret = subprocess.call([paths.get('df', 'optipng'), '-zc9', '-zm9',
@@ -60,6 +60,8 @@ def call_optipng():
                                   creationflags=0x00000008)
             if ret == 0:
                 os.remove(fname)
+    else:
+        log.e('Install PIL or Pillow to compress bitmaps.')
 
 def choose_region_map():
     """Returns the most-prefered region map available, or fallback."""
@@ -111,6 +113,7 @@ def move_files():
             'trd', 'veg', 'vol')
     for m in maps:
         m = glob.glob(pattern + '-' + m + '.???')
+        log.d('Found the following region maps:  ' + str(m))
         if m:
             t = os.path.join(dirname, 'region_maps', os.path.basename(m[0]))
             if os.path.isfile(t):
@@ -118,6 +121,7 @@ def move_files():
             else:
                 os.renames(m[0], t)
     for f in glob.glob(paths.get('df', region + '-*')):
+        log.d('Found the following misc files:  ' + str(m))
         if os.path.isfile(f):
             target = os.path.join(dirname, os.path.basename(f))
             if os.path.isfile(target):
@@ -132,6 +136,7 @@ def process_legends():
     if lnp.df_info.version >= '0.40.09':
         i = 0
         while get_region_info():
+            log.i('Processing legends from ' + get_region_info()[0])
             compress_bitmaps()
             create_archive()
             move_files()
