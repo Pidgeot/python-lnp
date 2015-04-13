@@ -121,6 +121,8 @@ def merge_all_mods(list_of_mods, gfx=None):
         status = merge_a_mod(mod)
         ret_list.append(status)
         if status == 3:
+            log.i('Mod {}, in {}, could not be merged.'.format(
+                mod, str(list_of_mods)))
             merged = merge_all_mods(list_of_mods[:i-1], gfx)
             return merged + [-1]*len(list_of_mods[i:])
     return ret_list
@@ -150,6 +152,7 @@ def do_merge_seq(mod_text, vanilla_text, gen_text):
         return 0, gen_text
     if mod_text and gen_text and not vanilla_text:
         # No such vanilla file, so we need a two-way merge (additive only)
+        log.v('Falling back to two-way merge; no vanilla file exists.')
         return 0, [s[2:] for s in ndiff(gen_text, mod_text)]
     # Finally go to the expensive but complete merge logic
     return three_way_merge(vanilla_text, gen_text, mod_text)
@@ -202,6 +205,7 @@ def three_way_merge(vanilla_text, gen_text, mod_text):
                 # An over-write merge. Change status to warn the user, unless
                 # we're overwriting with an identical change, and append the
                 # shorter block to new genned lines
+                log.v('Overwrite merge at line ' + str(cur_v))
                 if mod_i2 < gen_i2:
                     if gen_text[cur_v:mod_i2] != mod_text[cur_v:mod_i2]:
                         status = 2
@@ -234,27 +238,20 @@ def do_merge_files(mod_file_name, van_file_name, gen_file_name):
         3:  Fatal error, respond by rebuilding to previous mod
     """
     #pylint:disable=bare-except
-    try:
-        van_lines = open(van_file_name, mode='r', encoding='cp437',
-                         errors='replace').readlines()
-    except:
-        van_lines = []
-    try:
-        mod_lines = open(mod_file_name, mode='r', encoding='cp437',
-                         errors='replace').readlines()
-    except:
-        mod_lines = []
-    try:
-        gen_lines = open(gen_file_name, mode='r', encoding='cp437',
-                         errors='replace').readlines()
-    except:
-        gen_lines = []
+    van_lines, mod_lines, gen_lines = [], [], []
+    for fname, lines in ((van_file_name, van_lines),
+                         (mod_file_name, mod_lines),
+                         (gen_file_name, gen_lines)):
+        try:
+            lines += open(fname, encoding='cp437', errors='replace').readlines()
+        except:
+            log.d('Could not open ' + fname)
     status, gen_lines = do_merge_seq(mod_lines, van_lines, gen_lines)
     try:
         with open(gen_file_name, "w", encoding='cp437') as gen_file:
             gen_file.writelines(gen_lines)
     except:
-        log.e('Writing to {} failed on encoding error'.format(gen_file_name))
+        log.e('Writing to {} failed'.format(gen_file_name))
         return 3
     return status
 
@@ -304,9 +301,9 @@ def merge_folders(mod_folder, vanilla_folder, mixed_folder):
             elif any([f.endswith(a) for a in ('.lua', '.rb', '.bmp', '.png')]):
                 # copy DFHack scripts or sprite sheets
                 if not os.path.isdir(os.path.dirname(gen_f)):
-                    os.mkdir(os.path.dirname(gen_f))
+                    os.mkdirs(os.path.dirname(gen_f))
                 if not os.path.isfile(gen_f):
-                    shutil.copyfile(mod_f, gen_f)
+                    shutil.copy2(mod_f, gen_f)
                     status = max(1, status)
                 else:
                     with open(mod_f, 'rb') as f:
@@ -430,6 +427,7 @@ def read_installation_log(fname):
         with open(fname) as f:
             file_contents = list(f.readlines())
     except IOError:
+        log.d('Log not found: ' + fname)
         return []
     mods_list = []
     for line in file_contents:
