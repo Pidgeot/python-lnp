@@ -3,8 +3,8 @@
 """Color scheme management."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, os, shutil
-from . import helpers, paths
+import os, shutil
+from . import helpers, paths, log
 from .lnp import lnp
 from .dfraw import DFRaw
 

@@ -10,7 +10,7 @@ from . import launcher, paths, download, log
 from .json_config import JSONConfiguration
 
 try:  # Python 2
-    # pylint:disable=import-error
+    # pylint:disable=import-error, no-name-in-module
     from urllib import quote, unquote
     from urlparse import urlparse
 except ImportError:  # Python 3

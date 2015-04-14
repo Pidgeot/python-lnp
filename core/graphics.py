@@ -3,10 +3,10 @@
 """Graphics pack management."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, os, shutil, glob
+import os, shutil, glob
 from .launcher import open_folder
 from .lnp import lnp
-from . import colors, df, paths, baselines, mods, manifest, log
+from . import colors, df, paths, baselines, mods, log
 from .dfraw import DFRaw
 
 def open_graphics():

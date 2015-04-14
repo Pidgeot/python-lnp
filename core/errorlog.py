@@ -40,6 +40,7 @@ class CaptureStream(object):
         """
         self.lines.append(string)
         if sys.version_info[0] == 2:
+            # For Python3: pylint:disable=undefined-variable
             self.outfile.write(unicode(string))
         else:
             self.outfile.write(string)

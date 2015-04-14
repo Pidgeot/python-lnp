@@ -6,8 +6,8 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import os
 
-from core.dfraw import DFRaw
-from core import log
+from .dfraw import DFRaw
+from . import log
 
 # TODO: Handle older versions correctly
 # For example, 40d and earlier use object names MATGLOSS and DESCRIPTOR
@@ -59,7 +59,7 @@ def check_file(path):
         file_ok = False
     objname = filename
     check_objnames = []
-    for k, v in objname_overrides.iteritems():
+    for k, v in objname_overrides.items():
         if filename.startswith(k) and v in valid_objnames:
             check_objnames.append(v)
     for o in valid_objnames:

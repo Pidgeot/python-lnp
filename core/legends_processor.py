@@ -12,7 +12,7 @@ Sort files into region folder, with maps subfolders,
 from __future__ import print_function, unicode_literals, absolute_import
 
 import os, zipfile, glob, subprocess
-from . import paths
+from . import paths, log
 from .lnp import lnp
 
 def get_region_info():
@@ -106,28 +106,28 @@ def move_files():
         target = os.path.join(dirname, 'site_maps', os.path.basename(site_map))
         if os.path.isfile(target):
             os.remove(site_map)
-        else:
-            os.renames(site_map, target)
+            continue
+        os.renames(site_map, target)
     maps = ('world_map', 'bm', 'detailed', 'dip', 'drn', 'el', 'elw',
             'evil', 'hyd', 'nob', 'rain', 'sal', 'sav', 'str', 'tmp',
             'trd', 'veg', 'vol')
     for m in maps:
         m = glob.glob(pattern + '-' + m + '.???')
-        log.d('Found the following region maps:  ' + str(m))
         if m:
+            log.d('Found the following region map:  ' + str(m[0]))
             t = os.path.join(dirname, 'region_maps', os.path.basename(m[0]))
             if os.path.isfile(t):
                 os.remove(m[0])
-            else:
-                os.renames(m[0], t)
+                continue
+            os.renames(m[0], t)
     for f in glob.glob(paths.get('df', region + '-*')):
-        log.d('Found the following misc files:  ' + str(m))
+        log.d('Found the following misc files:  ' + str(f))
         if os.path.isfile(f):
             target = os.path.join(dirname, os.path.basename(f))
             if os.path.isfile(target):
                 os.remove(f)
-            else:
-                os.renames(f, target)
+                continue
+            os.renames(f, target)
     for f in glob.glob(paths.get('df', '*_color_key.txt')):
         os.remove(f)
 

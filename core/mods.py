@@ -301,7 +301,7 @@ def merge_folders(mod_folder, vanilla_folder, mixed_folder):
             elif any([f.endswith(a) for a in ('.lua', '.rb', '.bmp', '.png')]):
                 # copy DFHack scripts or sprite sheets
                 if not os.path.isdir(os.path.dirname(gen_f)):
-                    os.mkdirs(os.path.dirname(gen_f))
+                    os.makedirs(os.path.dirname(gen_f))
                 if not os.path.isfile(gen_f):
                     shutil.copy2(mod_f, gen_f)
                     status = max(1, status)
