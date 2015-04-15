@@ -5,6 +5,7 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import sys
+import types
 
 from . import binding
 
@@ -272,6 +273,13 @@ def create_scrollbar(parent, control, **gridargs):
     s.grid_remove()
     return s
 
+def listbox_identify(listbox, y):
+    """Returns the index of the listbox item currently under the cursor"""
+    item = listbox.nearest(y)
+    if (listbox.bbox(item)[1] + listbox.bbox(item)[3]) > y:
+        return item
+    return None
+
 def create_file_list(parent, title, listvar, **args):
     """
         Creates a file list with a scrollbar. Returns a tuple
@@ -296,6 +304,7 @@ def create_file_list(parent, title, listvar, **args):
     lb = Listbox(
         lf, listvariable=listvar, activestyle='dotbox', exportselection=0,
         **args)
+    lb.identify = types.MethodType(listbox_identify, lb)
     lb.grid(column=0, row=0, rowspan=2, sticky="nsew")
     create_scrollbar(lf, lb, column=1, row=0, rowspan=2)
     return (lf, lb)

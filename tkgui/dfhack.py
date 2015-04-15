@@ -24,6 +24,9 @@ class DFHackTab(Tab):
     """DFHack tab for the TKinter GUI."""
     def read_data(self):
         self.update_hack_list()
+        # Fix focus bug
+        if self.hacklist.get_children():
+            self.hacklist.focus(self.hacklist.get_children()[0])
 
     def create_controls(self):
         controls.create_trigger_option_button(
@@ -53,10 +56,10 @@ class DFHackTab(Tab):
         hacklist = self.hacklist
 
         # Do not show headings
-        hacklist.configure(show=['tree'], displaycolumns=())
+        hacklist.configure(show=['tree'], displaycolumns=(), selectmode="none")
 
-        hacklist.bind("<<TreeviewSelect>>", lambda e: self.deselect_all()) 
-        for seq in ("<1>", "<2>" if sys.platform == 'darwin' else "<3>"):
+        for seq in ("<space>", "<Return>", "<1>",
+                   "<2>" if sys.platform == 'darwin' else "<3>"):
             hacklist.bind(seq, self.toggle_hack)
 
         self.hack_tooltip = controls.create_tooltip(hacklist, '')
@@ -94,16 +97,13 @@ class DFHackTab(Tab):
             self.hacklist.insert('', 'end', text=title, tags=tags,
                                  values=(hack['tooltip'],))
 
-    def deselect_all(self):
-        self.hacklist.focus('')
-        items = self.hacklist.selection()
-        if items:
-            self.hacklist.selection_remove(items)
-
     def toggle_hack(self, event):
         """Toggles the selected hack."""
-        item = self.hacklist.identify_row(event.y)
-        
+        if event.keysym == '??':
+            item = self.hacklist.identify_row(event.y)
+        else:
+            item = self.hacklist.focus()
+
         if item:
             title = self.hacklist.item(item, 'text')
             hacks.toggle_hack(title)

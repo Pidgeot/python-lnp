@@ -25,6 +25,10 @@ class UtilitiesTab(Tab):
     """Utilities tab for the TKinter GUI."""
     def read_data(self):
         self.read_utilities()
+        
+        # Fix focus bug
+        if self.proglist.get_children():
+            self.proglist.focus(self.proglist.get_children()[0])
 
     def create_controls(self):
         progs = controls.create_control_group(
@@ -64,7 +68,7 @@ class UtilitiesTab(Tab):
         for seq in ("<Double-1>", "<Return>"):
             proglist.bind(seq, lambda e: self.run_selected_utilities())
 
-        for seq in ("<2>" if sys.platform == 'darwin' else "<3>",):
+        for seq in ("<space>", "<2>" if sys.platform == 'darwin' else "<3>",):
             proglist.bind(seq, self.toggle_autorun)
 
         self.list_tooltip = controls.create_tooltip(proglist, '')
@@ -120,7 +124,11 @@ class UtilitiesTab(Tab):
             event
                 Data for the click event that triggered this.
         """
-        item = self.proglist.identify_row(event.y)
+        if event.keysym == '??':
+            item = self.proglist.identify_row(event.y)
+        else:
+            item = self.proglist.focus()
+
         if item:
             utilities.toggle_autorun(item)
             self.tag_set(item, 'autorun', item in lnp.autorun)
