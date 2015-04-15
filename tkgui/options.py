@@ -106,8 +106,9 @@ class OptionsTab(Tab):
                 self.read_keybinds, self.save_keybinds,
                 lambda: self.delete_keybinds(self.keybinding_files))
         keybindings.pack(side=BOTTOM, fill=BOTH, expand=Y)
-        self.keybinding_files.bind(
-            "<Double-1>", lambda e: self.load_keybinds(self.keybinding_files))
+        for seq in ("<Double-1>", "<Return>"):
+            self.keybinding_files.bind(
+                seq, lambda e: self.load_keybinds(self.keybinding_files))
 
         if lnp.df_info.version >= '0.28.181.40a':
             embarkframe, self.embark_files, _ = \
@@ -184,8 +185,10 @@ class OptionsTab(Tab):
             listbox
                 Listbox containing the list of keybinding files.
         """
-        if len(listbox.curselection()) != 0:
-            keybinds.load_keybinds(listbox.get(listbox.curselection()[0]))
+        items = listbox.curselection()
+        if len(items) > 0:
+            listbox.selection_clear(items)
+            keybinds.load_keybinds(listbox.get(items[0]))
             self.read_keybinds()
 
     def save_keybinds(self):
