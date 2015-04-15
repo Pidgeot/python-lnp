@@ -95,6 +95,7 @@ class DFHackTab(Tab):
                                  values=(hack['tooltip'],))
 
     def deselect_all(self):
+        self.hacklist.focus('')
         items = self.hacklist.selection()
         if items:
             self.hacklist.selection_remove(items)

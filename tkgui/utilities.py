@@ -61,7 +61,7 @@ class UtilitiesTab(Tab):
         # Do not show headings
         proglist.configure(show=['tree'], displaycolumns=())
 
-        for seq in ("<Double-1>", "<Enter>"):
+        for seq in ("<Double-1>", "<Return>"):
             proglist.bind(seq, lambda e: self.run_selected_utilities())
 
         for seq in ("<2>" if sys.platform == 'darwin' else "<3>",):
