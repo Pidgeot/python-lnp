@@ -131,38 +131,12 @@ class UtilitiesTab(Tab):
 
         if item:
             utilities.toggle_autorun(item)
-            self.tag_set(item, 'autorun', item in lnp.autorun)
+            self.proglist.tag_set('autorun', item, item in lnp.autorun)
 
     def update_autorun_list(self):
         """Updates the autorun list."""
         for item in self.proglist.get_children():
-            self.tag_set(item, 'autorun', item in lnp.autorun)
-
-    def tag_set(self, item, tag, state=True, toggle=False):
-        """
-        Adds or removes a tag from the Treeview item's tags. Returns True if
-        tag is now set or False if it is not.
-
-        Params:
-            item
-                Treeview item id
-            state
-                True to set the tag; False to remove the tag.
-            toggle
-                If set to True, will toggle the tag. Overrides on.
-        """
-        tags = list(self.proglist.item(item, 'tags'))
-        is_set = tag in tags
-        if toggle:
-            state = not is_set
-
-        if state and (not is_set):
-            tags.append(tag)
-        elif (not state) and is_set:
-            tags.remove(tag)
-
-        self.proglist.item(item, tags=tags)
-        return state
+            self.proglist.tag_set('autorun', item, item in lnp.autorun)
 
     def run_selected_utilities(self):
         """Runs selected utilities."""

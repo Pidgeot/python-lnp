@@ -107,33 +107,8 @@ class DFHackTab(Tab):
         if item:
             title = self.hacklist.item(item, 'text')
             hacks.toggle_hack(title)
-            self.tag_set(item, 'enabled', hacks.get_hack(title)['enabled'])
-
-    def tag_set(self, item, tag, state=True, toggle=False):
-        """
-        Adds or removes a tag from the Treeview item's tags. Returns True if
-        tag is now set or False if it is not.
-
-        Params:
-            item
-                Treeview item id
-            state
-                True to set the tag; False to remove the tag.
-            toggle
-                If set to True, will toggle the tag. Overrides on.
-        """
-        tags = list(self.hacklist.item(item, 'tags'))
-        is_set = tag in tags
-        if toggle:
-            state = not is_set
-
-        if state and (not is_set):
-            tags.append(tag)
-        elif (not state) and is_set:
-            tags.remove(tag)
-
-        self.hacklist.item(item, tags=tags)
-        return state
+            self.hacklist.tag_set('enabled', item,
+                                  hacks.get_hack(title)['enabled'])
 
     @staticmethod
     def toggle_dfhack():

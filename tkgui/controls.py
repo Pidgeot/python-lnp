@@ -280,6 +280,35 @@ def listbox_identify(listbox, y):
         return item
     return None
 
+def treeview_tag_set(tree, tag, item, state=True, toggle=False):
+    """
+    Adds or removes a tag from the Treeview item's tags. Returns True if
+    tag is now set or False if it is not.
+
+    Params:
+        item
+            Treeview item id
+        state
+            True to set the tag; False to remove the tag.
+        toggle
+            If set to True, will toggle the tag. Overrides on.
+    """
+    # This is necessary because tag_add and tag_remove are not in the Python
+    # bindings for Tk, and this is more readable (and likely not any slower)
+    # than using arcane tk.call() syntax
+    tags = list(tree.item(item, 'tags'))
+    is_set = tag in tags
+    if toggle:
+        state = not is_set
+
+    if state and (not is_set):
+        tags.append(tag)
+    elif (not state) and is_set:
+        tags.remove(tag)
+
+    tree.item(item, tags=tags)
+    return state
+
 def create_file_list(parent, title, listvar, **args):
     """
         Creates a file list with a scrollbar. Returns a tuple
@@ -401,6 +430,7 @@ def create_toggle_list(parent, columns, framegridopts, listopts={}):
     Grid.rowconfigure(lf, 0, weight=1)
     Grid.columnconfigure(lf, 0, weight=1)
     lst = Treeview(lf, columns=columns, show=['headings'], **listopts)
+    lst.tag_set = types.MethodType(treeview_tag_set, lst)
     lst.grid(column=0, row=0, sticky="nsew")
     create_scrollbar(lf, lst, column=1, row=0)
     return lst
