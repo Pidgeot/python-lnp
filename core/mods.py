@@ -243,9 +243,10 @@ def do_merge_files(mod_file_name, van_file_name, gen_file_name):
                          (mod_file_name, mod_lines),
                          (gen_file_name, gen_lines)):
         try:
-            lines += open(fname, encoding='cp437', errors='replace').readlines()
-        except:
-            log.d('Could not open ' + fname)
+            with open(fname, encoding='cp437', errors='replace') as f:
+                lines = f.readlines()
+        except FileNotFoundError:
+            log.d(fname + ' does not exist; merging other files')
     status, gen_lines = do_merge_seq(mod_lines, van_lines, gen_lines)
     try:
         with open(gen_file_name, "w", encoding='cp437') as gen_file:

@@ -250,8 +250,7 @@ def update_graphics_raws(raw_dir, pack):
         return None
     built_log = paths.get('baselines', 'temp', 'raw', 'installed_raws.txt')
     built_graphics = logged_graphics(built_log)
-    retval = mods.update_raw_dir(raw_dir, gfx=(pack, built_graphics))
-    if retval:
+    if mods.update_raw_dir(raw_dir, gfx=(pack, built_graphics)):
         log.i('Safely updated graphics raws ' + raw_dir + ' to ' + pack)
         return True
     log.i('Aborted while updating raws ' + raw_dir + ' to ' + pack)
