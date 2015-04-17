@@ -532,7 +532,7 @@ def create_numeric_entry(parent, variable, option, tooltip):
     if not binding.version_has_option(option):
         return fake_control
     e = Entry(
-        parent, width=4, validate='key',
+        parent, width=4, validate='key', justify='center',
         validatecommand=__ui.vcmd, textvariable=variable)
     variable.trace(
         "w", lambda name, index, mode: __ui.change_entry(option, variable))

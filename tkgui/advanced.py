@@ -85,30 +85,40 @@ class AdvancedTab(Tab):
                 startup, 'Windowed', 'Start windowed or fullscreen',
                 'startWindowed').grid(column=0, row=1, sticky="nsew")
 
-        resolution = controls.create_control_group(self, 'Resolution', True)
+        resolution = controls.create_control_group(self, 'Resolution')
         main_grid.add(resolution, 2)
+        resolution['pad'] = (4, 0, 4, 8)
+        resolution.columnconfigure(5, weight=10)
+        resolution.columnconfigure(0, weight=10)
+        resolution.rowconfigure(2, minsize=3)
 
-        grid = GridLayouter(2)
-        grid.add(Label(resolution, text='Windowed X'))
-        grid.add(Label(resolution, text='Windowed Y'))
-        grid.add(controls.create_numeric_entry(
+        Label(resolution, text='Windowed').grid(row=1, column=4, sticky='w')
+        Label(resolution, text='Fullscreen').grid(row=3, column=4, sticky='w')
+        Label(resolution, text='Width').grid(row=0, column=1)
+        Label(resolution, text='Height').grid(row=0, column=3)
+        Label(resolution, text='x').grid(row=1, column=2)
+        Label(resolution, text='x').grid(row=3, column=2)
+        controls.create_numeric_entry(
             resolution, self.winX_var, ('WINDOWEDX', 'GRAPHICS_WINDOWEDX'),
             'Horizontal resolution in windowed mode. Values <= 255 represent '
-            'number of tiles, values > 255 represent number of pixels.'))
-        grid.add(controls.create_numeric_entry(
+            'number of tiles, values > 255 represent number of pixels.') \
+            .grid(row=1, column=1)
+        controls.create_numeric_entry(
             resolution, self.winY_var, ('WINDOWEDY', 'GRAPHICS_WINDOWEDY'),
             'Vertical resolution in windowed mode. Values <= 255 represent '
-            'number of tiles, values > 255 represent number of pixels.'))
-        grid.add(Label(resolution, text='Fullscreen X'))
-        grid.add(Label(resolution, text='Fullscreen Y'))
-        grid.add(controls.create_numeric_entry(
+            'number of tiles, values > 255 represent number of pixels.') \
+            .grid(row=1, column=3)
+        controls.create_numeric_entry(
             resolution, self.fullX_var, ('FULLSCREENX', 'GRAPHICS_FULLSCREENX'),
             'Horizontal resolution in fullscreen. Values <= 255 represent '
-            'number of tiles, values > 255 represent number of pixels.'))
-        grid.add(controls.create_numeric_entry(
+            'number of tiles, values > 255 represent number of pixels.') \
+            .grid(row=3, column=1)
+        controls.create_numeric_entry(
             resolution, self.fullY_var, ('FULLSCREENY', 'GRAPHICS_FULLSCREENY'),
             'Vertical resolution in fullscreen. Values <= 255 represent '
-            'number of tiles, values > 255 represent number of pixels.'))
+            'number of tiles, values > 255 represent number of pixels.') \
+            .grid(row=3, column=3)
+
         saverelated = controls.create_control_group(
             self, 'Save-related', True)
         main_grid.add(saverelated, 2)
