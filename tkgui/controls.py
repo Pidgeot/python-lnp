@@ -409,6 +409,32 @@ def create_file_list_buttons(
     delete.pack(side=TOP)
     return (lf, lb, buttons)
 
+def create_extended_file_list(parent, title, listvar, buttons, **kwargs):
+    kf = create_control_group(parent, title)
+    kf.columnconfigure(0, weight=1)
+
+    ke = Entry(kf) # Text box
+    ke.grid(row=1, column=0, sticky='ewn', pady=(0, 4))
+
+    lf = Frame(kf) # Listbox and scrollbar
+    kb = Listbox(lf, listvariable=listvar, activestyle='dotbox',
+                 exportselection=0, **kwargs)
+    lf.configure(borderwidth=kb['borderwidth'], relief=kb['relief'])
+    kb.configure(borderwidth=0, relief='flat')
+    kb.grid(row=0, column=0, sticky='nsew')
+    create_scrollbar(lf, kb, row=0, column=1)
+    lf.rowconfigure(0, weight=1)
+    lf.columnconfigure(0, weight=1)
+    lf.grid(row=2, column=0, sticky='nsew')
+
+    bf = Frame(kf)
+    for i, bn in enumerate(buttons):
+        create_trigger_button(bf, *bn).grid(row=i, pady=(0, 5))
+
+    bf.grid(column=1, row=2, sticky='ns', padx=(4, 0))
+
+    return (kf, ke, kb)
+
 def create_toggle_list(parent, columns, framegridopts, listopts={}):
     """
     Creates and returns a two-column Treeview in a frame to show toggleable
