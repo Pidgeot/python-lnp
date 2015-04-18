@@ -14,11 +14,13 @@ if sys.version_info[0] == 3:  # Alternate import names
     from tkinter import *
     from tkinter.ttk import *
     import tkinter.simpledialog as simpledialog
+    import tkinter.font as tkFont
 else:
     # pylint:disable=import-error
     from Tkinter import *
     from ttk import *
     import tkSimpleDialog as simpledialog
+    import tkFont
 
 # Monkeypatch simpledialog to use themed dialogs from ttk
 if sys.platform != 'darwin':  # OS X looks better without patch
@@ -410,6 +412,31 @@ def create_file_list_buttons(
     delete.pack(side=TOP)
     return (lf, lb, buttons)
 
+def add_default_to_entry(entry, default_text):
+    """Adds bindings to entry such that when there is no user text in the
+    entry, the entry will display default_text in grey and italics."""
+    normal_font = tkFont.Font(font='TkDefaultFont')
+    default_font = tkFont.Font(font='TkDefaultFont')
+    default_font.config(slant=tkFont.ITALIC)
+    entry.default_showing = True
+
+    def focus_out(_): # pylint:disable=missing-docstring
+        if len(entry.get()) == 0:
+            entry.insert(0, default_text)
+            entry.configure(font=default_font, foreground='grey')
+            entry.default_showing = True
+
+    def focus_in(_): # pylint:disable=missing-docstring
+        if entry.default_showing:
+            entry.delete(0, END)
+            entry.configure(font=normal_font, foreground='black')
+            entry.default_showing = False
+
+    entry.bind('<FocusIn>', focus_in)
+    entry.bind('<FocusOut>', focus_out)
+
+    focus_out(0)
+
 def create_list_with_entry(parent, title, listvar, buttonspec, **kwargs):
     """
     Creates a control group with a listbox, a text entry, and any number of
@@ -427,6 +454,7 @@ def create_list_with_entry(parent, title, listvar, buttonspec, **kwargs):
         buttonspec
             A list of tuples (title, tooltip, function) specifying the buttons
     """
+    entry_default = kwargs.pop('entry_default', None)
     if 'height' not in kwargs:
         kwargs['height'] = 4
 
@@ -454,6 +482,9 @@ def create_list_with_entry(parent, title, listvar, buttonspec, **kwargs):
         pad = 0 if i == 0 else (5, 0)
         create_trigger_button(bf, *bn).grid(row=i, pady=pad)
     bf.grid(column=1, row=1, rowspan=2, sticky='ns', padx=(4, 0))
+
+    if entry_default:
+        add_default_to_entry(ke, entry_default)
 
     return (kf, ke, kb)
 

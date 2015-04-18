@@ -17,13 +17,11 @@ if sys.version_info[0] == 3:  # Alternate import names
     from tkinter import *
     from tkinter.ttk import *
     import tkinter.messagebox as messagebox
-    import tkinter.simpledialog as simpledialog
 else:
     # pylint:disable=import-error
     from Tkinter import *
     from ttk import *
     import tkMessageBox as messagebox
-    import tkSimpleDialog as simpledialog
 
 #pylint: disable=too-many-public-methods
 class GraphicsTab(Tab):
@@ -159,7 +157,8 @@ class GraphicsTab(Tab):
                 [("Load", "Load color scheme", self.load_colors),
                  ("Save", "Save current color scheme", self.save_colors),
                  ("Delete", "Delete color scheme", self.delete_colors),
-                 ("Refresh", "Refresh list", self.read_colors)])
+                 ("Refresh", "Refresh list", self.read_colors)],
+                entry_default="Save current color scheme as...")
         colorframe.pack(side=BOTTOM, fill=BOTH, expand=N)
         self.color_files.bind(
             "<<ListboxSelect>>", lambda e: self.select_colors())

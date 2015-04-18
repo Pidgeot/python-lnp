@@ -105,7 +105,8 @@ class OptionsTab(Tab):
                 [("Load", "Load keybindings", self.load_keybinds),
                  ("Save", "Save current keybindings", self.save_keybinds),
                  ("Delete", "Delete keybindings", self.delete_keybinds),
-                 ("Refresh", "Refresh list", self.read_keybinds)])
+                 ("Refresh", "Refresh list", self.read_keybinds)],
+                entry_default="Save current keybindings as...")
         keybindings.pack(side=BOTTOM, fill=BOTH, expand=N)
         for seq in ("<Double-1>", "<Return>"):
             self.keybinding_files.bind(seq, lambda e: self.load_keybinds())
