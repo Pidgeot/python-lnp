@@ -153,12 +153,14 @@ class GraphicsTab(Tab):
             advanced, 'Open Tilesets Folder',
             'Add your own tilesets here!', graphics.open_tilesets), 2)
 
-        colorframe, self.color_files, buttons = \
-            controls.create_file_list_buttons(
-                self, 'Color schemes', self.colors, self.load_colors,
-                self.read_colors, self.save_colors, self.delete_colors)
-        colorframe.pack(side=BOTTOM, fill=BOTH, expand=Y, anchor="s")
-        buttons.grid(rowspan=3)
+        colorframe, self.color_entry, self.color_files = \
+            controls.create_list_with_entry(
+                self, "Color schemes", self.colors,
+                [("Load", "Load color scheme", self.load_colors),
+                 ("Save", "Save current color scheme", self.save_colors),
+                 ("Delete", "Delete color scheme", self.delete_colors),
+                 ("Refresh", "Refresh list", self.read_colors)])
+        colorframe.pack(side=BOTTOM, fill=BOTH, expand=N)
         self.color_files.bind(
             "<<ListboxSelect>>", lambda e: self.select_colors())
         for seq in ("<Double-1>", "<Return>"):
@@ -167,7 +169,7 @@ class GraphicsTab(Tab):
         self.color_preview = Canvas(
             colorframe, width=128, height=32, highlightthickness=0,
             takefocus=False)
-        self.color_preview.grid(column=0, row=2)
+        self.color_preview.grid(column=0, row=0, columnspan=2, pady=(0, 4))
 
         display = controls.create_control_group(self, 'Display Options', True)
         display.pack(side=TOP, fill=BOTH, expand=N)
@@ -301,15 +303,16 @@ class GraphicsTab(Tab):
             self.color_files.selection_clear(items)
             colors.load_colors(self.color_files.get(items[0]))
             self.read_colors()
+            self.color_entry.delete(0, END)
 
     def save_colors(self):
         """Saves color scheme to a file."""
-        v = simpledialog.askstring(
-            "Save Color scheme", "Save current color scheme as:")
-        if v is not None:
+        v = self.color_entry.get()
+        if v:
             if (not colors.color_exists(v) or messagebox.askyesno(
                     message='Overwrite {0}?'.format(v),
                     icon='question', title='Overwrite file?')):
+                self.color_entry.delete(0, END)
                 colors.save_colors(v)
                 self.read_colors()
 

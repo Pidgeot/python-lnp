@@ -274,7 +274,8 @@ def create_scrollbar(parent, control, **gridargs):
     return s
 
 def listbox_identify(listbox, y):
-    """Returns the index of the listbox item currently under the cursor"""
+    """Returns the index of the listbox item at the supplied (relative) y
+    coordinate"""
     item = listbox.nearest(y)
     if (listbox.bbox(item)[1] + listbox.bbox(item)[3]) > y:
         return item
@@ -409,12 +410,33 @@ def create_file_list_buttons(
     delete.pack(side=TOP)
     return (lf, lb, buttons)
 
-def create_extended_file_list(parent, title, listvar, buttons, **kwargs):
-    kf = create_control_group(parent, title)
-    kf.columnconfigure(0, weight=1)
+def create_list_with_entry(parent, title, listvar, buttonspec, **kwargs):
+    """
+    Creates a control group with a listbox, a text entry, and any number of
+    buttons specified with buttonspec. Does not lay out the control group in
+    its parent.
+    Returns a tuple (frame, entry, lsitbox)
 
-    ke = Entry(kf) # Text box
-    ke.grid(row=1, column=0, sticky='ewn', pady=(0, 4))
+    Params:
+        parent
+            The parent control for the list.
+        title
+            The title for the frame.
+        listvar
+            The Variable containing the list items.
+        buttonspec
+            A list of tuples (title, tooltip, function) specifying the buttons
+    """
+    if 'height' not in kwargs:
+        kwargs['height'] = 4
+
+    kf = create_control_group(parent, title)
+    kf.configure(pad=(2, 0, 2, 2))
+    kf.columnconfigure(0, weight=1)
+    kf.rowconfigure(2, weight=1)
+
+    ke = Entry(kf) # text box
+    ke.grid(row=1, column=0, sticky='ewn', pady=(1, 4))
 
     lf = Frame(kf) # Listbox and scrollbar
     kb = Listbox(lf, listvariable=listvar, activestyle='dotbox',
@@ -425,13 +447,13 @@ def create_extended_file_list(parent, title, listvar, buttons, **kwargs):
     create_scrollbar(lf, kb, row=0, column=1)
     lf.rowconfigure(0, weight=1)
     lf.columnconfigure(0, weight=1)
-    lf.grid(row=2, column=0, sticky='nsew')
+    lf.grid(row=2, column=0, rowspan=1, sticky='nsew')
 
-    bf = Frame(kf)
-    for i, bn in enumerate(buttons):
-        create_trigger_button(bf, *bn).grid(row=i, pady=(0, 5))
-
-    bf.grid(column=1, row=2, sticky='ns', padx=(4, 0))
+    bf = Frame(kf) # buttons
+    for i, bn in enumerate(buttonspec):
+        pad = 0 if i == 0 else (5, 0)
+        create_trigger_button(bf, *bn).grid(row=i, pady=pad)
+    bf.grid(column=1, row=1, rowspan=2, sticky='ns', padx=(4, 0))
 
     return (kf, ke, kb)
 

@@ -100,7 +100,7 @@ class OptionsTab(Tab):
             'your fort', 'aquifers').grid(column=0, row=0, sticky="nsew")
 
         keybindings, self.keybinding_entry, self.keybinding_files = \
-            controls.create_extended_file_list(
+            controls.create_list_with_entry(
                 self, "Key Bindings", self.keybinds,
                 [("Load", "Load keybindings", self.load_keybinds),
                  ("Save", "Save current keybindings", self.save_keybinds),
@@ -204,7 +204,7 @@ class OptionsTab(Tab):
     def save_keybinds(self):
         """Saves keybindings to a file."""
         v = self.keybinding_entry.get()
-        if v is not '':
+        if v:
             if not v.endswith('.txt'):
                 v = v + '.txt'
             if (not keybinds.keybind_exists(v) or messagebox.askyesno(
@@ -216,7 +216,6 @@ class OptionsTab(Tab):
 
     def delete_keybinds(self):
         """Deletes a keybinding file."""
-        #Save current keybindings as
         listbox = self.keybinding_files
         if len(listbox.curselection()) > 0:
             filename = listbox.get(listbox.curselection()[0])
