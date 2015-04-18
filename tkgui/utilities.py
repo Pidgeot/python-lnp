@@ -90,20 +90,24 @@ class UtilitiesTab(Tab):
         """
         Event handler for mouse motion over items in the utility list.
 
-        Hides the tooltip and then wait controls._TOOLTIP_DELAY milliseconds
-        (without this event being called) before showing the tooltip"""
+        If the mouse has moved out of the last list element, hides the tooltip.
+        Then, if the mouse is over a list item, wait controls._TOOLTIP_DELAY
+        milliseconds (without mouse movement) before showing the tooltip"""
         tooltip = self.list_tooltip
         proglist = self.proglist
+        item = proglist.identify_row(event.y)
+
+        def show(): # pylint:disable=missing-docstring
+            tooltip.settext(proglist.set(item, 'tooltip'))
+            tooltip.showtip()
 
         if tooltip.event:
-            tooltip.hidetip()
             proglist.after_cancel(tooltip.event)
-
-        item = proglist.identify_row(event.y)
+            tooltip.event = None
+        if proglist.set(item, 'tooltip') != tooltip.text:
+            tooltip.hidetip()
         if item:
-            tooltip.settext(proglist.set(item, 'tooltip'))
-            tooltip.event = proglist.after(controls._TOOLTIP_DELAY,
-                                           tooltip.showtip)
+            tooltip.event = proglist.after(controls._TOOLTIP_DELAY, show)
 
     def read_utilities(self):
         """Reads list of utilities."""

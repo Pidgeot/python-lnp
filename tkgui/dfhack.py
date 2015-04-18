@@ -70,22 +70,26 @@ class DFHackTab(Tab):
 
     def update_hack_tooltip(self, event):
         """
-        Event handler for mouse motion over items in the utility list.
+        Event handler for mouse motion over items in the hack list.
 
-        Hides the tooltip and then wait controls._TOOLTIP_DELAY milliseconds
-        (without this event being called) before showing the tooltip"""
+        If the mouse has moved out of the last list element, hides the tooltip.
+        Then, if the mouse is over a list item, wait controls._TOOLTIP_DELAY
+        milliseconds (without mouse movement) before showing the tooltip"""
         tooltip = self.hack_tooltip
         hacklist = self.hacklist
+        item = hacklist.identify_row(event.y)
+
+        def show(): # pylint:disable=missing-docstring
+            tooltip.settext(hacklist.set(item, 'tooltip'))
+            tooltip.showtip()
 
         if tooltip.event:
-            tooltip.hidetip()
             hacklist.after_cancel(tooltip.event)
-
-        item = hacklist.identify_row(event.y)
+            tooltip.event = None
+        if hacklist.set(item, 'tooltip') != tooltip.text:
+            tooltip.hidetip()
         if item:
-            tooltip.settext(hacklist.set(item, 'tooltip'))
-            tooltip.event = hacklist.after(controls._TOOLTIP_DELAY,
-                                           tooltip.showtip)
+            tooltip.event = hacklist.after(controls._TOOLTIP_DELAY, show)
 
     def update_hack_list(self):
         """Updates the hack list."""
