@@ -47,11 +47,11 @@ class AdvancedTab(Tab):
 
             controls.create_option_button(
                 sound, 'Sound', 'Turn game music on/off', 'sound').pack(
-                    side=LEFT)
+                    side=LEFT, fill=X, expand=Y)
             if lnp.settings.version_has_option('volume'):
                 controls.create_numeric_entry(
                     sound, self.volume_var, 'volume',
-                    'Music volume (0 to 255)').pack(side=LEFT)
+                    'Music volume (0 to 255)').pack(side=LEFT, padx=(6, 0))
                 Label(sound, text='/255').pack(side=LEFT)
         if lnp.settings.version_has_option('fpsCounter'):
             fps = controls.create_control_group(self, 'FPS')

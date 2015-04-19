@@ -184,6 +184,7 @@ def create_control_group(parent, text, dual_column=False):
         f = Labelframe(parent, text=text)
     else:
         f = Frame(parent)
+    f.configure(pad=(2, 0, 2, 2))
     if dual_column:
         Grid.columnconfigure(f, 0, weight=1)
         Grid.columnconfigure(f, 1, weight=1)
@@ -459,7 +460,6 @@ def create_list_with_entry(parent, title, listvar, buttonspec, **kwargs):
         kwargs['height'] = 4
 
     kf = create_control_group(parent, title)
-    kf.configure(pad=(2, 0, 2, 2))
     kf.columnconfigure(0, weight=1)
     kf.rowconfigure(2, weight=1)
 

@@ -38,10 +38,10 @@ class GraphicsTab(Tab):
 
     def create_controls(self):
         n = Notebook(self)
-        n.pack(side=TOP, fill=BOTH, expand=Y, padx=4, pady=4)
+        n.pack(side=TOP, fill=BOTH, expand=Y, pady=(6, 2))
 
         #First tab
-        change_graphics_tab = Frame(self)
+        change_graphics_tab = Frame(self, pad=(4, 2))
         change_graphics_tab.pack(side=TOP, fill=BOTH, expand=Y)
         n.add(change_graphics_tab, text="Change Graphics")
 
@@ -52,7 +52,7 @@ class GraphicsTab(Tab):
 
         grid = GridLayouter(2)
         listframe = Frame(change_graphics)
-        grid.add(listframe, 2, pady=4)
+        grid.add(listframe, 2)
         _, self.graphicpacks = controls.create_file_list(
             listframe, None, self.graphics, height=8)
         self.graphicpacks.bind(
@@ -98,7 +98,7 @@ class GraphicsTab(Tab):
             self.simplify_graphics))
 
         # Customization tab
-        customize_tab = Frame(self)
+        customize_tab = Frame(self, pad=(4, 2))
         customize_tab.pack(side=TOP, fill=BOTH, expand=Y)
         n.add(customize_tab, text="Customization")
 
@@ -114,15 +114,15 @@ class GraphicsTab(Tab):
         for seq in ("<Double-1>", "<Return>"):
             self.fonts.bind(seq, lambda e: self.install_tilesets(1))
         if lnp.settings.version_has_option('GRAPHICS_FONT'):
-            grid.add(tempframe, pady=4)
+            grid.add(tempframe, padx=(0,2), pady=(0, 2))
             tempframe = Frame(customize)
-            grid.add(tempframe, pady=4)
+            grid.add(tempframe, pady=(0, 2))
             _, self.graphicsfonts = controls.create_file_list(
                 tempframe, 'GRAPHICS_FONT', self.tilesets, height=8)
             for seq in ("<Double-1>", "<Return>"):
                 self.graphicsfonts.bind(seq, lambda e: self.install_tilesets(2))
         else:
-            grid.add(tempframe, 2, pady=4)
+            grid.add(tempframe, 2)
 
         grid.add(controls.create_trigger_button(
             customize, 'Install Tilesets',

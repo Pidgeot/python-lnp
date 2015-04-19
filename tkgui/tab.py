@@ -18,9 +18,9 @@ else:
 #pylint: disable=too-many-public-methods
 class Tab(Frame):
     """Base class for notebook tabs for the TKinter GUI."""
-    def __init__(self, parent):
+    def __init__(self, parent, *args, **kwargs):
         #pylint:disable=super-init-not-called
-        Frame.__init__(self, parent)
+        Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
         self.pack(side=TOP, fill=BOTH, expand=Y)
         self.create_variables()

@@ -253,7 +253,7 @@ class TkGui(object):
             caption
                 Caption for the newly created tab.
         """
-        tab = class_(self.n)
+        tab = class_(self.n, pad=(4, 2))
         self.n.add(tab, text=caption)
 
     def ensure_df(self):
