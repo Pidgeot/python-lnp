@@ -377,6 +377,7 @@ class TkGui(object):
         return menubar
 
     def reload_program(self):
+        """Reloads the program to allow the user to change DF folders."""
         self.do_reload = True
         self.exit_program()
 

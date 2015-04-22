@@ -5,7 +5,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys
 
 import os
-from . import errorlog, log
+from . import log
 
 from .json_config import JSONConfiguration
 
@@ -44,8 +44,16 @@ class PyLNP(object):
 
         from . import update
 
+        self.folders = []
+        self.df_info = None
+        self.settings = None
         self.running = {}
+        self.autorun = []
         self.updater = None
+        self.config = None
+        self.userconfig = None
+        self.ui = None
+
         self.initialize_program()
 
         self.initialize_df()
@@ -57,6 +65,7 @@ class PyLNP(object):
         self.ui.start()
 
     def initialize_program(self):
+        """Initializes the main program (errorlog, path registration, etc.)."""
         from . import paths, utilities, errorlog
         paths.clear()
         paths.register('root', self.BASEDIR)
@@ -106,6 +115,7 @@ class PyLNP(object):
         utilities.load_autorun()
 
     def initialize_df(self):
+        """Initializes the DF folder and related variables."""
         from . import df
         self.df_info = None
         self.folders = []
@@ -113,10 +123,12 @@ class PyLNP(object):
         df.find_df_folder()
 
     def initialize_ui(self):
+        """Instantiates the UI object."""
         from tkgui.tkgui import TkGui
         self.ui = TkGui()
 
     def reload_program(self):
+        """Reloads the program to allow the user to change DF folders."""
         self.initialize_program()
         self.initialize_df()
         self.initialize_ui()
