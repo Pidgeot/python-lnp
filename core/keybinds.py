@@ -23,7 +23,7 @@ def load_keybinds(filename):
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
     target = paths.get('init', 'interface.txt')
-    log.d('Loading ' + filename + 'keybinds')
+    log.i('Loading ' + filename + 'keybinds')
     shutil.copyfile(paths.get('keybinds', filename), target)
 
 def keybind_exists(filename):
@@ -49,7 +49,7 @@ def save_keybinds(filename):
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
     filename = paths.get('keybinds', filename)
-    log.d('Saving current keybinds as ' + filename)
+    log.i('Saving current keybinds as ' + filename)
     shutil.copyfile(paths.get('init', 'interface.txt'), filename)
 
 def delete_keybinds(filename):
@@ -62,7 +62,7 @@ def delete_keybinds(filename):
     """
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
-    log.d('Deleting ' + filename + 'keybinds')
+    log.i('Deleting ' + filename + 'keybinds')
     os.remove(os.path.join(paths.get('keybinds'), filename))
 
 def get_installed_file():

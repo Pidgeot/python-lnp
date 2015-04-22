@@ -186,5 +186,7 @@ def open_folder(path):
             subprocess.check_call(['xdg-open', path])
         elif sys.platform in ['windows', 'win32']:
             subprocess.check_call(['explorer', path])
+        else:
+            log.e('Unknown platform, cannot open folder in system file manager')
     except:
-        log.e('Could not open folder ' + path + ' in native file explorer')
+        log.e('Could not open folder ' + path + ' in system file manager')

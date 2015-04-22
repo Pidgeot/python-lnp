@@ -80,7 +80,7 @@ def simplify_pack(pack, folder):
     valid_dirs = ('graphics', 'mods', 'baselines')
     if not folder in valid_dirs:
         return False
-    log.v('Simplifying {}: {}'.format(folder, pack))
+    log.i('Simplifying {}: {}'.format(folder, pack))
     files_before = sum(len(f) for (_, _, f) in os.walk(paths.get(folder, pack)))
     if files_before == 0:
         return None

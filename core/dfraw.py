@@ -254,7 +254,7 @@ class DFRawNode(object):
             if self.is_tag:
                 value = ':'.join(value)
             else:
-                log.e('Multiple values passed to non-tag node')
+                log.e('Multiple values passed to non-tag node', stack=True)
                 raise Exception('Multiple values passed to non-tag node')
         if value == self.__value:
             return

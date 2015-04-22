@@ -275,7 +275,7 @@ def can_rebuild(log_file, strict=True):
     graphic_ok = logged_graphics(log_file) in [k[0] for k in read_graphics()]
     if graphic_ok and mods.can_rebuild(log_file, strict=strict):
         return True
-    log.i('Components unavialable to rebuild raws in ' +
+    log.i('Components unavailable to rebuild raws in ' +
           os.path.dirname(log_file))
     return False
 

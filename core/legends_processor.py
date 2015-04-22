@@ -42,7 +42,7 @@ def compress_bitmaps():
         except ImportError:
             call_optipng()
     else:
-        log.d('Compressing bitmaps with PIL/Pillow')
+        log.i('Compressing bitmaps with PIL/Pillow')
         for fname in glob.glob(paths.get(
                 'df', '-'.join(get_region_info()) + '-*.bmp')):
             f = Image.open(fname)
@@ -52,7 +52,8 @@ def compress_bitmaps():
 def call_optipng():
     """Calling optipng can work well, but isn't very portable."""
     if os.name == 'nt' and os.path.isfile(paths.get('df', 'optipng.exe')):
-        log.w('Falling to optipng for image compression, install PIL.')
+        log.w('Falling back to optipng for image compression. '
+              'It is recommended to install PIL.')
         for fname in glob.glob(paths.get(
                 'df', '-'.join(get_region_info()) + '-*.bmp')):
             ret = subprocess.call([paths.get('df', 'optipng'), '-zc9', '-zm9',
@@ -61,7 +62,7 @@ def call_optipng():
             if ret == 0:
                 os.remove(fname)
     else:
-        log.e('Install PIL or Pillow to compress bitmaps.')
+        log.e('A PIL-compatible library is required to compress bitmaps.')
 
 def choose_region_map():
     """Returns the most-prefered region map available, or fallback."""

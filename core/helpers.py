@@ -72,8 +72,7 @@ def detect_installed_files(current_file, test_files):
                 if tested in current:
                     installed.append(f)
             except IOError:
-                log.e('Cannot tell if {} is installed; read failed'.format(
-                    f))
+                log.e('Cannot tell if {} is installed; read failed'.format(f))
     except IOError:
         log.e('Cannot check installs in {}; read failed'.format(current_file))
     return installed

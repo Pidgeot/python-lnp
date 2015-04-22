@@ -152,7 +152,7 @@ def do_merge_seq(mod_text, vanilla_text, gen_text):
         return 0, gen_text
     if mod_text and gen_text and not vanilla_text:
         # No such vanilla file, so we need a two-way merge (additive only)
-        log.v('Falling back to two-way merge; no vanilla file exists.')
+        log.d('Falling back to two-way merge; no vanilla file exists.')
         return 0, [s[2:] for s in ndiff(gen_text, mod_text)]
     # Finally go to the expensive but complete merge logic
     return three_way_merge(vanilla_text, gen_text, mod_text)

@@ -37,7 +37,7 @@ class JSONConfiguration(object):
             #pylint: disable=bare-except
             self.data = json.load(open(filename), **enc_dict)
         except:
-            log.w('Note: Failed to read JSON from ' + filename +
+            log.e('Note: Failed to read JSON from ' + filename +
                   ', ignoring data - details follow', stack=True)
 
     @staticmethod

@@ -113,7 +113,7 @@ def save_params():
 
 def restore_defaults():
     """Copy default settings into the selected Dwarf Fortress instance."""
-    log.d('Restoring to default settings.')
+    log.i('Restoring to default settings')
     shutil.copy(paths.get('defaults', 'init.txt'),
                 paths.get('init', 'init.txt'))
     if lnp.df_info.version > '0.31.03':
@@ -192,7 +192,7 @@ class DFInstall(object):
             if DFConfiguration.has_field(v[0], v[1], **v[3]):
                 log.w('DF version detected based on init analysis; unreliable')
                 return (Version(v[2]), 'init detection')
-        log.e('DF version could not be detected')
+        log.w('DF version could not be detected, assuming 0.21.93.19a')
         return (Version('0.21.93.19a'), 'fallback')
 
     def detect_variations(self):

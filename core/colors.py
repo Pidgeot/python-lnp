@@ -43,7 +43,7 @@ def get_colors(colorscheme=None):
         result = DFRaw(f).get_values(*color_fields)
         return [tuple(int(x) for x in t) for t in result]
     except:
-        log.e('Could not get colors for unknown reason.')
+        log.e('Unable to read current colors', stack=True)
         return []
 
 def load_colors(filename):
@@ -55,7 +55,7 @@ def load_colors(filename):
         The name of the new colorscheme to install (extension optional).
         If no path is specified, file is assumed to be in LNP/Colors.
     """
-    log.d('Loading colorscheme ' + filename)
+    log.i('Loading colorscheme ' + filename)
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
     if os.path.dirname(filename) == '':
@@ -76,7 +76,7 @@ def save_colors(filename):
         filename
             The name of the new color scheme file.
     """
-    log.d('Saving colorscheme ' + filename)
+    log.i('Saving colorscheme ' + filename)
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
     filename = paths.get('colors', filename)
@@ -108,7 +108,7 @@ def delete_colors(filename):
         filename
             The filename to delete.
     """
-    log.d('Deleting colorscheme ' + filename)
+    log.i('Deleting colorscheme ' + filename)
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
     os.remove(paths.get('colors', filename))
