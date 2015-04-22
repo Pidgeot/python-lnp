@@ -42,8 +42,23 @@ class PyLNP(object):
             os.chdir(os.path.join(os.path.dirname(__file__), '..'))
         self.detect_basedir()
 
-        from . import df, paths, update, utilities
+        from . import update
 
+        self.running = {}
+        self.updater = None
+        self.initialize_program()
+
+        self.initialize_df()
+
+        self.new_version = None
+
+        self.initialize_ui()
+        update.check_update()
+        self.ui.start()
+
+    def initialize_program(self):
+        from . import paths, utilities, errorlog
+        paths.clear()
         paths.register('root', self.BASEDIR)
         errorlog.start()
 
@@ -58,13 +73,6 @@ class PyLNP(object):
         paths.register('tilesets', paths.get('lnp'), 'Tilesets')
         paths.register('baselines', paths.get('lnp'), 'Baselines')
         paths.register('mods', paths.get('lnp'), 'Mods')
-
-        self.df_info = None
-        self.folders = []
-        self.settings = None
-        self.autorun = []
-        self.running = {}
-        self.updater = None
 
         config_file = 'PyLNP.json'
         if os.access(paths.get('lnp', 'PyLNP.json'), os.F_OK):
@@ -94,15 +102,24 @@ class PyLNP(object):
         }
         self.config = JSONConfiguration(config_file, default_config)
         self.userconfig = JSONConfiguration('PyLNP.user')
-
-        df.find_df_folder()
+        self.autorun = []
         utilities.load_autorun()
 
-        self.new_version = None
+    def initialize_df(self):
+        from . import df
+        self.df_info = None
+        self.folders = []
+        self.settings = None
+        df.find_df_folder()
 
+    def initialize_ui(self):
         from tkgui.tkgui import TkGui
         self.ui = TkGui()
-        update.check_update()
+
+    def reload_program(self):
+        self.initialize_program()
+        self.initialize_df()
+        self.initialize_ui()
         self.ui.start()
 
     def parse_commandline(self):

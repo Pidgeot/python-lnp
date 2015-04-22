@@ -23,6 +23,7 @@ def init(lnp):
     # pylint:disable=global-statement
     global __lnp
     __lnp = lnp
+    __controls.clear()
 
 def bind(control, option, update_func=None):
     """Binds a control to an option."""
