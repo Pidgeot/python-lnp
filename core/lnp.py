@@ -129,6 +129,7 @@ class PyLNP(object):
 
     def reload_program(self):
         """Reloads the program to allow the user to change DF folders."""
+        self.args.df_folder = None
         self.initialize_program()
         self.initialize_df()
         self.initialize_ui()
