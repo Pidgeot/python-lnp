@@ -6,7 +6,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys, os, shutil, filecmp
 # pylint:disable=redefined-builtin
 from io import open
-from . import paths
+from . import paths, log
 from .lnp import lnp
 
 def read_hacks():
@@ -70,6 +70,7 @@ def get_hack(title):
     try:
         return get_hacks()[title]
     except KeyError:
+        log.d('No hack configured with name ' + title)
         return None
 
 def toggle_hack(name):
@@ -86,6 +87,7 @@ def toggle_hack(name):
 
 def rebuild_hacks():
     """Rebuilds PyLNP_dfhack_onload.init with the enabled hacks."""
+    log.i('Rebuilding PyLNP_dfhack_onload.init with the enabled hacks')
     f = open(
         paths.get('df', 'PyLNP_dfhack_onload.init'), 'w',
         encoding='latin1')
