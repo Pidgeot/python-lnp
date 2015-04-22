@@ -40,7 +40,6 @@ class PyLNP(object):
                 os.chdir('../../..')
         else:
             os.chdir(os.path.join(os.path.dirname(__file__), '..'))
-        self.detect_basedir()
 
         from . import update
 
@@ -67,6 +66,8 @@ class PyLNP(object):
     def initialize_program(self):
         """Initializes the main program (errorlog, path registration, etc.)."""
         from . import paths, utilities, errorlog
+        self.BASEDIR = '.'
+        self.detect_basedir()
         paths.clear()
         paths.register('root', self.BASEDIR)
         errorlog.start()
