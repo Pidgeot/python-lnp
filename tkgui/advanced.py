@@ -60,17 +60,28 @@ class AdvancedTab(Tab):
             controls.create_option_button(
                 fps, 'FPS Counter', 'Whether or not to display your FPS',
                 'fpsCounter').pack(fill=BOTH)
+
+            caps = controls.create_control_group(fps, 'FPS Caps')
+            caps.rowconfigure((1, 2), weight=1)
+            caps.columnconfigure((1, 3), weight=1)
             if lnp.settings.version_has_option('fpsCap'):
-                Label(fps, text='Calculation FPS Cap:').pack(anchor="w")
+                Label(caps, text='Calculation ').grid(
+                    row=1, column=1, sticky='e')
                 controls.create_numeric_entry(
-                    fps, self.fps_var, 'fpsCap', 'How fast the game runs').pack(
-                        anchor="w")
+                    caps, self.fps_var, 'fpsCap',
+                    'How fast the game runs').grid(
+                        row=1, column=2)
+                Label(caps, text='FPS').grid(row=1, column=3, sticky='w')
             if lnp.settings.version_has_option('gpsCap'):
-                Label(fps, text='Graphical FPS Cap:').pack(anchor="w")
+                Label(caps, text='Graphical ').grid(row=2, column=1, sticky='e')
                 controls.create_numeric_entry(
-                    fps, self.gps_var, 'gpsCap', 'How fast the game visually '
+                    caps, self.gps_var, 'gpsCap', 'How fast the game visually '
                     'updates.\nLower value may give small boost to FPS but '
-                    'will be less reponsive.').pack(anchor="w")
+                    'will be less reponsive.').grid(
+                        row=2, column=2, pady=(3, 0))
+                Label(caps, text='FPS').grid(row=2, column=3, sticky='w')
+            if caps.children:
+                caps.pack(fill=BOTH, expand=Y)
 
         if lnp.settings.version_has_option('introMovie'):
             startup = controls.create_control_group(self, 'Startup')
