@@ -41,17 +41,14 @@ class GraphicsTab(Tab):
         n.pack(side=TOP, fill=BOTH, expand=Y, pady=(6, 2))
 
         #First tab
-        change_graphics_tab = Frame(self, pad=(4, 2))
+        change_graphics_tab = Frame(self, pad=(4, 8, 4, 2))
         change_graphics_tab.pack(side=TOP, fill=BOTH, expand=Y)
         n.add(change_graphics_tab, text="Change Graphics")
 
-        change_graphics = controls.create_control_group(
-            change_graphics_tab, 'Change Graphics', True)
-        Grid.rowconfigure(change_graphics, 0, weight=1)
-        change_graphics.pack(side=TOP, fill=BOTH, expand=Y)
-
         grid = GridLayouter(2)
-        listframe = Frame(change_graphics)
+        change_graphics_tab.columnconfigure((0, 1), weight=1, uniform=1)
+        change_graphics_tab.rowconfigure(0, weight=1)
+        listframe = Frame(change_graphics_tab)
         grid.add(listframe, 2)
         _, self.graphicpacks = controls.create_file_list(
             listframe, None, self.graphics, height=8)
@@ -61,61 +58,33 @@ class GraphicsTab(Tab):
             self.graphicpacks.bind(seq, lambda e: self.install_graphics())
 
         grid.add(controls.create_trigger_button(
-            change_graphics, 'Install Graphics',
+            change_graphics_tab, 'Install Graphics',
             'Install selected graphics pack',
             self.install_graphics))
         grid.add(controls.create_trigger_button(
-            change_graphics, 'Update Savegames',
+            change_graphics_tab, 'Update Savegames',
             'Install current graphics pack in all savegames',
             self.update_savegames))
         grid.add(controls.create_trigger_button(
-            change_graphics, 'Refresh List', 'Refresh list of graphics packs',
-            self.read_graphics), 2)
+            change_graphics_tab, 'Refresh List',
+            'Refresh list of graphics packs', self.read_graphics), 2)
 
-        advanced = controls.create_control_group(
-            change_graphics_tab, 'Advanced', True)
-        advanced.pack(fill=X, expand=N)
-
-        grid = GridLayouter(2)
-        if 'legacy' not in lnp.df_info.variations:
-            grid.add(controls.create_option_button(
-                advanced, 'Print Mode',
-                'Changes how Dwarf Fortress draws to the screen. "2D" allows '
-                'Truetype fonts, "standard" enables advanced graphics tools. '
-                'Certain modifications may use other values.',
-                'printmode'), 2)
-            grid.add(controls.create_option_button(
-                advanced, 'TrueType Fonts',
-                'Toggles whether to use TrueType fonts or tileset for text. '
-                'Only works with Print Mode set to 2D.', 'truetype'), 2)
-        grid.add(controls.create_trigger_button(
-            advanced, 'Open Graphics Folder',
-            'Add your own graphics packs here!', graphics.open_graphics), 2)
-        grid.add(controls.create_trigger_button(
-            advanced, 'Simplify Graphic Folders',
-            'Deletes unnecessary files from graphics packs '
-            '(saves space, useful for re-packaging)',
-            self.simplify_graphics))
-
-        # Customization tab
+        # Tilesets tab
         customize_tab = Frame(self, pad=(4, 2))
         customize_tab.pack(side=TOP, fill=BOTH, expand=Y)
-        n.add(customize_tab, text="Customization")
-
-        customize = controls.create_control_group(
-            customize_tab, 'Change Tilesets', True)
-        Grid.rowconfigure(customize, 0, weight=1)
-        customize.pack(side=TOP, fill=BOTH, expand=Y)
+        customize_tab.columnconfigure((0, 1), weight=1, uniform=1)
+        customize_tab.rowconfigure(0, weight=1)
+        n.add(customize_tab, text="Tilesets")
 
         grid = GridLayouter(2, pad=(4, 0))
-        tempframe = Frame(customize, pad=(0, 0, 0, 4))
+        tempframe = Frame(customize_tab, pad=(0, 0, 0, 4))
         _, self.fonts = controls.create_file_list(
             tempframe, 'FONT', self.tilesets, height=8)
         for seq in ("<Double-1>", "<Return>"):
             self.fonts.bind(seq, lambda e: self.install_tilesets(1))
         if lnp.settings.version_has_option('GRAPHICS_FONT'):
             grid.add(tempframe)
-            tempframe = Frame(customize, pad=(0, 0, 0, 4))
+            tempframe = Frame(customize_tab, pad=(0, 0, 0, 4))
             grid.add(tempframe)
             _, self.graphicsfonts = controls.create_file_list(
                 tempframe, 'GRAPHICS_FONT', self.tilesets, height=8)
@@ -125,31 +94,41 @@ class GraphicsTab(Tab):
             grid.add(tempframe, 2)
 
         grid.add(controls.create_trigger_button(
-            customize, 'Install Tilesets',
+            customize_tab, 'Install Tilesets',
             'Install selected tilesets', self.install_tilesets), 2)
         grid.add(controls.create_trigger_button(
-            customize, 'Refresh List', 'Refresh list of tilesets',
+            customize_tab, 'Refresh List', 'Refresh list of tilesets',
             self.read_tilesets))
 
-        advanced = controls.create_control_group(
-            customize_tab, 'Advanced', True)
-        advanced.pack(fill=X, expand=N)
+        # Advanced tab
+        advanced_tab = Frame(self, pad=(4, 8, 4, 2))
+        advanced_tab.pack(side=TOP, fill=BOTH, expand=Y)
+        advanced_tab.columnconfigure((0, 1), weight=1, uniform=1)
+        n.add(advanced_tab, text="Advanced")
 
-        # Outside tab
         grid = GridLayouter(2)
-        grid.add(controls.create_option_button(
-            advanced, 'Print Mode',
-            'Changes how Dwarf Fortress draws to the screen. "2D" allows '
-            'Truetype fonts, "standard" enables advanced graphics tools. '
-            'Certain modifications may use other values.',
-            'printmode'), 2)
-        grid.add(controls.create_option_button(
-            advanced, 'TrueType Fonts',
-            'Toggles whether to use TrueType fonts or tileset for text. '
-            'Only works with Print Mode set to 2D.', 'truetype'), 2)
+        if 'legacy' not in lnp.df_info.variations:
+            grid.add(controls.create_option_button(
+                advanced_tab, 'Print Mode',
+                'Changes how Dwarf Fortress draws to the screen. "2D" allows '
+                'Truetype fonts, "standard" enables advanced graphics tools. '
+                'Certain modifications may use other values.',
+                'printmode'), 2)
+            grid.add(controls.create_option_button(
+                advanced_tab, 'TrueType Fonts',
+                'Toggles whether to use TrueType fonts or tileset for text. '
+                'Only works with Print Mode set to 2D.', 'truetype'), 2)
         grid.add(controls.create_trigger_button(
-            advanced, 'Open Tilesets Folder',
+            advanced_tab, 'Open Graphics Folder',
+            'Add your own graphics packs here!', graphics.open_graphics), 2)
+        grid.add(controls.create_trigger_button(
+            advanced_tab, 'Open Tilesets Folder',
             'Add your own tilesets here!', graphics.open_tilesets), 2)
+        grid.add(controls.create_trigger_button(
+            advanced_tab, 'Simplify Graphic Folders',
+            'Deletes unnecessary files from graphics packs '
+            '(saves space, useful for re-packaging)',
+            self.simplify_graphics))
 
         colorframe, self.color_entry, self.color_files = \
             controls.create_list_with_entry(
