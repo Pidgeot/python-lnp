@@ -46,10 +46,10 @@ class GraphicsTab(Tab):
         n.add(change_graphics_tab, text="Change Graphics")
 
         grid = GridLayouter(2)
-        change_graphics_tab.columnconfigure((0, 1), weight=1, uniform=1)
+        change_graphics_tab.columnconfigure(0, weight=1)
         change_graphics_tab.rowconfigure(0, weight=1)
         listframe = Frame(change_graphics_tab)
-        grid.add(listframe, 2)
+        grid.add(listframe, rowspan=3)
         _, self.graphicpacks = controls.create_file_list(
             listframe, None, self.graphics, height=8)
         self.graphicpacks.bind(
@@ -64,10 +64,10 @@ class GraphicsTab(Tab):
         grid.add(controls.create_trigger_button(
             change_graphics_tab, 'Update Savegames',
             'Install current graphics pack in all savegames',
-            self.update_savegames))
+            self.update_savegames), ipadx=5)
         grid.add(controls.create_trigger_button(
             change_graphics_tab, 'Refresh List',
-            'Refresh list of graphics packs', self.read_graphics), 2)
+            'Refresh list of graphics packs', self.read_graphics))
 
         # Tilesets tab
         customize_tab = Frame(self, pad=(4, 2))
