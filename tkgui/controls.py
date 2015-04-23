@@ -186,8 +186,7 @@ def create_control_group(parent, text, dual_column=False):
         f = Frame(parent)
     f.configure(pad=(2, 0, 2, 2))
     if dual_column:
-        Grid.columnconfigure(f, 0, weight=1)
-        Grid.columnconfigure(f, 1, weight=1)
+        f.columnconfigure((0, 1), weight=1, uniform=1)
     return f
 
 def create_option_button(
