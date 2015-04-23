@@ -39,7 +39,7 @@ class AdvancedTab(Tab):
         Grid.columnconfigure(self, 0, weight=1)
         Grid.columnconfigure(self, 1, weight=1)
 
-        main_grid = GridLayouter(2)
+        main_grid = GridLayouter(2, pad=(4, 0))
 
         if lnp.settings.version_has_option('sound'):
             sound = controls.create_control_group(self, 'Sound')

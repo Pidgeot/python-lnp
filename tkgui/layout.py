@@ -8,17 +8,23 @@ from . import controls
 
 class GridLayouter(object):
     """Class to automate grid layouts."""
-    def __init__(self, cols):
+    def __init__(self, cols, pad=(0, 0)):
         """
         Constructor for GridLayouter.
 
         Params:
             cols
                 Number of columns for the grid.
+            pad
+                The amount (x, y) of padding between elements
         """
         self.cols = cols
         self.controls = []
         self.used = []
+        try:
+            self.pad = (int(pad), int(pad))
+        except TypeError: # not an int; assume tuple
+            self.pad = pad
 
     def add(self, control, span=1, **opts):
         """
@@ -47,8 +53,13 @@ class GridLayouter(object):
                 if (row, col) not in self.used:
                     break
                 cells_used += 1
+
+            padx = 0 if col == 0 else (self.pad[0], 0)
+            pady = 0 if row == 0 else (self.pad[1], 0)
+
             c[0].grid(
-                row=row, column=col, sticky="nsew", columnspan=c[1], **c[2])
+                row=row, column=col, sticky="nsew", columnspan=c[1], padx=padx,
+                pady=pady, **c[2])
             if 'rowspan' in c[2]:
                 for n in range(1, c[2]['rowspan']+1):
                     self.used.append((row+n, col))

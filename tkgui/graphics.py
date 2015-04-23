@@ -107,16 +107,16 @@ class GraphicsTab(Tab):
         Grid.rowconfigure(customize, 0, weight=1)
         customize.pack(side=TOP, fill=BOTH, expand=Y)
 
-        grid = GridLayouter(2)
-        tempframe = Frame(customize)
+        grid = GridLayouter(2, pad=(4, 0))
+        tempframe = Frame(customize, pad=(0, 0, 0, 4))
         _, self.fonts = controls.create_file_list(
             tempframe, 'FONT', self.tilesets, height=8)
         for seq in ("<Double-1>", "<Return>"):
             self.fonts.bind(seq, lambda e: self.install_tilesets(1))
         if lnp.settings.version_has_option('GRAPHICS_FONT'):
-            grid.add(tempframe, padx=(0,2), pady=(0, 2))
-            tempframe = Frame(customize)
-            grid.add(tempframe, pady=(0, 2))
+            grid.add(tempframe)
+            tempframe = Frame(customize, pad=(0, 0, 0, 4))
+            grid.add(tempframe)
             _, self.graphicsfonts = controls.create_file_list(
                 tempframe, 'GRAPHICS_FONT', self.tilesets, height=8)
             for seq in ("<Double-1>", "<Return>"):
