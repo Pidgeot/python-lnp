@@ -30,6 +30,8 @@ if sys.version_info[0] == 3:  # Alternate import names
     from tkinter.ttk import *
     import tkinter.messagebox as messagebox
     import tkinter.simpledialog as simpledialog
+    #pylint:disable=redefined-builtin
+    basestring = str
 else:
     # pylint:disable=import-error
     import Queue
@@ -437,7 +439,7 @@ class TkGui(object):
             var
                 The variable bound to the control.
         """
-        if hasattr(key, '__iter__'):
+        if not isinstance(key, basestring):
             for k in key:
                 TkGui.change_entry(k, var)
             return
@@ -515,7 +517,7 @@ class TkGui(object):
             field
                 The option to cycle.
         """
-        if hasattr(field, '__iter__'):
+        if not isinstance(field, basestring):
             for f in field:
                 TkGui.cycle_option(f)
             return
@@ -532,7 +534,7 @@ class TkGui(object):
                 The field name to change. The corresponding value is
                 automatically read.
         """
-        if hasattr(field, '__iter__'):
+        if not isinstance(field, basestring):
             for f in field:
                 df.set_option(f, binding.get(field))
         else:

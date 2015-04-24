@@ -10,6 +10,8 @@ if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import END
     from tkinter.ttk import Entry
+    #pylint:disable=redefined-builtin
+    basestring = str
 else:
     # pylint:disable=import-error
     from Tkinter import END
@@ -38,8 +40,9 @@ def bind(control, option, update_func=None):
     __controls[option].append(value)
 
 def version_has_option(field):
+    """Returns True if the current DF version has the provided field."""
     o = field
-    if hasattr(field, '__iter__'):
+    if not isinstance(field, basestring):
         o = field[0]
     return __lnp.settings.version_has_option(o)
 
@@ -55,11 +58,11 @@ def update():
     for key in __controls.keys():
         try:
             k = key
-            if hasattr(key, '__iter__'):
+            if not isinstance(k, basestring):
                 k = key[0]
             value = getattr(__lnp.settings, k)
         except KeyError:
-            value = None
+            value = ''
         for entry in __controls[key]:
             if hasattr(entry, '__iter__'):
                 # Allow (control, func) tuples, etc. to customize value
