@@ -279,7 +279,7 @@ def listbox_identify(listbox, y):
     """Returns the index of the listbox item at the supplied (relative) y
     coordinate"""
     item = listbox.nearest(y)
-    if (listbox.bbox(item)[1] + listbox.bbox(item)[3]) > y:
+    if item != 1 and listbox.bbox(item)[1] + listbox.bbox(item)[3] > y:
         return item
     return None
 
