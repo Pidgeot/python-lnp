@@ -177,7 +177,7 @@ class PyLNP(object):
             while os.path.abspath(self.BASEDIR) != prev_path:
                 df.find_df_folders()
                 if len(self.folders) != 0:
-                    break
+                    return
                 prev_path = os.path.abspath(self.BASEDIR)
                 self.BASEDIR = os.path.join(self.BASEDIR, '..')
         except UnicodeDecodeError:
@@ -188,6 +188,8 @@ class PyLNP(object):
                 "Alternatively, you may run PyLNP from source using Python 3.",
                 file=sys.stderr)
             sys.exit(1)
+        log.e("Could not find any Dwarf Fortress installations.")
+        sys.exit(2)
 
 
 # vim:expandtab
