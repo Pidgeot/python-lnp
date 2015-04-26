@@ -633,8 +633,11 @@ Tilesets
 This folder contains tilesets; individual image files that the user can use
 for the FONT and GRAPHICS_FONT settings (and their fullscreen counterparts).
 Tilesets can be installed through the graphics customisation tab, which reads
-from <df>/data/art, as they are added to each graphics pack as the pack is
-installed - especially useful for TwbT text tiles.
+from ``<df>/data/art``.  All files in the Tilesets folder are copied here when
+graphics are installed, which is especially useful for TwbT files which can be
+shared across graphics packs.  Tilesets whose filename begins with an
+underscore will not be shown in the tilesets GUI (but still installed); use
+this to hide non-tileset files such as TwbT overrides.
 
 Mods
 ----
