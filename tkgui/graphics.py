@@ -38,17 +38,30 @@ class GraphicsTab(Tab):
 
     def create_controls(self):
         n = Notebook(self)
-        n.pack(side=TOP, fill=BOTH, expand=Y, pady=(6, 2))
+        n.pack(fill=BOTH, expand=Y, pady=(6, 2))
 
-        #First tab
+        # Tab: Change Graphics
         change_graphics_tab = Frame(self, pad=(4, 2))
-        change_graphics_tab.pack(side=TOP, fill=BOTH, expand=Y)
+        change_graphics_tab.pack(fill=BOTH, expand=Y)
         n.add(change_graphics_tab, text="Change Graphics")
 
-        change_graphics = controls.create_control_group(
-            change_graphics_tab, 'Change Graphics', True)
-        Grid.rowconfigure(change_graphics, 0, weight=1)
-        change_graphics.pack(side=TOP, fill=BOTH, expand=Y)
+        self._create_cg_group(change_graphics_tab).pack(fill=BOTH, expand=Y)
+        self._create_advanced_group(change_graphics_tab).pack(fill=X, expand=N)
+
+        # Tab: Customization
+        customize_tab = Frame(self, pad=(4, 2))
+        customize_tab.pack(fill=BOTH, expand=Y)
+        n.add(customize_tab, text="Customization")
+
+        # Outside of the Notebook
+        self._create_tilesets_group(customize_tab).pack(fill=BOTH, expand=Y)
+        self._create_cs_group(self).pack(fill=BOTH, expand=N)
+        self._create_display_group(self).pack(fill=BOTH, expand=N)
+
+    def _create_cg_group(self, parent, show_title=True):
+        title = 'Change Graphics' if show_title else None
+        change_graphics = controls.create_control_group(parent, title, True)
+        change_graphics.rowconfigure(0, weight=1)
 
         grid = GridLayouter(2)
         listframe = Frame(change_graphics)
@@ -72,9 +85,11 @@ class GraphicsTab(Tab):
             change_graphics, 'Refresh List', 'Refresh list of graphics packs',
             self.read_graphics), 2)
 
-        advanced = controls.create_control_group(
-            change_graphics_tab, 'Advanced', True)
-        advanced.pack(fill=X, expand=N)
+        return change_graphics
+
+    def _create_advanced_group(self, parent, show_title=True):
+        title = 'Advanced' if show_title else None
+        advanced = controls.create_control_group(parent, title, True)
 
         grid = GridLayouter(2)
         if 'legacy' not in lnp.df_info.variations:
@@ -97,15 +112,12 @@ class GraphicsTab(Tab):
             '(saves space, useful for re-packaging)',
             self.simplify_graphics))
 
-        # Customization tab
-        customize_tab = Frame(self, pad=(4, 2))
-        customize_tab.pack(side=TOP, fill=BOTH, expand=Y)
-        n.add(customize_tab, text="Customization")
+        return advanced
 
-        customize = controls.create_control_group(
-            customize_tab, 'Change Tilesets', True)
-        Grid.rowconfigure(customize, 0, weight=1)
-        customize.pack(side=TOP, fill=BOTH, expand=Y)
+    def _create_tilesets_group(self, parent, show_title=True):
+        title = 'Change Tilesets' if show_title else None
+        customize = controls.create_control_group(parent, title, True)
+        customize.rowconfigure(0, weight=1)
 
         grid = GridLayouter(2, pad=(4, 0))
         tempframe = Frame(customize, pad=(0, 0, 0, 4))
@@ -129,37 +141,23 @@ class GraphicsTab(Tab):
             'Install selected tilesets', self.install_tilesets), 2)
         grid.add(controls.create_trigger_button(
             customize, 'Refresh List', 'Refresh list of tilesets',
-            self.read_tilesets))
-
-        advanced = controls.create_control_group(
-            customize_tab, 'Advanced', True)
-        advanced.pack(fill=X, expand=N)
-
-        # Outside tab
-        grid = GridLayouter(2)
-        grid.add(controls.create_option_button(
-            advanced, 'Print Mode',
-            'Changes how Dwarf Fortress draws to the screen. "2D" allows '
-            'Truetype fonts, "standard" enables advanced graphics tools. '
-            'Certain modifications may use other values.',
-            'printmode'), 2)
-        grid.add(controls.create_option_button(
-            advanced, 'TrueType Fonts',
-            'Toggles whether to use TrueType fonts or tileset for text. '
-            'Only works with Print Mode set to 2D.', 'truetype'), 2)
+            self.read_tilesets), 2)
         grid.add(controls.create_trigger_button(
-            advanced, 'Open Tilesets Folder',
+            customize, 'Open Tilesets Folder',
             'Add your own tilesets here!', graphics.open_tilesets), 2)
 
+        return customize
+
+    def _create_cs_group(self, parent, show_title=True):
+        title = "Color schemes" if show_title else None
         colorframe, self.color_entry, self.color_files = \
             controls.create_list_with_entry(
-                self, "Color schemes", self.colors,
+                parent, title, self.colors,
                 [("Load", "Load color scheme", self.load_colors),
                  ("Save", "Save current color scheme", self.save_colors),
                  ("Delete", "Delete color scheme", self.delete_colors),
                  ("Refresh", "Refresh list", self.read_colors)],
                 entry_default="Save current color scheme as...")
-        colorframe.pack(side=BOTTOM, fill=BOTH, expand=N)
         self.color_files.bind(
             "<<ListboxSelect>>", lambda e: self.select_colors())
         for seq in ("<Double-1>", "<Return>"):
@@ -170,8 +168,11 @@ class GraphicsTab(Tab):
             takefocus=False)
         self.color_preview.grid(column=0, row=0, columnspan=2, pady=(0, 4))
 
-        display = controls.create_control_group(self, 'Display Options', True)
-        display.pack(side=TOP, fill=BOTH, expand=N)
+        return colorframe
+
+    def _create_display_group(self, parent, show_title=True):
+        title = 'Display Options' if show_title else None
+        display = controls.create_control_group(parent, title, True)
 
         grid = GridLayouter(2)
         grid.add(controls.create_option_button(
@@ -182,6 +183,8 @@ class GraphicsTab(Tab):
             display, 'Varied Ground',
             'If ground tiles use a variety of punctuation, or only periods',
             'variedGround'))
+
+        return display
 
     def read_graphics(self):
         """Reads list of graphics packs."""
