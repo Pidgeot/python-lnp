@@ -116,28 +116,20 @@ class GraphicsTab(Tab):
     def _create_tilesets_group(self, parent, show_title=True):
         title = 'Change Tilesets' if show_title else None
         customize = controls.create_control_group(parent, title, True)
-        customize.rowconfigure(0, weight=1)
 
-        grid = GridLayouter(2, pad=(4, 0))
-        tempframe = Frame(customize, pad=(0, 0, 0, 4))
         _, self.fonts = controls.create_file_list(
-            tempframe, 'FONT', self.tilesets, height=8)
+            customize, 'FONT', self.tilesets)
         for seq in ("<Double-1>", "<Return>"):
             self.fonts.bind(seq, lambda e: self.install_tilesets(1))
+
         if lnp.settings.version_has_option('GRAPHICS_FONT'):
-            grid.add(tempframe)
-            tempframe = Frame(customize, pad=(0, 0, 0, 4))
-            grid.add(tempframe)
             _, self.graphicsfonts = controls.create_file_list(
-                tempframe, 'GRAPHICS_FONT', self.tilesets, height=8)
+                customize, 'GRAPHICS_FONT', self.tilesets)
             for seq in ("<Double-1>", "<Return>"):
                 self.graphicsfonts.bind(seq, lambda e: self.install_tilesets(2))
-        else:
-            grid.add(tempframe, 2)
 
-        buttons = Frame(customize)
-        buttons.columnconfigure((0, 1), weight=1, uniform=1)
-        grid.add(buttons, 2)
+        buttons = controls.create_control_group(customize, None, True)
+        buttons.pack(fill=X)
 
         grid = GridLayouter(2)
         grid.add(controls.create_trigger_button(
