@@ -102,8 +102,8 @@ class OptionsTab(Tab):
         keybindings, self.keybinding_entry, self.keybinding_files = \
             controls.create_list_with_entry(
                 self, "Key Bindings", self.keybinds,
-                [("Load", "Load keybindings", self.load_keybinds),
-                 ("Save", "Save current keybindings", self.save_keybinds),
+                [("Save", "Save current keybindings", self.save_keybinds),
+                 ("Load", "Load keybindings", self.load_keybinds),
                  ("Delete", "Delete keybindings", self.delete_keybinds),
                  ("Refresh", "Refresh list", self.read_keybinds)],
                 entry_default="Save current keybindings as...")

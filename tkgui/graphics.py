@@ -81,8 +81,11 @@ class GraphicsTab(Tab):
             'Install current graphics pack in all savegames',
             self.update_savegames))
         grid.add(controls.create_trigger_button(
-            change_graphics, 'Refresh List', 'Refresh list of graphics packs',
-            self.read_graphics), 2)
+            change_graphics, 'Refresh', 'Refresh list of graphics packs',
+            self.read_graphics))
+        grid.add(controls.create_trigger_button(
+            change_graphics, 'Open Folder',
+            'Add your own graphics packs here!', graphics.open_graphics))
 
         return change_graphics
 
@@ -102,9 +105,6 @@ class GraphicsTab(Tab):
                 advanced, 'TrueType Fonts',
                 'Toggles whether to use TrueType fonts or tileset for text. '
                 'Only works with Print Mode set to 2D.', 'truetype'), 2)
-        grid.add(controls.create_trigger_button(
-            advanced, 'Open Graphics Folder',
-            'Add your own graphics packs here!', graphics.open_graphics), 2)
         grid.add(controls.create_trigger_button(
             advanced, 'Simplify Graphic Folders',
             'Deletes unnecessary files from graphics packs '
@@ -135,15 +135,20 @@ class GraphicsTab(Tab):
         else:
             grid.add(tempframe, 2)
 
+        buttons = Frame(customize)
+        buttons.columnconfigure((0, 1), weight=1, uniform=1)
+        grid.add(buttons, 2)
+
+        grid = GridLayouter(2)
         grid.add(controls.create_trigger_button(
-            customize, 'Install Tilesets',
+            buttons, 'Install Tilesets',
             'Install selected tilesets', self.install_tilesets), 2)
         grid.add(controls.create_trigger_button(
-            customize, 'Refresh List', 'Refresh list of tilesets',
-            self.read_tilesets), 2)
+            buttons, 'Refresh', 'Refresh list of tilesets',
+            self.read_tilesets))
         grid.add(controls.create_trigger_button(
-            customize, 'Open Tilesets Folder',
-            'Add your own tilesets here!', graphics.open_tilesets), 2)
+            buttons, 'Open Folder',
+            'Add your own tilesets here!', graphics.open_tilesets))
 
         return customize
 
@@ -152,8 +157,8 @@ class GraphicsTab(Tab):
         colorframe, self.color_entry, self.color_files = \
             controls.create_list_with_entry(
                 parent, title, self.colors,
-                [("Load", "Load color scheme", self.load_colors),
-                 ("Save", "Save current color scheme", self.save_colors),
+                [("Save", "Save current color scheme", self.save_colors),
+                 ("Load", "Load color scheme", self.load_colors),
                  ("Delete", "Delete color scheme", self.delete_colors),
                  ("Refresh", "Refresh list", self.read_colors)],
                 entry_default="Save current color scheme as...")
