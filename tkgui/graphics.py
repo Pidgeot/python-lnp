@@ -38,25 +38,24 @@ class GraphicsTab(Tab):
 
     def create_controls(self):
         n = Notebook(self)
-        n.pack(fill=BOTH, expand=Y, pady=(6, 2))
+        n.pack(fill=BOTH, expand=Y, pady=(4, 2))
 
         # Tab: Change Graphics
         change_graphics_tab = Frame(self, pad=(4, 2))
         change_graphics_tab.pack(fill=BOTH, expand=Y)
-        n.add(change_graphics_tab, text="Change Graphics")
+        n.add(change_graphics_tab, text="Choose")
 
         self._create_cg_group(change_graphics_tab).pack(fill=BOTH, expand=Y)
+        self._create_display_group(change_graphics_tab).pack(fill=X, expand=N)
         self._create_advanced_group(change_graphics_tab).pack(fill=X, expand=N)
 
         # Tab: Customization
         customize_tab = Frame(self, pad=(4, 2))
         customize_tab.pack(fill=BOTH, expand=Y)
-        n.add(customize_tab, text="Customization")
+        n.add(customize_tab, text="Customize")
 
-        # Outside of the Notebook
         self._create_tilesets_group(customize_tab).pack(fill=BOTH, expand=Y)
-        self._create_cs_group(self).pack(fill=BOTH, expand=N)
-        self._create_display_group(self).pack(fill=BOTH, expand=N)
+        self._create_cs_group(customize_tab).pack(fill=BOTH, expand=N)
 
     def _create_cg_group(self, parent, show_title=True):
         title = 'Change Graphics' if show_title else None
