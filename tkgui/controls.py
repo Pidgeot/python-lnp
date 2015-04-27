@@ -330,7 +330,7 @@ def create_file_list(parent, title, listvar, **args):
     if 'height' not in args:
         args['height'] = 4
     lf = create_control_group(parent, title)
-    lf.pack(side=BOTTOM, fill=BOTH, expand=Y, anchor="s")
+    lf.pack(fill=BOTH, expand=Y)
     Grid.columnconfigure(lf, 0, weight=2)
     Grid.rowconfigure(lf, 1, weight=1)
     lb = Listbox(
