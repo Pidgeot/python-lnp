@@ -37,7 +37,8 @@ class GraphicsTab(Tab):
         self.read_tilesets()
 
     def create_controls(self):
-        n = Notebook(self)
+        Style().configure('SubNotebook.TNotebook', tabposition='n')
+        n = Notebook(self, style='SubNotebook.TNotebook')
         n.pack(fill=BOTH, expand=Y, pady=(4, 2))
 
         # Tab: Change Graphics
