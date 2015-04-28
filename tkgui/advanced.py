@@ -9,7 +9,7 @@ from .layout import GridLayouter
 from .tab import Tab
 import sys
 
-from core import launcher, legends_processor
+from core import df, launcher, legends_processor
 from core.lnp import lnp
 
 if sys.version_info[0] == 3:  # Alternate import names
@@ -155,23 +155,30 @@ class AdvancedTab(Tab):
             saverelated, 'Open Savegame Folder', 'Open the savegame folder',
             launcher.open_savegames))
 
-        main_grid.add(Frame(self, height=30), 2)
-        main_grid.add(controls.create_option_button(
-            self, 'Processor Priority',
+        misc_group = controls.create_control_group(self, 'Miscellaneous')
+        main_grid.add(misc_group, 2)
+        controls.create_option_button(
+            misc_group, 'Processor Priority',
             'Adjusts the priority given to Dwarf Fortress by your OS',
-            'procPriority'), 2)
-
-        main_grid.add(controls.create_trigger_option_button(
-            self, 'Close GUI on launch',
-            'Whether this GUI should close when Dwarf Fortress is launched',
-            self.toggle_autoclose, 'autoClose', lambda v: ('NO', 'YES')[
-                lnp.userconfig.get_bool('autoClose')]), 2)
+            'procPriority').pack(fill=X)
 
         if lnp.df_info.version >= '0.40.09':
-            main_grid.add(controls.create_trigger_button(
-                self, 'Process Legends Exports',
+            controls.create_trigger_button(
+                misc_group, 'Process Legends Exports',
                 'Compress and sort files exported from legends mode',
-                self.process_legends), 2)
+                self.process_legends).pack(fill=X)
+
+        launcher_group = controls.create_control_group(self, 'Launcher')
+        main_grid.add(launcher_group, 2)
+        controls.create_trigger_option_button(
+            launcher_group, 'Close GUI on launch',
+            'Whether this GUI should close when Dwarf Fortress is launched',
+            self.toggle_autoclose, 'autoClose', lambda v: ('NO', 'YES')[
+                lnp.userconfig.get_bool('autoClose')]).pack(fill=X)
+        controls.create_trigger_button(
+            launcher_group, 'Restore default settings',
+            'Reset everything to default settings',
+            self.restore_defaults).pack(fill=X)
 
     @staticmethod
     def process_legends():
@@ -199,3 +206,14 @@ class AdvancedTab(Tab):
         launcher.toggle_autoclose()
         binding.update()
 
+    def restore_defaults(self):
+        """Restores default configuration data."""
+        if messagebox.askyesno(
+                message='Are you sure? '
+                'ALL SETTINGS will be reset to game defaults.\n'
+                'You may need to re-install graphics afterwards.',
+                title='Reset all settings to Defaults?', icon='question'):
+            df.restore_defaults()
+            messagebox.showinfo(
+                self.root.title(),
+                'All settings reset to defaults!')

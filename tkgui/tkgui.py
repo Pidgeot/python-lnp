@@ -151,7 +151,7 @@ class TkGui(object):
         self.download_text = StringVar()
         self.download_status = Label(
             self.download_panel, textvariable=self.download_text)
-        self.download_panel.pack(fill=X, expand=N, side=BOTTOM)
+        # self.download_panel.pack(fill=X, expand=N, side=BOTTOM)
         self.download_status.pack(side=BOTTOM)
         self.download_status.grid(row=0, column=0)
 
@@ -445,18 +445,6 @@ class TkGui(object):
     def save_params():
         """Writes configuration data."""
         df.save_params()
-
-    def restore_defaults(self):
-        """Restores default configuration data."""
-        if messagebox.askyesno(
-                message='Are you sure? '
-                'ALL SETTINGS will be reset to game defaults.\n'
-                'You may need to re-install graphics afterwards.',
-                title='Reset all settings to Defaults?', icon='question'):
-            df.restore_defaults()
-            messagebox.showinfo(
-                self.root.title(),
-                'All settings reset to defaults!')
 
     def exit_program(self):
         """Quits the program."""
