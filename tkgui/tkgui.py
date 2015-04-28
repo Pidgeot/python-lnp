@@ -30,6 +30,7 @@ if sys.version_info[0] == 3:  # Alternate import names
     from tkinter.ttk import *
     import tkinter.messagebox as messagebox
     import tkinter.simpledialog as simpledialog
+    import tkinter.font as tkFont
 else:
     # pylint:disable=import-error
     import Queue
@@ -37,6 +38,7 @@ else:
     from ttk import *
     import tkMessageBox as messagebox
     import tkSimpleDialog as simpledialog
+    import tkFont
 
 # Workaround to use Pillow in PyInstaller
 if False:
@@ -168,19 +170,14 @@ class TkGui(object):
         n.enable_traversal()
         n.pack(fill=BOTH, expand=Y, padx=2, pady=3)
 
-        main_buttons = Frame(main)
-        main_buttons.pack(side=BOTTOM)
-
-        controls.create_trigger_button(
-            main_buttons, 'Play Dwarf Fortress!', 'Play the game!',
-            launcher.run_df).grid(column=0, row=0, sticky="nsew")
-        controls.create_trigger_button(
-            main_buttons, 'Init Editor',
-            'Edit init and d_init in a built-in text editor',
-            self.run_init).grid(column=1, row=0, sticky="nsew")
-        controls.create_trigger_button(
-            main_buttons, 'Defaults', 'Reset everything to default settings',
-            self.restore_defaults).grid(column=2, row=0, sticky="nsew")
+        play_font = tkFont.Font(font='TkDefaultFont')
+        play_font.config(weight=tkFont.BOLD, size=int(play_font['size'] * 1.5))
+        Style().configure('Big.TButton', font=play_font)
+        play_button = controls.create_trigger_button(
+            main, 'Play Dwarf Fortress!', 'Play the game!',
+            launcher.run_df)
+        play_button.configure(style='Big.TButton')
+        play_button.pack(side=BOTTOM, fill=X, padx=(1, 3), pady=(0, 3))
 
         self.menubar = self.create_menu(root)
 
