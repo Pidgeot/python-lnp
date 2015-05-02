@@ -31,6 +31,8 @@ if sys.version_info[0] == 3:  # Alternate import names
     import tkinter.messagebox as messagebox
     import tkinter.simpledialog as simpledialog
     import tkinter.font as tkFont
+    #pylint:disable=redefined-builtin
+    basestring = str
 else:
     # pylint:disable=import-error
     import Queue
@@ -121,6 +123,7 @@ class TkGui(object):
         self.root = root = Tk()
         self.updateDays = IntVar()
         self.downloadBaselines = BooleanVar()
+        self.do_reload = False
         controls.init(self)
         binding.init(lnp)
 
@@ -218,7 +221,7 @@ class TkGui(object):
             fill=X, expand=N, side=BOTTOM))
         root.bind(
             '<<HideDLPanel>>', lambda e: self.download_panel.pack_forget())
-        self.root.after(100, self.check_cross_thread)
+        self.cross_thread_timer = self.root.after(100, self.check_cross_thread)
 
     def on_resize(self):
         """Called when the window is resized."""
@@ -231,6 +234,8 @@ class TkGui(object):
     def start(self):
         """Starts the UI."""
         self.root.mainloop()
+        if self.do_reload:
+            lnp.reload_program()
 
     def on_update_available(self):
         """Called by the main LNP class if an update is available."""
@@ -335,6 +340,10 @@ class TkGui(object):
             menu_file.add_command(
                 label="Configure terminal...", command=self.configure_terminal)
 
+        if len(lnp.folders) > 1:
+            menu_file.add_command(
+                label="Reload/Choose DF folder", command=self.reload_program)
+
         if sys.platform != 'darwin':
             menu_file.add_command(
                 label='Exit', command=self.exit_program, accelerator='Alt+F4')
@@ -365,6 +374,11 @@ class TkGui(object):
         root.bind_all('<Alt-F1>', lambda e: self.show_about())
         root.createcommand('tkAboutDialog', self.show_about)
         return menubar
+
+    def reload_program(self):
+        """Reloads the program to allow the user to change DF folders."""
+        self.do_reload = True
+        self.exit_program()
 
     @staticmethod
     def configure_terminal():
@@ -422,7 +436,7 @@ class TkGui(object):
             var
                 The variable bound to the control.
         """
-        if hasattr(key, '__iter__'):
+        if not isinstance(key, basestring):
             for k in key:
                 TkGui.change_entry(k, var)
             return
@@ -445,6 +459,8 @@ class TkGui(object):
 
     def exit_program(self):
         """Quits the program."""
+        self.root.after_cancel(self.cross_thread_timer)
+        self.root.quit()
         self.root.destroy()
 
     @staticmethod
@@ -474,7 +490,8 @@ class TkGui(object):
         messagebox.showinfo(
             title='About', message="PyLNP "+VERSION +" - Lazy Newb Pack Python "
             "Edition\n\nPort by Pidgeot\nContributions by PeridexisErrant, "
-            "rx80, dricus\n\nOriginal program: LucasUP, TolyK/aTolyK")
+            "rx80, dricus, James Morgensen\n\nOriginal program: LucasUP, "
+            "TolyK/aTolyK")
 
     @staticmethod
     def cycle_option(field):
@@ -485,7 +502,7 @@ class TkGui(object):
             field
                 The option to cycle.
         """
-        if hasattr(field, '__iter__'):
+        if not isinstance(field, basestring):
             for f in field:
                 TkGui.cycle_option(f)
             return
@@ -502,7 +519,7 @@ class TkGui(object):
                 The field name to change. The corresponding value is
                 automatically read.
         """
-        if hasattr(field, '__iter__'):
+        if not isinstance(field, basestring):
             for f in field:
                 df.set_option(f, binding.get(field))
         else:
@@ -602,7 +619,7 @@ class TkGui(object):
             except:
                 break
             self.root.event_generate(v, when='tail')
-        self.root.after(100, self.check_cross_thread)
+        self.cross_thread_timer = self.root.after(100, self.check_cross_thread)
 
     @staticmethod
     def check_vanilla_raws():

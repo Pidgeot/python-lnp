@@ -42,6 +42,8 @@ def find_vanilla_raws(download_missing=True):
 def prepare_baselines():
     """Unzip any DF releases found, and discard non-universial files."""
     archives = glob.glob(os.path.join(paths.get('baselines'), 'df_??_?*.???'))
+    if archives:
+        log.i('Extracting archives in baselines: ' + str(archives))
     for item in archives:
         version = os.path.basename(item)
         for s in ('_win', '_osx', '_linux', '_legacy', '_s',
@@ -78,6 +80,7 @@ def simplify_pack(pack, folder):
     valid_dirs = ('graphics', 'mods', 'baselines')
     if not folder in valid_dirs:
         return False
+    log.i('Simplifying {}: {}'.format(folder, pack))
     files_before = sum(len(f) for (_, _, f) in os.walk(paths.get(folder, pack)))
     if files_before == 0:
         return None
@@ -110,6 +113,7 @@ def simplify_pack(pack, folder):
                 else:
                     os.remove(full_path)
     files_after = sum(len(f) for (_, _, f) in os.walk(paths.get(folder, pack)))
+    log.v('Removed {} files'.format(files_before - files_after))
     return files_before - files_after
 
 def remove_vanilla_raws_from_pack(pack, folder):
@@ -122,11 +126,13 @@ def remove_vanilla_raws_from_pack(pack, folder):
     Returns:
         The number of files removed
     """
+    if not find_vanilla():
+        return 0
     i = 0
     for folder, van_folder in (
             [paths.get(folder, pack, 'raw'), find_vanilla_raws()],
             [paths.get(folder, pack, 'data', 'speech'),
-             paths.get('baselines', pack, 'data', 'speech')]):
+             os.path.join(find_vanilla(), 'data', 'speech')]):
         for root, _, files in os.walk(folder):
             for k in files:
                 f = os.path.join(root, k)
@@ -136,15 +142,10 @@ def remove_vanilla_raws_from_pack(pack, folder):
                     continue
                 van_f = os.path.join(van_folder, os.path.relpath(f, folder))
                 if os.path.isfile(van_f):
-                    try:
-                        with open(van_f, mode='r', encoding='cp437',
-                                  errors='replace') as v:
-                            vtext = v.read()
-                        with open(f, mode='r', encoding='cp437',
-                                  errors='replace') as m:
-                            mtext = m.read()
-                    except UnicodeDecodeError:
-                        continue
+                    with open(van_f, encoding='cp437', errors='replace') as v:
+                        vtext = v.read()
+                    with open(f, encoding='cp437', errors='replace') as m:
+                        mtext = m.read()
                     if vtext == mtext:
                         os.remove(f)
                         i += 1

@@ -5,6 +5,8 @@ keys."""
 from __future__ import print_function, unicode_literals, absolute_import
 import sys, os, json
 
+from . import log
+
 if sys.version_info[0] == 3:  # Alternate import names
     enc_dict = {}
 else:
@@ -29,18 +31,14 @@ class JSONConfiguration(object):
         if filename is None:
             return
         if not os.path.isfile(filename):
-            print(
-                "File " + filename + " does not exist",
-                file=sys.stderr)
+            log.w("JSONConfiguration: File " + filename + " does not exist")
             return
         try:
             #pylint: disable=bare-except
             self.data = json.load(open(filename), **enc_dict)
         except:
-            print(
-                "Note: Failed to read JSON from " + filename +
-                ", ignoring data - error details follow", file=sys.stderr)
-            sys.excepthook(*sys.exc_info())
+            log.e('Note: Failed to read JSON from ' + filename +
+                  ', ignoring data - details follow', stack=True)
 
     @staticmethod
     def from_text(text):
@@ -53,7 +51,6 @@ class JSONConfiguration(object):
         if self.filename:
             json.dump(
                 self.data, open(self.filename, 'w'), indent=2, **enc_dict)
-
 
     def get(self, path, default=None):
         """
@@ -87,7 +84,6 @@ class JSONConfiguration(object):
                 Value returned if path does not exist.
         """
         return self.get(path, default)
-
 
     def get_string(self, path):
         """

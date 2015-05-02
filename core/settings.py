@@ -493,7 +493,6 @@ class DFConfiguration(object):
             name
                 Name of the setting to cycle.
         """
-
         self.settings[name] = self.cycle_list(
             self.settings[name], self.options[name])
 
@@ -543,7 +542,6 @@ class DFConfiguration(object):
             calling create_option(field_name, field_name, value, None,
             (filename,)).
         """
-
         text = DFRaw.read(filename)
         if auto_add:
             for match in re.findall(r'\[(.+?):(.+?)\]', text):
@@ -664,11 +662,9 @@ class DFConfiguration(object):
         if option_name in self.missing_fields:
             # Field was missing when expected, pretend it doesn't exist yet
             return False
-
         if option_name[0] == option_name.lower()[0]:
             # Internal name, let it pass by
             return True
-
         option = _option_version_data[option_name]
         if len(option) == 2:
             return option[0] <= self.df_info.version < option[1]

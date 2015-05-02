@@ -5,7 +5,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys
 
 import os
-from . import errorlog, log
+from . import log
 
 from .json_config import JSONConfiguration
 
@@ -40,10 +40,35 @@ class PyLNP(object):
                 os.chdir('../../..')
         else:
             os.chdir(os.path.join(os.path.dirname(__file__), '..'))
+
+        from . import update
+
+        self.folders = []
+        self.df_info = None
+        self.settings = None
+        self.running = {}
+        self.autorun = []
+        self.updater = None
+        self.config = None
+        self.userconfig = None
+        self.ui = None
+
+        self.initialize_program()
+
+        self.initialize_df()
+
+        self.new_version = None
+
+        self.initialize_ui()
+        update.check_update()
+        self.ui.start()
+
+    def initialize_program(self):
+        """Initializes the main program (errorlog, path registration, etc.)."""
+        from . import paths, utilities, errorlog
+        self.BASEDIR = '.'
         self.detect_basedir()
-
-        from . import df, paths, update, utilities
-
+        paths.clear()
         paths.register('root', self.BASEDIR)
         errorlog.start()
 
@@ -58,13 +83,6 @@ class PyLNP(object):
         paths.register('tilesets', paths.get('lnp'), 'Tilesets')
         paths.register('baselines', paths.get('lnp'), 'Baselines')
         paths.register('mods', paths.get('lnp'), 'Mods')
-
-        self.df_info = None
-        self.folders = []
-        self.settings = None
-        self.autorun = []
-        self.running = {}
-        self.updater = None
 
         config_file = 'PyLNP.json'
         if os.access(paths.get('lnp', 'PyLNP.json'), os.F_OK):
@@ -94,15 +112,28 @@ class PyLNP(object):
         }
         self.config = JSONConfiguration(config_file, default_config)
         self.userconfig = JSONConfiguration('PyLNP.user')
-
-        df.find_df_folder()
+        self.autorun = []
         utilities.load_autorun()
 
-        self.new_version = None
+    def initialize_df(self):
+        """Initializes the DF folder and related variables."""
+        from . import df
+        self.df_info = None
+        self.folders = []
+        self.settings = None
+        df.find_df_folder()
 
+    def initialize_ui(self):
+        """Instantiates the UI object."""
         from tkgui.tkgui import TkGui
         self.ui = TkGui()
-        update.check_update()
+
+    def reload_program(self):
+        """Reloads the program to allow the user to change DF folders."""
+        self.args.df_folder = None
+        self.initialize_program()
+        self.initialize_df()
+        self.initialize_ui()
         self.ui.start()
 
     def parse_commandline(self):
@@ -146,7 +177,7 @@ class PyLNP(object):
             while os.path.abspath(self.BASEDIR) != prev_path:
                 df.find_df_folders()
                 if len(self.folders) != 0:
-                    break
+                    return
                 prev_path = os.path.abspath(self.BASEDIR)
                 self.BASEDIR = os.path.join(self.BASEDIR, '..')
         except UnicodeDecodeError:
@@ -157,6 +188,8 @@ class PyLNP(object):
                 "Alternatively, you may run PyLNP from source using Python 3.",
                 file=sys.stderr)
             sys.exit(1)
+        log.e("Could not find any Dwarf Fortress installations.")
+        sys.exit(2)
 
 
 # vim:expandtab

@@ -12,7 +12,7 @@ Sort files into region folder, with maps subfolders,
 from __future__ import print_function, unicode_literals, absolute_import
 
 import os, zipfile, glob, subprocess
-from . import paths
+from . import paths, log
 from .lnp import lnp
 
 def get_region_info():
@@ -40,9 +40,9 @@ def compress_bitmaps():
         try:
             import Image
         except ImportError:
-            print('Please install PIL or Pillow to compress bitmaps.')
             call_optipng()
     else:
+        log.i('Compressing bitmaps with PIL/Pillow')
         for fname in glob.glob(paths.get(
                 'df', '-'.join(get_region_info()) + '-*.bmp')):
             f = Image.open(fname)
@@ -52,7 +52,8 @@ def compress_bitmaps():
 def call_optipng():
     """Calling optipng can work well, but isn't very portable."""
     if os.name == 'nt' and os.path.isfile(paths.get('df', 'optipng.exe')):
-        print('Falling back to optipng for image compression.')
+        log.w('Falling back to optipng for image compression. '
+              'It is recommended to install PIL.')
         for fname in glob.glob(paths.get(
                 'df', '-'.join(get_region_info()) + '-*.bmp')):
             ret = subprocess.call([paths.get('df', 'optipng'), '-zc9', '-zm9',
@@ -60,6 +61,8 @@ def call_optipng():
                                   creationflags=0x00000008)
             if ret == 0:
                 os.remove(fname)
+    else:
+        log.e('A PIL-compatible library is required to compress bitmaps.')
 
 def choose_region_map():
     """Returns the most-prefered region map available, or fallback."""
@@ -104,26 +107,28 @@ def move_files():
         target = os.path.join(dirname, 'site_maps', os.path.basename(site_map))
         if os.path.isfile(target):
             os.remove(site_map)
-        else:
-            os.renames(site_map, target)
+            continue
+        os.renames(site_map, target)
     maps = ('world_map', 'bm', 'detailed', 'dip', 'drn', 'el', 'elw',
             'evil', 'hyd', 'nob', 'rain', 'sal', 'sav', 'str', 'tmp',
             'trd', 'veg', 'vol')
     for m in maps:
         m = glob.glob(pattern + '-' + m + '.???')
         if m:
+            log.d('Found the following region map:  ' + str(m[0]))
             t = os.path.join(dirname, 'region_maps', os.path.basename(m[0]))
             if os.path.isfile(t):
                 os.remove(m[0])
-            else:
-                os.renames(m[0], t)
+                continue
+            os.renames(m[0], t)
     for f in glob.glob(paths.get('df', region + '-*')):
+        log.d('Found the following misc files:  ' + str(f))
         if os.path.isfile(f):
             target = os.path.join(dirname, os.path.basename(f))
             if os.path.isfile(target):
                 os.remove(f)
-            else:
-                os.renames(f, target)
+                continue
+            os.renames(f, target)
     for f in glob.glob(paths.get('df', '*_color_key.txt')):
         os.remove(f)
 
@@ -132,6 +137,7 @@ def process_legends():
     if lnp.df_info.version >= '0.40.09':
         i = 0
         while get_region_info():
+            log.i('Processing legends from ' + get_region_info()[0])
             compress_bitmaps()
             create_archive()
             move_files()

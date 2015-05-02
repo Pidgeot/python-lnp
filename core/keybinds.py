@@ -4,7 +4,7 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import os, shutil
-from . import helpers, paths
+from . import helpers, paths, log
 
 def read_keybinds():
     """Returns a list of keybinding files."""
@@ -23,6 +23,7 @@ def load_keybinds(filename):
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
     target = paths.get('init', 'interface.txt')
+    log.i('Loading ' + filename + 'keybinds')
     shutil.copyfile(paths.get('keybinds', filename), target)
 
 def keybind_exists(filename):
@@ -48,6 +49,7 @@ def save_keybinds(filename):
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
     filename = paths.get('keybinds', filename)
+    log.i('Saving current keybinds as ' + filename)
     shutil.copyfile(paths.get('init', 'interface.txt'), filename)
 
 def delete_keybinds(filename):
@@ -60,6 +62,7 @@ def delete_keybinds(filename):
     """
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
+    log.i('Deleting ' + filename + 'keybinds')
     os.remove(os.path.join(paths.get('keybinds'), filename))
 
 def get_installed_file():

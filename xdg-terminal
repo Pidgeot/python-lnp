@@ -403,10 +403,20 @@ terminal_generic()
         TERM=xterm
     fi
 
+    # If `which $TERM` throws an error, fall back to xterm
+    ERROR="$(which $TERM 2>&1 > /dev/null)"
+    if [ -n "$ERROR" ]; then
+        if [ "$TERM" == "rxvt-unicode-256color" ]; then
+            TERM="urxvt" # fix for if $TERM is set to "rxvt-unicode-256color" but the terminal binary is named "urxvt"
+        else
+        TERM="xterm"
+        fi
+    fi
+
     terminal_exec=`which $TERM 2>/dev/null`
 
     if [ -x "$terminal_exec" ]; then
-			  if [ x"$1" == x"" ]; then
+        if [ x"$1" == x"" ]; then
             nohup $terminal_exec > /dev/null &
         else
             nohup $terminal_exec "-e" "$1" > /dev/null &

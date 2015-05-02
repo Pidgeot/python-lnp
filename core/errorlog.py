@@ -40,6 +40,7 @@ class CaptureStream(object):
         """
         self.lines.append(string)
         if sys.version_info[0] == 2:
+            # For Python3: pylint:disable=undefined-variable
             self.outfile.write(unicode(string))
         else:
             self.outfile.write(string)
@@ -60,9 +61,9 @@ class CaptureStream(object):
 
     def redirect(self):
         """Sets up the initial redirection."""
-        self.outfile = open(
-            paths.get('root', self.name+'.txt'), 'w',
-            encoding='utf-8')
+        if not self.outfile:
+            self.outfile = open(
+                paths.get('root', self.name+'.txt'), 'w', encoding='utf-8')
         self.hook()
 
 def start():
