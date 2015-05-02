@@ -192,11 +192,11 @@ class TkGui(object):
             height += self.menubar.winfo_reqheight()
         root.minsize(width=root.winfo_width(), height=height)
         self.download_panel.pack_forget()
-        root.update()
         root.geometry('{}x{}'.format(
             lnp.userconfig.get_number('tkgui_width'),
             lnp.userconfig.get_number('tkgui_height')))
         root.bind("<Configure>", lambda e: self.on_resize())
+        root.update()
 
         queue = download.get_queue('baselines')
         queue.register_start_queue(self.start_download_queue)
