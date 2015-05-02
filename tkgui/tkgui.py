@@ -156,9 +156,8 @@ class TkGui(object):
         self.download_text = StringVar()
         self.download_status = Label(
             self.download_panel, textvariable=self.download_text)
-        # self.download_panel.pack(fill=X, expand=N, side=BOTTOM)
+        self.download_panel.pack(fill=X, expand=N, side=BOTTOM)
         self.download_status.pack(side=BOTTOM)
-        self.download_status.grid(row=0, column=0)
 
         self.n = n = Notebook(main)
 
