@@ -69,12 +69,12 @@ def is_compatible(content_type, item):
     if not exists(content_type, item):
         return True
     cfg = get_cfg(content_type, item)
-    if any(lnp.df_info.version < cfg.get_string('df_min_version'),
-           (lnp.df_info.version > cfg.get_string('df_max_version')
-            and cfg.get_string('df_max_version')),
-           lnp.df_info.version in cfg.get_list('incompatible_df_versions'),
-           (cfg.get_bool('needs_dfhack') and
-            'dfhack' not in lnp.df_info.variations)):
+    if any([lnp.df_info.version < cfg.get_string('df_min_version'),
+            (lnp.df_info.version > cfg.get_string('df_max_version')
+             and cfg.get_string('df_max_version')),
+            lnp.df_info.version in cfg.get_list('incompatible_df_versions'),
+            (cfg.get_bool('needs_dfhack') and
+             'dfhack' not in lnp.df_info.variations)]):
         return False
     return True
 
