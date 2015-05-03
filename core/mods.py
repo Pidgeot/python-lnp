@@ -255,7 +255,7 @@ def do_merge_files(mod_file_name, van_file_name, gen_file_name):
                          (gen_file_name, gen_lines)):
         try:
             with open(fname, encoding='cp437', errors='replace') as f:
-                lines = f.readlines()
+                lines.extend(f.readlines())
         except IOError:
             log.d(fname + ' cannot be read; merging other files')
     status, gen_lines = do_merge_seq(mod_lines, van_lines, gen_lines)

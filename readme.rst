@@ -666,24 +666,6 @@ combination installed.  Through more complex merge logic, graphics can also
 be used with mods and changed on most modded saves.  Graphics can be configured
 with a content manifest.
 
-Tilesets
---------
-This folder contains tilesets; individual image files that the user can use
-for the FONT and GRAPHICS_FONT settings (and their fullscreen counterparts).
-Tilesets can be installed through the graphics customisation tab, which reads
-from ``<df>/data/art``.  All files in the Tilesets folder are copied here when
-graphics are installed, which is especially useful for TwbT files which can be
-shared across graphics packs.  Tilesets whose filename begins with an
-underscore will not be shown in the tilesets GUI (but still installed); use
-this to hide non-tileset files such as TwbT overrides.
-
-Mods
-----
-This folder contains mods for Dwarf Fortress, in the form of changes to the
-defining raws (which define the content DF uses).  Mods use the same reduced
-format for raws as graphics packs.  Mods can be configured with a content
-manifest.
-
 Keybinds
 --------
 This folder contains keybindings.
@@ -692,8 +674,23 @@ If you intend to use multiple versions of DF, note that legacy Windows and
 Mac versions uses a different keybinding syntax, so files from newer
 SDL-based versions are not compatible (and vice versa).
 
+Mods
+----
+This folder contains mods for Dwarf Fortress, in the form of changes to the
+defining raws (which define the content DF uses).  Mods use the same reduced
+format for raws as graphics packs.  Mods can be configured with a content
+manifest.
+
+Tilesets
+--------
+This folder contains tilesets; individual image files that the user can use
+for the FONT and GRAPHICS_FONT settings (and their fullscreen counterparts).
+Tilesets can be installed through the graphics customisation tab, which reads
+from <df>/data/art, as they are added to each graphics pack as the pack is
+installed - especially useful for TwbT text tiles.
+
 Utilities
-=========
+---------
 Each platform will auto-detect different file types in the Utilities pane.
 
 Windows:
@@ -704,7 +701,7 @@ OS X:
   ``*.app``, ``*.jar``, ``*.sh``
 
 Correcting the auto-detection
------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 For some platforms, you may wish to include a utility not matched by the
 above patterns. Also, some utilities may include subprograms that should not
 appear in the list.
@@ -724,7 +721,7 @@ Alternatively, you can also use the file ``utilities.txt`` to cover both
 scenarios, as documented below.
 
 Relabeling utilities
---------------------
+~~~~~~~~~~~~~~~~~~~~
 By default, the title for a utility is derived from its filename. This can be
 overriden using the file ``utilities.txt`` in the Utilites folder, and
 tooltips can be added.
