@@ -184,9 +184,9 @@ def create_control_group(parent, text, dual_column=False):
         f = Labelframe(parent, text=text)
     else:
         f = Frame(parent)
+    f.configure(pad=(2, 0, 2, 2))
     if dual_column:
-        Grid.columnconfigure(f, 0, weight=1)
-        Grid.columnconfigure(f, 1, weight=1)
+        f.columnconfigure((0, 1), weight=1, uniform=1)
     return f
 
 def create_option_button(
@@ -330,7 +330,7 @@ def create_file_list(parent, title, listvar, **args):
     if 'height' not in args:
         args['height'] = 4
     lf = create_control_group(parent, title)
-    lf.pack(side=BOTTOM, fill=BOTH, expand=Y, anchor="s")
+    lf.pack(fill=BOTH, expand=Y)
     Grid.columnconfigure(lf, 0, weight=2)
     Grid.rowconfigure(lf, 1, weight=1)
     lb = Listbox(
@@ -459,7 +459,6 @@ def create_list_with_entry(parent, title, listvar, buttonspec, **kwargs):
         kwargs['height'] = 4
 
     kf = create_control_group(parent, title)
-    kf.configure(pad=(2, 0, 2, 2))
     kf.columnconfigure(0, weight=1)
     kf.rowconfigure(2, weight=1)
 
@@ -532,7 +531,7 @@ def create_numeric_entry(parent, variable, option, tooltip):
     if not binding.version_has_option(option):
         return fake_control
     e = Entry(
-        parent, width=4, validate='key',
+        parent, width=4, validate='key', justify='center',
         validatecommand=__ui.vcmd, textvariable=variable)
     variable.trace(
         "w", lambda name, index, mode: __ui.change_entry(option, variable))

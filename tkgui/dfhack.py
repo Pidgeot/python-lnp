@@ -37,7 +37,7 @@ class DFHackTab(Tab):
                 hacks.is_dfhack_enabled()]).pack(
                     side=TOP, expand=N, fill=X, pady=4)
 
-        hacks_frame = Labelframe(self, text='Available hacks')
+        hacks_frame = controls.create_control_group(self, 'Available hacks')
         hacks_frame.pack(side=TOP, expand=Y, fill=BOTH)
         Grid.columnconfigure(hacks_frame, 0, weight=1)
         Grid.rowconfigure(hacks_frame, 1, weight=1)

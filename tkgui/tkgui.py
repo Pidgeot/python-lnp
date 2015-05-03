@@ -30,6 +30,7 @@ if sys.version_info[0] == 3:  # Alternate import names
     from tkinter.ttk import *
     import tkinter.messagebox as messagebox
     import tkinter.simpledialog as simpledialog
+    import tkinter.font as tkFont
     #pylint:disable=redefined-builtin
     basestring = str
 else:
@@ -39,6 +40,7 @@ else:
     from ttk import *
     import tkMessageBox as messagebox
     import tkSimpleDialog as simpledialog
+    import tkFont
 
 # Workaround to use Pillow in PyInstaller
 if False:
@@ -156,7 +158,6 @@ class TkGui(object):
             self.download_panel, textvariable=self.download_text)
         self.download_panel.pack(fill=X, expand=N, side=BOTTOM)
         self.download_status.pack(side=BOTTOM)
-        self.download_status.grid(row=0, column=0)
 
         self.n = n = Notebook(main)
 
@@ -171,19 +172,14 @@ class TkGui(object):
         n.enable_traversal()
         n.pack(fill=BOTH, expand=Y, padx=2, pady=3)
 
-        main_buttons = Frame(main)
-        main_buttons.pack(side=BOTTOM)
-
-        controls.create_trigger_button(
-            main_buttons, 'Play Dwarf Fortress!', 'Play the game!',
-            launcher.run_df).grid(column=0, row=0, sticky="nsew")
-        controls.create_trigger_button(
-            main_buttons, 'Init Editor',
-            'Edit init and d_init in a built-in text editor',
-            self.run_init).grid(column=1, row=0, sticky="nsew")
-        controls.create_trigger_button(
-            main_buttons, 'Defaults', 'Reset everything to default settings',
-            self.restore_defaults).grid(column=2, row=0, sticky="nsew")
+        play_font = tkFont.Font(font='TkDefaultFont')
+        play_font.config(weight=tkFont.BOLD, size=int(play_font['size'] * 1.5))
+        Style().configure('Big.TButton', font=play_font)
+        play_button = controls.create_trigger_button(
+            main, 'Play Dwarf Fortress!', 'Play the game!',
+            launcher.run_df)
+        play_button.configure(style='Big.TButton')
+        play_button.pack(side=BOTTOM, fill=X, padx=(1, 3), pady=(0, 3))
 
         self.menubar = self.create_menu(root)
 
@@ -196,11 +192,11 @@ class TkGui(object):
             height += self.menubar.winfo_reqheight()
         root.minsize(width=root.winfo_width(), height=height)
         self.download_panel.pack_forget()
-        root.update()
         root.geometry('{}x{}'.format(
             lnp.userconfig.get_number('tkgui_width'),
             lnp.userconfig.get_number('tkgui_height')))
         root.bind("<Configure>", lambda e: self.on_resize())
+        root.update()
 
         queue = download.get_queue('baselines')
         queue.register_start_queue(self.start_download_queue)
@@ -258,7 +254,7 @@ class TkGui(object):
             caption
                 Caption for the newly created tab.
         """
-        tab = class_(self.n)
+        tab = class_(self.n, pad=(4, 2))
         self.n.add(tab, text=caption)
 
     def ensure_df(self):
@@ -459,18 +455,6 @@ class TkGui(object):
     def save_params():
         """Writes configuration data."""
         df.save_params()
-
-    def restore_defaults(self):
-        """Restores default configuration data."""
-        if messagebox.askyesno(
-                message='Are you sure? '
-                'ALL SETTINGS will be reset to game defaults.\n'
-                'You may need to re-install graphics afterwards.',
-                title='Reset all settings to Defaults?', icon='question'):
-            df.restore_defaults()
-            messagebox.showinfo(
-                self.root.title(),
-                'All settings reset to defaults!')
 
     def exit_program(self):
         """Quits the program."""
