@@ -415,7 +415,7 @@ handle backwards compatibility.
 
 When checking for updates, the version retrieved online will be compared with
 the ``packVersion`` field. If they are different, PyLNP will show a notice that
-updates are available.
+updates are available. *All update methods require this field to be specified.*
 
 If you do not want update checking, remove the ``updates`` object, or set
 ``updateMethod`` to a blank string.
@@ -424,6 +424,14 @@ If you do not want update checking, remove the ``updates`` object, or set
 ~~~~~~~~
 For files hosted on http://dffd.bay12games.com/, simply add a field ``dffdId``
 which contains the ID of your hosted file. No other configuration is necessary.
+Example::
+
+  "updates": {
+    "updateMethod": "dffd",
+    "packVersion": "x.yy.zz r2",
+    "dffdId": "1234"
+  }
+
 
 ``regex``
 ~~~~~~~~~
@@ -456,6 +464,15 @@ When doing direct downloads, the URL's file name will be used as the target file
 name (e.g. ``http://example.com/downloads/my_pack.zip`` gets downloaded as
 ``my_pack.zip``) if neither ``directFilename`` or ``directFilenameRegex`` is
 set.
+
+Example::
+  "updates": {
+    "updateMethod": "regex",
+    "packVersion": "x.yy.zz r2",
+    "checkURL": "http://example.com/my_df_pack.html",
+    "downloadURL": "http://example.com/my_df_pack.html",
+    "versionRegex": "Version: (.+)"
+  }
 
 ``json``
 ~~~~~~~~~
@@ -499,6 +516,15 @@ When doing direct downloads, the URL's file name will be used as the target file
 name (e.g. ``http://example.com/downloads/my_pack.zip`` gets downloaded as
 ``my_pack.zip``) if neither ``directFilename`` or ``directFilenameJsonPath`` is
 set.
+
+Example::
+  "updates": {
+    "updateMethod": "json",
+    "packVersion": "x.yy.zz r2",
+    "checkURL": "http://example.com/my_df_pack_version.json",
+    "downloadURL": "http://example.com/my_df_pack.html",
+    "versionJsonPath": "version"
+  }
 
 ``dfhack``
 ----------

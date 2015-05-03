@@ -139,8 +139,11 @@ class Updater(object):
         self.text = download.download_str(self.get_check_url())
         if self.text is None:
             log.e("Error checking for updates")
-        return (
-            self.get_version() != lnp.config.get_string('updates/packVersion'))
+        curr_version = lnp.config.get_string('updates/packVersion')
+        if not curr_version:
+            log.e("Current pack version is not set, cannot check for updates")
+            return False
+        return (self.get_version() != curr_version)
 
     def get_check_url(self):
         """Returns the URL used to check for updates."""
