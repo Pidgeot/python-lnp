@@ -422,14 +422,14 @@ If you do not want update checking, remove the ``updates`` object, or set
 
 ``dffd``
 ~~~~~~~~
-For files hosted on http://dffd.bay12games.com/, simply add a field ``dffdId``
+For files hosted on http://dffd.bay12games.com/, simply add a field ``dffdID``
 which contains the ID of your hosted file. No other configuration is necessary.
 Example::
 
   "updates": {
     "updateMethod": "dffd",
     "packVersion": "x.yy.zz r2",
-    "dffdId": "1234"
+    "dffdID": "1234"
   }
 
 

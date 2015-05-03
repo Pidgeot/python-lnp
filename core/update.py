@@ -138,7 +138,7 @@ class Updater(object):
         """Checks if an update is necessary."""
         self.text = download.download_str(self.get_check_url())
         if self.text is None:
-            log.e("Error checking for updates")
+            log.e("Error checking for updates, could not download text")
         curr_version = lnp.config.get_string('updates/packVersion')
         if not curr_version:
             log.e("Current pack version is not set, cannot check for updates")
@@ -244,6 +244,8 @@ class DFFDUpdater(Updater):
     """Updater class for DFFD-hosted downloads."""
     def get_check_url(self):
         self.dffd_id = lnp.config.get_string('updates/dffdID')
+        if not self.dffd_id:
+            log.e('Field "updates/dffdID" must be set in PyLNP.json')
         return 'http://dffd.bay12games.com/file_data/'+self.dffd_id+'.json'
 
     def get_version(self):
