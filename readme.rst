@@ -523,6 +523,43 @@ Example::
         }
     }
 
+Content Manifests
+=================
+Raw-based content - ie graphics packs or mods - may be
+distributed with a file titled ``manifest.json`` in their root directory.
+This can be used to declare the name, version, and author of the content,
+versions of DF known to be incompatible, an explanatory tooltip, and more.
+
+If the manifest does not exist, or a field is missing, PyLNP will use sensible
+default values - letting the user make the decision based on autodetection.
+
+For example, in ``LNP/Mods/foo_mod/manifest.json``::
+
+    {
+        "author": "Urist McFoo_Modder and friends",
+        "content_version": "1.2a",
+        "df_min_version": "0.40.03",
+        "df_max_version": "",
+        "title": "Foo Mod!",
+        "tooltip": "The mod all about foo-ing.\nA second line."
+    }
+
+"title" and "tooltip" control presentation in the list for that kind of
+content.  Both should be strings.  Title is the name in the list; tooltip
+is the hovertext - linebreaks are inserted with "\n", since it must be one
+line in the manifest file.
+
+"author" and "content_version" are strings for the author and version of the
+content.  Both are for information only at this stage.
+
+"df_min_version" and "df_max_version" allow you to specify versions of DF
+with which the content is incompatible.  When playing a version outside the
+range, which is open ended if not specified, the content is hidden.  In the
+example, the mod will be visible for DF 40.03 and all later versions.
+
+More complex - but usually unnecessary - options are documented in
+``core/manifests.py``.
+
 Directory structure
 ===================
 PyLNP expects to see the following directory structure::
@@ -626,7 +663,8 @@ This folder contains graphics packs, consisting of data and raw folders.  Any
 raws identical to vanilla files will be discarded; when installing a graphics
 pack the remaining files will be copied over a set of vanilla raws and the
 combination installed.  Through more complex merge logic, graphics can also
-be used with mods and changed on most modded saves.
+be used with mods and changed on most modded saves.  Graphics can be configured
+with a content manifest.
 
 Tilesets
 --------
@@ -643,7 +681,8 @@ Mods
 ----
 This folder contains mods for Dwarf Fortress, in the form of changes to the
 defining raws (which define the content DF uses).  Mods use the same reduced
-format for raws as graphics packs.
+format for raws as graphics packs.  Mods can be configured with a content
+manifest.
 
 Keybinds
 --------
