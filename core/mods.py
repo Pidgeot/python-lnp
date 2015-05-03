@@ -8,7 +8,7 @@ from difflib import ndiff, SequenceMatcher
 # pylint:disable=redefined-builtin
 from io import open
 
-from . import paths, baselines, log
+from . import paths, baselines, log, manifest
 from .lnp import lnp
 
 def toggle_premerge_gfx():
@@ -23,9 +23,20 @@ def will_premerge_gfx():
 
 def read_mods():
     """Returns a list of mod packs"""
-    return [os.path.basename(o) for o in
-            glob.glob(paths.get('mods', '*'))
-            if os.path.isdir(o)]
+    return [os.path.basename(o) for o in glob.glob(paths.get('mods', '*'))
+            if os.path.isdir(o) and
+            manifest.is_compatible('mods', os.path.basename(o))]
+
+def get_title(mod):
+    """Returns the mod title; either per manifest or from dirname."""
+    title = manifest.get_cfg('mods', mod).get_string('title')
+    if title:
+        return title
+    return mod
+
+def get_tooltip(mod):
+    """Returns the tooltip for the given mod."""
+    return manifest.get_cfg('mods', mod).get_string('tooltip')
 
 def simplify_mods():
     """Removes unnecessary files from all mods."""
@@ -244,7 +255,7 @@ def do_merge_files(mod_file_name, van_file_name, gen_file_name):
                          (gen_file_name, gen_lines)):
         try:
             with open(fname, encoding='cp437', errors='replace') as f:
-                lines = f.readlines()
+                lines.extend(f.readlines())
         except IOError:
             log.d(fname + ' cannot be read; merging other files')
     status, gen_lines = do_merge_seq(mod_lines, van_lines, gen_lines)

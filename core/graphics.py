@@ -6,12 +6,23 @@ from __future__ import print_function, unicode_literals, absolute_import
 import os, shutil, glob
 from .launcher import open_folder
 from .lnp import lnp
-from . import colors, df, paths, baselines, mods, log
+from . import colors, df, paths, baselines, mods, log, manifest
 from .dfraw import DFRaw
 
 def open_graphics():
     """Opens the graphics pack folder."""
     open_folder(paths.get('graphics'))
+
+def get_title(pack):
+    """Returns the pack title; either per manifest or from dirname."""
+    title = manifest.get_cfg('graphics', pack).get_string('title')
+    if title:
+        return title
+    return pack
+
+def get_tooltip(pack):
+    """Returns the tooltip for the given graphics pack."""
+    return manifest.get_cfg('graphics', pack).get_string('tooltip')
 
 def current_pack():
     """Returns the currently installed graphics pack.
@@ -47,7 +58,8 @@ def logged_graphics(logfile):
 def read_graphics():
     """Returns a list of tuples of (graphics dir, FONT, GRAPHICS_FONT)."""
     packs = [os.path.basename(o) for o in
-             glob.glob(paths.get('graphics', '*')) if os.path.isdir(o)]
+             glob.glob(paths.get('graphics', '*')) if os.path.isdir(o)
+             and manifest.is_compatible('graphics', os.path.basename(o))]
     result = []
     for p in packs:
         if not validate_pack(p):
@@ -130,6 +142,7 @@ def validate_pack(pack):
     result &= os.path.isdir(os.path.join(gfx_dir, 'data', 'init'))
     result &= os.path.isdir(os.path.join(gfx_dir, 'data', 'art'))
     result &= os.path.isfile(os.path.join(gfx_dir, 'data', 'init', 'init.txt'))
+    result &= manifest.is_compatible('graphics', pack)
     if lnp.df_info.version >= '0.31.04':
         result &= os.path.isfile(os.path.join(
             gfx_dir, 'data', 'init', 'd_init.txt'))
@@ -289,7 +302,8 @@ def read_tilesets():
     if 'legacy' not in lnp.df_info.variations:
         files += glob.glob(paths.get('data', 'art', '*.png'))
     return tuple(o for o in [os.path.basename(f) for f in files] if
-        not o=='shadows.png' or o.startswith('mouse.') or o.startswith('_'))
+                 not o == 'shadows.png' or o.startswith('mouse.')
+                 or o.startswith('_'))
 
 def current_tilesets():
     """Returns the current tilesets as a tuple (FONT, GRAPHICS_FONT)."""

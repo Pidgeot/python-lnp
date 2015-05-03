@@ -27,15 +27,18 @@ class PyLNP(object):
         self.args = self.parse_commandline()
 
         self.BASEDIR = '.'
+        if sys.platform == 'win32':
+            self.os = 'win'
+        elif sys.platform.startswith('linux'):
+            self.os = 'linux'
+        elif sys.platform == 'darwin':
+            self.os = 'osx'
+
         self.bundle = ''
         if hasattr(sys, 'frozen'):
+            self.bundle = self.os
             os.chdir(os.path.dirname(sys.executable))
-            if sys.platform == 'win32':
-                self.bundle = 'win'
-            elif sys.platform.startswith('linux'):
-                self.bundle = 'linux'
-            elif sys.platform == 'darwin':
-                self.bundle = 'osx'
+            if self.bundle == 'osx':
                 # OS X bundles start in different directory
                 os.chdir('../../..')
         else:
