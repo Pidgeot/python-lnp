@@ -70,6 +70,8 @@ class GraphicsTab(Tab):
             listframe, None, self.graphics, height=8)
         self.graphicpacks.bind(
             '<<ListboxSelect>>', lambda e: self.select_graphics())
+        controls.listbox_dyn_tooltip(
+            self.graphicpacks, lambda i: self.packs[i], graphics.get_tooltip)
         for seq in ("<Double-1>", "<Return>"):
             self.graphicpacks.bind(seq, lambda e: self.install_graphics())
 
@@ -185,8 +187,8 @@ class GraphicsTab(Tab):
 
     def read_graphics(self):
         """Reads list of graphics packs."""
-        packs = [p[0] for p in graphics.read_graphics()]
-        self.graphics.set(tuple(packs))
+        packs = self.packs = [p[0] for p in graphics.read_graphics()]
+        self.graphics.set(tuple([graphics.get_title(p) for p in packs]))
         current = graphics.current_pack()
         for i, p in enumerate(packs):
             if p == current:
@@ -202,7 +204,7 @@ class GraphicsTab(Tab):
             from .tkgui import TkGui
             if not TkGui.check_vanilla_raws():
                 return
-            gfx_dir = self.graphicpacks.get(self.graphicpacks.curselection()[0])
+            gfx_dir = self.packs[int(self.graphicpacks.curselection()[0])]
             result = None
             if messagebox.askokcancel(
                     message='Your graphics, settings and raws will be changed.',
@@ -239,7 +241,8 @@ class GraphicsTab(Tab):
                         'Folder does not exist or does not have required files '
                         'or folders:\n'+str(gfx_dir))
             if result:
-                self.graphicpacks.selection_clear(self.graphicpacks.curselection())
+                self.graphicpacks.selection_clear(
+                    self.graphicpacks.curselection())
             binding.update()
             self.read_data()
 
@@ -329,7 +332,7 @@ class GraphicsTab(Tab):
         """Event handler for selecting a graphics pack."""
         colorscheme = None
         if len(self.graphicpacks.curselection()) != 0:
-            pack = self.graphicpacks.get(self.graphicpacks.curselection()[0])
+            pack = self.packs[int(self.graphicpacks.curselection()[0])]
             if lnp.df_info.version >= '0.31.04':
                 colorscheme = paths.get('graphics', pack, 'data', 'init',
                                         'colors.txt')

@@ -44,6 +44,7 @@ class _AutoScrollbar(Scrollbar):
     # pylint:disable=arguments-differ
     def set(self, lo, hi):
         """Only show scrollbar when there's more content than will fit."""
+        #pylint:disable=no-member
         if (float(lo) <= 0.0 and float(hi) >= 1.0) or (
                 hasattr(self, 'hidden') and self.hidden):
             self.grid_remove()
@@ -282,6 +283,45 @@ def listbox_identify(listbox, y):
     if item != -1 and listbox.bbox(item)[1] + listbox.bbox(item)[3] > y:
         return item
     return None
+
+def listbox_dyn_tooltip(listbox, item_get, tooltip_get):
+    """Attaches a dynamic tooltip to a listbox.
+
+    Params:
+        listbox
+            The listbox to attach to.
+        item_get
+            A function taking the index of the item and returning a reference to
+            the item.
+        tooltip_get
+            A function taking a reference to an item and returning its tooltip
+            (or a blank string for no tooltip).
+    """
+    tooltip = create_tooltip(listbox, '')
+    def motion_handler(event):
+        """
+        Event handler for mouse motion over items in a listbox.
+
+        If the mouse has moved out of the last list element, hides the tooltip.
+        Then, if the mouse is over a list item, wait controls._TOOLTIP_DELAY
+        milliseconds (without mouse movement) before showing the tooltip"""
+        item = listbox.identify(event.y)
+        if item is not None:
+            item = item_get(item)
+
+        def show(): # pylint:disable=missing-docstring
+            tooltip.settext(tooltip_get(item))
+            tooltip.showtip()
+
+        if tooltip.event:
+            listbox.after_cancel(tooltip.event)
+            tooltip.event = None
+        if not item or tooltip_get(item) != tooltip.text:
+            tooltip.hidetip()
+        if item:
+            tooltip.event = listbox.after(_TOOLTIP_DELAY, show)
+
+    listbox.bind('<Motion>', motion_handler)
 
 def treeview_tag_set(tree, tag, item, state=True, toggle=False):
     """
