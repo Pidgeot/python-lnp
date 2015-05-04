@@ -28,17 +28,18 @@ else:
 class ModsTab(Tab):
     """Mods tab for the TKinter GUI."""
     def create_variables(self):
-        self.installed = Variable()
-        self.available = Variable()
+        self.installed = []
+        self.available = []
+        self.installed_var = Variable()
+        self.available_var = Variable()
         self.status = 3
 
     def read_data(self):
         mods.clear_temp()
-        available = mods.read_mods()
-        installed = mods.get_installed_mods_from_log()
-        available = [m for m in available if m not in installed]
-        self.available.set(tuple(available))
-        self.installed.set(tuple(installed))
+        self.available = mods.read_mods()
+        self.installed = mods.get_installed_mods_from_log()
+        self.available = [m for m in self.available if m not in self.installed]
+        self.update_lists()
 
     def create_controls(self):
         Grid.columnconfigure(self, 0, weight=1, uniform="mods")
@@ -49,8 +50,9 @@ class ModsTab(Tab):
 
         f = controls.create_control_group(self, 'Merged')
         install_frame, self.installed_list = controls.create_file_list(
-            f, None, self.installed, selectmode='multiple')
-
+            f, None, self.installed_var, selectmode='multiple')
+        controls.listbox_dyn_tooltip(
+            self.installed_list, lambda i: self.installed[i], mods.get_tooltip)
         self.installed_list.bind(
             "<Double-1>", lambda e: self.remove_from_installed())
         reorder_frame = controls.create_control_group(install_frame, None)
@@ -69,7 +71,9 @@ class ModsTab(Tab):
 
         f = controls.create_control_group(self, 'Available')
         _, self.available_list = controls.create_file_list(
-            f, None, self.available, selectmode='multiple')
+            f, None, self.available_var, selectmode='multiple')
+        controls.listbox_dyn_tooltip(
+            self.available_list, lambda i: self.available[i], mods.get_tooltip)
         self.available_list.bind(
             "<Double-1>", lambda e: self.add_to_installed())
         main_grid.add(f, 2)
@@ -90,6 +94,14 @@ class ModsTab(Tab):
             'to your installed raws.  Use to preserve custom tweaks.',
             self.create_from_installed))
 
+    def update_lists(self):
+        """Updates the lists."""
+        self.available.sort(key=mods.get_title)
+        self.available_var.set(tuple(
+            [mods.get_title(m) for m in self.available]))
+        self.installed_var.set(tuple(
+            [mods.get_title(m) for m in self.installed]))
+
     @staticmethod
     def toggle_preload():
         """Toggles whether to preload graphics before merging mods."""
@@ -100,17 +112,16 @@ class ModsTab(Tab):
         if len(self.installed_list.curselection()) == 0:
             return
         selection = [int(i) for i in self.installed_list.curselection()]
-        newlist = list(self.installed_list.get(0, END))
-        for i in range(1, len(newlist)):
+        lst = self.installed
+        for i in range(1, len(lst)):
             j = i
-            while j in selection and i-1 not in selection and j < len(newlist):
-                newlist[j-1], newlist[j] = newlist[j], newlist[j-1]
+            while j in selection and i-1 not in selection and j < len(lst):
+                lst[j-1], lst[j] = lst[j], lst[j-1]
                 j += 1
-        self.installed_list.delete(0, END)
-        for i in newlist:
-            self.installed_list.insert(END, i)
+        self.update_lists()
         first_missed = False
-        for i in range(0, len(newlist)):
+        self.installed_list.selection_clear(0, END)
+        for i in range(0, len(lst)):
             if i not in selection:
                 first_missed = True
             else:
@@ -122,17 +133,16 @@ class ModsTab(Tab):
         if len(self.installed_list.curselection()) == 0:
             return
         selection = [int(i) for i in self.installed_list.curselection()]
-        newlist = list(self.installed_list.get(0, END))
-        for i in range(len(newlist) - 1, 0, -1):
+        lst = self.installed
+        for i in range(len(lst) - 1, 0, -1):
             j = i
             while i not in selection and j-1 in selection and j > 0:
-                newlist[j-1], newlist[j] = newlist[j], newlist[j-1]
+                lst[j-1], lst[j] = lst[j], lst[j-1]
                 j -= 1
-        self.installed_list.delete(0, END)
-        for i in newlist:
-            self.installed_list.insert(END, i)
+        self.update_lists()
         first_missed = False
-        for i in range(len(newlist), 0, -1):
+        self.installed_list.selection_clear(0, END)
+        for i in range(len(lst), 0, -1):
             if i - 1 not in selection:
                 first_missed = True
             else:
@@ -159,9 +169,11 @@ class ModsTab(Tab):
         if len(self.available_list.curselection()) == 0:
             return
         for i in self.available_list.curselection():
-            self.installed_list.insert(END, self.available_list.get(i))
+            self.installed.append(self.available[int(i)])
         for i in self.available_list.curselection()[::-1]:
-            self.available_list.delete(i)
+            self.available.remove(self.available[int(i)])
+        self.available_list.selection_clear()
+        self.update_lists()
         self.perform_merge()
 
     def remove_from_installed(self):
@@ -169,13 +181,10 @@ class ModsTab(Tab):
         if len(self.installed_list.curselection()) == 0:
             return
         for i in self.installed_list.curselection()[::-1]:
-            self.available_list.insert(END, self.installed_list.get(i))
-            self.installed_list.delete(i)
-        #Re-sort items
-        temp_list = sorted(list(self.available_list.get(0, END)))
-        self.available_list.delete(0, END)
-        for item in temp_list:
-            self.available_list.insert(END, item)
+            self.available.append(self.installed[int(i)])
+            self.installed.remove(self.installed[int(i)])
+        self.installed_list.selection_clear()
+        self.update_lists()
         self.perform_merge()
 
     def perform_merge(self):
@@ -184,7 +193,7 @@ class ModsTab(Tab):
         if not TkGui.check_vanilla_raws():
             return
         colors = ['pale green', 'yellow', 'orange', 'red', 'white']
-        result = mods.merge_all_mods(self.installed_list.get(0, END))
+        result = mods.merge_all_mods(self.installed)
         for i, status in enumerate(result):
             self.installed_list.itemconfig(i, bg=colors[status])
         self.status = max(result + [0])
