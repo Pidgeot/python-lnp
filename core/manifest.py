@@ -55,7 +55,7 @@ def get_cfg(content_type, item):
         'tooltip': ''
         }
     manifest = paths.get(content_type, item, 'manifest.json')
-    return json_config.JSONConfiguration(manifest, default_config)
+    return json_config.JSONConfiguration(manifest, default_config, warn=False)
 
 def exists(content_type, item):
     """Returns a bool, that the given item has a manifest.

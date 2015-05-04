@@ -15,7 +15,7 @@ else:
 class JSONConfiguration(object):
     """Proxy for JSON-based configuration files."""
 
-    def __init__(self, filename, default=None):
+    def __init__(self, filename, default=None, warn=True):
         """
         Constructor for JSONConfiguration.
 
@@ -25,13 +25,16 @@ class JSONConfiguration(object):
                 from default.
             default
                 Default value to use in case loading fails.
+            warn
+                If True, log a warning if the file is missing. Defaults to True.
         """
         self.filename = filename
         self.data = default if default else {}
         if filename is None:
             return
         if not os.path.isfile(filename):
-            log.w("JSONConfiguration: File " + filename + " does not exist")
+            if warn:
+                log.w("JSONConfiguration: File " + filename + " does not exist")
             return
         try:
             #pylint: disable=bare-except
