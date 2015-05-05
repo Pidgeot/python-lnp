@@ -172,7 +172,7 @@ class ModsTab(Tab):
             self.installed.append(self.available[int(i)])
         for i in self.available_list.curselection()[::-1]:
             self.available.remove(self.available[int(i)])
-        self.available_list.selection_clear()
+        self.available_list.selection_clear(0, END)
         self.update_lists()
         self.perform_merge()
 
@@ -183,7 +183,7 @@ class ModsTab(Tab):
         for i in self.installed_list.curselection()[::-1]:
             self.available.append(self.installed[int(i)])
             self.installed.remove(self.installed[int(i)])
-        self.installed_list.selection_clear()
+        self.installed_list.selection_clear(0, END)
         self.update_lists()
         self.perform_merge()
 
