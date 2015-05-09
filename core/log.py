@@ -61,7 +61,7 @@ class Log(object):
             return ''
         return ': '.join(self.prefixes+[''])
 
-    def log(self, log_level, message, **kwargs):
+    def log(self, log_level, message, *args, **kwargs):
         """Logs a message if the current logging level includes messages at
         level <log_level>.
 
@@ -71,6 +71,8 @@ class Log(object):
                 logging level, nothing will happen.
             message
                 The message to log.
+            Additional arguments
+                Used to format the message with the % operator.
 
         Keyword arguments:
             stack
@@ -78,7 +80,7 @@ class Log(object):
         if log_level < self.max_level:
             return
         p = self.__get_level_string(log_level) + self.__get_prefixes()
-        self.__write(p + str(message) + "\n")
+        self.__write(p + str(message) % args + "\n")
         if kwargs.get('stack', False):
             for l in traceback.format_stack():
                 self.__write(l)
@@ -88,25 +90,25 @@ class Log(object):
         """Returns a prefix corresponding to the given logging level."""
         return ["VERBOSE", "DEBUG", "INFO", "WARNING", "ERROR"][level] + ": "
 
-    def d(self, message, **kwargs):
+    def d(self, message, *args, **kwargs):
         """Writes a DEBUG message to the log. See Log.log for details."""
-        return self.log(DEBUG, message, **kwargs)
+        return self.log(DEBUG, message, *args, **kwargs)
 
-    def e(self, message, **kwargs):
+    def e(self, message, *args, **kwargs):
         """Writes an ERROR message to the log. See Log.log for details."""
-        return self.log(ERROR, message, **kwargs)
+        return self.log(ERROR, message, *args, **kwargs)
 
-    def i(self, message, **kwargs):
+    def i(self, message, *args, **kwargs):
         """Writes a INFO message to the log. See Log.log for details."""
-        return self.log(INFO, message, **kwargs)
+        return self.log(INFO, message, *args, **kwargs)
 
-    def v(self, message, **kwargs):
+    def v(self, message, *args, **kwargs):
         """Writes a VERBOSE message to the log. See Log.log for details."""
-        return self.log(VERBOSE, message, **kwargs)
+        return self.log(VERBOSE, message, *args, **kwargs)
 
-    def w(self, message, **kwargs):
+    def w(self, message, *args, **kwargs):
         """Writes a WARNING message to the log. See Log.log for details."""
-        return self.log(WARNING, message, **kwargs)
+        return self.log(WARNING, message, *args, **kwargs)
 
     def get_lines(self):
         """Returns all logged lines."""
