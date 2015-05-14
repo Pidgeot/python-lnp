@@ -301,9 +301,8 @@ def read_tilesets():
     files = glob.glob(paths.get('data', 'art', '*.bmp'))
     if 'legacy' not in lnp.df_info.variations:
         files += glob.glob(paths.get('data', 'art', '*.png'))
-    return tuple(o for o in [os.path.basename(f) for f in files] if
-                 not o == 'shadows.png' or o.startswith('mouse.')
-                 or o.startswith('_'))
+    return tuple(o for o in [os.path.basename(f) for f in files] if not
+                 any(o.startswith(a) for a in ['shadows.png', 'mouse.', '_']))
 
 def current_tilesets():
     """Returns the current tilesets as a tuple (FONT, GRAPHICS_FONT)."""
