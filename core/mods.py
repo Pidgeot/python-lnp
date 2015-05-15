@@ -216,7 +216,7 @@ def three_way_merge(vanilla_text, gen_text, mod_text):
                 # An over-write merge. Change status to warn the user, unless
                 # we're overwriting with an identical change, and append the
                 # shorter block to new genned lines
-                log.v('Overwrite merge at line ' + str(cur_v))
+                log.d('Overwrite merge at line ' + str(cur_v))
                 if mod_i2 < gen_i2:
                     if gen_text[cur_v:mod_i2] != mod_text[cur_v:mod_i2]:
                         status = 2
