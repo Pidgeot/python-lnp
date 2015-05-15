@@ -96,6 +96,7 @@ def simplify_pack(pack, folder):
     if folder == 'mods':
         keep = [os.path.join('raw', '*'),
                 os.path.join('data', 'speech', '*')]
+    keep += ['manifest.json']
     for root, _, files in os.walk(paths.get(folder, pack)):
         d = paths.get(folder, pack)
         for k in files:
