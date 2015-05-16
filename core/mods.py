@@ -138,146 +138,6 @@ def merge_all_mods(list_of_mods, gfx=None):
             return merged + [-1]*len(list_of_mods[i:])
     return ret_list
 
-def do_merge_seq(mod_text, vanilla_text, gen_text):
-    """Merges sequences of lines.
-
-    Params:
-        mod_text
-            The lines of the mod file being added to the merge.
-        vanilla_text
-            The lines of the corresponding vanilla file.
-        gen_text
-            The lines of the previously merged file or files.
-
-    Returns:
-        tuple(status, lines); status is 0/'ok' or 2/'overlap merged'
-    """
-    if mod_text and vanilla_text == gen_text:
-        # This is the first time a vanilla file is modified
-        log.d('no overlap with previous mods, replacing vanilla file')
-        return 0, mod_text
-    if gen_text and vanilla_text == mod_text:
-        # The mod being merged isn't in reduced raw format
-        log.d('mod file identical to vanilla file')
-        return 0, gen_text
-    if gen_text and gen_text == mod_text:
-        # A previous mod made exactly the same changes
-        log.d('changes are identical to a previously merged mod')
-        return 0, gen_text
-    if mod_text and gen_text and not vanilla_text:
-        # No such vanilla file, so we need a two-way merge (additive only)
-        log.d('Falling back to two-way merge; no vanilla file exists.')
-        return 0, [s[2:] for s in ndiff(gen_text, mod_text)]
-    # Finally go to the expensive but complete merge logic
-    log.d('performing three-way merge')
-    return three_way_merge(vanilla_text, gen_text, mod_text)
-
-def three_way_merge(vanilla_text, gen_text, mod_text):
-    """Implements a three-way merge and returns a tuple of (status, result)"""
-    #pylint:disable=too-many-locals,too-many-branches,too-many-statements
-    # SequenceMatcher describes how to turn vanilla into mod or gen lines.
-    # cur_v holds the line we're up to, truncating overridden blocks
-    van_mod_ops = SequenceMatcher(None, vanilla_text, mod_text).get_opcodes()
-    van_gen_ops = SequenceMatcher(None, vanilla_text, gen_text).get_opcodes()
-    status, output_file_temp, cur_v = 0, [], 0
-
-    while van_mod_ops and van_gen_ops:
-        # get names from the next set of opcodes
-        mod_tag, _, mod_i2, mod_j1, mod_j2 = van_mod_ops[0]
-        gen_tag, _, gen_i2, gen_j1, gen_j2 = van_gen_ops[0]
-        # if the mod is vanilla for these lines
-        if mod_tag == 'equal':
-            # if the gen lines are also vanilla
-            if gen_tag == 'equal':
-                # append the shorter block to new genned lines
-                if mod_i2 < gen_i2:
-                    output_file_temp += vanilla_text[cur_v:mod_i2]
-                    cur_v = mod_i2
-                    van_mod_ops.pop(0)
-                else:
-                    output_file_temp += vanilla_text[cur_v:gen_i2]
-                    cur_v = gen_i2
-                    van_gen_ops.pop(0)
-                    if mod_i2 == gen_i2:
-                        van_mod_ops.pop(0)
-            # otherwise append current genned lines
-            else:
-                output_file_temp += gen_text[gen_j1:gen_j2]
-                cur_v = gen_i2
-                van_gen_ops.pop(0)
-                if mod_i2 == gen_i2:
-                    van_mod_ops.pop(0)
-        # if mod has changes from vanilla
-        else:
-            # if no earlier mod changed this section, adopt these changes
-            if gen_tag == 'equal':
-                output_file_temp += mod_text[mod_j1:mod_j2]
-                cur_v = mod_i2
-                van_mod_ops.pop(0)
-                if mod_i2 == gen_i2:
-                    van_gen_ops.pop(0)
-            else:
-                # An over-write merge. Change status to warn the user, unless
-                # we're overwriting with an identical change, and append the
-                # shorter block to new genned lines
-                if mod_i2 < gen_i2:
-                    gtxt, mtxt = gen_text[cur_v:mod_i2], mod_text[cur_v:mod_i2]
-                    if gtxt != mtxt:
-                        log.d('Overwrite merge at line ' + str(cur_v) + '!')
-                        log.v('--  ' + '--  '.join(gtxt) +
-                              '++  ' + '++  '.join(mtxt))
-                        status = 2
-                    output_file_temp += mod_text[cur_v:mod_i2]
-                    cur_v = mod_i2
-                    van_mod_ops.pop(0)
-                else:
-                    gtxt, mtxt = gen_text[cur_v:gen_i2], mod_text[cur_v:gen_i2]
-                    if gtxt != mtxt:
-                        log.d('Overwrite merge at line ' + str(cur_v) + '!')
-                        log.v('--  ' + '--  '.join(gtxt) +
-                              '++  ' + '++  '.join(mtxt))
-                        status = 2
-                    output_file_temp += mod_text[cur_v:gen_i2]
-                    cur_v = gen_i2
-                    van_gen_ops.pop(0)
-                    if mod_i2 == gen_i2:
-                        van_mod_ops.pop(0)
-    # clean up trailing opcodes, to avoid dropping the end of the file
-    while van_mod_ops:
-        mod_tag, _, mod_i2, mod_j1, mod_j2 = van_mod_ops.pop(0)
-        output_file_temp += mod_text[mod_j1:mod_j2]
-    while van_gen_ops:
-        gen_tag, _, gen_i2, gen_j1, gen_j2 = van_gen_ops.pop(0)
-        output_file_temp += gen_text[gen_j1:gen_j2]
-    return status, output_file_temp
-
-def do_merge_files(mod_file_name, van_file_name, gen_file_name):
-    """Merges three files, and returns an exit code 0-3.
-
-        0:  Merge was successful, all well
-        1:  Potential compatibility issues, no merge problems
-        2:  Non-fatal error, overlapping lines or non-existent mod etc
-        3:  Fatal error, respond by rebuilding to previous mod
-    """
-    #pylint:disable=bare-except
-    van_lines, mod_lines, gen_lines = [], [], []
-    for fname, lines in ((van_file_name, van_lines),
-                         (mod_file_name, mod_lines),
-                         (gen_file_name, gen_lines)):
-        try:
-            with open(fname, encoding='cp437', errors='replace') as f:
-                lines.extend(f.readlines())
-        except IOError:
-            log.d(fname + ' cannot be read; merging other files')
-    status, gen_lines = do_merge_seq(mod_lines, van_lines, gen_lines)
-    try:
-        with open(gen_file_name, "w", encoding='cp437') as gen_file:
-            gen_file.writelines(gen_lines)
-    except:
-        log.e('Writing to {} failed'.format(gen_file_name))
-        return 3
-    return status
-
 def merge_a_mod(mod):
     """Merges the specified mod, and returns an exit code 0-3.
 
@@ -295,10 +155,10 @@ def merge_a_mod(mod):
     if not os.path.isdir(mod_raw_folder):
         log.w('mod is invalid; /raw/ must be a directory')
         return 2
-    status = merge_folders(mod_raw_folder, baselines.find_vanilla_raws(),
-                           paths.get('baselines', 'temp', 'raw'))
+    status = merge_folder(mod_raw_folder, baselines.find_vanilla_raws(),
+                          paths.get('baselines', 'temp', 'raw'))
     if os.path.isdir(paths.get('mods', mod, 'data', 'speech')):
-        status = max(status, merge_folders(
+        status = max(status, merge_folder(
             paths.get('mods', mod, 'data', 'speech'),
             os.path.join(baselines.find_vanilla(), 'data', 'speech'),
             paths.get('baselines', 'temp', 'data', 'speech')))
@@ -310,7 +170,7 @@ def merge_a_mod(mod):
     log.pop_prefix()
     return status
 
-def merge_folders(mod_folder, vanilla_folder, mixed_folder):
+def merge_folder(mod_folder, vanilla_folder, mixed_folder):
     """Merge the specified folders, output going in 'LNP/Baselines/temp'
     Text files are merged; other files (sprites etc) are copied over."""
     status = 0
@@ -324,7 +184,7 @@ def merge_folders(mod_folder, vanilla_folder, mixed_folder):
             gen_f = os.path.join(mixed_folder, f)
             if any([f.endswith(a) for a in ('.txt', '.init')]):
                 # merge raws and DFHack init files
-                status = max(status, do_merge_files(mod_f, van_f, gen_f))
+                status = max(status, merge_file(mod_f, van_f, gen_f))
             elif any([f.endswith(a) for a in ('.lua', '.rb', '.bmp', '.png')]):
                 # copy DFHack scripts or sprite sheets
                 if not os.path.isdir(os.path.dirname(gen_f)):
@@ -334,10 +194,8 @@ def merge_folders(mod_folder, vanilla_folder, mixed_folder):
                     status = max(1, status)
                 else:
                     with open(mod_f, 'rb') as f:
-                        #pylint:disable=maybe-no-member
                         mb = f.read()
                     with open(gen_f, 'rb') as f:
-                        #pylint:disable=maybe-no-member
                         gb = f.read()
                     if not mb == gb:
                         shutil.copyfile(mod_f, gen_f)
@@ -346,11 +204,112 @@ def merge_folders(mod_folder, vanilla_folder, mixed_folder):
             log.pop_prefix()
     return status
 
+def merge_file(mod_file_name, van_file_name, gen_file_name):
+    """Merges three files, and returns an exit code 0-3.
+
+        0:  Merge was successful, all well
+        1:  Potential compatibility issues, no merge problems
+        2:  Non-fatal error, overlapping lines or non-existent mod etc
+        3:  Fatal error, respond by rebuilding to previous mod
+    """
+    #pylint:disable=bare-except
+    van_lines, mod_lines, gen_lines = [], [], []
+    for fname, lines in ((van_file_name, van_lines),
+                         (mod_file_name, mod_lines),
+                         (gen_file_name, gen_lines)):
+        try:
+            with open(fname, encoding='cp437', errors='replace') as f:
+                lines.extend(f.readlines())
+        except IOError:
+            log.d(fname + ' cannot be read; merging other files')
+    status, gen_lines = merge_line_list(mod_lines, van_lines, gen_lines)
+    try:
+        with open(gen_file_name, "w", encoding='cp437') as gen_file:
+            gen_file.writelines(gen_lines)
+    except:
+        log.e('Writing to {} failed'.format(gen_file_name))
+        status = 3
+    return status
+
+def merge_line_list(mod_text, vanilla_text, gen_text):
+    """Merges sequences of lines.
+
+    Params:
+        mod_text
+            The lines of the mod file being added to the merge.
+        vanilla_text
+            The lines of the corresponding vanilla file.
+        gen_text
+            The lines of the previously merged file or files.
+
+    Returns:
+        tuple(status, lines); status is 0/'ok' or 2/'overlap merged'
+    """
+    if mod_text and vanilla_text == gen_text:
+        log.d('no overlap with previous mods, replacing vanilla file')
+        return 0, mod_text
+    if gen_text and vanilla_text == mod_text:
+        log.d('mod file identical to vanilla file')
+        return 0, gen_text
+    if gen_text and gen_text == mod_text:
+        log.d('changes are identical to a previously merged mod')
+        return 0, gen_text
+    if mod_text and gen_text and not vanilla_text:
+        log.d('Falling back to two-way merge; no vanilla file exists.')
+        return 0, [s[2:] for s in ndiff(gen_text, mod_text)]
+    log.d('performing three-way merge')
+    # SequenceMatcher describes the diff to vanilla
+    gen_ops = SequenceMatcher(None, vanilla_text, gen_text).get_opcodes()
+    mod_ops = SequenceMatcher(None, vanilla_text, mod_text).get_opcodes()
+    outfile = []
+    for block in three_way_merge(gen_text, gen_ops, mod_text, mod_ops):
+        outfile.extend(block)
+    status = outfile.pop()
+    return status, outfile
+
+def three_way_merge(gen_text, van_gen_ops, mod_text, van_mod_ops):
+    """Yield blocks of lines from a three-way-merge.  Last block is status."""
+    status, cur_v, mod_i2, gen_i2 = 0, 0, 1, 1
+    while van_mod_ops and van_gen_ops:
+        if mod_i2 <= cur_v:
+            van_mod_ops.pop(0)
+        if gen_i2 <= cur_v:
+            van_gen_ops.pop(0)
+        _, _, mod_i2, mod_j1, mod_j2 = van_mod_ops[0]
+        gen_tag, _, gen_i2, gen_j1, gen_j2 = van_gen_ops[0]
+        low_i2 = min(mod_i2, gen_i2)
+        if van_mod_ops[0][0] == 'equal':
+            if gen_tag == 'equal':
+                yield gen_text[cur_v:low_i2]
+                cur_v = low_i2
+                continue
+            yield gen_text[gen_j1:gen_j2]
+            cur_v = gen_i2
+            continue
+        if gen_tag == 'equal':
+            yield mod_text[mod_j1:mod_j2]
+            cur_v = mod_i2
+            continue
+        yield mod_text[cur_v:low_i2]
+        if gen_text[cur_v:low_i2] != mod_text[cur_v:low_i2]:
+            status = 2
+            log.d('Overwrite merge at line {}'.format(cur_v))
+            log.v('- ' + '- '.join(gen_text[cur_v:low_i2]) +
+                  '+ ' + '+ '.join(mod_text[cur_v:low_i2]))
+        cur_v = low_i2
+    while van_mod_ops:
+        _, _, _, mod_j1, mod_j2 = van_mod_ops.pop(0)
+        yield mod_text[mod_j1:mod_j2]
+    while van_gen_ops:
+        _, _, _, gen_j1, gen_j2 = van_gen_ops.pop(0)
+        yield gen_text[gen_j1:gen_j2]
+    yield status
+
 def clear_temp():
     """Resets the folder in which raws are mixed."""
     if not baselines.find_vanilla_raws(False):
         log.e('Could not clear temp: baseline raws unavailable')
-        return None
+        return
     if os.path.exists(paths.get('baselines', 'temp')):
         shutil.rmtree(paths.get('baselines', 'temp'))
     shutil.copytree(baselines.find_vanilla_raws(),
@@ -405,7 +364,7 @@ def can_rebuild(log_file, strict=True):
     if not os.path.isfile(log_file):
         guess = not strict
         log.w('{} not found; assume rebuildable = {}'.format(log_file, guess))
-        return not strict
+        return guess
     mod_list = read_installation_log(log_file)
     return all([m in read_mods() for m in mod_list])
 
@@ -425,14 +384,14 @@ def make_mod_from_installed_raws(name):
     else:
         reconstruction = baselines.find_vanilla()
         if not reconstruction:
-            return None
+            return
     clear_temp()
-    merge_folders(os.path.join(reconstruction, 'raw'),
-                  paths.get('df', 'raw'),
-                  paths.get('baselines', 'temp', 'raw'))
-    merge_folders(os.path.join(reconstruction, 'data', 'speech'),
-                  paths.get('df', 'data', 'speech'),
-                  paths.get('baselines', 'temp', 'data', 'speech'))
+    merge_folder(os.path.join(reconstruction, 'raw'),
+                 paths.get('df', 'raw'),
+                 paths.get('baselines', 'temp', 'raw'))
+    merge_folder(os.path.join(reconstruction, 'data', 'speech'),
+                 paths.get('df', 'data', 'speech'),
+                 paths.get('baselines', 'temp', 'data', 'speech'))
     baselines.simplify_pack('temp', 'baselines')
     baselines.remove_vanilla_raws_from_pack('temp', 'baselines')
     baselines.remove_empty_dirs('temp', 'baselines')
@@ -450,7 +409,7 @@ def get_installed_mods_from_log():
     return [mod for mod in logged if mod in read_mods()]
 
 def read_installation_log(fname):
-    """Read an 'installed_raws.txt' and return it's full contents."""
+    """Read an 'installed_raws.txt' and return the mods."""
     try:
         with open(fname) as f:
             file_contents = list(f.readlines())
