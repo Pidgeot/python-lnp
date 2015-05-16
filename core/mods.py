@@ -174,7 +174,7 @@ def do_merge_seq(mod_text, vanilla_text, gen_text):
 
 def three_way_merge(vanilla_text, gen_text, mod_text):
     """Implements a three-way merge and returns a tuple of (status, result)"""
-    #pylint:disable=too-many-locals,too-many-branches,too-many-statements
+    #pylint:disable=too-many-locals,too-many-branches
     # SequenceMatcher describes how to turn vanilla into mod or gen lines.
     # cur_v holds the line we're up to, truncating overridden blocks
     van_mod_ops = SequenceMatcher(None, vanilla_text, mod_text).get_opcodes()
@@ -190,16 +190,12 @@ def three_way_merge(vanilla_text, gen_text, mod_text):
             # if the gen lines are also vanilla
             if gen_tag == 'equal':
                 # append the shorter block to new genned lines
-                if mod_i2 < gen_i2:
-                    output_file_temp += vanilla_text[cur_v:mod_i2]
-                    cur_v = mod_i2
+                output_file_temp += vanilla_text[cur_v:min(mod_i2, gen_i2)]
+                cur_v = min(mod_i2, gen_i2)
+                if mod_i2 <= gen_i2:
                     van_mod_ops.pop(0)
-                else:
-                    output_file_temp += vanilla_text[cur_v:gen_i2]
-                    cur_v = gen_i2
+                if mod_i2 >= gen_i2:
                     van_gen_ops.pop(0)
-                    if mod_i2 == gen_i2:
-                        van_mod_ops.pop(0)
             # otherwise append current genned lines
             else:
                 output_file_temp += gen_text[gen_j1:gen_j2]
@@ -217,31 +213,20 @@ def three_way_merge(vanilla_text, gen_text, mod_text):
                 if mod_i2 == gen_i2:
                     van_gen_ops.pop(0)
             else:
-                # An over-write merge. Change status to warn the user, unless
-                # we're overwriting with an identical change, and append the
-                # shorter block to new genned lines
-                if mod_i2 < gen_i2:
-                    gtxt, mtxt = gen_text[cur_v:mod_i2], mod_text[cur_v:mod_i2]
-                    if gtxt != mtxt:
-                        log.d('Overwrite merge at line ' + str(cur_v) + '!')
-                        log.v('--  ' + '--  '.join(gtxt) +
-                              '++  ' + '++  '.join(mtxt))
-                        status = 2
-                    output_file_temp += mod_text[cur_v:mod_i2]
-                    cur_v = mod_i2
+                # possible overwrite merge
+                gtxt = gen_text[cur_v:min(mod_i2, gen_i2)]
+                mtxt = mod_text[cur_v:min(mod_i2, gen_i2)]
+                output_file_temp += mtxt
+                if gtxt != mtxt:
+                    log.d('Overwrite merge at line ' + str(cur_v) + '!')
+                    log.v('--  ' + '--  '.join(gtxt) +
+                          '++  ' + '++  '.join(mtxt))
+                    status = 2
+                cur_v = min(mod_i2, gen_i2)
+                if mod_i2 <= gen_i2:
                     van_mod_ops.pop(0)
-                else:
-                    gtxt, mtxt = gen_text[cur_v:gen_i2], mod_text[cur_v:gen_i2]
-                    if gtxt != mtxt:
-                        log.d('Overwrite merge at line ' + str(cur_v) + '!')
-                        log.v('--  ' + '--  '.join(gtxt) +
-                              '++  ' + '++  '.join(mtxt))
-                        status = 2
-                    output_file_temp += mod_text[cur_v:gen_i2]
-                    cur_v = gen_i2
+                if mod_i2 >= gen_i2:
                     van_gen_ops.pop(0)
-                    if mod_i2 == gen_i2:
-                        van_mod_ops.pop(0)
     # clean up trailing opcodes, to avoid dropping the end of the file
     while van_mod_ops:
         mod_tag, _, mod_i2, mod_j1, mod_j2 = van_mod_ops.pop(0)
