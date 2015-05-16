@@ -138,7 +138,102 @@ def merge_all_mods(list_of_mods, gfx=None):
             return merged + [-1]*len(list_of_mods[i:])
     return ret_list
 
-def do_merge_seq(mod_text, vanilla_text, gen_text):
+def merge_a_mod(mod):
+    """Merges the specified mod, and returns an exit code 0-3.
+
+        0:  Merge was successful, all well
+        1:  Potential compatibility issues, no merge problems
+        2:  Non-fatal error, overlapping lines or non-existent mod etc
+        3:  Fatal error, respond by rebuilding to previous mod
+        """
+    log.push_prefix('In "' + mod + '": ')
+    if not baselines.find_vanilla_raws():
+        log.e('Could not merge: baseline raws unavailable')
+        return 3
+    log.d('Starting to merge mod: {}'.format(mod))
+    mod_raw_folder = paths.get('mods', mod, 'raw')
+    if not os.path.isdir(mod_raw_folder):
+        log.w('mod is invalid; /raw/ must be a directory')
+        return 2
+    status = merge_folder(mod_raw_folder, baselines.find_vanilla_raws(),
+                          paths.get('baselines', 'temp', 'raw'))
+    if os.path.isdir(paths.get('mods', mod, 'data', 'speech')):
+        status = max(status, merge_folder(
+            paths.get('mods', mod, 'data', 'speech'),
+            os.path.join(baselines.find_vanilla(), 'data', 'speech'),
+            paths.get('baselines', 'temp', 'data', 'speech')))
+    if status < 3:
+        with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
+                  'a') as f:
+            f.write('mods/' + mod + '\n')
+    log.i('Finished merging')
+    log.pop_prefix()
+    return status
+
+def merge_folder(mod_folder, vanilla_folder, mixed_folder):
+    """Merge the specified folders, output going in 'LNP/Baselines/temp'
+    Text files are merged; other files (sprites etc) are copied over."""
+    status = 0
+    for root, _, files in os.walk(mod_folder):
+        for k in files:
+            f = os.path.relpath(os.path.join(root, k), mod_folder)
+            log.push_prefix('file "' + f + '": ')
+            log.d('merging...')
+            mod_f = os.path.join(mod_folder, f)
+            van_f = os.path.join(vanilla_folder, f)
+            gen_f = os.path.join(mixed_folder, f)
+            if any([f.endswith(a) for a in ('.txt', '.init')]):
+                # merge raws and DFHack init files
+                status = max(status, merge_file(mod_f, van_f, gen_f))
+            elif any([f.endswith(a) for a in ('.lua', '.rb', '.bmp', '.png')]):
+                # copy DFHack scripts or sprite sheets
+                if not os.path.isdir(os.path.dirname(gen_f)):
+                    os.makedirs(os.path.dirname(gen_f))
+                if not os.path.isfile(gen_f):
+                    shutil.copy2(mod_f, gen_f)
+                    status = max(1, status)
+                else:
+                    with open(mod_f, 'rb') as f:
+                        #pylint:disable=maybe-no-member
+                        mb = f.read()
+                    with open(gen_f, 'rb') as f:
+                        #pylint:disable=maybe-no-member
+                        gb = f.read()
+                    if not mb == gb:
+                        shutil.copyfile(mod_f, gen_f)
+                        status = max(2, status)
+            log.d('merged with status {}'.format(status))
+            log.pop_prefix()
+    return status
+
+def merge_file(mod_file_name, van_file_name, gen_file_name):
+    """Merges three files, and returns an exit code 0-3.
+
+        0:  Merge was successful, all well
+        1:  Potential compatibility issues, no merge problems
+        2:  Non-fatal error, overlapping lines or non-existent mod etc
+        3:  Fatal error, respond by rebuilding to previous mod
+    """
+    #pylint:disable=bare-except
+    van_lines, mod_lines, gen_lines = [], [], []
+    for fname, lines in ((van_file_name, van_lines),
+                         (mod_file_name, mod_lines),
+                         (gen_file_name, gen_lines)):
+        try:
+            with open(fname, encoding='cp437', errors='replace') as f:
+                lines.extend(f.readlines())
+        except IOError:
+            log.d(fname + ' cannot be read; merging other files')
+    status, gen_lines = merge_line_list(mod_lines, van_lines, gen_lines)
+    try:
+        with open(gen_file_name, "w", encoding='cp437') as gen_file:
+            gen_file.writelines(gen_lines)
+    except:
+        log.e('Writing to {} failed'.format(gen_file_name))
+        return 3
+    return status
+
+def merge_line_list(mod_text, vanilla_text, gen_text):
     """Merges sequences of lines.
 
     Params:
@@ -236,101 +331,6 @@ def three_way_merge(vanilla_text, gen_text, mod_text):
         output_file_temp += gen_text[gen_j1:gen_j2]
     return status, output_file_temp
 
-def do_merge_files(mod_file_name, van_file_name, gen_file_name):
-    """Merges three files, and returns an exit code 0-3.
-
-        0:  Merge was successful, all well
-        1:  Potential compatibility issues, no merge problems
-        2:  Non-fatal error, overlapping lines or non-existent mod etc
-        3:  Fatal error, respond by rebuilding to previous mod
-    """
-    #pylint:disable=bare-except
-    van_lines, mod_lines, gen_lines = [], [], []
-    for fname, lines in ((van_file_name, van_lines),
-                         (mod_file_name, mod_lines),
-                         (gen_file_name, gen_lines)):
-        try:
-            with open(fname, encoding='cp437', errors='replace') as f:
-                lines.extend(f.readlines())
-        except IOError:
-            log.d(fname + ' cannot be read; merging other files')
-    status, gen_lines = do_merge_seq(mod_lines, van_lines, gen_lines)
-    try:
-        with open(gen_file_name, "w", encoding='cp437') as gen_file:
-            gen_file.writelines(gen_lines)
-    except:
-        log.e('Writing to {} failed'.format(gen_file_name))
-        return 3
-    return status
-
-def merge_a_mod(mod):
-    """Merges the specified mod, and returns an exit code 0-3.
-
-        0:  Merge was successful, all well
-        1:  Potential compatibility issues, no merge problems
-        2:  Non-fatal error, overlapping lines or non-existent mod etc
-        3:  Fatal error, respond by rebuilding to previous mod
-        """
-    log.push_prefix('In "' + mod + '": ')
-    if not baselines.find_vanilla_raws():
-        log.e('Could not merge: baseline raws unavailable')
-        return 3
-    log.d('Starting to merge mod: {}'.format(mod))
-    mod_raw_folder = paths.get('mods', mod, 'raw')
-    if not os.path.isdir(mod_raw_folder):
-        log.w('mod is invalid; /raw/ must be a directory')
-        return 2
-    status = merge_folders(mod_raw_folder, baselines.find_vanilla_raws(),
-                           paths.get('baselines', 'temp', 'raw'))
-    if os.path.isdir(paths.get('mods', mod, 'data', 'speech')):
-        status = max(status, merge_folders(
-            paths.get('mods', mod, 'data', 'speech'),
-            os.path.join(baselines.find_vanilla(), 'data', 'speech'),
-            paths.get('baselines', 'temp', 'data', 'speech')))
-    if status < 3:
-        with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
-                  'a') as f:
-            f.write('mods/' + mod + '\n')
-    log.i('Finished merging')
-    log.pop_prefix()
-    return status
-
-def merge_folders(mod_folder, vanilla_folder, mixed_folder):
-    """Merge the specified folders, output going in 'LNP/Baselines/temp'
-    Text files are merged; other files (sprites etc) are copied over."""
-    status = 0
-    for root, _, files in os.walk(mod_folder):
-        for k in files:
-            f = os.path.relpath(os.path.join(root, k), mod_folder)
-            log.push_prefix('file "' + f + '": ')
-            log.d('merging...')
-            mod_f = os.path.join(mod_folder, f)
-            van_f = os.path.join(vanilla_folder, f)
-            gen_f = os.path.join(mixed_folder, f)
-            if any([f.endswith(a) for a in ('.txt', '.init')]):
-                # merge raws and DFHack init files
-                status = max(status, do_merge_files(mod_f, van_f, gen_f))
-            elif any([f.endswith(a) for a in ('.lua', '.rb', '.bmp', '.png')]):
-                # copy DFHack scripts or sprite sheets
-                if not os.path.isdir(os.path.dirname(gen_f)):
-                    os.makedirs(os.path.dirname(gen_f))
-                if not os.path.isfile(gen_f):
-                    shutil.copy2(mod_f, gen_f)
-                    status = max(1, status)
-                else:
-                    with open(mod_f, 'rb') as f:
-                        #pylint:disable=maybe-no-member
-                        mb = f.read()
-                    with open(gen_f, 'rb') as f:
-                        #pylint:disable=maybe-no-member
-                        gb = f.read()
-                    if not mb == gb:
-                        shutil.copyfile(mod_f, gen_f)
-                        status = max(2, status)
-            log.d('merged with status {}'.format(status))
-            log.pop_prefix()
-    return status
-
 def clear_temp():
     """Resets the folder in which raws are mixed."""
     if not baselines.find_vanilla_raws(False):
@@ -412,12 +412,12 @@ def make_mod_from_installed_raws(name):
         if not reconstruction:
             return None
     clear_temp()
-    merge_folders(os.path.join(reconstruction, 'raw'),
-                  paths.get('df', 'raw'),
-                  paths.get('baselines', 'temp', 'raw'))
-    merge_folders(os.path.join(reconstruction, 'data', 'speech'),
-                  paths.get('df', 'data', 'speech'),
-                  paths.get('baselines', 'temp', 'data', 'speech'))
+    merge_folder(os.path.join(reconstruction, 'raw'),
+                 paths.get('df', 'raw'),
+                 paths.get('baselines', 'temp', 'raw'))
+    merge_folder(os.path.join(reconstruction, 'data', 'speech'),
+                 paths.get('df', 'data', 'speech'),
+                 paths.get('baselines', 'temp', 'data', 'speech'))
     baselines.simplify_pack('temp', 'baselines')
     baselines.remove_vanilla_raws_from_pack('temp', 'baselines')
     baselines.remove_empty_dirs('temp', 'baselines')
