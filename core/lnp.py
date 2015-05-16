@@ -142,8 +142,10 @@ class PyLNP(object):
     def parse_commandline(self):
         """Parses and acts on command line options."""
         args = self.get_commandline_args()
-        if args.debug:
+        if args.debug == 1:
             log.set_level(log.DEBUG)
+        elif args.debug > 1:
+            log.set_level(log.VERBOSE)
         log.d(args)
         return args
 
@@ -154,8 +156,8 @@ class PyLNP(object):
         parser = argparse.ArgumentParser(
             description="PyLNP " +VERSION)
         parser.add_argument(
-            '-d', '--debug', action='store_true',
-            help='turn on extra debugging output')
+            '-d', '--debug', action='count',
+            help='Turn on debugging output (use twice for extra verbosity)')
         parser.add_argument(
             '--raw-lint', action='store_true',
             help='Verify contents of raw files and exit')
