@@ -92,7 +92,8 @@ def make_blank_files(pack):
 
 def install_mods():
     """Deletes installed raw folder, and copies over merged raws."""
-    if get_installed_mods_from_log():
+    merge_log = paths.get('baselines', 'temp', 'raw', 'installed_raws.txt')
+    if read_installation_log(merge_log):
         shutil.rmtree(paths.get('df', 'raw'))
         shutil.rmtree(paths.get('df', 'data', 'speech'))
         shutil.copytree(paths.get('baselines', 'temp', 'raw'),

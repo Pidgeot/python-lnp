@@ -144,7 +144,7 @@ class PyLNP(object):
         args = self.get_commandline_args()
         if args.debug == 1:
             log.set_level(log.DEBUG)
-        elif args.debug > 1:
+        elif args.debug is not None and args.debug > 1:
             log.set_level(log.VERBOSE)
         log.d(args)
         return args
