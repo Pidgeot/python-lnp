@@ -8,6 +8,7 @@ import sys
 import types
 
 from . import binding
+from core.lnp import lnp
 
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
@@ -45,11 +46,12 @@ class _AutoScrollbar(Scrollbar):
     def set(self, lo, hi):
         """Only show scrollbar when there's more content than will fit."""
         #pylint:disable=no-member
-        if (float(lo) <= 0.0 and float(hi) >= 1.0) or (
-                hasattr(self, 'hidden') and self.hidden):
-            self.grid_remove()
-        else:
-            self.grid()
+        if not lnp.userconfig.get_bool('tkgui_show_scroll'):
+            if (float(lo) <= 0.0 and float(hi) >= 1.0) or (
+                    hasattr(self, 'hidden') and self.hidden):
+                self.grid_remove()
+            else:
+                self.grid()
         Scrollbar.set(self, lo, hi)
 
 # http://www.voidspace.org.uk/python/weblog/arch_d7_2006_07_01.shtml#e387
@@ -273,7 +275,8 @@ def create_scrollbar(parent, control, **gridargs):
     s = _AutoScrollbar(parent, orient=VERTICAL, command=control.yview)
     control['yscrollcommand'] = s.set
     s.grid(sticky="ns", **gridargs)
-    s.grid_remove()
+    if not lnp.userconfig.get_bool('tkgui_show_scroll'):
+        s.grid_remove()
     return s
 
 def listbox_identify(listbox, y):

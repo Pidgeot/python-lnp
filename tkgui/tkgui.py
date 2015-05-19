@@ -123,6 +123,8 @@ class TkGui(object):
         self.root = root = Tk()
         self.updateDays = IntVar()
         self.downloadBaselines = BooleanVar()
+        self.show_scrollbars = BooleanVar()
+        self.autoclose = BooleanVar()
         self.do_reload = False
         controls.init(self)
         binding.init(lnp)
@@ -297,12 +299,14 @@ class TkGui(object):
         root['menu'] = menubar
 
         menu_file = Menu(menubar)
+        menu_options = Menu(menubar)
         menu_run = Menu(menubar)
         menu_folders = Menu(menubar)
         menu_links = Menu(menubar)
         menu_help = Menu(menubar)
         #menu_beta = Menu(menubar)
         menubar.add_cascade(menu=menu_file, label='File')
+        menubar.add_cascade(menu=menu_options, label='Options')
         menubar.add_cascade(menu=menu_run, label='Run')
         menubar.add_cascade(menu=menu_folders, label='Folders')
         menubar.add_cascade(menu=menu_links, label='Links')
@@ -317,23 +321,9 @@ class TkGui(object):
             accelerator='Ctrl+S')
         menu_file.add_command(
             label='Output log', command=lambda: LogWindow(self.root))
-        if update.updates_configured():
-            menu_updates = menu_updates = Menu(menubar)
-            menu_file.add_cascade(menu=menu_updates, label='Check for updates')
-            options = [
-                "every launch", "every day", "every 3 days", "every 7 days",
-                "every 14 days", "every 30 days", "Never"]
-            daylist = [0, 1, 3, 7, 14, 30, -1]
-            self.updateDays.set(lnp.userconfig.get_number('updateDays'))
-            for i, o in enumerate(options):
-                menu_updates.add_radiobutton(
-                    label=o, value=daylist[i], variable=self.updateDays,
-                    command=lambda i=i: self.configure_updates(daylist[i]))
-        self.downloadBaselines.set(lnp.userconfig.get_bool('downloadBaselines'))
-        menu_file.add_checkbutton(
-            label='Allow auto-download of baselines', onvalue=True,
-            offvalue=False, variable=self.downloadBaselines,
-            command=self.set_downloads)
+
+        menu_file.add_command(
+            label='Restore default settings', command=self.restore_defaults)
 
         if sys.platform.startswith('linux'):
             menu_file.add_command(
@@ -348,6 +338,36 @@ class TkGui(object):
                 label='Exit', command=self.exit_program, accelerator='Alt+F4')
         root.bind_all('<Control-l>', lambda e: self.load_params())
         root.bind_all('<Control-s>', lambda e: self.save_params())
+
+        self.autoclose.set(lnp.userconfig.get_bool('autoClose'))
+        menu_options.add_checkbutton(
+            label='Close GUI on launch', onvalue=True, offvalue=False,
+            variable=self.autoclose, command=self.set_autoclose)
+
+        if update.updates_configured():
+            menu_updates = menu_updates = Menu(menubar)
+            menu_options.add_cascade(
+                menu=menu_updates, label='Check for updates')
+            options = [
+                "every launch", "every day", "every 3 days", "every 7 days",
+                "every 14 days", "every 30 days", "Never"]
+            daylist = [0, 1, 3, 7, 14, 30, -1]
+            self.updateDays.set(lnp.userconfig.get_number('updateDays'))
+            for i, o in enumerate(options):
+                menu_updates.add_radiobutton(
+                    label=o, value=daylist[i], variable=self.updateDays,
+                    command=lambda i=i: self.configure_updates(daylist[i]))
+        self.downloadBaselines.set(lnp.userconfig.get_bool('downloadBaselines'))
+        menu_options.add_checkbutton(
+            label='Allow auto-download of baselines', onvalue=True,
+            offvalue=False, variable=self.downloadBaselines,
+            command=self.set_downloads)
+
+        self.show_scrollbars.set(lnp.userconfig.get_bool('tkgui_show_scroll'))
+        menu_options.add_checkbutton(
+            label='Always show scrollbars (reloads program)', onvalue=True,
+            offvalue=False, variable=self.show_scrollbars,
+            command=self.set_show_scroll)
 
         menu_run.add_command(
             label='Dwarf Fortress', command=launcher.run_df,
@@ -403,6 +423,15 @@ class TkGui(object):
     def set_downloads(self):
         """Sets the option for auto-download of baselines."""
         baselines.set_auto_download(self.downloadBaselines.get())
+
+    def set_show_scroll(self):
+       lnp.userconfig['tkgui_show_scroll'] = self.show_scrollbars.get()
+       lnp.userconfig.save_data()
+       self.reload_program()
+
+    @staticmethod
+    def set_autoclose():
+        launcher.toggle_autoclose()
 
     @staticmethod
     def populate_menu(collection, menu, method):
@@ -643,5 +672,17 @@ class TkGui(object):
                     'completes.', title='Download required')
             return False
         return True
+
+    def restore_defaults(self):
+        """Restores default configuration data."""
+        if messagebox.askyesno(
+                message='Are you sure? '
+                'ALL SETTINGS will be reset to game defaults.\n'
+                'You may need to re-install graphics afterwards.',
+                title='Reset all settings to Defaults?', icon='question'):
+            df.restore_defaults()
+            messagebox.showinfo(
+                self.root.title(),
+                'All settings reset to defaults!')
 
 # vim:expandtab

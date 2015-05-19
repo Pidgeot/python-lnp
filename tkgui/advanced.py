@@ -168,18 +168,6 @@ class AdvancedTab(Tab):
                 'Compress and sort files exported from legends mode',
                 self.process_legends).pack(fill=X)
 
-        launcher_group = controls.create_control_group(self, 'Launcher')
-        main_grid.add(launcher_group, 2)
-        controls.create_trigger_option_button(
-            launcher_group, 'Close GUI on launch',
-            'Whether this GUI should close when Dwarf Fortress is launched',
-            self.toggle_autoclose, 'autoClose', lambda v: ('NO', 'YES')[
-                lnp.userconfig.get_bool('autoClose')]).pack(fill=X)
-        controls.create_trigger_button(
-            launcher_group, 'Restore default settings',
-            'Reset everything to default settings',
-            self.restore_defaults).pack(fill=X)
-
     @staticmethod
     def process_legends():
         """Process legends exports."""
@@ -199,21 +187,3 @@ class AdvancedTab(Tab):
             messagebox.showinfo(string + ' processed',
                                 'Legends exported from ' + string +
                                 ' were found and processed')
-
-    @staticmethod
-    def toggle_autoclose():
-        """Toggle automatic closing of the UI when launching DF."""
-        launcher.toggle_autoclose()
-        binding.update()
-
-    def restore_defaults(self):
-        """Restores default configuration data."""
-        if messagebox.askyesno(
-                message='Are you sure? '
-                'ALL SETTINGS will be reset to game defaults.\n'
-                'You may need to re-install graphics afterwards.',
-                title='Reset all settings to Defaults?', icon='question'):
-            df.restore_defaults()
-            messagebox.showinfo(
-                self.root.title(),
-                'All settings reset to defaults!')
