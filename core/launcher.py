@@ -6,6 +6,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys
 import os
 import subprocess
+import copy
 
 from .helpers import get_resource
 from .lnp import lnp
@@ -115,7 +116,16 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
             run_args = ['open', path]
             workdir = path
 
-        lnp.running[path] = subprocess.Popen(run_args, cwd=workdir)
+        environ = os.environ
+        if lnp.bundle:
+            environ = copy.deepcopy(os.environ)
+            if 'TCL_LIBRARY' in environ and sys._MEIPASS in environ['TCL_LIBRARY']:
+                del environ['TCL_LIBRARY']
+            if 'TK_LIBRARY' in environ and sys._MEIPASS in environ['TK_LIBRARY']:
+                del environ['TK_LIBRARY']
+
+        lnp.running[path] = subprocess.Popen(
+            run_args, cwd=workdir, environ=environ)
         return True
     except OSError:
         sys.excepthook(*sys.exc_info())
