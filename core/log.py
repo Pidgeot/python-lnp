@@ -137,11 +137,11 @@ push_level = _log.push_level
 pop_level = _log.pop_level
 set_level = _log.set_level
 log = _log.log
-d = _log.d
-e = _log.e
-i = _log.i
-v = _log.v
-w = _log.w
+debug = d = _log.d
+error = e = _log.e
+info = i = _log.i
+verbose = v = _log.v
+warning = w = _log.w
 get_lines = _log.get_lines
 push_prefix = _log.push_prefix
 pop_prefix = _log.pop_prefix
