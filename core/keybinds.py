@@ -66,7 +66,7 @@ def load_keybinds(filename):
     if 'legacy' in lnp.df_info.variations:
         shutil.copyfile(filename, target)
     else:
-        van , cfg = _sdl_get_binds(filename)
+        van, cfg = _sdl_get_binds(filename)
         lines = ['']
         for bind, vals in van.items():
             lines.append(bind)
@@ -100,7 +100,7 @@ def save_keybinds(filename):
     if 'legacy' in lnp.df_info.variations:
         shutil.copyfile(paths.get('init', 'interface.txt'), filename)
     else:
-        van , cfg = _sdl_get_binds(filename)
+        van, cfg = _sdl_get_binds(filename)
         with open(filename, 'w', encoding='cp437') as f:
             for bind, vals in cfg.items():
                 if vals != van.get(bind):
