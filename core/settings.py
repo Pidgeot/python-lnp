@@ -5,6 +5,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os, re
 from .dfraw import DFRaw
+from . import log
 
 # Markers to read certain settings correctly
 # pylint:disable=too-few-public-methods,too-many-instance-attributes,too-many-statements,too-many-arguments
@@ -320,7 +321,10 @@ _option_version_data = {
     'TREE_TWIGS_DEAD': ['0.40.01'],
     'STRICT_POPULATION_CAP': ['0.40.05'],
     'POST_PREPARE_EMBARK_CONFIRMATION': ['0.40.09'],
-    'GRAZE_COEFFICIENT': ['0.40.13']
+    'GRAZE_COEFFICIENT': ['0.40.13'],
+    'VISITOR_CAP': ['0.42.01'],
+    'INVASION_SOLDIER_CAP': ['0.42.01'],
+    'INVASION_MONSTER_CAP': ['0.42.01'],
 }
 
 class DFConfiguration(object):
@@ -406,6 +410,11 @@ class DFConfiguration(object):
             "entombPets", "COFFIN_NO_PETS_DEFAULT", "NO", _negated_bool, dinit)
         self.create_option("artifacts", "ARTIFACTS", "YES", boolvals, dinit)
         self.create_option("grazeCoef", "GRAZE_COEFFICIENT", "100", None, dinit)
+        self.create_option("visitorCap", "VISITOR_CAP", "100", None, dinit)
+        self.create_option(
+            "invSoldierCap", "INVASION_SOLDIER_CAP", "120", None, dinit)
+        self.create_option(
+            "invMonsterCap", "INVASION_MONSTER_CAP", "40", None, dinit)
         # special
         if df_info.version < '0.31':
             aquifer_files = [
@@ -665,6 +674,10 @@ class DFConfiguration(object):
         if option_name[0] == option_name.lower()[0]:
             # Internal name, let it pass by
             return True
+        if option_name not in _option_version_data:
+            log.w("Unknown option: %s", option_name)
+            # Unknown option, must be a later DF than this knows about
+            return False
         option = _option_version_data[option_name]
         if len(option) == 2:
             return option[0] <= self.df_info.version < option[1]

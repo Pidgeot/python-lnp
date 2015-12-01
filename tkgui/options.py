@@ -57,10 +57,22 @@ class OptionsTab(Tab):
                 options, 'Strict Population Cap',
                 'Strict limit on population in your fort (blocks births)',
                 self.set_strict_pop_cap, 'strictPopcap'), 2)
+        grid.add(controls.create_trigger_option_button(
+            options, 'Visitor Cap',
+            'Limit on number of generic visitors in your fort',
+            self.set_visitor_cap, 'visitorCap'))
         grid.add(controls.create_option_button(
             options, 'Invaders',
             'Toggles whether invaders (goblins, etc.) show up',
             'invaders'))
+        grid.add(controls.create_trigger_option_button(
+            options, 'Invasion Soldier Cap',
+            'Limit on number of enemy soldiers during an invasion',
+            self.set_inv_soldier_cap, 'invSoldierCap'), 2)
+        grid.add(controls.create_trigger_option_button(
+            options, 'Invasion Monster Cap',
+            'Limit on number of enemy monsters during an invasion',
+            self.set_inv_monster_cap, 'invMonsterCap'), 2)
         grid.add(controls.create_option_button(
             options, 'Cave-ins',
             'Toggles whether unsupported bits of terrain will collapse',
@@ -181,6 +193,36 @@ class OptionsTab(Tab):
             initialvalue=lnp.settings.grazeCoef)
         if v is not None:
             df.set_option('grazeCoef', str(v))
+            binding.update()
+
+    @staticmethod
+    def set_visitor_cap():
+        """Requests new visitor cap from the user."""
+        v = simpledialog.askinteger(
+            "Settings", "Visitor cap:",
+            initialvalue=lnp.settings.visitorCap)
+        if v is not None:
+            df.set_option('visitorCap', str(v))
+            binding.update()
+
+    @staticmethod
+    def set_inv_soldier_cap():
+        """Requests new invasion soldier cap from the user."""
+        v = simpledialog.askinteger(
+            "Settings", "Cap on # of soldiers in invasion:",
+            initialvalue=lnp.settings.invSoldierCap)
+        if v is not None:
+            df.set_option('invSoldierCap', str(v))
+            binding.update()
+
+    @staticmethod
+    def set_inv_monster_cap():
+        """Requests new invasion monster cap from the user."""
+        v = simpledialog.askinteger(
+            "Settings", "Cap on # of monsters in invasion:",
+            initialvalue=lnp.settings.invMonsterCap)
+        if v is not None:
+            df.set_option('invMonsterCap', str(v))
             binding.update()
 
 
