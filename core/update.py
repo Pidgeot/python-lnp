@@ -5,10 +5,6 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import re, time, os, threading, zipfile, tarfile
 
-from .lnp import lnp
-from . import launcher, paths, download, log
-from .json_config import JSONConfiguration
-
 try:  # Python 2
     # pylint:disable=import-error, no-name-in-module
     from urllib import quote, unquote
@@ -16,6 +12,10 @@ try:  # Python 2
 except ImportError:  # Python 3
     # pylint:disable=import-error, no-name-in-module
     from urllib.parse import quote, unquote, urlparse
+
+from .lnp import lnp
+from . import launcher, paths, download, log
+from .json_config import JSONConfiguration
 
 def updates_configured():
     """Returns True if update checking have been configured."""
@@ -143,7 +143,7 @@ class Updater(object):
         if not curr_version:
             log.e("Current pack version is not set, cannot check for updates")
             return False
-        return (self.get_version() != curr_version)
+        return self.get_version() != curr_version
 
     def get_check_url(self):
         """Returns the URL used to check for updates."""

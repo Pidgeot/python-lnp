@@ -6,11 +6,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import sys
 
-from . import controls
-from .layout import GridLayouter
-from .tab import Tab
-from core import mods
-
+# pylint:disable=wrong-import-order
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
@@ -23,8 +19,14 @@ else:
     from ttk import *
     import tkMessageBox as messagebox
     import tkSimpleDialog as simpledialog
+# pylint:enable=wrong-import-order
 
-#pylint: disable=too-many-public-methods
+from . import controls
+from .layout import GridLayouter
+from .tab import Tab
+from core import mods
+
+# pylint:disable=too-many-public-methods
 class ModsTab(Tab):
     """Mods tab for the TKinter GUI."""
     def create_variables(self):

@@ -78,7 +78,7 @@ def simplify_pack(pack, folder):
         None if folder is empty
     """
     valid_dirs = ('graphics', 'mods', 'baselines')
-    if not folder in valid_dirs:
+    if folder not in valid_dirs:
         return False
     log.i('Simplifying {}: {}'.format(folder, pack))
     files_before = sum(len(f) for (_, _, f) in os.walk(paths.get(folder, pack)))
@@ -103,7 +103,7 @@ def simplify_pack(pack, folder):
             f = os.path.join(root, k)
             if not any(fnmatch.fnmatch(f, os.path.join(d, p)) for p in keep):
                 os.remove(f)
-    if not folder == 'mods':
+    if folder != 'mods':
         init_files = ('colors', 'd_init', 'init', 'overrides')
         init_dir = paths.get(folder, pack, 'data', 'init')
         for f in os.listdir(init_dir):

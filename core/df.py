@@ -231,6 +231,7 @@ class DFInstall(object):
             return base + '_s.zip'
         return base + '.zip'
 
+# pylint:disable=too-few-public-methods
 @total_ordering
 class Version(object):
     """Container for a version number for easy comparisons."""
@@ -254,16 +255,16 @@ class Version(object):
         self.data = tuple(data)
 
     def __lt__(self, other):
-        if type(self) != Version:
+        if not isinstance(self, Version):
             return Version(self) < other
-        if type(other) != Version:
+        if not isinstance(other, Version):
             return self < Version(other)
         return self.data < other.data
 
     def __eq__(self, other):
-        if type(self) != Version:
+        if not isinstance(self, Version):
             return Version(self) == other
-        if type(other) != Version:
+        if not isinstance(other, Version):
             return self == Version(other)
         return self.data == other.data
 

@@ -4,13 +4,9 @@
 """Utilities tab for the TKinter GUI."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-from . import controls
-from .tab import Tab
 import sys
 
-from core import launcher, paths, utilities
-from core.lnp import lnp
-
+# pylint:disable=wrong-import-order
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
@@ -19,13 +15,21 @@ else:
     # pylint:disable=import-error
     from Tkinter import *
     from ttk import *
+# pylint:enable=wrong-import-order
+
+from . import controls
+from .tab import Tab
+
+from core import launcher, paths, utilities
+from core.lnp import lnp
+
 
 #pylint: disable=too-many-public-methods
 class UtilitiesTab(Tab):
     """Utilities tab for the TKinter GUI."""
     def read_data(self):
         self.read_utilities()
-        
+
         # Fix focus bug
         if self.proglist.get_children():
             self.proglist.focus(self.proglist.get_children()[0])
@@ -49,8 +53,9 @@ class UtilitiesTab(Tab):
             progs, text='Right-click on a program to toggle auto-launch.').grid(
                 column=0, row=2, columnspan=2)
 
-        self.proglist = controls.create_toggle_list(progs, ('path', 'tooltip'),
-            {'column': 0, 'row': 3, 'columnspan': 2, 'sticky': "nsew"})
+        self.proglist = controls.create_toggle_list(
+            progs, ('path', 'tooltip'), {
+                'column': 0, 'row': 3, 'columnspan': 2, 'sticky': "nsew"})
         self.configure_proglist()
 
         refresh = controls.create_trigger_button(

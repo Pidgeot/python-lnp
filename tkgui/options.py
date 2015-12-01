@@ -4,14 +4,9 @@
 """Options tab for the TKinter GUI."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-from . import controls, binding
-from .layout import GridLayouter
-from .tab import Tab
 import sys
 
-from core import df, keybinds, embarks
-from core.lnp import lnp
-
+# pylint:disable=wrong-import-order
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
@@ -24,8 +19,16 @@ else:
     from ttk import *
     import tkMessageBox as messagebox
     import tkSimpleDialog as simpledialog
+# pylint:enable=wrong-import-order
 
-#pylint: disable=too-many-public-methods
+from . import controls, binding
+from .layout import GridLayouter
+from .tab import Tab
+
+from core import df, keybinds, embarks
+from core.lnp import lnp
+
+# pylint: disable=too-many-public-methods
 class OptionsTab(Tab):
     """Options tab for the TKinter GUI."""
     def create_variables(self):
@@ -124,10 +127,10 @@ class OptionsTab(Tab):
             # This hack ensures the listbox never selects anything itself. This
             # is much better than the alternative hack required to prevent the
             # list selecting the last element when clicking in empty space.
-            def deselect_all(event):
+            def _deselect_all(event):
                 for item in event.widget.curselection():
                     event.widget.selection_clear(item)
-            self.embark_files.bind("<<ListboxSelect>>", deselect_all)
+            self.embark_files.bind("<<ListboxSelect>>", _deselect_all)
 
             for seq in ("<space>", "<Return>", "<1>",
                         "<2>" if sys.platform == 'darwin' else "<3>"):

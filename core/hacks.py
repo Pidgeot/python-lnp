@@ -14,7 +14,7 @@ def read_hacks():
     hacklines = []
     for init_file in ('dfhack', 'onLoad', 'onMapLoad'):
         try:
-            with open(paths.get('df', init_file + '_PyLNP.init'), 
+            with open(paths.get('df', init_file + '_PyLNP.init'),
                       encoding='latin1') as f:
                 hacklines.extend(l.strip() for l in f.readlines())
         except IOError:

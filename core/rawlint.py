@@ -39,6 +39,7 @@ objname_overrides = {
 def check_file(path):
     """Validates the raw file located at <path>. Error details are printed to
     the log with level WARNING. Returns True/False."""
+    # pylint:disable=too-many-branches
     file_ok = True
     if not path.endswith('.txt'):
         log.w('Unrecognized filename')

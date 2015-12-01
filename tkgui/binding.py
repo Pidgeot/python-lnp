@@ -6,6 +6,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import sys
 
+# pylint:disable=wrong-import-order
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import END
@@ -16,6 +17,7 @@ else:
     # pylint:disable=import-error
     from Tkinter import END
     from ttk import Entry
+# pylint:enable=wrong-import-order
 
 __controls = dict()
 __lnp = None

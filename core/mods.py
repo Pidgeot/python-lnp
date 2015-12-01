@@ -195,10 +195,10 @@ def merge_folder(mod_folder, vanilla_folder, mixed_folder):
                     status = max(1, status)
                 else:
                     with open(mod_f, 'rb') as f:
-                        mb = f.read()
+                        mb = f.read() # pylint:disable=no-member
                     with open(gen_f, 'rb') as f:
-                        gb = f.read()
-                    if not mb == gb:
+                        gb = f.read() # pylint:disable=no-member
+                    if mb != gb:
                         shutil.copyfile(mod_f, gen_f)
                         status = max(2, status)
             log.d('merged with status {}'.format(status))

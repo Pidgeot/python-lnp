@@ -101,6 +101,7 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
 
     try:
         workdir = os.path.dirname(path)
+        # pylint:disable=redefined-variable-type
         run_args = path
         if spawn_terminal and not sys.platform.startswith('win'):
             term = get_terminal_launcher()
@@ -119,13 +120,15 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
         environ = os.environ
         if lnp.bundle:
             environ = copy.deepcopy(os.environ)
-            if 'TCL_LIBRARY' in environ and sys._MEIPASS in environ['TCL_LIBRARY']:
+            if ('TCL_LIBRARY' in environ and
+                    sys._MEIPASS in environ['TCL_LIBRARY']): # pylint:disable=no-member
                 del environ['TCL_LIBRARY']
-            if 'TK_LIBRARY' in environ and sys._MEIPASS in environ['TK_LIBRARY']:
+            if ('TK_LIBRARY' in environ and
+                    sys._MEIPASS in environ['TK_LIBRARY']): # pylint:disable=no-member
                 del environ['TK_LIBRARY']
 
         lnp.running[path] = subprocess.Popen(
-            run_args, cwd=workdir, environ=environ)
+            run_args, cwd=workdir, env=environ)
         return True
     except OSError:
         sys.excepthook(*sys.exc_info())

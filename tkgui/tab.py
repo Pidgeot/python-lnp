@@ -6,6 +6,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import sys
 
+# pylint:disable=wrong-import-order
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import TOP, BOTH, Y
@@ -14,6 +15,7 @@ else:
     # pylint:disable=import-error
     from Tkinter import TOP, BOTH, Y
     from ttk import Frame
+# pylint:enable=wrong-import-order
 
 #pylint: disable=too-many-public-methods
 class Tab(Frame):

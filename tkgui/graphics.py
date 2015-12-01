@@ -4,14 +4,9 @@
 """Graphics tab for the TKinter GUI."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-from . import controls, binding
-from .layout import GridLayouter
-from .tab import Tab
 import sys
 
-from core import colors, graphics, paths
-from core.lnp import lnp
-
+# pylint:disable=wrong-import-order
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
@@ -22,8 +17,16 @@ else:
     from Tkinter import *
     from ttk import *
     import tkMessageBox as messagebox
+# pylint:enable=wrong-import-order
 
-#pylint: disable=too-many-public-methods
+from . import controls, binding
+from .layout import GridLayouter
+from .tab import Tab
+
+from core import colors, graphics, paths
+from core.lnp import lnp
+
+# pylint:disable=too-many-public-methods,too-many-instance-attributes
 class GraphicsTab(Tab):
     """Graphics tab for the TKinter GUI."""
     def create_variables(self):
@@ -169,7 +172,8 @@ class GraphicsTab(Tab):
 
         return colorframe
 
-    def _create_display_group(self, parent, show_title=True):
+    @staticmethod
+    def _create_display_group(parent, show_title=True):
         title = 'Display Options' if show_title else None
         display = controls.create_control_group(parent, title, True)
 

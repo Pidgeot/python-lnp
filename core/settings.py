@@ -7,7 +7,7 @@ import sys, os, re
 from .dfraw import DFRaw
 
 # Markers to read certain settings correctly
-
+# pylint:disable=too-few-public-methods,too-many-instance-attributes,too-many-statements,too-many-arguments
 class _DisableValues(object):
     """Marker class for DFConfiguration. Value is disabled by replacing [ and ]
     with !."""

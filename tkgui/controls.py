@@ -7,9 +7,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys
 import types
 
-from . import binding
-from core.lnp import lnp
-
+# pylint:disable=wrong-import-order
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
@@ -22,6 +20,10 @@ else:
     from ttk import *
     import tkSimpleDialog as simpledialog
     import tkFont
+# pylint:enable=wrong-import-order
+
+from . import binding
+from core.lnp import lnp
 
 # Monkeypatch simpledialog to use themed dialogs from ttk
 if sys.platform != 'darwin':  # OS X looks better without patch
@@ -545,7 +547,7 @@ def create_toggle_list(parent, columns, framegridopts, listopts={}):
         listopts
             Additional options for the Treeview.
     """
-    # pylint:disable=star-args,dangerous-default-value
+    # pylint:disable=dangerous-default-value
     lf = Frame(parent)
     lf.grid(**framegridopts)
     Grid.rowconfigure(lf, 0, weight=1)

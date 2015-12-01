@@ -11,6 +11,8 @@ from .json_config import JSONConfiguration
 
 VERSION = '0.10b'
 
+# pylint:disable=too-many-instance-attributes
+
 lnp = None
 class PyLNP(object):
     """
@@ -183,6 +185,7 @@ class PyLNP(object):
                 df.find_df_folders()
                 if len(self.folders) != 0:
                     return
+                # pylint:disable=redefined-variable-type
                 prev_path = os.path.abspath(self.BASEDIR)
                 self.BASEDIR = os.path.join(self.BASEDIR, '..')
         except UnicodeDecodeError:

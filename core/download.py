@@ -5,9 +5,6 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import os, shutil, tempfile
 from threading import Thread, Lock
-from .lnp import VERSION
-
-from . import log
 
 try:  # Python 2
     # pylint:disable=import-error
@@ -16,6 +13,9 @@ except ImportError:  # Python 3
     # pylint:disable=import-error, no-name-in-module
     from urllib.request import urlopen, Request
     from urllib.error import URLError
+
+from .lnp import VERSION
+from . import log
 
 __download_queues = {}
 
@@ -57,6 +57,7 @@ def get_queue(queue):
     __download_queues.setdefault(queue, DownloadQueue(queue))
     return __download_queues[queue]
 
+# pylint:disable=too-many-instance-attributes
 class DownloadQueue(object):
     """Queue used for downloading files."""
     def __init__(self, name):

@@ -4,12 +4,9 @@
 """DFHack tab for the TKinter GUI."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-from . import binding, controls
-from .tab import Tab
 import sys
 
-from core import hacks
-
+# pylint:disable=wrong-import-order
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
@@ -18,8 +15,14 @@ else:
     # pylint:disable=import-error
     from Tkinter import *
     from ttk import *
+# pylint:enable=wrong-import-order
 
-#pylint: disable=too-many-public-methods
+from . import binding, controls
+from .tab import Tab
+
+from core import hacks
+
+# pylint:disable=too-many-public-methods
 class DFHackTab(Tab):
     """DFHack tab for the TKinter GUI."""
     def read_data(self):
@@ -46,8 +49,8 @@ class DFHackTab(Tab):
             hacks_frame, text='Click on a hack to toggle it.').grid(
                 column=0, row=0)
 
-        self.hacklist = controls.create_toggle_list(hacks_frame, ('tooltip'),
-            {'column': 0, 'row': 1, 'sticky': "nsew"})
+        self.hacklist = controls.create_toggle_list(hacks_frame, ('tooltip'), {
+            'column': 0, 'row': 1, 'sticky': "nsew"})
         self.hacklist.grid(column=0, row=0, sticky="nsew")
         self.configure_hacklist()
 
@@ -59,7 +62,7 @@ class DFHackTab(Tab):
         hacklist.configure(show=['tree'], displaycolumns=(), selectmode="none")
 
         for seq in ("<space>", "<Return>", "<1>",
-                   "<2>" if sys.platform == 'darwin' else "<3>"):
+                    "<2>" if sys.platform == 'darwin' else "<3>"):
             hacklist.bind(seq, self.toggle_hack)
 
         self.hack_tooltip = controls.create_tooltip(hacklist, '')

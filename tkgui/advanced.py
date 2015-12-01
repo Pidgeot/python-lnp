@@ -4,14 +4,9 @@
 """Advanced tab for the TKinter GUI."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-from . import controls, binding
-from .layout import GridLayouter
-from .tab import Tab
 import sys
 
-from core import df, launcher, legends_processor
-from core.lnp import lnp
-
+# pylint:disable=wrong-import-order
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
@@ -22,8 +17,16 @@ else:
     from Tkinter import *
     from ttk import *
     import tkMessageBox as messagebox
+# pylint:enable=wrong-import-order
 
-#pylint: disable=too-many-public-methods
+from . import controls
+from .layout import GridLayouter
+from .tab import Tab
+
+from core import launcher, legends_processor
+from core.lnp import lnp
+
+#pylint: disable=too-many-public-methods,too-many-statements
 class AdvancedTab(Tab):
     """Advanced tab for the TKinter GUI."""
     def create_variables(self):

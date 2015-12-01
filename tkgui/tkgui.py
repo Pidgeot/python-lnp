@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint:disable=unused-wildcard-import,wildcard-import,invalid-name
+# pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,too-many-instance-attributes,too-many-public-methods,too-many-statements
 """TKinter-based GUI for PyLNP."""
 from __future__ import print_function, unicode_literals, absolute_import
 
@@ -8,21 +8,7 @@ import os
 import sys
 from threading import Semaphore
 
-from . import controls, binding
-from .child_windows import LogWindow, InitEditor, SelectDF, UpdateWindow
-from .child_windows import ConfirmRun
-from core.helpers import get_resource
-
-from .options import OptionsTab
-from .graphics import GraphicsTab
-from .utilities import UtilitiesTab
-from .advanced import AdvancedTab
-from .dfhack import DFHackTab
-from .mods import ModsTab
-
-from core.lnp import lnp, VERSION
-from core import df, launcher, paths, update, mods, download, baselines
-
+# pylint:disable=wrong-import-order
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     import queue as Queue
@@ -41,9 +27,10 @@ else:
     import tkMessageBox as messagebox
     import tkSimpleDialog as simpledialog
     import tkFont
+# pylint:enable=wrong-import-order
 
 # Workaround to use Pillow in PyInstaller
-if False:
+if False: # pylint:disable=using-constant-test
     # pylint:disable=unused-import
     import pkg_resources
 
@@ -59,6 +46,21 @@ except ImportError:  # Some PIL installations live outside of the PIL package
         has_PIL = True
     except ImportError:  # No PIL compatible library
         has_PIL = False
+
+from . import controls, binding
+from .child_windows import LogWindow, InitEditor, SelectDF, UpdateWindow
+from .child_windows import ConfirmRun
+
+from .options import OptionsTab
+from .graphics import GraphicsTab
+from .utilities import UtilitiesTab
+from .advanced import AdvancedTab
+from .dfhack import DFHackTab
+from .mods import ModsTab
+
+from core.helpers import get_resource
+from core.lnp import lnp, VERSION
+from core import df, launcher, paths, update, mods, download, baselines
 
 has_PNG = has_PIL or (TkVersion >= 8.6)  # Tk 8.6 supports PNG natively
 
@@ -425,12 +427,17 @@ class TkGui(object):
         baselines.set_auto_download(self.downloadBaselines.get())
 
     def set_show_scroll(self):
-       lnp.userconfig['tkgui_show_scroll'] = self.show_scrollbars.get()
-       lnp.userconfig.save_data()
-       self.reload_program()
+        """
+        Toggles if scroll bars should always be shown. Used to work around a
+        bug with some themes that modify Windows system files.
+        """
+        lnp.userconfig['tkgui_show_scroll'] = self.show_scrollbars.get()
+        lnp.userconfig.save_data()
+        self.reload_program()
 
     @staticmethod
     def set_autoclose():
+        """Toggles automatic closing of the launcher."""
         launcher.toggle_autoclose()
 
     @staticmethod
