@@ -46,8 +46,13 @@ def _sdl_keybinds_serialiser(lines):
 
 def _sdl_get_binds(filename):
     """Return serialised keybindings for vanilla and for the given file."""
-    with open(os.path.join(baselines.find_vanilla(), 'data', 'init',
-                           'interface.txt', encoding='cp437')) as f:
+    try:
+        vanfile = os.path.join(
+            baselines.find_vanilla(), 'data', 'init', 'interface.txt')
+    except TypeError:
+        log.w("Can't load or change keybinds with missing baseline!")
+        return None, None
+    with open(vanfile, encoding='cp437') as f:
         van = _sdl_keybinds_serialiser(f.readlines())
     with open(filename, encoding='cp437') as f:
         return van, _sdl_keybinds_serialiser(f.readlines())
@@ -67,13 +72,13 @@ def load_keybinds(filename):
         shutil.copyfile(filename, target)
     else:
         van, cfg = _sdl_get_binds(filename)
+        if not van:
+            return
+        van.update(cfg)
         lines = ['']
         for bind, vals in van.items():
             lines.append(bind)
-            if bind in cfg:
-                lines.extend(cfg[bind])
-            else:
-                lines.extend(vals)
+            lines.extend(vals)
         with open(target, 'w', encoding='cp437') as f:
             f.write('\n'.join(lines))
 
@@ -101,6 +106,8 @@ def save_keybinds(filename):
         shutil.copyfile(paths.get('init', 'interface.txt'), filename)
     else:
         van, cfg = _sdl_get_binds(filename)
+        if not van:
+            return
         with open(filename, 'w', encoding='cp437') as f:
             for bind, vals in cfg.items():
                 if vals != van.get(bind):
