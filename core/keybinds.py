@@ -25,7 +25,7 @@ def read_keybinds():
     files = []
     for fname in helpers.get_text_files(paths.get('keybinds')):
         with open(fname, encoding='cp437') as f:
-            if '[BIND:' in f.read(20) == 'legacy' in lnp.df_info.variations:
+            if ('[BIND:' in f.read(20)) != ('legacy' in lnp.df_info.variations):
                 files.append(fname)
     return tuple(os.path.basename(o) for o in files)
 
