@@ -208,7 +208,7 @@ class OptionsTab(Tab):
     def save_keybinds(self):
         """Saves keybindings to a file."""
         v = self.keybinding_entry.get()
-        if v:
+        if v and not getattr(self.keybinding_entry, 'default_showing', False):
             if not v.endswith('.txt'):
                 v = v + '.txt'
             if (not keybinds.keybind_exists(v) or messagebox.askyesno(

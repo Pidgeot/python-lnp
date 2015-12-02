@@ -314,7 +314,7 @@ class GraphicsTab(Tab):
     def save_colors(self):
         """Saves color scheme to a file."""
         v = self.color_entry.get()
-        if v:
+        if v and not getattr(self.keybinding_entry, 'default_showing', False):
             if (not colors.color_exists(v) or messagebox.askyesno(
                     message='Overwrite {0}?'.format(v),
                     icon='question', title='Overwrite file?')):
