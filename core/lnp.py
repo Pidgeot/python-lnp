@@ -79,7 +79,7 @@ class PyLNP(object):
 
         paths.register('lnp', self.BASEDIR, 'LNP')
         if not os.path.isdir(paths.get('lnp')):
-            print('WARNING: LNP folder is missing!', file=sys.stderr)
+            log.w('LNP folder is missing!')
         paths.register('keybinds', paths.get('lnp'), 'Keybinds')
         paths.register('graphics', paths.get('lnp'), 'Graphics')
         paths.register('utilities', paths.get('lnp'), 'Utilities')
@@ -192,12 +192,13 @@ class PyLNP(object):
                 prev_path = os.path.abspath(self.BASEDIR)
                 self.BASEDIR = os.path.join(self.BASEDIR, '..')
         except UnicodeDecodeError:
-            print(
-                "ERROR: PyLNP is being stored in a path containing non-ASCII "
+            # This seems to no longer be an issue, but leaving in the check
+            # just in case
+            log.e(
+                "PyLNP is being stored in a path containing non-ASCII "
                 "characters, and cannot continue. Folder names may only use "
                 "the characters A-Z, 0-9, and basic punctuation.\n"
-                "Alternatively, you may run PyLNP from source using Python 3.",
-                file=sys.stderr)
+                "Alternatively, you may run PyLNP from source using Python 3.")
             sys.exit(1)
         log.e("Could not find any Dwarf Fortress installations.")
         sys.exit(2)

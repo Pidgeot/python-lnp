@@ -60,14 +60,16 @@ from .mods import ModsTab
 
 from core.helpers import get_resource
 from core.lnp import lnp, VERSION
-from core import df, launcher, paths, update, mods, download, baselines
+from core import df, launcher, log, paths, update, mods, download, baselines
 
 has_PNG = has_PIL or (TkVersion >= 8.6)  # Tk 8.6 supports PNG natively
 
+if not has_PIL:
+    log.w("No PIL support available - cannot perform image manipulation")
 if not has_PNG:
-    print(
-        'Note: PIL not found and Tk version too old for PNG support ({0}).'
-        'Falling back to GIF images.'.format(TkVersion), file=sys.stderr)
+    log.w(
+        'Note: PIL not found and Tk version too old for PNG support (%s).'
+        'Falling back to GIF images.', TkVersion)
 
 
 def get_image(filename):

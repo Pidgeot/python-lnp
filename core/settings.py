@@ -573,8 +573,8 @@ class DFConfiguration(object):
                     self.settings[field] = value
                 else:
                     self.missing_fields.append(self.field_names[field])
-                    print(
-                        'WARNING: Field ' + str(self.field_names[field]) +
+                    log.w(
+                        'Field ' + str(self.field_names[field]) +
                         ' seems to be missing from file ' + str(filename) +
                         '!', file=sys.stderr)
 
