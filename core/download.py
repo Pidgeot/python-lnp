@@ -43,9 +43,9 @@ def download_str(url, **kwargs):
         log.e('Error downloading '+url)
     return None
 
-def download(queue, url, destination, end_callback=None):
+def download(queue, url, destination, end_callback=None, **kwargs):
     """Adds a download to the specified queue."""
-    return get_queue(queue).add(url, destination, end_callback)
+    return get_queue(queue).add(url, destination, end_callback, **kwargs)
 
 def queue_empty(queue):
     """Returns True if the specified queue does not exist, or is empty;
@@ -70,6 +70,16 @@ class DownloadQueue(object):
         self.on_end_queue = []
         self.thread = None
         self.lock = Lock()
+        if name == 'immediate':
+            def _immediate_progress(_, url, progress, total):
+                if total != -1:
+                    msg = "Downloading %s... (%s/%s)" % (
+                        os.path.basename(url), progress, total)
+                else:
+                    msg = ("Downloading %s... (%s bytes downloaded)" % (
+                        os.path.basename(url), progress))
+                print("\r%s" % msg, end='')
+            self.register_progress(_immediate_progress)
 
     def add(self, url, target, end_callback):
         """Adds a download to the queue.
@@ -88,11 +98,14 @@ class DownloadQueue(object):
                 log.d(self.name+': queueing '+url+' for download to '+target)
             else:
                 log.d(self.name+': skipping add of '+url+', already in queue')
-            if not self.thread:
+            if not self.thread and self.name != 'immediate':
                 log.d('Download queue '+self.name+' not running, starting it')
                 self.thread = t = Thread(target=self.__process_queue)
                 t.daemon = True
                 t.start()
+        if self.name == 'immediate':
+            log.i('Downloading immediately...')
+            self.__process_queue()
 
     def empty(self):
         """Returns True if the queue is empty, otherwise False."""

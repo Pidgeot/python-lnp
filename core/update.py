@@ -82,13 +82,14 @@ def start_update():
     """Launches a webbrowser to the specified update URL."""
     launcher.open_url(lnp.updater.get_download_url())
 
-def download_df_baseline():
+def download_df_baseline(immediate=False):
     """Download the current version of DF from Bay12 Games to serve as a
     baseline, in LNP/Baselines/"""
     filename = lnp.df_info.get_archive_name()
     url = 'http://www.bay12games.com/dwarves/' + filename
     target = os.path.join(paths.get('baselines'), filename)
-    download.download('baselines', url, target)
+    queue_name = 'immediate' if immediate else 'baselines'
+    download.download(queue_name, url, target)
 
 def direct_download_pack():
     """Directly download a new version of the pack to the current BASEDIR"""

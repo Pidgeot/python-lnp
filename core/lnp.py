@@ -148,6 +148,8 @@ class PyLNP(object):
             log.set_level(log.DEBUG)
         elif args.debug is not None and args.debug > 1:
             log.set_level(log.VERBOSE)
+        if args.release_prep:
+            args.raw_lint = True
         log.d(args)
         return args
 
@@ -171,6 +173,9 @@ class PyLNP(object):
         parser.add_argument(
             '--df-executable', action='store',
             help='Override DF/DFHack executable name')
+        parser.add_argument(
+            '--release-prep', action='store_true',
+            help=argparse.SUPPRESS)
         return parser.parse_known_args()[0]
 
     def save_config(self):

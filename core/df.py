@@ -41,14 +41,6 @@ def set_df_folder(path):
     :param path: The path of the Dwarf Fortress instance to use.
     """
     paths.register('df', lnp.BASEDIR, path, allow_create=False)
-    if lnp.args.raw_lint:
-        from . import rawlint
-        p, f = rawlint.check_df(paths.get('df'))
-        l = log.Log()
-        l.output_out = True
-        l.set_level(log.INFO)
-        l.i("%d files passed, %d files failed check" % (len(p), len(f)))
-        sys.exit(0 if len(f) == 0 else 1)
     paths.register('data', paths.get('df'), 'data', allow_create=False)
     paths.register('init', paths.get('data'), 'init', allow_create=False)
     paths.register('save', paths.get('data'), 'save', allow_create=False)
@@ -56,9 +48,39 @@ def set_df_folder(path):
     paths.register('defaults', paths.get('lnp'), 'Defaults')
     lnp.df_info = DFInstall(paths.get('df'))
     lnp.settings = lnp.df_info.settings
+    if lnp.args.release_prep or lnp.args.raw_lint:
+        perform_checks()
     install_extras()
     load_params()
     hacks.read_hacks()
+
+def perform_checks():
+    """Performs various automated tasks and quits the program.
+    Return code is 0 if all went well."""
+    log.set_level(log.INFO)
+    log.get().output_out = True
+    log.get().output_err = False
+    if not do_rawlint(paths.get('df')):
+        sys.exit(3)
+    if lnp.args.release_prep:
+        from . import baselines, graphics, mods, update
+        found_baseline = baselines.find_vanilla(False)
+        if found_baseline is None:
+            log.e('DF version not detected accurately, aborting')
+            sys.exit(4)
+        if found_baseline == False: #pylint:disable=singleton-comparison
+            update.download_df_baseline(True)
+        baselines.prepare_baselines()
+        graphics.simplify_graphics()
+        mods.simplify_mods()
+    sys.exit(0)
+
+def do_rawlint(path):
+    """Runs the raw linter on the specified directory."""
+    from . import rawlint
+    p, f = rawlint.check_df(path)
+    log.i("%d files passed, %d files failed check" % (len(p), len(f)))
+    return len(f) == 0
 
 def install_extras():
     """
