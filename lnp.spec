@@ -2,6 +2,8 @@
 # If PIL or similar is available on this system, it will be available for the
 # generated executable. Since this is the only factor in whether or not we
 # will be able to use non-GIF images, we only include the appropriate version.
+import sys
+
 try:
     from PIL import Image, ImageTk
     has_PIL = True
