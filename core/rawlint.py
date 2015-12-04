@@ -100,7 +100,7 @@ def check_folder(path):
     for f in files:
         f_parts = f.split(os.sep)
         if (f.endswith('.txt') and 'notes' not in f_parts and
-                'text' not in f_parts):
+                'examples and notes' not in f_parts and 'text' not in f_parts):
             log.push_prefix(f)
             has_passed = check_file(f)
             log.pop_prefix()
