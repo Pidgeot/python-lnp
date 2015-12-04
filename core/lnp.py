@@ -168,6 +168,9 @@ class PyLNP(object):
             help='Dwarf Fortress folder to use (if it exists)')
         parser.add_argument(
             '--version', action='version', version="PyLNP "+VERSION)
+        parser.add_argument(
+            '--df-executable', action='store',
+            help='Override DF/DFHack executable name')
         return parser.parse_known_args()[0]
 
     def save_config(self):

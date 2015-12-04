@@ -45,6 +45,8 @@ def get_df_executable():
             spawn_terminal = True
         else:
             df_filename = 'df'
+    if lnp.args.df_executable:
+        df_filename = lnp.args.df_executable
     return df_filename, spawn_terminal
 
 def run_df(force=False):
