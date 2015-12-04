@@ -91,6 +91,10 @@ class OptionsTab(Tab):
             options, 'Artifacts',
             'Whether dwarfs should enter artifact producing moods.',
             'artifacts'))
+        grid.add(controls.create_option_button(
+            options, 'Aquifers', 'Whether newly created worlds will have '
+            'Aquifers in them (Infinite sources of underground water, but may '
+            'flood your fort', 'aquifers'))
         grid.add(controls.create_trigger_option_button(
             options, 'Graze Coefficient',
             'Scales how often grazing animals need to eat.  Larger numbers '
@@ -105,15 +109,6 @@ class OptionsTab(Tab):
             grid.add(controls.create_option_button(
                 options, 'Starting Labors', tooltip, 'laborLists'), 2)
 
-        mods = controls.create_control_group(
-            self, 'Modifications')
-        mods.pack(side=TOP, expand=N, anchor="w")
-
-        controls.create_option_button(
-            mods, 'Aquifers', 'Whether newly created worlds will have Aquifers '
-            'in them (Infinite sources of underground water, but may flood '
-            'your fort', 'aquifers').grid(column=0, row=0, sticky="nsew")
-
         keybindings, self.keybinding_entry, self.keybinding_files = \
             controls.create_list_with_entry(
                 self, "Key Bindings", self.keybinds,
@@ -127,8 +122,8 @@ class OptionsTab(Tab):
             self.keybinding_files.bind(seq, lambda e: self.load_keybinds())
 
         if lnp.df_info.version >= '0.28.181.40a':
-            embarkframe, self.embark_files = \
-                controls.create_file_list(self, 'Embark profiles', self.embarks)
+            embarkframe, self.embark_files = controls.create_file_list(
+                self, 'Embark profiles', self.embarks, height=3)
             self.embark_files.configure(selectmode="single")
 
             refresh = controls.create_trigger_button(
