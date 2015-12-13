@@ -206,7 +206,7 @@ class DFInstall(object):
             record = convert(str, self.index_scramble(record)).strip()
             # Check if version is in record of form "18~v0.40.24\r\n"
             if re.search(r"\d+~v[\d.a-z]+", record) is not None:
-                return record.split('v')[1]
+                return record.partition('v')[-1]
 
     def _detect_version_from_notes(self):
         """Attempt to detect Dwarf Fortress version based on release notes."""
