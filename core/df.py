@@ -4,6 +4,8 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os, shutil, re
+import struct
+import zlib
 from datetime import datetime
 from distutils import dir_util
 from glob import glob
@@ -163,23 +165,58 @@ class DFInstall(object):
             result += '\nVariations detected: ' + ', '.join(self.variations)
         return result
 
-    def detect_version(self):
+    def _detect_version_from_index(self):
+        """The most reliable way to detect DF version is '<df>/data/index'.
+
+        Adapted from https://github.com/lethosor/dftext
         """
-        Attempts to detect Dwarf Fortress version based on release notes or
-        init file contents.
-        """
+        def convert(func, string):
+            """Convert between string and bytes on Py3."""
+            if sys.version_info[0] == 2:
+                return string
+            return func(string, encoding='cp437')
+
+        def index_scramble(self, text):
+            text = list(text)
+            for i, ch in enumerate(text):
+                ord_ch = (ord(ch) if sys.version_info[0] == 2 else ch)
+                text[i] = chr(255 - (i % 5) - ord_ch)
+            return convert(bytes, ''.join(text))
+
+        with open(paths.get('df', 'data', 'index'), 'rb') as f:
+            in_text = f.read()
+
+        decompressed = b''
+        while in_text:
+            chunk_length = struct.unpack('<L', in_text[:4])[0]
+            end = chunk_length + 4
+            decompressed += zlib.decompress(in_text[4:end])
+            in_text = in_text[end:]
+
+        record_count = struct.unpack('<L', decompressed[:4])[0]
+        decompressed = decompressed[4:]
+        for record_id in range(record_count):
+            record_length, record_length_2 = \
+                    struct.unpack('<LH', decompressed[:6])
+            decompressed = decompressed[6:]
+            if record_length != record_length_2:
+                raise ValueError('Record lengths do not match')
+            record = decompressed[:record_length]
+            decompressed = decompressed[record_length:]
+            record = convert(str, self.index_scramble(record)).strip()
+            # Check if version is in record of form "18~v0.40.24\r\n"
+            if re.search(r"\d+~v[\d.a-z]+", record) is not None:
+                return record.split('v')[1]
+
+    def _detect_version_from_notes(self):
+        """Attempt to detect Dwarf Fortress version based on release notes."""
         notes = os.path.join(self.df_dir, 'release notes.txt')
-        if os.path.isfile(notes):
-            try:
-                # If the release notes exist, get the version from there
-                notes_text = open(notes, encoding='latin1').read()
-                m = re.search(r"Release notes for ([\d.a-z]+)", notes_text)
-                return (Version(m.group(1)), 'release notes')
-            # pylint:disable=bare-except
-            except:
-                # If we can't find a match in the release notes,
-                # fall back to using init detection
-                pass
+        with open(notes, encoding='latin1') as notes_text:
+            m = re.search(r"Release notes for ([\d.a-z]+)", notes_text.read())
+        return (Version(m.group(1)), 'release notes')
+
+    def _detect_version_from_init(self):
+        """Attempt to detect Dwarf Fortress version from init file contents."""
         init = os.path.join(self.init_dir, 'init.txt')
         d_init = os.path.join(self.init_dir, 'd_init.txt')
         versions = [
@@ -217,6 +254,21 @@ class DFInstall(object):
             if DFConfiguration.has_field(v[0], v[1], **v[3]):
                 log.w('DF version detected based on init analysis; unreliable')
                 return (Version(v[2]), 'init detection')
+
+    def detect_version(self):
+        """
+        Attempt to detect Dwarf Fortress version from data/index,
+        release notes or init file contents.
+        """
+        for func in (self._detect_version_from_index,
+                     self._detect_version_from_notes,
+                     self._detect_version_from_init):
+            try:
+                ver = func()
+                if ver is not None:
+                    return ver
+            except Exception:
+                pass
         log.w('DF version could not be detected, assuming 0.21.93.19a')
         return (Version('0.21.93.19a'), 'fallback')
 
