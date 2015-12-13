@@ -27,7 +27,7 @@ def read_keybinds():
         with open(fname, encoding='cp437') as f:
             if ('[BIND:' in f.read(20)) != ('legacy' in lnp.df_info.variations):
                 files.append(fname)
-    return tuple(os.path.basename(o) for o in files)
+    return sorted(tuple(os.path.basename(o) for o in files))
 
 def _sdl_keybinds_serialiser(lines):
     """Turn lines into an ordered dict, to preserve structure of file.

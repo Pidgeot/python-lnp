@@ -9,9 +9,9 @@ from .dfraw import DFRaw
 
 def read_embarks():
     """Returns a list of embark profiles."""
-    return tuple([
+    return sorted(tuple([
         os.path.basename(o) for o in helpers.get_text_files(
-            paths.get('embarks'))])
+            paths.get('embarks'))]))
 
 def install_embarks(files):
     """
