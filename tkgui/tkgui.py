@@ -87,11 +87,14 @@ def get_image(filename):
         filename = filename + '.png'
     else:
         filename = filename + '.gif'
-    if has_PIL:
-        # pylint:disable=maybe-no-member
-        return ImageTk.PhotoImage(Image.open(filename))
-    else:
-        return PhotoImage(file=filename)
+    try:
+        if has_PIL:
+            # pylint:disable=maybe-no-member
+            return ImageTk.PhotoImage(Image.open(filename))
+        else:
+            return PhotoImage(file=filename)
+    except Exception:
+        log.w('Unable to load image: ' + filename)
 
 def validate_number(value_if_allowed):
     """

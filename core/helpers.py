@@ -50,7 +50,7 @@ def detect_installed_file(current_file, test_files):
         current = DFRaw.read(current_file)
         for f in test_files:
             tested = DFRaw.read(f)
-            if tested[-1] == '\n':
+            if tested.endswith('\n'):
                 tested = tested[:-1]
             if tested in current:
                 return f
@@ -67,7 +67,7 @@ def detect_installed_files(current_file, test_files):
         for f in test_files:
             try:
                 tested = DFRaw.read(f)
-                if tested[-1] == '\n':
+                if tested.endswith('\n'):
                     tested = tested[:-1]
                 if tested in current:
                     installed.append(f)

@@ -25,7 +25,8 @@ def read_keybinds():
     files = []
     for fname in helpers.get_text_files(paths.get('keybinds')):
         with open(fname, encoding='cp437') as f:
-            if ('[BIND:' in f.read(20)) != ('legacy' in lnp.df_info.variations):
+            if ('[DISPLAY_STRING:' in f.read()) == \
+                    ('legacy' in lnp.df_info.variations):
                 files.append(fname)
     return tuple(os.path.basename(o) for o in files)
 
@@ -128,6 +129,14 @@ def delete_keybinds(filename):
 
 def get_installed_file():
     """Returns the name of the currently installed keybindings."""
+    with open(paths.get('df', 'data', 'init', 'interface.txt'),
+              encoding='cp437') as f:
+        installed = _sdl_keybinds_serialiser(f.readlines())
+    for fname in helpers.get_text_files(paths.get('keybinds')):
+        with open(fname, encoding='cp437') as f:
+            if installed == _sdl_keybinds_serialiser(f.readlines()):
+                return os.path.basename(fname)
+
     files = helpers.get_text_files(paths.get('keybinds'))
     current = paths.get('init', 'interface.txt')
     result = helpers.detect_installed_file(current, files)
