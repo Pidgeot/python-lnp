@@ -60,21 +60,20 @@ def get_cfg(content_type, item):
 def exists(content_type, item):
     """Returns a bool, that the given item has a manifest.
     Used before calling get_cfg if logging a warning isn't required."""
-    if os.path.isfile(paths.get(content_type, item, 'manifest.json')):
-        return True
-    return False
+    return os.path.isfile(paths.get(content_type, item, 'manifest.json'))
 
-def is_compatible(content_type, item):
+def is_compatible(content_type, item, ver=''):
     """Boolean compatibility rating; True unless explicitly incompatible."""
     if not exists(content_type, item):
         return True
+    if not ver:
+        ver = lnp.df_info.version
     cfg = get_cfg(content_type, item)
-    if any([lnp.df_info.version < cfg.get_string('df_min_version'),
-            (lnp.df_info.version > cfg.get_string('df_max_version')
-             and cfg.get_string('df_max_version')),
-            lnp.df_info.version in cfg.get_list('incompatible_df_versions'),
-            (cfg.get_bool('needs_dfhack') and
-             'dfhack' not in lnp.df_info.variations)]):
-        return False
-    return True
-
+    df_min_version = cfg.get_string('df_min_version')
+    df_max_version = cfg.get_string('df_max_version')
+    return not any([
+        ver < df_min_version,
+        (ver > df_max_version and df_max_version),
+        ver in cfg.get_list('incompatible_df_versions'),
+        cfg.get_bool('needs_dfhack') and 'dfhack' not in lnp.df_info.variations
+        ])

@@ -46,13 +46,13 @@ def current_pack():
     log.w('Could not determine installed graphics, tileset is ' + result)
     return result
 
-def logged_graphics(logfile):
+def logged_graphics(logfile, start='graphics/'):
     """Returns the graphics pack from an 'installed_raws.txt' file"""
     if os.path.isfile(logfile):
         with open(logfile) as f:
             for l in f.readlines():
-                if l.startswith('graphics/'):
-                    return l.strip().replace('graphics/', '')
+                if l.startswith(start):
+                    return l.strip().replace(start, '')
     return ''
 
 def read_graphics():
@@ -134,7 +134,7 @@ def install_graphics(pack):
     df.load_params()
     return True
 
-def validate_pack(pack):
+def validate_pack(pack, df_version=lnp.df_info.version):
     """Checks for presence of all required files for a pack install."""
     result = True
     gfx_dir = paths.get('graphics', pack)
@@ -142,7 +142,7 @@ def validate_pack(pack):
     result &= os.path.isdir(os.path.join(gfx_dir, 'data', 'init'))
     result &= os.path.isdir(os.path.join(gfx_dir, 'data', 'art'))
     result &= os.path.isfile(os.path.join(gfx_dir, 'data', 'init', 'init.txt'))
-    result &= manifest.is_compatible('graphics', pack)
+    result &= manifest.is_compatible('graphics', pack, df_version)
     if lnp.df_info.version >= '0.31.04':
         result &= os.path.isfile(os.path.join(
             gfx_dir, 'data', 'init', 'd_init.txt'))
@@ -262,6 +262,10 @@ def update_graphics_raws(raw_dir, pack):
         log.w('Cannot update raws to an invalid graphics pack (' + pack + ')')
         return None
     built_log = paths.get('baselines', 'temp', 'raw', 'installed_raws.txt')
+    save_raws = logged_graphics(built_log, start='baselines/')
+    if not validate_pack(pack, save_raws.replace('df', '0').replace('_', '.')):
+        log.w('Save raws not compatible with ' + pack + ' graphics, aborting.')
+        return None
     built_graphics = logged_graphics(built_log)
     if mods.update_raw_dir(raw_dir, gfx=(pack, built_graphics)):
         log.i('Safely updated graphics raws ' + raw_dir + ' to ' + pack)
@@ -274,11 +278,10 @@ def update_savegames():
     count, skipped, saves = 0, 0, savegames_to_update()
     for save_raws in [paths.get('saves', s, 'raw') for s in saves]:
         r = can_rebuild(os.path.join(save_raws, 'installed_raws.txt'))
-        if r:
-            if update_graphics_raws(save_raws, current_pack()):
-                count += 1
-            else:
-                skipped += 1
+        if r and update_graphics_raws(save_raws, current_pack()):
+            count += 1
+        else:
+            skipped += 1
     return count, skipped
 
 def can_rebuild(log_file, strict=True):
