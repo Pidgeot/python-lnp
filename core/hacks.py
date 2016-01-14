@@ -88,7 +88,7 @@ def rebuild_hacks():
     """Rebuilds *_PyLNP.init files with the enabled hacks."""
     log.i('Rebuilding dfhack_PyLNP.init files with the enabled hacks')
     for init_file in ('dfhack', 'onLoad', 'onMapLoad'):
-        fname = os.path.isfile(paths.get('df', init_file + '_PyLNP.init'))
+        fname = paths.get('df', init_file + '_PyLNP.init')
         lines = []
         for k, h in get_hacks().items():
             if h['enabled'] and h.get('file', 'dfhack') == init_file:
