@@ -11,7 +11,12 @@ Sort files into region folder, with maps subfolders,
 
 from __future__ import print_function, unicode_literals, absolute_import
 
-import os, zipfile, glob, subprocess
+import glob
+import os
+import re
+import subprocess
+import zipfile
+
 from . import paths, log
 from .lnp import lnp
 
@@ -23,13 +28,9 @@ def get_region_info():
              os.path.isfile(f)]
     if files:
         fname = os.path.basename(files[0])
-        idx = fname.index('-')
-        date = fname[idx+1:idx+12]
-        if date[6] == '-':
-            date = fname[idx+1:idx+13]
-        elif date[7] == '-':
-            date = fname[idx+1:idx+14]
-        return (fname[:idx], date)
+        region = fname.partition('-')[0]
+        date = re.search(r'\d+-\d\d\-\d\d', fname).group()
+        return region, date
 
 def compress_bitmaps():
     """Compresses all bitmap maps."""
