@@ -165,7 +165,8 @@ class DFInstall(object):
             result += '\nVariations detected: ' + ', '.join(self.variations)
         return result
 
-    def _detect_version_from_index(self):
+    @staticmethod
+    def _detect_version_from_index():
         """The most reliable way to detect DF version is '<df>/data/index'.
 
         Adapted from https://github.com/lethosor/dftext
@@ -176,7 +177,8 @@ class DFInstall(object):
                 return string
             return func(string, encoding='cp437')
 
-        def index_scramble(self, text):
+        def index_scramble(text):
+            """Unscrambles data from the index file."""
             text = list(text)
             for i, ch in enumerate(text):
                 ord_ch = (ord(ch) if sys.version_info[0] == 2 else ch)
@@ -188,25 +190,25 @@ class DFInstall(object):
 
         decompressed = b''
         while in_text:
-            chunk_length = struct.unpack('<L', in_text[:4])[0]
+            chunk_length = struct.unpack(str('<L'), in_text[:4])[0]
             end = chunk_length + 4
             decompressed += zlib.decompress(in_text[4:end])
             in_text = in_text[end:]
 
-        record_count = struct.unpack('<L', decompressed[:4])[0]
+        record_count = struct.unpack(str('<L'), decompressed[:4])[0]
         decompressed = decompressed[4:]
-        for record_id in range(record_count):
+        for _ in range(record_count):
             record_length, record_length_2 = \
-                    struct.unpack('<LH', decompressed[:6])
+                    struct.unpack(str('<LH'), decompressed[:6])
             decompressed = decompressed[6:]
             if record_length != record_length_2:
                 raise ValueError('Record lengths do not match')
             record = decompressed[:record_length]
             decompressed = decompressed[record_length:]
-            record = convert(str, self.index_scramble(record)).strip()
+            record = convert(str, index_scramble(record)).strip()
             # Check if version is in record of form "18~v0.40.24\r\n"
             if re.search(r"\d+~v[\d.a-z]+", record) is not None:
-                return record.partition('v')[-1]
+                return (Version(record.partition('v')[-1]), 'index')
 
     def _detect_version_from_notes(self):
         """Attempt to detect Dwarf Fortress version based on release notes."""
@@ -267,7 +269,7 @@ class DFInstall(object):
                 ver = func()
                 if ver is not None:
                     return ver
-            except Exception:
+            except: # pylint:disable=bare-except
                 pass
         log.w('DF version could not be detected, assuming 0.21.93.19a')
         return (Version('0.21.93.19a'), 'fallback')

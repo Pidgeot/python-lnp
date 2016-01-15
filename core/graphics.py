@@ -134,16 +134,21 @@ def install_graphics(pack):
     df.load_params()
     return True
 
-def validate_pack(pack, df_version=lnp.df_info.version):
+def validate_pack(pack, df_version=None):
     """Checks for presence of all required files for a pack install."""
     result = True
+    ver = df_version
+    if not ver:
+        if not (lnp and lnp.df_info and lnp.df_info.version):
+            return False
+        ver = lnp.df_info.version
     gfx_dir = paths.get('graphics', pack)
     result &= os.path.isdir(gfx_dir)
     result &= os.path.isdir(os.path.join(gfx_dir, 'data', 'init'))
     result &= os.path.isdir(os.path.join(gfx_dir, 'data', 'art'))
     result &= os.path.isfile(os.path.join(gfx_dir, 'data', 'init', 'init.txt'))
     result &= manifest.is_compatible('graphics', pack, df_version)
-    if lnp.df_info.version >= '0.31.04':
+    if df_version >= '0.31.04':
         result &= os.path.isfile(os.path.join(
             gfx_dir, 'data', 'init', 'd_init.txt'))
         result &= os.path.isfile(os.path.join(

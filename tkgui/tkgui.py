@@ -93,7 +93,7 @@ def get_image(filename):
             return ImageTk.PhotoImage(Image.open(filename))
         else:
             return PhotoImage(file=filename)
-    except Exception:
+    except: # pylint:disable=bare-except
         log.w('Unable to load image: ' + filename)
 
 def validate_number(value_if_allowed):
