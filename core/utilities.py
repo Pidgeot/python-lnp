@@ -107,7 +107,7 @@ def read_utilities():
                     os.path.join(root, filename),
                     paths.get('utilities')))
 
-    return progs
+    return sorted(progs)
 
 def toggle_autorun(item):
     """
