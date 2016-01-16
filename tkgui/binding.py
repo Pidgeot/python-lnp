@@ -21,12 +21,14 @@ else:
 
 __controls = dict()
 __lnp = None
+__ui = None
 
-def init(lnp):
-    """Connect to an LNP instance."""
+def init(lnp, ui):
+    """Connect to LNP and TkGui instances."""
     # pylint:disable=global-statement
-    global __lnp
+    global __lnp, __ui
     __lnp = lnp
+    __ui = ui
     __controls.clear()
 
 def bind(control, option, update_func=None):
@@ -57,6 +59,12 @@ def get(field):
 
 def update():
     """Updates configuration displays (buttons, etc.)."""
+    def disabled_change_entry(*args, **kwargs): #pylint: disable=unused-argument
+        """Prevents entry change callbacks from being processed."""
+        pass
+
+    old_change_entry = __ui.change_entry
+    __ui.change_entry = disabled_change_entry
     for key in __controls.keys():
         try:
             k = key
@@ -79,5 +87,6 @@ def update():
                 control["text"] = (
                     control["text"].split(':')[0] + ': ' +
                     str(value))
+    __ui.change_entry = old_change_entry
 
 # vim:expandtab

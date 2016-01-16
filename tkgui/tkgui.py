@@ -134,7 +134,7 @@ class TkGui(object):
         self.autoclose = BooleanVar()
         self.do_reload = False
         controls.init(self)
-        binding.init(lnp)
+        binding.init(lnp, self)
 
         if not self.ensure_df():
             return
