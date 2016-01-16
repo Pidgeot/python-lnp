@@ -3,7 +3,7 @@
 """DFHack management."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, os, shutil, filecmp
+import sys, os, shutil, filecmp, collections
 # pylint:disable=redefined-builtin
 from io import open
 from . import paths, log
@@ -56,7 +56,8 @@ def toggle_dfhack():
 
 def get_hacks():
     """Returns dict of available hacks."""
-    return lnp.config.get_dict('dfhack')
+    return collections.OrderedDict(sorted(
+        lnp.config.get_dict('dfhack').items(), key=lambda t: t[0]))
 
 def get_hack(title):
     """
