@@ -68,7 +68,7 @@ def read_graphics():
         #pylint: disable=unbalanced-tuple-unpacking
         font, graphics = DFRaw(init_path).get_values('FONT', 'GRAPHICS_FONT')
         result.append((p, font, graphics))
-    return sorted(tuple(result))
+    return tuple(sorted(result))
 
 def install_graphics(pack):
     """Installs the graphics pack located in LNP/Graphics/<pack>.
@@ -309,8 +309,9 @@ def read_tilesets():
     files = glob.glob(paths.get('data', 'art', '*.bmp'))
     if 'legacy' not in lnp.df_info.variations:
         files += glob.glob(paths.get('data', 'art', '*.png'))
-    return sorted(tuple(o for o in [os.path.basename(f) for f in files] if not
-                 any(o.startswith(a) for a in ['shadows.png', 'mouse.', '_'])))
+    return tuple(sorted(
+        o for o in [os.path.basename(f) for f in files] if not
+        any(o.startswith(a) for a in ['shadows.png', 'mouse.', '_'])))
 
 def current_tilesets():
     """Returns the current tilesets as a tuple (FONT, GRAPHICS_FONT)."""

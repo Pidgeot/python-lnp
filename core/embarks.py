@@ -9,7 +9,7 @@ from .dfraw import DFRaw
 
 def read_embarks():
     """Returns a list of embark profiles."""
-    return sorted(tuple([
+    return tuple(sorted([
         os.path.basename(o) for o in helpers.get_text_files(
             paths.get('embarks'))]))
 

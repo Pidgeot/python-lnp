@@ -17,7 +17,7 @@ _df_colors = (
 
 def read_colors():
     """Returns a list of color schemes."""
-    return sorted(tuple([
+    return tuple(sorted([
         os.path.splitext(os.path.basename(p))[0] for p in
         helpers.get_text_files(paths.get('colors'))]))
 
