@@ -28,7 +28,8 @@ def get_region_info():
              os.path.isfile(f)]
     if files:
         fname = os.path.basename(files[0])
-        region = fname.partition('-')[0]
+        region = re.search(
+            r'^.*(?=(-\d\d\d\d\d\d*-\d\d\-\d\d))', fname).group()
         date = re.search(r'\d+-\d\d\-\d\d', fname).group()
         return region, date
 
