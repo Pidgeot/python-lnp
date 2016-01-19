@@ -282,7 +282,7 @@ class TkGui(object):
                     try:
                         df.set_df_folder(selector.result)
                     except IOError as e:
-                        messagebox.showerror(self.root.title(), e.message)
+                        messagebox.showerror(self.root.title(), str(e))
                         self.exit_program()
                         return False
             else:
@@ -488,7 +488,7 @@ class TkGui(object):
         try:
             df.load_params()
         except IOError as e:
-            messagebox.showerror(self.root.title(), e.message)
+            messagebox.showerror(self.root.title(), str(e))
             self.exit_program()
         binding.update()
 

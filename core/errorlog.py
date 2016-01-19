@@ -47,14 +47,9 @@ class CaptureStream(object):
             self.outfile.write(unicode(string))
         else:
             self.outfile.write(string)
-        self.flush()
+        self.outfile.flush()
         if self.tee:
             return self.stream.write(string)
-
-    def flush(self):
-        """Flushes the output file."""
-        if self.outfile is not None:
-            self.outfile.flush()
 
     def hook(self):
         """Replaces the named stream with the redirected stream."""
@@ -64,14 +59,10 @@ class CaptureStream(object):
         """Restores the original stream object."""
         setattr(sys, self.name, self.stream)
 
-    def redirect(self):
-        """Sets up the initial redirection."""
-        self.hook()
-
 def start():
     """Starts redirection of stdout and stderr."""
-    out.redirect()
-    err.redirect()
+    out.hook()
+    err.hook()
 
 out = CaptureStream('stdout', not hasattr(sys, 'frozen'))
 err = CaptureStream('stderr', not hasattr(sys, 'frozen'))
