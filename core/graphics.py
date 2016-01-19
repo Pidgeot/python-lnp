@@ -136,12 +136,9 @@ def install_graphics(pack):
 
 def validate_pack(pack, df_version=None):
     """Checks for presence of all required files for a pack install."""
+    if df_version is None:
+        df_version = lnp.df_info.version
     result = True
-    ver = df_version
-    if not ver:
-        if not (lnp and lnp.df_info and lnp.df_info.version):
-            return False
-        ver = lnp.df_info.version
     gfx_dir = paths.get('graphics', pack)
     result &= os.path.isdir(gfx_dir)
     result &= os.path.isdir(os.path.join(gfx_dir, 'data', 'init'))

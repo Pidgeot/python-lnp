@@ -247,7 +247,8 @@ class DFFDUpdater(Updater):
         self.dffd_id = lnp.config.get_string('updates/dffdID')
         if not self.dffd_id:
             log.e('Field "updates/dffdID" must be set in PyLNP.json')
-        return 'http://dffd.bay12games.com/file_data/'+self.dffd_id+'.json'
+        return 'http://dffd.bay12games.com/file_data/{}.json'.format(
+            self.dffd_id)
 
     def get_version(self):
         self.json = JSONConfiguration.from_text(self.text)

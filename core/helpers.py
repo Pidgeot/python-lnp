@@ -61,6 +61,9 @@ def detect_installed_file(current_file, test_files):
 def detect_installed_files(current_file, test_files):
     """Returns a list of files in <test_files> that are contained in
     <current_file>."""
+    if not os.path.isfile(current_file):
+        log.d('Nothing installed in nonexistent file {}'.format(current_file))
+        return []
     installed = []
     try:
         current = DFRaw.read(current_file)

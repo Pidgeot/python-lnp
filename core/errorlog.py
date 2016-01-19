@@ -47,12 +47,14 @@ class CaptureStream(object):
             self.outfile.write(unicode(string))
         else:
             self.outfile.write(string)
+        self.flush()
         if self.tee:
             return self.stream.write(string)
 
     def flush(self):
         """Flushes the output file."""
-        self.outfile.flush()
+        if self.outfile is not None:
+            self.outfile.flush()
 
     def hook(self):
         """Replaces the named stream with the redirected stream."""
