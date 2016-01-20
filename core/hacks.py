@@ -20,7 +20,9 @@ def read_hacks():
         except IOError:
             log.debug(init_file + '_PyLNP.init not found.')
     for h in get_hacks().values():
-        h['enabled'] = h['command'] in hacklines
+        f.pop('enabled', None)
+        if h['command'] in hacklines:
+            h['enabled'] = True
 
 def is_dfhack_enabled():
     """Returns YES if DFHack should be used."""
@@ -81,7 +83,8 @@ def toggle_hack(name):
         name
             The name of the hack to toggle.
     """
-    get_hack(name)['enabled'] = not get_hack(name).get('enabled', False)
+    if not get_hack(name).pop('enabled', False):
+        get_hack(name)['enabled'] = True
     lnp.config.save_data()
     rebuild_hacks()
 
@@ -92,7 +95,7 @@ def rebuild_hacks():
         fname = paths.get('df', init_file + '_PyLNP.init')
         lines = []
         for k, h in get_hacks().items():
-            if h['enabled'] and h.get('file', 'dfhack') == init_file:
+            if h.get('enabled') and h.get('file', 'dfhack') == init_file:
                 lines.append('# {}\n# {}\n{}\n\n'.format(
                     k, h['tooltip'].replace('\n', '\n#'), h['command']))
         if lines:
