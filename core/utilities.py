@@ -6,7 +6,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys
 import os
 import re
-import fnmatch
+from fnmatch import fnmatch
 # pylint:disable=redefined-builtin
 from io import open
 
@@ -18,29 +18,24 @@ def open_utils():
     """Opens the utilities folder."""
     open_folder(paths.get('utilities'))
 
-
-metadata = {}
 def read_metadata():
     """Read metadata from the utilities directory."""
-    metadata.clear()
-    entries = read_utility_lists(paths.get('utilities', 'utilities.txt'))
-    for e in entries:
-        data = e.split(':', 2)
-        if len(data) < 3:
-            data.extend(['', ''])
-        metadata[data[0]] = {'title': data[1]}
-        metadata[data[0]]['tooltip'] = data[2]
+    metadata = {}
+    for e in read_utility_lists(paths.get('utilities', 'utilities.txt')):
+        fname, title, tooltip, *_ = e.split(':', 2) + ['', '']
+        metadata[fname] = {'title': title, 'tooltip': tooltip}
+    return metadata
 
 def get_title(path):
     """
     Returns a title for the given utility. If an non-blank override exists, it
     will be used; otherwise, the filename will be manipulated according to
     PyLNP.json settings."""
+    metadata = read_metadata()
     if os.path.basename(path) in metadata:
         if metadata[os.path.basename(path)]['title'] != '':
             return metadata[os.path.basename(path)]['title']
-    result = os.path.join(
-        os.path.basename(os.path.dirname(path)), os.path.basename(path))
+    result = path
     if lnp.config.get_bool('hideUtilityPath'):
         result = os.path.basename(result)
     if lnp.config.get_bool('hideUtilityExt'):
@@ -49,10 +44,7 @@ def get_title(path):
 
 def get_tooltip(path):
     """Returns the tooltip for the given utility, or an empty string."""
-    try:
-        return metadata[os.path.basename(path)]['tooltip']
-    except KeyError:
-        return ''
+    return read_metadata().get(os.path.basename(path), {}).get('tooltip', '')
 
 def read_utility_lists(path):
     """
@@ -70,44 +62,44 @@ def read_utility_lists(path):
         pass
     return result
 
+def find_executables(include=None):
+    """Yield a sequence of (potential) utilities.
+
+    The unique identifier is a relative path from the `LNP/Utilities/` dir.
+    This sequence is *before* any items are excluded.
+    """
+    if include is None:
+        # User include patterns, useful eg on Linux without set file extensions
+        include = []
+    patterns = ['*.jar', '*.sh']
+    if lnp.os == 'win':
+        patterns = ['*.jar', '*.exe', '*.bat']
+    for root, dirnames, filenames in os.walk(paths.get('utilities')):
+        if lnp.os == 'osx':
+            for dirname in dirnames:
+                if any(fnmatch(dirname, p) for p in ['*.app'] + include):
+                    # OS X application bundles are really directories
+                    yield os.path.relpath(os.path.join(root, dirname),
+                                          paths.get('utilities'))
+        for filename in filenames:
+            if any(fnmatch(filename, p) for p in patterns + include):
+                yield os.path.relpath(os.path.join(root, filename),
+                                      paths.get('utilities'))
+
 def read_utilities():
     """Returns a list of utility programs."""
-    read_metadata()
+    metadata = read_metadata()
     exclusions = read_utility_lists(paths.get('utilities', 'exclude.txt'))
     exclusions.extend(
         [u for u in metadata.keys() if metadata[u]['title'] == 'EXCLUDE'])
     # Allow for an include list of filenames that will be treated as valid
     # utilities. Useful for e.g. Linux, where executables rarely have
-    # extensions.
+    # extensions.  Also accepts glob patterns for filename (not path).
     inclusions = read_utility_lists(paths.get('utilities', 'include.txt'))
     inclusions.extend(
         [u for u in metadata.keys() if metadata[u]['title'] != 'EXCLUDE'])
-    progs = []
-    patterns = ['*.jar']  # Java applications
-    if sys.platform in ['windows', 'win32']:
-        patterns.append('*.exe')  # Windows executables
-        patterns.append('*.bat')  # Batch files
-    else:
-        patterns.append('*.sh')  # Shell scripts for Linux and OS X
-    for root, dirnames, filenames in os.walk(paths.get('utilities')):
-        if sys.platform == 'darwin':
-            for dirname in dirnames:
-                if (fnmatch.fnmatch(dirname, '*.app') and
-                        dirname not in exclusions):
-                    # OS X application bundles are really directories
-                    progs.append(os.path.relpath(
-                        os.path.join(root, dirname),
-                        paths.get('utilities')))
-        for filename in filenames:
-            if ((
-                    any(fnmatch.fnmatch(filename, p) for p in patterns) or
-                    filename in inclusions) and
-                    filename not in exclusions):
-                progs.append(os.path.relpath(
-                    os.path.join(root, filename),
-                    paths.get('utilities')))
-
-    return sorted(progs)
+    return sorted(util for util in find_executables(inclusions)
+                  if not any(fnmatch(util, ex) for ex in exclusions))
 
 def toggle_autorun(item):
     """
@@ -127,12 +119,10 @@ def load_autorun():
     """Loads autorun settings."""
     lnp.autorun = []
     try:
-        for line in open(
-                paths.get('utilities', 'autorun.txt'),
-                encoding='utf-8'):
-            if line.endswith('\n'):
-                line = line[:-1]
-            lnp.autorun.append(line)
+        with open(paths.get('utilities', 'autorun.txt'),
+                  encoding='utf-8') as file:
+            for line in file:
+                lnp.autorun.append(line.rstrip('\n'))
     except IOError:
         pass
 
