@@ -20,7 +20,7 @@ def read_hacks():
         except IOError:
             log.debug(init_file + '_PyLNP.init not found.')
     for h in get_hacks().values():
-        f.pop('enabled', None)
+        h.pop('enabled', None)
         if h['command'] in hacklines:
             h['enabled'] = True
 
