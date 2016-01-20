@@ -289,8 +289,13 @@ def update_savegames():
 def can_rebuild(log_file, strict=True):
     """Test if user can exactly rebuild a raw folder, returning a bool."""
     if not os.path.isfile(log_file):
+        log.w('Cannot change graphics without log: {}'.format(log_file))
         return not strict
-    graphic_ok = logged_graphics(log_file) in [k[0] for k in read_graphics()]
+    # Graphics dirname can change, and later part of manifest title is
+    # more often a size or author than part of the name.
+    names = [(pack, get_title(pack), get_title(pack).split(' ')[0])
+             for pack in [k[0] for k in read_graphics()]]
+    graphic_ok = any(logged_graphics(log_file) in n for n in names)
     if graphic_ok and mods.can_rebuild(log_file, strict=strict):
         return True
     log.i('Components unavailable to rebuild raws in ' +

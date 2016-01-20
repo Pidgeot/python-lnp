@@ -347,6 +347,7 @@ def update_raw_dir(path, gfx=('', '')):
 
 def add_graphics(gfx):
     """Adds graphics to the mod merge in baselines/temp."""
+    from . import graphics
     gfx_raws = paths.get('graphics', gfx, 'raw')
     for root, _, files in os.walk(gfx_raws):
         dst = paths.get('baselines', 'temp', 'raw',
@@ -357,7 +358,7 @@ def add_graphics(gfx):
             shutil.copy2(os.path.join(root, f), dst)
     with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
               'a') as f:
-        f.write('graphics/' + gfx + '\n')
+        f.write('graphics/{}\n'.format(graphics.get_title(gfx).split(' ')[0]))
     log.i('{} graphics added (small mod compatibility risk)'.format(gfx))
 
 def can_rebuild(log_file, strict=True):
