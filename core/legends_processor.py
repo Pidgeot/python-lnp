@@ -78,7 +78,8 @@ def choose_region_map():
 def create_archive():
     """Creates a legends archive, or zips the xml if files are missing."""
     pattern = paths.get('df', '-'.join(get_region_info()) + '-')
-    l = [pattern + 'legends.xml', pattern + 'world_history.txt',
+    worldgen = paths.get('df', get_region_info()[0] + '-world_gen_param.txt')
+    l = [pattern + 'legends.xml', pattern + 'world_history.txt', worldgen,
          choose_region_map(), pattern + 'world_sites_and_pops.txt']
     if os.path.isfile(pattern + 'legends_plus.xml'):
         l.append(pattern + 'legends_plus.xml')
@@ -101,11 +102,11 @@ def move_files():
     pattern = paths.get('df', '-'.join(get_region_info()))
     region = get_region_info()[0]
     dirname = get_region_info()[0] + '_legends_exports'
-    if os.path.isdir(os.path.join(lnp.BASEDIR, 'User Generated Content')):
-        dirname = os.path.join(
-            lnp.BASEDIR, 'User Generated Content', dirname, 'Legends')
+    if os.path.isdir(paths.get('root', 'User Generated Content')):
+        dirname = paths.get(
+            'root', 'User Generated Content', 'Legends', dirname)
         if not os.path.isdir(dirname):
-            os.mkdir(dirname)
+            os.makedirs(dirname)
     else:
         dirname = paths.get('df', dirname)
     for site_map in glob.glob(pattern + '-site_map-*'):
