@@ -102,7 +102,10 @@ def move_files():
     region = get_region_info()[0]
     dirname = get_region_info()[0] + '_legends_exports'
     if os.path.isdir(os.path.join(lnp.BASEDIR, 'User Generated Content')):
-        dirname = os.path.join(lnp.BASEDIR, 'User Generated Content', dirname)
+        dirname = os.path.join(
+            lnp.BASEDIR, 'User Generated Content', dirname, 'Legends')
+        if not os.path.isdir(dirname):
+            os.mkdir(dirname)
     else:
         dirname = paths.get('df', dirname)
     for site_map in glob.glob(pattern + '-site_map-*'):
