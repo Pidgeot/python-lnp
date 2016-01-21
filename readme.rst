@@ -536,6 +536,12 @@ executed by DFHack, and a tooltip. The ``dfhack`` object should contain
 subobjects where the title is used as the name of the key for a subobject,
 and the subobject itself contains two keys: ``command`` and ``tooltip``.
 
+The ``enabled`` and ``file`` keys are optional; ``file`` may be any of
+"dfhack" (default), "onLoad", or "onMapLoad" and if "enabled" is ``true``
+the command will be saved to ``<file>_PyLNP.init`` and executed by DFHack
+at the appropriate time.  See the `DFHack docs on init files
+<https://dfhack.readthedocs.org/en/stable/docs/Core.html#init-files>_.
+
 Example::
 
     "dfhack": {
@@ -546,6 +552,8 @@ Example::
         "Performance Tweaks": {
             "command": "repeat -time 3 months -command cleanowned x",
             "tooltip": "regularly confiscates worn clothes and old items"
+            "enabled": true,
+            "file": "onMapLoad"
         }
     }
 

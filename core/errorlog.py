@@ -42,14 +42,17 @@ class CaptureStream(object):
         if not self.outfile:
             self.outfile = open(
                 paths.get('root', self.name+'.txt'), 'w', encoding='utf-8')
-        if sys.version_info[0] == 2:
+        self.outfile.write(
             # For Python3: pylint:disable=undefined-variable
-            self.outfile.write(unicode(string))
-        else:
-            self.outfile.write(string)
-        self.outfile.flush()
+            unicode(string) if sys.version_info[0] == 2 else string)
+        self.flush()
         if self.tee:
             return self.stream.write(string)
+
+    def flush(self):
+        """Flushes the output file."""
+        if self.outfile is not None:
+            self.outfile.flush()
 
     def hook(self):
         """Replaces the named stream with the redirected stream."""
