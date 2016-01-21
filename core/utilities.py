@@ -134,9 +134,9 @@ def scan_normal_dir(root, dirnames, filenames):
     include = read_utility_lists(paths.get('utilities', 'include.txt'))
     include += [u for u in metadata if metadata[u]['title'] != 'EXCLUDE']
     if lnp.os == 'osx':
-        # OS X application bundles are really directories
+        # OS X application bundles are really directories, and always end .app
         for dirname in dirnames:
-            if any_match(dirname, ['*.app'] + include, exclude):
+            if any_match(dirname, ['*.app'], exclude):
                 yield os.path.relpath(os.path.join(root, dirname),
                                       paths.get('utilities'))
     for filename in filenames:
