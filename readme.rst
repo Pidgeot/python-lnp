@@ -612,7 +612,9 @@ from the directory containing the manifest, not just the filename
 (unless the file is in the same directory as the manifest, of course).
 
 The utility lists any files that match the include pattern, but do not match
-any exclude patterns.  This should be a single file (per OS) per utility.
+any exclude patterns.  This should usually be a single file (per OS) per utility.
+Multiple files *can* be matched under a single manifest, and so long as the
+"title" field is not set they will display by filename.  All other metadata is shared.
 
 For Linux and OXS, the "launch_with_terminal" option denotes that the utility
 requires launching from a terminal.  This option does nothing on Windows.

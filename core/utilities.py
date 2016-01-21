@@ -62,11 +62,13 @@ def get_title(path):
     PyLNP.json settings."""
     config = manifest_for(path)
     if config is not None:
-        return config.get_string('title')
-    metadata = read_metadata()
-    if os.path.basename(path) in metadata:
-        if metadata[os.path.basename(path)]['title']:
-            return metadata[os.path.basename(path)]['title']
+        if config.get_string('title'):
+            return config.get_string('title')
+    else:
+        metadata = read_metadata()
+        if os.path.basename(path) in metadata:
+            if metadata[os.path.basename(path)]['title']:
+                return metadata[os.path.basename(path)]['title']
     result = path
     if lnp.config.get_bool('hideUtilityPath'):
         result = os.path.basename(result)
@@ -109,8 +111,12 @@ def scan_manifest_dir(root):
     if len(utils) < 1:
         log.w(m_path + ' manifest include/exclude matched no utilities!')
     if len(utils) > 1:
-        log.w('Multiple paths matched by include/exclude patterns in {}: {}'
-              .format(m_path, utils))
+        if config.get_string('title'):
+            log.w('Multiple paths matched by include/exclude patterns '
+                  'in {}: {}, with single title!'.format(m_path, utils))
+        else:
+            log.i('Multiple utilities under {}, titles are filenames.'
+                  .format(m_path))
     yield from utils
 
 def any_match(filename, include, exclude):
