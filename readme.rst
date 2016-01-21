@@ -598,23 +598,15 @@ Utility manifests include the same keys as content manifests, as well as
 the following utility-specific options::
 
     {
-        "exe_include_win": "My Util.exe",
-        "exe_include_osx": "My Util.app",
-        "exe_include_linux": "launcher.sh",
-        "exe_exclude_patterns": ["lib*", "backup.bat"],
+        "win_exe": "My Util.exe",
+        "osx_exe": "path/to/My Util.app",
+        "linux_exe": "another/path/launcher.sh",
         "launch_with_terminal": false,
     }
 
-Each operating system can have a seperate "include" string, which is passed to
-`glob.glob() <https://docs.python.org/3/library/glob.html>`_.  Recursive patterns
-with ``**`` are *not* supported.  Note that this pattern must match the path
-from the directory containing the manifest, not just the filename
-(unless the file is in the same directory as the manifest, of course).
-
-The utility lists any files that match the include pattern, but do not match
-any exclude patterns.  This should usually be a single file (per OS) per utility.
-Multiple files *can* be matched under a single manifest, and so long as the
-"title" field is not set they will display by filename.  All other metadata is shared.
+The utility for each OS is configured as the relative path from the manifest
+directory to the file, including intermediate directory names and the filename.
+**This must be an exact match**, or the utility will not be found by PyLNP!
 
 For Linux and OXS, the "launch_with_terminal" option denotes that the utility
 requires launching from a terminal.  This option does nothing on Windows.

@@ -102,22 +102,10 @@ def read_utility_lists(path):
 def scan_manifest_dir(root):
     """Yields the configured utility (or utilities) from root and subdirs."""
     m_path = os.path.relpath(root, paths.get('utilities'))
-    config = manifest.get_cfg('utilities', m_path)
-    pattern = config.get_string('exe_include_' + lnp.os)
-    exclude = config.get_string('exe_exclude_patterns')
-
-    utils = [u for u in glob.glob(pattern)
-             if not any(fnmatch(u, p) for p in exclude)]
-    if len(utils) < 1:
-        log.w(m_path + ' manifest include/exclude matched no utilities!')
-    if len(utils) > 1:
-        if config.get_string('title'):
-            log.w('Multiple paths matched by include/exclude patterns '
-                  'in {}: {}, with single title!'.format(m_path, utils))
-        else:
-            log.i('Multiple utilities under {}, titles are filenames.'
-                  .format(m_path))
-    yield from utils
+    util = manifest.get_cfg('utilities', m_path).get_string(lnp.os + '_exe')
+    if not os.path.isfile(os.path.join(root, util)):
+        log.w('Utility not found:  {}'.format(os.path.join(m_path, util)))
+    yield os.path.join(m_path, util)
 
 def any_match(filename, include, exclude):
     """Return True if at least one pattern matches the filename, or False."""

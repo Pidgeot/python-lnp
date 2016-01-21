@@ -56,10 +56,9 @@ def get_cfg(content_type, item):
         }
     if content_type == 'utilities':
         default_config.update({
-            'exe_include_win': '',
-            'exe_include_osx': '',
-            'exe_include_linux': '',
-            'exe_exclude_patterns': [],
+            'win_exe': '',
+            'osx_exe': '',
+            'linux_exe': '',
             'launch_with_terminal': False,
             })
     manifest = paths.get(content_type, item, 'manifest.json')
