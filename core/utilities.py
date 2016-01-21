@@ -1,16 +1,36 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Utility management."""
+"""Utility management.
+
+There are now two seperate metadata systems:
+ - the manifest system, which applies to each dir with a manifest (and subdirs)
+ - the global system, which applies to everything else
+
+Utilities are uniformly and uniquely identified by the relative path
+from `LNP/Utilities/` to the executable file.
+
+Metadata for each is found by looking back up the pach for a manifest, and
+in the global metadata if one is not found.
+
+Utilities are found by walking down from the base dir.
+
+For each dir, if a manifest is found it and all it's subdirs are only analysed
+by the manifest system.  TODO: details here.
+Otherwise, each file (and on osx, dir) is matched against standard patterns
+and user include patterns.  Any matches that do not also match a user exclude
+pattern are added to the list of identified utilities.
+
+"""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys
+import glob
 import os
 import re
 from fnmatch import fnmatch
 # pylint:disable=redefined-builtin
 from io import open
 
-from . import paths
+from . import log, manifest, paths
 from .launcher import open_folder
 from .lnp import lnp
 
@@ -26,14 +46,26 @@ def read_metadata():
         metadata[fname] = {'title': title, 'tooltip': tooltip}
     return metadata
 
+def manifest_for(path):
+    """Returns the JsonConfiguration from manifest for the given utility,
+    or None if no manifest exists."""
+    while path:
+        path = os.path.dirname(path)
+        if os.path.isfile(os.path.join(
+                paths.get('utilities'), path, 'manifest.json')):
+            return manifest.get_cfg('utilities', path)
+
 def get_title(path):
     """
     Returns a title for the given utility. If an non-blank override exists, it
     will be used; otherwise, the filename will be manipulated according to
     PyLNP.json settings."""
+    manifest = manifest_for(path)
+    if manifest is not None:
+        return manifest.get_string('title')
     metadata = read_metadata()
     if os.path.basename(path) in metadata:
-        if metadata[os.path.basename(path)]['title'] != '':
+        if metadata[os.path.basename(path)]['title']:
             return metadata[os.path.basename(path)]['title']
     result = path
     if lnp.config.get_bool('hideUtilityPath'):
@@ -44,6 +76,9 @@ def get_title(path):
 
 def get_tooltip(path):
     """Returns the tooltip for the given utility, or an empty string."""
+    manifest = manifest_for(path)
+    if manifest is not None:
+        return manifest.get_string('tooltip')
     return read_metadata().get(os.path.basename(path), {}).get('tooltip', '')
 
 def read_utility_lists(path):
@@ -54,52 +89,71 @@ def read_utility_lists(path):
     """
     result = []
     try:
-        util_file = open(path, encoding='utf-8')
-        for line in util_file:
-            for match in re.findall(r'\[(.+?)\]', line):
-                result.append(match)
+        with open(path, encoding='utf-8') as util_file:
+            for line in util_file:
+                for match in re.findall(r'\[(.+?)\]', line):
+                    result.append(match)
     except IOError:
         pass
     return result
 
-def find_executables(include=None):
-    """Yield a sequence of (potential) utilities.
+def scan_manifest_dir(root):
+    """Yields the configured utility (or utilities) from root and subdirs."""
+    m_path = os.path.relpath(root, paths.get('utilities'))
+    config = manifest.get_cfg('utilities', m_path)
+    pattern = config.get_string('exe_include_' + lnp.os)
+    exclude = config.get_string('exe_exclude_patterns')
 
-    The unique identifier is a relative path from the `LNP/Utilities/` dir.
-    This sequence is *before* any items are excluded.
+    utils = [u for u in glob.glob(pattern)
+             if not any(fnmatch(u, p) for p in exclude)]
+    if len(utils) < 1:
+        log.w(m_path + ' manifest include/exclude matched no utilities!')
+    if len(utils) > 1:
+        log.w('Multiple paths matched by include/exclude patterns in {}: {}'
+              .format(m_path, utils))
+    yield from utils
+
+def any_match(filename, include, exclude):
+    """Return True if at least one pattern matches the filename, or False."""
+    return any(fnmatch(filename, p) for p in include) and \
+        not any(fnmatch(filename, p) for p in exclude)
+
+def scan_normal_dir(root, dirnames, filenames):
+    """Yields candidate utilities in the given root directory.
+
+    Allow for an include list of filenames that will be treated as valid
+    utilities. Useful for e.g. Linux, where executables rarely have
+    extensions.  Also accepts glob patterns for filename (not path).
     """
-    if include is None:
-        # User include patterns, useful eg on Linux without set file extensions
-        include = []
+    metadata = read_metadata()
     patterns = ['*.jar', '*.sh']
     if lnp.os == 'win':
         patterns = ['*.jar', '*.exe', '*.bat']
-    for root, dirnames, filenames in os.walk(paths.get('utilities')):
-        if lnp.os == 'osx':
-            for dirname in dirnames:
-                if any(fnmatch(dirname, p) for p in ['*.app'] + include):
-                    # OS X application bundles are really directories
-                    yield os.path.relpath(os.path.join(root, dirname),
-                                          paths.get('utilities'))
-        for filename in filenames:
-            if any(fnmatch(filename, p) for p in patterns + include):
-                yield os.path.relpath(os.path.join(root, filename),
+    exclude = read_utility_lists(paths.get('utilities', 'exclude.txt'))
+    exclude += [u for u in metadata if metadata[u]['title'] == 'EXCLUDE']
+    include = read_utility_lists(paths.get('utilities', 'include.txt'))
+    include += [u for u in metadata if metadata[u]['title'] != 'EXCLUDE']
+    if lnp.os == 'osx':
+        # OS X application bundles are really directories
+        for dirname in dirnames:
+            if any_match(dirname, ['*.app'] + include, exclude):
+                yield os.path.relpath(os.path.join(root, dirname),
                                       paths.get('utilities'))
+    for filename in filenames:
+        if any_match(filename, patterns + include, exclude):
+            yield os.path.relpath(os.path.join(root, filename),
+                                  paths.get('utilities'))
 
 def read_utilities():
-    """Returns a list of utility programs."""
-    metadata = read_metadata()
-    exclusions = read_utility_lists(paths.get('utilities', 'exclude.txt'))
-    exclusions.extend(
-        [u for u in metadata.keys() if metadata[u]['title'] == 'EXCLUDE'])
-    # Allow for an include list of filenames that will be treated as valid
-    # utilities. Useful for e.g. Linux, where executables rarely have
-    # extensions.  Also accepts glob patterns for filename (not path).
-    inclusions = read_utility_lists(paths.get('utilities', 'include.txt'))
-    inclusions.extend(
-        [u for u in metadata.keys() if metadata[u]['title'] != 'EXCLUDE'])
-    return sorted(util for util in find_executables(inclusions)
-                  if not any(fnmatch(util, ex) for ex in exclusions))
+    """Returns a sorted list of utility programs."""
+    utilities = []
+    for root, dirs, files in os.walk(paths.get('utilities')):
+        if 'manifest.json' in files:
+            utilities.extend(scan_manifest_dir(root))
+            dirs[:] = []  # Don't run normal scan in subdirs
+        else:
+            utilities.extend(scan_normal_dir(root, dirs, files))
+    return sorted(utilities, key=lambda u: get_title(u))
 
 def toggle_autorun(item):
     """

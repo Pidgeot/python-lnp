@@ -54,8 +54,17 @@ def get_cfg(content_type, item):
         'title': '',
         'tooltip': ''
         }
+    if content_type == 'utilities':
+        default_config.update({
+            'exe_include_win': '',
+            'exe_include_osx': '',
+            'exe_include_linux': '',
+            'exe_exclude_patterns': [],
+            'launch_with_terminal': False,
+            })
     manifest = paths.get(content_type, item, 'manifest.json')
-    return json_config.JSONConfiguration(manifest, default_config, warn=False)
+    return json_config.JSONConfiguration(
+        manifest, default_config, warn=(content_type != 'utilities'))
 
 def exists(content_type, item):
     """Returns a bool, that the given item has a manifest.
