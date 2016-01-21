@@ -583,8 +583,39 @@ with which the content is incompatible.  When playing a version outside the
 range, which is open ended if not specified, the content is hidden.  In the
 example, the mod will be visible for DF 40.03 and all later versions.
 
-More complex - but usually unnecessary - options are documented in
-``core/manifests.py``.
+Finally, "df_incompatible_versions" is a list of incompatible DF versions,
+and "needs_dfhack" will hide the content if DFHack is not activated -
+so use it only when the content is *totally* useless without DFHack.
+
+Utility Manifests
+-----------------
+Utilities may also have manifests, which may be placed in any directory
+and disable the global utilities configuration for anything in that or a
+lower directory.  They thus offer utility authors control over the presentation
+of their work.
+
+Utility manifests include the same keys as content manifests, as well as
+the following utility-specific options::
+
+    {
+        "exe_include_win": "My Util.exe",
+        "exe_include_osx": "My Util.app",
+        "exe_include_linux": "launcher.sh",
+        "exe_exclude_patterns": ["lib*", "backup.bat"],
+        "launch_with_terminal": false,
+    }
+
+Each operating system can have a seperate "include" string, which is passed to
+`glob.glob() <https://docs.python.org/3/library/glob.html>`_.  Recursive patterns
+with ``**`` are *not* supported.  Note that this pattern must match the path
+from the directory containing the manifest, not just the filename
+(unless the file is in the same directory as the manifest, of course).
+
+The utility lists any files that match the include pattern, but do not match
+any exclude patterns.  This should be a single file (per OS) per utility.
+
+For Linux and OXS, the "launch_with_terminal" option denotes that the utility
+requires launching from a terminal.  This option does nothing on Windows.
 
 Directory structure
 ===================
@@ -717,6 +748,10 @@ installed - especially useful for TwbT text tiles.
 
 Utilities
 ---------
+Utilities may be configured by a manifest (see above), which will override
+the global configuration described here for the directory the manifest is in,
+and all subdirectories.  This also disables autodetection 'below' a manifest.
+
 Each platform will auto-detect different file types in the Utilities pane.
 
 Windows:

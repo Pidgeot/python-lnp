@@ -60,9 +60,9 @@ def get_title(path):
     Returns a title for the given utility. If an non-blank override exists, it
     will be used; otherwise, the filename will be manipulated according to
     PyLNP.json settings."""
-    manifest = manifest_for(path)
-    if manifest is not None:
-        return manifest.get_string('title')
+    config = manifest_for(path)
+    if config is not None:
+        return config.get_string('title')
     metadata = read_metadata()
     if os.path.basename(path) in metadata:
         if metadata[os.path.basename(path)]['title']:
@@ -76,9 +76,9 @@ def get_title(path):
 
 def get_tooltip(path):
     """Returns the tooltip for the given utility, or an empty string."""
-    manifest = manifest_for(path)
-    if manifest is not None:
-        return manifest.get_string('tooltip')
+    config = manifest_for(path)
+    if config is not None:
+        return config.get_string('tooltip')
     return read_metadata().get(os.path.basename(path), {}).get('tooltip', '')
 
 def read_utility_lists(path):
@@ -153,7 +153,7 @@ def read_utilities():
             dirs[:] = []  # Don't run normal scan in subdirs
         else:
             utilities.extend(scan_normal_dir(root, dirs, files))
-    return sorted(utilities, key=lambda u: get_title(u))
+    return sorted(utilities, key=get_title)
 
 def toggle_autorun(item):
     """
