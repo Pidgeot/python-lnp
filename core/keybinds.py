@@ -129,12 +129,14 @@ def delete_keybinds(filename):
 
 def get_installed_file():
     """Returns the name of the currently installed keybindings."""
-    with open(paths.get('df', 'data', 'init', 'interface.txt'),
-              encoding='cp437') as f:
-        installed = _sdl_keybinds_serialiser(f.readlines())
+    van, cfg = _sdl_get_binds(paths.get('df', 'data', 'init', 'interface.txt'))
+    installed = dict()
+    for k, v in cfg.items():
+        if v != van[k]:
+            installed[k] = v
     for fname in helpers.get_text_files(paths.get('keybinds')):
         with open(fname, encoding='cp437') as f:
-            if installed == _sdl_keybinds_serialiser(f.readlines()):
+            if installed == dict(_sdl_keybinds_serialiser(f.readlines())):
                 return os.path.basename(fname)
 
     files = helpers.get_text_files(paths.get('keybinds'))
