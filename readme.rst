@@ -466,6 +466,7 @@ name (e.g. ``http://example.com/downloads/my_pack.zip`` gets downloaded as
 set.
 
 Example::
+
   "updates": {
     "updateMethod": "regex",
     "packVersion": "x.yy.zz r2",
@@ -518,6 +519,7 @@ name (e.g. ``http://example.com/downloads/my_pack.zip`` gets downloaded as
 set.
 
 Example::
+
   "updates": {
     "updateMethod": "json",
     "packVersion": "x.yy.zz r2",
@@ -539,8 +541,9 @@ and the subobject itself contains two keys: ``command`` and ``tooltip``.
 The ``enabled`` and ``file`` keys are optional; ``file`` may be any of
 "dfhack" (default), "onLoad", or "onMapLoad" and if "enabled" is ``true``
 the command will be saved to ``<file>_PyLNP.init`` and executed by DFHack
-at the appropriate time.  See the `DFHack docs on init files
-<https://dfhack.readthedocs.org/en/stable/docs/Core.html#init-files>_.
+at the appropriate time.  See the `DFHack docs on init files`__.
+
+.. __: https://dfhack.readthedocs.org/en/stable/docs/Core.html#init-files
 
 Example::
 
