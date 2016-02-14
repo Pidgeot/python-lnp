@@ -5,7 +5,11 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os, re
 from .dfraw import DFRaw
-from . import log
+from . import log, hacks
+
+if sys.version_info[0] == 3:
+    #pylint:disable=redefined-builtin
+    basestring = str
 
 # Markers to read certain settings correctly
 # pylint:disable=too-few-public-methods,too-many-instance-attributes,too-many-statements,too-many-arguments
@@ -327,6 +331,12 @@ _option_version_data = {
     'INVASION_MONSTER_CAP': ['0.42.01'],
 }
 
+def _option_item_to_value(item):
+    """Removes any validation expression from <item>."""
+    if not isinstance(item, basestring):
+        return item[0]
+    return item
+
 class DFConfiguration(object):
     """Reads and modifies Dwarf Fortress configuration textfiles."""
     def __init__(self, base_dir, df_info):
@@ -367,9 +377,11 @@ class DFConfiguration(object):
                 "IDLE"), init)
         self.create_option(
             "compressSaves", "COMPRESSED_SAVES", "YES", boolvals, init)
+        twbt_validate = hacks.is_dfhack_enabled
         printmodes = ["2D", "STANDARD"]
         if 'twbt' in df_info.variations:
-            printmodes += ["TWBT", "TWBT_LEGACY"]
+            printmodes += [
+                ("TWBT", twbt_validate), ("TWBT_LEGACY", twbt_validate)]
         self.create_option(
             "printmode", "PRINT_MODE", "2D", tuple(printmodes), init,
             'legacy' not in df_info.variations)
@@ -527,8 +539,23 @@ class DFConfiguration(object):
         if items is _disabled or items is _negated_bool:
             items = ("YES", "NO")
         if current not in items:
-            return items[0]
-        return items[(items.index(current) + 1) % len(items)]
+            for i in items:
+                if not isinstance(i, basestring) and i[0] == current:
+                    current = i
+                    break
+            else: #item not found
+                result = items[0]
+                return _option_item_to_value(result)
+
+        i = 1
+        while i < len(items):
+            result = items[(items.index(current) + i) % len(items)]
+            if isinstance(result, basestring):
+                break
+            if result[1]():
+                break
+            i = i + 1
+        return _option_item_to_value(result)
 
     def read_settings(self):
         """Read settings from known filesets. If fileset only contains one
