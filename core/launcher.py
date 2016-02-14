@@ -51,6 +51,10 @@ def get_df_executable():
 
 def run_df(force=False):
     """Launches Dwarf Fortress."""
+    validation_result = lnp.settings.validate_config()
+    if validation_result:
+        if not lnp.ui.on_invalid_config(validation_result):
+            return
     df_filename, spawn_terminal = get_df_executable()
 
     executable = paths.get('df', df_filename)

@@ -355,6 +355,7 @@ class DFConfiguration(object):
         self.files = dict()
         self.in_files = dict()
         self.missing_fields = []
+        self.validate = dict()
 
         self.df_info = df_info
         # init.txt
@@ -362,7 +363,7 @@ class DFConfiguration(object):
         init = (os.path.join(base_dir, 'data', 'init', 'init.txt'),)
         self.create_option(
             "truetype", "TRUETYPE", "YES", boolvals, init,
-            'legacy' not in df_info.variations)
+            'legacy' not in df_info.variations, self.validate_truetype)
         self.create_option("sound", "SOUND", "YES", boolvals, init)
         self.create_option("volume", "VOLUME", "255", None, init)
         self.create_option("introMovie", "INTRO", "YES", boolvals, init)
@@ -378,10 +379,12 @@ class DFConfiguration(object):
         self.create_option(
             "compressSaves", "COMPRESSED_SAVES", "YES", boolvals, init)
         twbt_validate = hacks.is_dfhack_enabled
+        twbt_validate_error = "DFHack is required for TWBT."
         printmodes = ["2D", "STANDARD"]
         if 'twbt' in df_info.variations:
             printmodes += [
-                ("TWBT", twbt_validate), ("TWBT_LEGACY", twbt_validate)]
+                ("TWBT", twbt_validate, twbt_validate_error),
+                ("TWBT_LEGACY", twbt_validate, twbt_validate_error)]
         self.create_option(
             "printmode", "PRINT_MODE", "2D", tuple(printmodes), init,
             'legacy' not in df_info.variations)
@@ -440,7 +443,8 @@ class DFConfiguration(object):
             os.path.join(base_dir, 'raw', 'objects', a) for a in aquifer_files))
 
     def create_option(
-            self, name, field_name, default, values, files, cond=True):
+            self, name, field_name, default, values, files, cond=True,
+            validate=None):
         """
         Register an option to write back for changes. If the field_name has
         been registered before, no changes are made. Fields that do not exist in
@@ -473,6 +477,10 @@ class DFConfiguration(object):
             A boolean which must be True in order for the field to be valid.
             If False, this will merely register the field name mapping.
             Defaults to True.
+          validate
+            An optional function(x) which may be used to validate a value
+            for this field. Will be sent the value as parameter, must return a
+            tuple (ok, errormsg).
         """
 
         # Don't allow re-registration of a known field
@@ -482,6 +490,7 @@ class DFConfiguration(object):
         self.field_names[name] = field_name
         if not (cond and self.version_has_option(field_name)):
             return
+        self.validate[name] = validate
         self.settings[name] = default
         self.options[name] = values
         if field_name != name:
@@ -556,6 +565,57 @@ class DFConfiguration(object):
                 break
             i = i + 1
         return _option_item_to_value(result)
+
+    def validate_truetype(self, value):
+        """Validates the Truetype setting."""
+        if self.settings["printmode"] != "2D":
+            return (True, "")
+        if value in self.options["truetype"]:
+            return (True, "")
+        try:
+            int(value)
+        except ValueError:
+            return (False, "Must be YES, NO or a number")
+        return (True, "")
+
+    def validate_config(self):
+        """
+        Checks if all settings are set to valid values.
+        Returns a list of strings with error messages.
+        """
+        errors = []
+        for f in self.settings:
+            fn = self.field_names[f]
+            current = self.settings[f]
+            if self.validate[f]:
+                ok, error = self.validate[f](current)
+                if not ok:
+                    errors.append(
+                        "Invalid value %s for option %s: %s" % (
+                            current, fn, error))
+                continue
+            items = self.options[f]
+            if items is None:
+                continue
+            if items is _disabled or items is _negated_bool:
+                items = ("YES", "NO")
+            if current not in items:
+                for i in items:
+                    if not isinstance(i, basestring) and i[0] == current:
+                        current = i
+                        break
+                else:
+                    errors.append(
+                        "Invalid value %s for option %s: Unknown value" % (
+                            current, fn))
+                    continue
+            if isinstance(current, basestring):
+                continue
+            if not current[1]():
+                errors.append(
+                    "Invalid value %s for option %s: %s" % (
+                        current[0], fn, current[2]))
+        return errors
 
     def read_settings(self):
         """Read settings from known filesets. If fileset only contains one

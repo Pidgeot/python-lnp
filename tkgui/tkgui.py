@@ -253,6 +253,14 @@ class TkGui(object):
         """Called by the main LNP class if a program is already running."""
         ConfirmRun(self.root, path, is_df)
 
+    @staticmethod
+    def on_invalid_config(errors):
+        """Notifies a user about an invalid configuration."""
+        return messagebox.askyesno(
+            message='Some problems were found with your current '
+            'configuration:\n\n' + '\n'.join(errors) + '\n\nRun DF anyway?',
+            title='Invalid configuration', icon='warning', default='no')
+
     def create_tab(self, class_, caption):
         """
         Creates a new tab and adds it to the main Notebook.
