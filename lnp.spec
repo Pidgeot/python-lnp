@@ -4,6 +4,19 @@
 # will be able to use non-GIF images, we only include the appropriate version.
 import sys
 
+if sys.platform == 'win32':
+    try:
+      from PyInstaller.utils.winmanifest import Manifest
+    except ImportError:
+      # Newer PyInstaller versions
+      from PyInstaller.utils.win32.winmanifest import Manifest
+    Manifest.old_toprettyxml = Manifest.toprettyxml
+    def new_toprettyxml(self, indent="  ", newl=os.linesep, encoding="UTF-8"):
+      s = self.old_toprettyxml(indent, newl, encoding)
+      d = indent + '<dpiAware>false</dpiAware>' + newl
+      return s.replace('</assembly>',d+'</assembly>')
+    Manifest.toprettyxml = new_toprettyxml
+
 try:
     from PIL import Image, ImageTk
     has_PIL = True

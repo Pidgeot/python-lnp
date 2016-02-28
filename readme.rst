@@ -121,7 +121,11 @@ slightly less pretty logo.
     details.
 
   you most likely need to install the `Microsoft Visual C++ 2008
-  redistributable package`__
+  redistributable package`__.
+
+  The user interface library used by PyLNP has issues with high-DPI displays.
+  For builds made after February 28, 2016, Windows should automatically scale
+  the PyLNP window to match your DPI settings, thereby avoiding these problems.
 
 .. __: http://www.microsoft.com/en-us/download/details.aspx?id=29
 
