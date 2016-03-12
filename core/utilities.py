@@ -57,6 +57,7 @@ def manifest_for(path):
         if os.path.isfile(os.path.join(
                 paths.get('utilities'), path, 'manifest.json')):
             return manifest.get_cfg('utilities', path)
+    return None
 
 def get_title(path):
     """
@@ -72,9 +73,9 @@ def get_title(path):
         if os.path.basename(path) in metadata:
             if metadata[os.path.basename(path)]['title']:
                 return metadata[os.path.basename(path)]['title']
-    result = path
-    if lnp.config.get_bool('hideUtilityPath'):
-        result = os.path.basename(result)
+    head, result = os.path.split(path)
+    if not lnp.config.get_bool('hideUtilityPath'):
+        result = os.path.join(os.path.basename(head), result)
     if lnp.config.get_bool('hideUtilityExt'):
         result = os.path.splitext(result)[0]
     return result
@@ -106,9 +107,10 @@ def scan_manifest_dir(root):
     """Yields the configured utility (or utilities) from root and subdirs."""
     m_path = os.path.relpath(root, paths.get('utilities'))
     util = manifest.get_cfg('utilities', m_path).get_string(lnp.os + '_exe')
-    if not os.path.isfile(os.path.join(root, util)):
+    if manifest.is_compatible('utilities', m_path):
+        if os.path.isfile(os.path.join(root, util)):
+            return os.path.join(m_path, util)
         log.w('Utility not found:  {}'.format(os.path.join(m_path, util)))
-    yield os.path.join(m_path, util)
 
 def any_match(filename, include, exclude):
     """Return True if at least one pattern matches the filename, or False."""
@@ -146,7 +148,9 @@ def read_utilities():
     utilities = []
     for root, dirs, files in os.walk(paths.get('utilities')):
         if 'manifest.json' in files:
-            utilities.extend(scan_manifest_dir(root))
+            util = scan_manifest_dir(root)
+            if util is not None:
+                utilities.append(util)
             dirs[:] = []  # Don't run normal scan in subdirs
         else:
             utilities.extend(scan_normal_dir(root, dirs, files))
