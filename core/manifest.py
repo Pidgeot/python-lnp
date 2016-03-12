@@ -54,6 +54,13 @@ def get_cfg(content_type, item):
         'title': '',
         'tooltip': ''
         }
+    if content_type == 'utilities':
+        default_config.update({
+            'win_exe': '',
+            'osx_exe': '',
+            'linux_exe': '',
+            'launch_with_terminal': False,
+            })
     manifest = paths.get(content_type, item, 'manifest.json')
     return json_config.JSONConfiguration(manifest, default_config, warn=False)
 

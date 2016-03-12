@@ -600,8 +600,33 @@ with which the content is incompatible.  When playing a version outside the
 range, which is open ended if not specified, the content is hidden.  In the
 example, the mod will be visible for DF 40.03 and all later versions.
 
-More complex - but usually unnecessary - options are documented in
-``core/manifests.py``.
+Finally, "df_incompatible_versions" is a list of incompatible DF versions,
+and "needs_dfhack" will hide the content if DFHack is not activated -
+so use it only when the content is *totally* useless without DFHack.
+
+Utility Manifests
+-----------------
+Utilities may also have manifests, which may be placed in any directory
+and disable the global utilities configuration for anything in that or a
+lower directory.  They thus offer utility authors control over the presentation
+of their work.
+
+Utility manifests include the same keys as content manifests, as well as
+the following utility-specific options::
+
+    {
+        "win_exe": "My Util.exe",
+        "osx_exe": "path/to/My Util.app",
+        "linux_exe": "another/path/launcher.sh",
+        "launch_with_terminal": false,
+    }
+
+The utility for each OS is configured as the relative path from the manifest
+directory to the file, including intermediate directory names and the filename.
+**This must be an exact match**, or the utility will not be found by PyLNP!
+
+For Linux and OSX, the "launch_with_terminal" option denotes that the utility
+requires launching from a terminal.  This option does nothing on Windows.
 
 Directory structure
 ===================
@@ -734,6 +759,10 @@ installed - especially useful for TwbT text tiles.
 
 Utilities
 ---------
+Utilities may be configured by a manifest (see above), which will override
+the global configuration described here for the directory the manifest is in,
+and all subdirectories.  This also disables autodetection 'below' a manifest.
+
 Each platform will auto-detect different file types in the Utilities pane.
 
 Windows:
