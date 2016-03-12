@@ -608,7 +608,7 @@ The utility for each OS is configured as the relative path from the manifest
 directory to the file, including intermediate directory names and the filename.
 **This must be an exact match**, or the utility will not be found by PyLNP!
 
-For Linux and OXS, the "launch_with_terminal" option denotes that the utility
+For Linux and OSX, the "launch_with_terminal" option denotes that the utility
 requires launching from a terminal.  This option does nothing on Windows.
 
 Directory structure

@@ -62,8 +62,7 @@ def get_cfg(content_type, item):
             'launch_with_terminal': False,
             })
     manifest = paths.get(content_type, item, 'manifest.json')
-    return json_config.JSONConfiguration(
-        manifest, default_config, warn=(content_type != 'utilities'))
+    return json_config.JSONConfiguration(manifest, default_config, warn=False)
 
 def exists(content_type, item):
     """Returns a bool, that the given item has a manifest.

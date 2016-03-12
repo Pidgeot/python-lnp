@@ -15,15 +15,18 @@ in the global metadata if one is not found.
 Utilities are found by walking down from the base dir.
 
 For each dir, if a manifest is found it and all it's subdirs are only analysed
-by the manifest system.  TODO: details here.
-Otherwise, each file (and on osx, dir) is matched against standard patterns
-and user include patterns.  Any matches that do not also match a user exclude
-pattern are added to the list of identified utilities.
+by the manifest system.  See the README for how this works, and note that it
+is more structured as well as more powerful, slightly decreasing flexibility -
+for example mandating only one executable per platform, but specifying
+requirements for DFHack or a terminal.
 
+Otherwise, each file (and on OSX, dir) is matched against standard patterns
+and user include patterns.  Any matches that do not also match a user exclude
+pattern are added to the list of identified utilities.  This global config is
+found in some combination of include.txt, exclude.txt, and uilities.txt.
 """
 from __future__ import print_function, unicode_literals, absolute_import
 
-import glob
 import os
 import re
 from fnmatch import fnmatch
@@ -42,7 +45,7 @@ def read_metadata():
     """Read metadata from the utilities directory."""
     metadata = {}
     for e in read_utility_lists(paths.get('utilities', 'utilities.txt')):
-        fname, title, tooltip, *_ = e.split(':', 2) + ['', '']
+        fname, title, tooltip = (e.split(':', 2) + ['', ''])[:3]
         metadata[fname] = {'title': title, 'tooltip': tooltip}
     return metadata
 
