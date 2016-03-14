@@ -166,7 +166,7 @@ class UtilitiesTab(Tab):
         if len(self.proglist.selection()) == 0:
             return
         for item in self.proglist.selection():
-            launched_any = launched_any or utilities.open_readme(item)
+            launched_any = utilities.open_readme(item) or launched_any
         if not launched_any:
             messagebox.showinfo(
                 message='Readme not found for any of the selected utilities.',
