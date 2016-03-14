@@ -140,7 +140,7 @@ def get_installed_file():
             with open(fname, encoding='cp437') as f:
                 if installed == dict(_sdl_keybinds_serialiser(f.readlines())):
                     return os.path.basename(fname)
-    except:
+    except: #pylint: disable=bare-except
         # Baseline missing, or interface.txt is missing from baseline - use
         # plain file comparsion
         pass
