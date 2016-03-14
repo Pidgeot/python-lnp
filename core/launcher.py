@@ -170,13 +170,13 @@ def program_is_running(path, nonchild=False):
 
 def open_folder_idx(i):
     """Opens the folder specified by index i, as listed in PyLNP.json."""
-    open_folder(os.path.join(
+    open_file(os.path.join(
         paths.get('root'), lnp.config['folders'][i][1].replace(
             '<df>', paths.get('df'))))
 
 def open_savegames():
     """Opens the save game folder."""
-    open_folder(paths.get('save'))
+    open_file(paths.get('save'))
 
 def open_link_idx(i):
     """Opens the link specified by index i, as listed in PyLNP.json."""
@@ -187,15 +187,14 @@ def open_url(url):
     import webbrowser
     webbrowser.open(url)
 
-def open_folder(path):
+def open_file(path):
     """
-    Opens a folder in the system file manager.
+    Opens a file with the system default viewer for the respective file type.
 
     Params:
         path
-            The folder path to open.
+            The file path to open.
     """
-    # http://stackoverflow.com/q/6631299
     path = os.path.normpath(path)
     # pylint: disable=broad-except, bare-except
     try:
@@ -204,8 +203,8 @@ def open_folder(path):
         elif sys.platform.startswith('linux'):
             subprocess.check_call(['xdg-open', path])
         elif sys.platform in ['windows', 'win32']:
-            subprocess.check_call(['explorer', path])
+            os.startfile(path)
         else:
-            log.e('Unknown platform, cannot open folder in system file manager')
+            log.e('Unknown platform, cannot open file')
     except:
-        log.e('Could not open folder ' + path + ' in system file manager')
+        log.e('Could not open file ' + path)

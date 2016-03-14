@@ -4,14 +4,14 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import os, shutil, glob
-from .launcher import open_folder
+from .launcher import open_file
 from .lnp import lnp
 from . import colors, df, paths, baselines, mods, log, manifest
 from .dfraw import DFRaw
 
 def open_graphics():
     """Opens the graphics pack folder."""
-    open_folder(paths.get('graphics'))
+    open_file(paths.get('graphics'))
 
 def get_title(pack):
     """Returns the pack title; either per manifest or from dirname."""
@@ -304,7 +304,7 @@ def can_rebuild(log_file, strict=True):
 
 def open_tilesets():
     """Opens the tilesets folder."""
-    open_folder(paths.get('tilesets'))
+    open_file(paths.get('tilesets'))
 
 def read_tilesets():
     """Returns a tuple of tileset files."""

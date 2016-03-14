@@ -11,10 +11,12 @@ if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
     from tkinter.ttk import *
+    import tkinter.messagebox as messagebox
 else:
     # pylint:disable=import-error
     from Tkinter import *
     from ttk import *
+    import tkMessageBox as messagebox
 # pylint:enable=wrong-import-order
 
 from . import controls
@@ -58,10 +60,15 @@ class UtilitiesTab(Tab):
                 'column': 0, 'row': 3, 'columnspan': 2, 'sticky': "nsew"})
         self.configure_proglist()
 
+        open_readme = controls.create_trigger_button(
+            progs, 'Open Readme', 'Open the readme file associated with the '+
+            'selected utilities.', self.open_readmes)
+        open_readme.grid(column=0, row=4, columnspan=2, sticky="nsew")
+
         refresh = controls.create_trigger_button(
             progs, 'Refresh List', 'Refresh the list of utilities',
             self.read_utilities)
-        refresh.grid(column=0, row=4, columnspan=2, sticky="nsew")
+        refresh.grid(column=0, row=5, columnspan=2, sticky="nsew")
 
     def configure_proglist(self):
         """Configures the treeview."""
@@ -153,3 +160,14 @@ class UtilitiesTab(Tab):
             #utility_path = self.proglist.item(item, 'text')
             launcher.run_program(paths.get('utilities', item))
 
+    def open_readmes(self):
+        """Attempts to open the readme for the selected utilities."""
+        launched_any = False
+        if len(self.proglist.selection()) == 0:
+            return
+        for item in self.proglist.selection():
+            launched_any = launched_any or utilities.open_readme(item)
+        if not launched_any:
+            messagebox.showinfo(
+                message='Readme not found for any of the selected utilities.',
+                title='No readmes found')

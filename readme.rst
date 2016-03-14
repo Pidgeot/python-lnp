@@ -619,6 +619,7 @@ the following utility-specific options::
         "osx_exe": "path/to/My Util.app",
         "linux_exe": "another/path/launcher.sh",
         "launch_with_terminal": false,
+        "readme": "My_Readme.txt"
     }
 
 The utility for each OS is configured as the relative path from the manifest
@@ -627,6 +628,13 @@ directory to the file, including intermediate directory names and the filename.
 
 For Linux and OSX, the "launch_with_terminal" option denotes that the utility
 requires launching from a terminal.  This option does nothing on Windows.
+
+The readme entry points to a readme file for your utility. It may point to any
+file type; the operating system will try to open it using the default viewer for
+that file type, so common types like TXT and PDF are more likely to work. If
+absent, PyLNP will try to open the first file it encounters which starts with
+either "README", "READ ME", or "READ_ME", using case-insensitive matching (so
+"readme.txt" will still be found).
 
 Directory structure
 ===================

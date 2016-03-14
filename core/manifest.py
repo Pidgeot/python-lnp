@@ -13,7 +13,7 @@ def get_cfg(content_type, item):
 
     Params:
         content_type
-            'graphics' or 'mods'
+            'graphics', 'mods', or 'utilities'
         item
             content identifier path segment, such that
             the full path is 'LNP/content_type/item/*'
@@ -60,6 +60,7 @@ def get_cfg(content_type, item):
             'osx_exe': '',
             'linux_exe': '',
             'launch_with_terminal': False,
+            'readme': '',
             })
     manifest = paths.get(content_type, item, 'manifest.json')
     return json_config.JSONConfiguration(manifest, default_config, warn=False)

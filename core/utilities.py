@@ -34,12 +34,12 @@ from fnmatch import fnmatch
 from io import open
 
 from . import log, manifest, paths
-from .launcher import open_folder
+from .launcher import open_file
 from .lnp import lnp
 
 def open_utils():
     """Opens the utilities folder."""
-    open_folder(paths.get('utilities'))
+    open_file(paths.get('utilities'))
 
 def read_metadata():
     """Read metadata from the utilities directory."""
@@ -185,3 +185,28 @@ def save_autorun():
     """Saves autorun settings."""
     with open(paths.get('utilities', 'autorun.txt'), 'w') as autofile:
         autofile.write("\n".join(lnp.autorun))
+
+def open_readme(path):
+    """
+    Opens the readme associated with the utility <path>, if one exists.
+    Returns False if no readme was found; otherwise True.
+    """
+    readme = None
+    log.d('Finding readme for ' + path)
+    m = manifest_for(path)
+    path = paths.get('utilities', os.path.dirname(path))
+    if m:
+        readme = m.get('readme', None)
+    if not readme:
+        dir_contents = os.listdir(path)
+        for s in sorted(dir_contents):
+            if re.match('read( |_)?me', s, re.IGNORECASE):
+                readme = s
+                break
+        else:
+            log.d('No readme found')
+            return False
+    readme = os.path.join(path, readme)
+    log.d('Found readme at ' + readme)
+    open_file(readme)
+    return True
