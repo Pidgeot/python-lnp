@@ -40,6 +40,13 @@ class DFHackTab(Tab):
                 hacks.is_dfhack_enabled()]).pack(
                     side=TOP, expand=N, fill=X, pady=4)
 
+        controls.create_trigger_button(
+            self,
+            'Open DFHack Readme',
+            'Open the DFHack documentation in your browser.',
+            hacks.open_dfhack_readme
+            ).pack(side=TOP, expand=N, fill=X, pady=4)
+
         hacks_frame = controls.create_control_group(self, 'Available hacks')
         hacks_frame.pack(side=TOP, expand=Y, fill=BOTH)
         Grid.columnconfigure(hacks_frame, 0, weight=1)
