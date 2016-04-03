@@ -25,7 +25,7 @@ def check_update():
     """Checks for updates using the URL specified in PyLNP.json."""
     if not updates_configured():
         return
-    if lnp.userconfig.get_number('updateDays') == -1:
+    if lnp.userconfig.get_value('updateDays', -1) == -1:
         return
     if lnp.userconfig.get_number('nextUpdate') < time.time():
         t = threading.Thread(target=perform_update_check)
