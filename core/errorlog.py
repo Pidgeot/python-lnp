@@ -11,7 +11,7 @@ from . import paths
 class CaptureStream(object):
     """ Redirects output to a file-like object to an internal list as well as a
     file."""
-    def __init__(self, name, tee=True):
+    def __init__(self, name, add_header=False, tee=True):
         """
         Constructor for CaptureStream. Call redirect() to start redirection.
 
@@ -19,6 +19,11 @@ class CaptureStream(object):
             name
                 The name of the sys stream to capture (e.g. 'stdout' for
                 sys.stdout)
+            add_header
+                If True, extra information will be printed to the file when it
+                is initially written to. The text contains the PyLNP version
+                number, the OS it's running on, and whether it's a compiled
+                executable.
             tee
                 If True, forward writing to the original stream after
                 capturing. If False, the redirected stream is not used.
@@ -26,6 +31,7 @@ class CaptureStream(object):
         self.softspace = 0
         self.lines = []
         self.name = name
+        self.add_header = add_header
         self.tee = tee
         self.stream = getattr(sys, name)
         self.outfile = None
@@ -42,6 +48,11 @@ class CaptureStream(object):
         if not self.outfile:
             self.outfile = open(
                 paths.get('root', self.name+'.txt'), 'w', encoding='utf-8')
+            if self.add_header:
+                from  .lnp import VERSION, lnp
+                self.outfile.write(
+                    "Running PyLNP {} (OS: {}, Compiled: {})\n".format(
+                        VERSION, lnp.os, lnp.os == lnp.bundle))
         self.outfile.write(
             # For Python3: pylint:disable=undefined-variable
             unicode(string) if sys.version_info[0] == 2 else string)
@@ -67,7 +78,7 @@ def start():
     out.hook()
     err.hook()
 
-out = CaptureStream('stdout', not hasattr(sys, 'frozen'))
-err = CaptureStream('stderr', not hasattr(sys, 'frozen'))
+out = CaptureStream('stdout')
+err = CaptureStream('stderr', True)
 
 # vim:expandtab
