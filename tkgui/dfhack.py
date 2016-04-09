@@ -18,6 +18,7 @@ else:
 # pylint:enable=wrong-import-order
 
 from . import binding, controls
+from .layout import GridLayouter
 from .tab import Tab
 
 from core import hacks
@@ -32,20 +33,20 @@ class DFHackTab(Tab):
             self.hacklist.focus(self.hacklist.get_children()[0])
 
     def create_controls(self):
-        controls.create_trigger_option_button(
-            self, 'Enable DFHack',
+        button_group = controls.create_control_group(self, None, True)
+        button_group.pack(side=TOP, fill=BOTH, expand=N)
+        grid = GridLayouter(2)
+        grid.add(controls.create_trigger_option_button(
+            button_group, 'Enable DFHack',
             'Controls whether DFHack should be enabled. Turning DFHack off '
             'also disables addons like TwbT.',
             self.toggle_dfhack, 'use_dfhack', lambda v: ('NO', 'YES')[
-                hacks.is_dfhack_enabled()]).pack(
-                    side=TOP, expand=N, fill=X, pady=4)
+                hacks.is_dfhack_enabled()]))
 
-        controls.create_trigger_button(
-            self,
-            'Open DFHack Readme',
+        grid.add(controls.create_trigger_button(
+            button_group, 'Open DFHack Readme',
             'Open the DFHack documentation in your browser.',
-            hacks.open_dfhack_readme
-            ).pack(side=TOP, expand=N, fill=X, pady=4)
+            hacks.open_dfhack_readme))
 
         hacks_frame = controls.create_control_group(self, 'Available hacks')
         hacks_frame.pack(side=TOP, expand=Y, fill=BOTH)

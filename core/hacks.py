@@ -6,14 +6,15 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys, os, shutil, filecmp, collections
 # pylint:disable=redefined-builtin
 from io import open
-from . import paths, launcher, log
+from . import paths, log
 from .lnp import lnp
 
 def open_dfhack_readme():
     """Open the DFHack Readme in the default browser."""
+    from . import launcher
     index = paths.get('df', 'hack', 'docs', 'index.html')
     if os.path.isfile(index):
-        launcher.open_url(index)
+        launcher.open_file(index)
     else:
         launcher.open_url('https://dfhack.readthedocs.org')
 
