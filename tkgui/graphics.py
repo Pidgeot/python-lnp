@@ -19,7 +19,7 @@ else:
     import tkMessageBox as messagebox
 # pylint:enable=wrong-import-order
 
-from . import controls, binding
+from . import controls, binding, tkhelpers
 from .layout import GridLayouter
 from .tab import Tab
 
@@ -205,8 +205,7 @@ class GraphicsTab(Tab):
     def install_graphics(self):
         """Installs a graphics pack."""
         if len(self.graphicpacks.curselection()) != 0:
-            from .tkgui import TkGui
-            if not TkGui.check_vanilla_raws():
+            if not tkhelpers.check_vanilla_raws():
                 return
             gfx_dir = self.packs[int(self.graphicpacks.curselection()[0])]
             result = None
@@ -266,8 +265,7 @@ class GraphicsTab(Tab):
 
     def simplify_graphics(self):
         """Removes unnecessary files from graphics packs."""
-        from .tkgui import TkGui
-        if not TkGui.check_vanilla_raws():
+        if not tkhelpers.check_vanilla_raws():
             return
         self.read_graphics()
         for pack in self.graphics.get():

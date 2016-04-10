@@ -21,7 +21,7 @@ else:
     import tkSimpleDialog as simpledialog
 # pylint:enable=wrong-import-order
 
-from . import controls, binding
+from . import controls, binding, tkhelpers
 from .layout import GridLayouter
 from .tab import Tab
 
@@ -234,6 +234,8 @@ class OptionsTab(Tab):
 
     def load_keybinds(self):
         """Replaces keybindings with selected file."""
+        if not tkhelpers.check_vanilla_raws():
+            return
         listbox = self.keybinding_files
         items = listbox.curselection()
         if len(items) > 0:

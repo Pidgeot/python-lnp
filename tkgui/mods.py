@@ -21,9 +21,10 @@ else:
     import tkSimpleDialog as simpledialog
 # pylint:enable=wrong-import-order
 
-from . import controls
+from . import controls, tkhelpers
 from .layout import GridLayouter
 from .tab import Tab
+
 from core import mods
 
 # pylint:disable=too-many-public-methods
@@ -191,8 +192,7 @@ class ModsTab(Tab):
 
     def perform_merge(self):
         """Merge the selected mods, with background color for user feedback."""
-        from .tkgui import TkGui
-        if not TkGui.check_vanilla_raws():
+        if not tkhelpers.check_vanilla_raws():
             return
         colors = ['pale green', 'yellow', 'orange', 'red', 'white']
         result = mods.merge_all_mods(self.installed)
@@ -228,8 +228,7 @@ class ModsTab(Tab):
     @staticmethod
     def simplify_mods():
         """Simplify mods; runs on startup if called directly by button."""
-        from .tkgui import TkGui
-        if not TkGui.check_vanilla_raws():
+        if not tkhelpers.check_vanilla_raws():
             return
         m, f = mods.simplify_mods()
         messagebox.showinfo(
