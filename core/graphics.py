@@ -231,7 +231,7 @@ def patch_inits(gfx_dir):
 def simplify_graphics():
     """Removes unnecessary files from all graphics packs."""
     for pack in read_graphics():
-        simplify_pack(pack)
+        simplify_pack(pack[0])
 
 def simplify_pack(pack):
     """Removes unnecessary files from one graphics pack."""
