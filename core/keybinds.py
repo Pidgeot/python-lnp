@@ -49,7 +49,7 @@ def _sdl_get_binds(filename):
     """Return serialised keybindings for vanilla and for the given file."""
     try:
         vanfile = os.path.join(
-            baselines.find_vanilla(), 'data', 'init', 'interface.txt')
+            baselines.find_vanilla(False), 'data', 'init', 'interface.txt')
     except TypeError:
         log.w("Can't load or change keybinds with missing baseline!")
         return None, None
