@@ -9,24 +9,6 @@ import sys
 from .dfraw import DFRaw
 from . import log
 
-def identify_folder_name(base, name):
-    """
-    Allows folder names to be lowercase on case-sensitive systems.
-    Returns "base/name" where name is lowercase if the lower case version
-    exists and the standard case version does not.
-
-    Params:
-        base
-            The path containing the desired folder.
-        name
-            The standard case name of the desired folder.
-    """
-    normal = os.path.join(base, name)
-    lower = os.path.join(base, name.lower())
-    if os.path.isdir(lower) and not os.path.isdir(normal):
-        return lower
-    return normal
-
 def get_text_files(directory):
     """
     Returns a list of .txt files in <directory>.

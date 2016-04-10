@@ -4,21 +4,38 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import os
-from . import helpers
 
 __paths = {}
+
+def _identify_folder_name(base, name):
+    """
+    Allows folder names to be lowercase on case-sensitive systems.
+    Returns "base/name" where name is lowercase if the lower case version
+    exists and the standard case version does not.
+
+    Params:
+        base
+            The path containing the desired folder.
+        name
+            The standard case name of the desired folder.
+    """
+    normal = os.path.join(base, name)
+    lower = os.path.join(base, name.lower())
+    if os.path.isdir(lower) and not os.path.isdir(normal):
+        return lower
+    return normal
 
 
 def register(name, *path_elms, **kwargs):
     """Registers a path constructed by <path_elms> under <name>.
     If multiple path elements are given, the last
-    element will undergo case correction (see helpers.identify_folder_name).
+    element will undergo case correction (see _identify_folder_name).
     kwargs:
         allow_create
             If True, the registered path will be created if it does not already
             exist. Defaults to True."""
     if len(path_elms) > 1:
-        __paths[name] = helpers.identify_folder_name(os.path.join(
+        __paths[name] = _identify_folder_name(os.path.join(
             *path_elms[:-1]), path_elms[-1])
     else:
         __paths[name] = path_elms[0]
