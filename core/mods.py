@@ -60,7 +60,10 @@ def simplify_pack(pack):
     # contain a complete set of raws, and vanilla files which are missing
     # should not be inserted.  We thus add empty files to fill out the set in
     # cases where several files are removed.
+    # pylint: disable=redefined-variable-type
     i = baselines.simplify_pack(pack, 'mods')
+    if not i:
+        i = 0
     if i > 10:
         log.w('Reducing mod "{}": assume vanilla files were omitted '
               'deliberately'.format(pack))
