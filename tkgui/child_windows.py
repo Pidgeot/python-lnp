@@ -240,7 +240,7 @@ class UpdateWindow(ChildWindow):
             str(lnp.new_version) + '). Download now?').grid(
                 column=0, row=0)
         Label(f, text='You can control the frequency of update checks from the '
-              'menu File > Check for Updates.').grid(column=0, row=1)
+              'menu Options > Check for Updates.').grid(column=0, row=1)
 
         f.pack(fill=BOTH, expand=Y)
 
