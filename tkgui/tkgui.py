@@ -261,6 +261,25 @@ class TkGui(object):
             'configuration:\n\n' + '\n'.join(errors) + '\n\nRun DF anyway?',
             title='Invalid configuration', icon='warning', default='no')
 
+    def on_request_update_permission(self, interval):
+        """Asks the user if update checking should be performed."""
+        if interval == 0:
+            days = 'launch'
+        elif interval == 1:
+            days = 'day'
+        else:
+            days = str(interval)+' days'
+        result = messagebox.askyesno(
+            message='This pack can automatically check for updates. The author '
+            'of this pack suggests checking every '+days+'.\n\nAllow automatic '
+            'update checks? You can change this behavior at any time from '
+            'Options > Check for Updates.', title='Update checks',
+            icon='question', default='yes')
+        if result:
+            self.updateDays.set(interval)
+        else:
+            self.updateDays.set(-1)
+
     def create_tab(self, class_, caption):
         """
         Creates a new tab and adds it to the main Notebook.
@@ -364,8 +383,8 @@ class TkGui(object):
             menu_options.add_cascade(
                 menu=menu_updates, label='Check for updates')
             options = [
-                "every launch", "every day", "every 3 days", "every 7 days",
-                "every 14 days", "every 30 days", "Never"]
+                "Every launch", "Every day", "Every 3 days", "Every 7 days",
+                "Every 14 days", "Every 30 days", "Never"]
             daylist = [0, 1, 3, 7, 14, 30, -1]
             self.updateDays.set(lnp.userconfig.get_number('updateDays'))
             for i, o in enumerate(options):

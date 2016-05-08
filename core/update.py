@@ -25,6 +25,12 @@ def check_update():
     """Checks for updates using the URL specified in PyLNP.json."""
     if not updates_configured():
         return
+    if not lnp.userconfig.has_value('updateDays'):
+        interval = lnp.config.get_value('updates/defaultInterval', -1)
+        if interval != -1 and lnp.ui.on_request_update_permission(interval):
+            next_update(interval)
+        else:
+            next_update(-1)
     if lnp.userconfig.get_value('updateDays', -1) == -1:
         return
     if lnp.userconfig.get_number('nextUpdate') < time.time():

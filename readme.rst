@@ -424,6 +424,21 @@ updates are available. *All update methods require this field to be specified.*
 If you do not want update checking, remove the ``updates`` object, or set
 ``updateMethod`` to a blank string.
 
+By default, the user must explicitly enable automatic checking for updates.
+However, pack authors may add an additional field to the ``updates`` object,
+``defaultInterval`` which specifies the suggested number of days between each
+check. If this field is present in PyLNP.json, and the user has not previously
+chosen an update frequency, the user will be prompted to enable updates when
+they first launch the program, using the specified frequency as the default.
+
+It is strongly recommended that you use one of the options already visible in
+the program (0, 1, 3, 7, 14, 30).
+
+Note that the time for the next update check is determined when the option is
+set, i.e. when the user makes a choice. If you default to 0 days (every
+launch), the first check will happen immediately after the user has been
+prompted.
+
 ``dffd``
 ~~~~~~~~
 For files hosted on http://dffd.bay12games.com/, simply add a field ``dffdID``
@@ -564,7 +579,7 @@ Example::
         }
     }
 
-Content Manifests
+Content manifests
 =================
 Raw-based content - ie graphics packs or mods - may be
 distributed with a file titled ``manifest.json`` in their root directory.
@@ -604,7 +619,7 @@ Finally, "df_incompatible_versions" is a list of incompatible DF versions,
 and "needs_dfhack" will hide the content if DFHack is not activated -
 so use it only when the content is *totally* useless without DFHack.
 
-Utility Manifests
+Utility manifests
 -----------------
 Utilities may also have manifests, which may be placed in any directory
 and disable the global utilities configuration for anything in that or a

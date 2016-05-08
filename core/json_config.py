@@ -75,6 +75,10 @@ class JSONConfiguration(object):
         except KeyError:
             return default
 
+    def has_value(self, path):
+        """Returns True if the path exists in the configuration."""
+        return self.get_value(path) is not None
+
     def get_value(self, path, default=None):
         """
         Retrieves a value from the configuration.
