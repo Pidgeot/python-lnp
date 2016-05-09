@@ -13,8 +13,11 @@ if sys.platform == 'win32':
     Manifest.old_toprettyxml = Manifest.toprettyxml
     def new_toprettyxml(self, indent="  ", newl=os.linesep, encoding="UTF-8"):
       s = self.old_toprettyxml(indent, newl, encoding)
-      d = indent + '<dpiAware>false</dpiAware>' + newl
-      return s.replace('</assembly>',d+'</assembly>')
+      # Make sure we only modify our own manifest
+      if 'name="lnp"' in s:
+        d = indent + '<dpiAware>false</dpiAware>' + newl
+        s =s.replace('</assembly>',d+'</assembly>')
+      return s
     Manifest.toprettyxml = new_toprettyxml
 
 try:
