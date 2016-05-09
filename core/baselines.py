@@ -77,43 +77,30 @@ def simplify_pack(pack, folder):
         False if an exception occurred
         None if folder is empty
     """
-    valid_dirs = ('graphics', 'mods', 'baselines')
-    if folder not in valid_dirs:
+    if folder not in ('graphics', 'mods', 'baselines'):
         return False
     log.i('Simplifying {}: {}'.format(folder, pack))
-    files_before = sum(len(f) for (_, _, f) in os.walk(paths.get(folder, pack)))
+    packdir = paths.get(folder, pack)
+    files_before = sum(len(f) for _, _, f in os.walk(packdir))
     if files_before == 0:
         return None
-    keep = [os.path.join('raw', '*'),
-            os.path.join('data', 'speech', '*'),
-            os.path.join('data', 'art', '*'),
-            os.path.join('data', 'init', '*')]
+    keep = [('raw',), ('data', 'speech')]
     if folder == 'graphics':
-        keep = [os.path.join('raw', 'objects', '*'),
-                os.path.join('raw', 'graphics', '*'),
-                os.path.join('data', 'art', '*'),
-                os.path.join('data', 'init', '*')]
-    if folder == 'mods':
-        keep = [os.path.join('raw', '*'),
-                os.path.join('data', 'speech', '*')]
-    keep += ['manifest.json']
-    for root, _, files in os.walk(paths.get(folder, pack)):
-        d = paths.get(folder, pack)
-        for k in files:
-            f = os.path.join(root, k)
-            if not any(fnmatch.fnmatch(f, os.path.join(d, p)) for p in keep):
-                os.remove(f)
+        keep = [('raw', 'objects'), ('raw', 'graphics')]
     if folder != 'mods':
-        init_files = ('colors', 'd_init', 'init', 'overrides')
-        init_dir = paths.get(folder, pack, 'data', 'init')
-        for f in os.listdir(init_dir):
-            if not any(p in f for p in init_files):
-                full_path = os.path.join(init_dir, f)
-                if os.path.isdir(full_path):
-                    os.rmdir(full_path)
-                else:
-                    os.remove(full_path)
-    files_after = sum(len(f) for (_, _, f) in os.walk(paths.get(folder, pack)))
+        keep += [('data', 'art')] + [
+            ('data', 'init', f + '.txt') for f in
+            ('colors', 'd_init', 'init', 'overrides')]
+    keep = [os.path.join(*k) for k in keep]
+    for root, _, files in os.walk(packdir):
+        for k in files:
+            if k == 'manifest.json' or 'readme' in k.lower():
+                continue
+            f = os.path.join(root, k)
+            if not any(fnmatch.fnmatch(f, os.path.join(packdir, pattern, '*'))
+                       for pattern in keep):
+                os.remove(f)
+    files_after = sum(len(f) for _, _, f in os.walk(packdir))
     log.v('Removed {} files'.format(files_before - files_after))
     return files_before - files_after
 
