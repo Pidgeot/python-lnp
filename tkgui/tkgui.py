@@ -560,8 +560,8 @@ class TkGui(object):
         messagebox.showinfo(
             title='About', message="PyLNP "+VERSION +" - Lazy Newb Pack Python "
             "Edition\n\nPort by Pidgeot\nContributions by PeridexisErrant, "
-            "rx80, dricus, James Morgensen, jecowa\n\nOriginal program: LucasUP, "
-            "TolyK/aTolyK")
+            "rx80, dricus, James Morgensen, jecowa\n\n"
+            "Original program: LucasUP, TolyK/aTolyK")
 
     @staticmethod
     def cycle_option(field):
