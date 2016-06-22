@@ -3,8 +3,7 @@
 """Helper functions."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import os, glob
-import sys
+import sys, os, glob, platform
 
 from .dfraw import DFRaw
 from . import log
@@ -80,3 +79,7 @@ def get_resource(filename):
         return os.path.join(sys._MEIPASS, filename)
     else:
         return os.path.abspath(filename)
+
+def os_is_64bit():
+    """Returns true if running on a 64-bit OS."""
+    return platform.machine().endswith('64')
