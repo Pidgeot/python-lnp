@@ -21,7 +21,7 @@ else:
 
 from . import controls
 
-from core import errorlog, launcher, paths, update
+from core import errorlog, launcher, paths, terminal, update
 from core.dfraw import DFRaw
 from core.lnp import lnp
 
@@ -69,6 +69,10 @@ class ChildWindow(object):
         self.top.focus_set()
         self.top.protocol("WM_DELETE_WINDOW", on_cancel)
         self.top.wait_window(self.top)
+
+    def close(self):
+        """Called when the window is closed."""
+        self.top.destroy()
 
 class DualTextWindow(ChildWindow):
     """Window containing a row of buttons and two scrollable text fields."""
@@ -272,9 +276,6 @@ class UpdateWindow(ChildWindow):
             title='Download in progress')
         self.close()
 
-    def close(self):
-        """Called when the window is closed."""
-        self.top.destroy()
 
 class ConfirmRun(ChildWindow):
     """Confirmation dialog for already running programs."""
@@ -321,6 +322,37 @@ class ConfirmRun(ChildWindow):
             launcher.run_program(self.path)
         self.close()
 
+class TerminalSelector(ChildWindow):
+    """Used to select a terminal for launcing child programs on Linux."""
+    def __init__(self, parent):
+        super(TerminalSelector, self).__init__(parent, 'Configure terminal')
+        self.make_modal(self.top.destroy)
+
+    def create_controls(self, container):
+        f = Frame(container)
+        Label(f, text='Please select which terminal should be used when '
+              'launching programs requiring it (e.g. DFHack).').grid(
+                  column=0, row=0)
+        self.term = StringVar(self.parent)
+        cur = terminal.get_configured_terminal()
+        try:
+            self.term.set(cur.name)
+        except NameError:
+            pass
+        terminals = [t.name for t in terminal.get_valid_terminals()]
+        OptionMenu(f, self.term, self.term.get(), *terminals).grid(
+            column=0, row=1)
+
+        Label(f, text='If you use a custom command, put it here. Use $ as a '
+              'placeholder for the actual command.').grid(column=0, row=2)
+        self.cmd = StringVar()
+        self.cmd.set(terminal.get_custom_terminal_cmd())
+        Entry(f, textvariable=self.cmd).grid(column=0, row=3, sticky='nsew')
+
+        f.pack(fill=BOTH, expand=Y)
+        Button(container, text='OK', command=self.close).pack(side=BOTTOM)
+
     def close(self):
-        """Called when the window is closed."""
-        self.top.destroy()
+        terminal.configure_terminal(self.term.get())
+        terminal.configure_custom_terminal(self.cmd.get())
+        super(TerminalSelector, self).close()

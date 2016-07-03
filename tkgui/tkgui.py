@@ -49,7 +49,7 @@ except ImportError:  # Some PIL installations live outside of the PIL package
 
 from . import controls, binding
 from .child_windows import LogWindow, InitEditor, SelectDF, UpdateWindow
-from .child_windows import ConfirmRun
+from .child_windows import ConfirmRun, TerminalSelector
 
 from .options import OptionsTab
 from .graphics import GraphicsTab
@@ -139,6 +139,15 @@ class TkGui(object):
 
         if not self.ensure_df():
             return
+
+        if lnp.os == 'linux' and not terminal.terminal_configured():
+            self.root.withdraw()
+            messagebox.showinfo(
+                'PyLNP',
+                'You need to configure a terminal to allow things like DFHack '
+                'to work correctly. Press OK to do this now.')
+            self.configure_terminal()
+            self.root.deiconify()
 
         root.option_add('*tearOff', FALSE)
         windowing = root.tk.call('tk', 'windowingsystem')
@@ -437,21 +446,9 @@ class TkGui(object):
         self.do_reload = True
         self.exit_program()
 
-    @staticmethod
-    def configure_terminal():
+    def configure_terminal(self):
         """Configures the command used to launch a terminal on Linux."""
-        v = simpledialog.askstring(
-            "Terminal", "When using DFHack, PyLNP must be able to spawn an "
-            "independent terminal.\nThis is normally done using a shell "
-            "script, xdg-terminal.\nIf this doesn't work for you, you can "
-            "provide an alternate command to do this here.\nUse $ as a "
-            "placeholder for the command to run inside the terminal; if "
-            "omitted, the command will simply be appended.\n"
-            "To use the default script, leave this blank.\n"
-            "See the PyLNP readme for more information.",
-            initialvalue=lnp.userconfig['terminal'])
-        if v is not None:
-            terminal.configure_custom_terminal(v)
+        TerminalSelector(self.root)
 
     def configure_updates(self, days):
         """Sets the number of days until next update check."""

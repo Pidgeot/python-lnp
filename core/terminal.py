@@ -34,6 +34,14 @@ def get_configured_terminal():
             return t
     return CustomTerminal
 
+def terminal_configured():
+    """Returns True if a terminal has been set up."""
+    return lnp.userconfig.get('terminal_type') is not None
+
+def get_custom_terminal_cmd():
+    """Returns the command used by the custom terminal."""
+    return lnp.userconfig.get_string('terminal')
+
 def get_valid_terminals():
     """Gets the terminals that are available on this system."""
     result = []
@@ -263,7 +271,7 @@ class CustomTerminal(LinuxTerminal):
 
     @staticmethod
     def get_command_line():
-        cmd = lnp.userconfig.get_string('terminal')
+        cmd = get_custom_terminal_cmd()
         if cmd:
             cmd = cmd.split(' ')
         return cmd
