@@ -164,6 +164,15 @@ class PyLNP(object):
         self.autorun = []
         utilities.load_autorun()
 
+        if self.args.terminal_test_parent:
+            from . import terminal
+            sys.exit(terminal.terminal_test_parent(
+                self.args.terminal_test_parent))
+        if self.args.terminal_test_child:
+            from . import terminal
+            sys.exit(terminal.terminal_test_child(
+                self.args.terminal_test_child))
+
     def initialize_df(self):
         """Initializes the DF folder and related variables."""
         from . import df
@@ -219,6 +228,12 @@ class PyLNP(object):
             help='Override DF/DFHack executable name')
         parser.add_argument(
             '--release-prep', action='store_true',
+            help=argparse.SUPPRESS)
+        parser.add_argument(
+            '--terminal-test-parent', nargs=1,
+            help=argparse.SUPPRESS)
+        parser.add_argument(
+            '--terminal-test-child', nargs=1,
             help=argparse.SUPPRESS)
         return parser.parse_known_args()[0]
 

@@ -61,6 +61,7 @@ from .mods import ModsTab
 from core.helpers import get_resource
 from core.lnp import lnp, VERSION
 from core import df, launcher, log, paths, update, mods, download, baselines
+from core import terminal
 
 has_PNG = has_PIL or (TkVersion >= 8.6)  # Tk 8.6 supports PNG natively
 
@@ -450,7 +451,7 @@ class TkGui(object):
             "See the PyLNP readme for more information.",
             initialvalue=lnp.userconfig['terminal'])
         if v is not None:
-            launcher.configure_terminal(v)
+            terminal.configure_custom_terminal(v)
 
     def configure_updates(self, days):
         """Sets the number of days until next update check."""

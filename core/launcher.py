@@ -8,18 +8,8 @@ import os
 import subprocess
 import copy
 
-from .helpers import get_resource
 from .lnp import lnp
-from . import hacks, paths, log
-
-def get_configured_terminal():
-    """Retrieves the configured terminal command."""
-    return lnp.userconfig.get_string('terminal')
-
-def configure_terminal(new_path):
-    """Configures the command used to launch a terminal on Linux."""
-    lnp.userconfig['terminal'] = new_path
-    lnp.userconfig.save_data()
+from . import hacks, paths, log, terminal
 
 def toggle_autoclose():
     """Toggle automatic closing of the UI when launching DF."""
@@ -72,17 +62,6 @@ def run_df(force=False):
         sys.exit()
     return result
 
-def get_terminal_launcher():
-    """Returns a command prefix to launch a program in a new terminal."""
-    if sys.platform == 'darwin':
-        return ['open', '-a', 'Terminal.app']
-    elif sys.platform.startswith('linux'):
-        override = get_configured_terminal()
-        if override:
-            return override.split(' ')
-        return [get_resource('xdg-terminal')]
-    raise Exception('No terminal launcher for platform: ' + sys.platform)
-
 def run_program(path, force=False, is_df=False, spawn_terminal=False):
     """
     Launches an external program.
@@ -110,13 +89,7 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
         # pylint:disable=redefined-variable-type
         run_args = path
         if spawn_terminal and not sys.platform.startswith('win'):
-            term = get_terminal_launcher()
-            if "$" in term:
-                cmd = [path if x == '$' else x for x in term]
-            else:
-                cmd = term + [path]
-            retcode = subprocess.call(cmd, cwd=workdir)
-            return retcode == 0
+            run_args = terminal.get_terminal_command(path)
         elif path.endswith('.jar'):  # Explicitly launch JAR files with Java
             run_args = ['java', '-jar', os.path.basename(path)]
         elif path.endswith('.app'):  # OS X application bundle
@@ -209,219 +182,4 @@ def open_file(path):
     except:
         log.e('Could not open file ' + path)
 
-def get_valid_terminals():
-    """Gets the terminals that are available on this system."""
-    def get_subclasses(c):
-        """Returns all subclasses of <c>, direct and indirect."""
-        result = []
-        for s in c.__subclasses__():
-            result.append(s)
-            result += get_subclasses(s)
-        return result
 
-    terminals = get_subclasses(LinuxTerminal)
-
-    for t in terminals:
-        log.d("Checking for terminal %s", t.name)
-        if t.detect():
-            log.d("Found terminal %s", t.name)
-
-class LinuxTerminal(object):
-    """
-    Class for detecting and launching using a dedicated terminal on Linux.
-    """
-
-    # Set this in subclasses to provide a label for the terminal.
-    name = "????"
-
-    @staticmethod
-    def detect():
-        """Detects if this terminal is available."""
-        pass
-
-    @staticmethod
-    def get_command_line():
-        """
-        Returns a subprocess-compatible command to launch a command with
-        this terminal.
-        If the command to be launched should go somewhere other than the end
-        of the command line, use $ to indicate the correct place.
-        """
-        pass
-
-# pylint: disable=missing-docstring, bare-except
-
-# Desktop environment-specific terminals
-class KDETerminal(LinuxTerminal):
-    name = "KDE"
-
-    @staticmethod
-    def detect():
-        return os.environ.get('KDE_FULL_SESSION', '') == 'true'
-
-    @staticmethod
-    def get_command_line():
-        s = subprocess.check_output(
-            ['kreadconfig', '--file', 'kdeglobals', '--group', 'General',
-             '--key', 'TerminalApplication', '--default', 'konsole'])
-        return ['nohup', s, '-e']
-
-class GNOMETerminal(LinuxTerminal):
-    name = "GNOME"
-
-    @staticmethod
-    def detect():
-        if os.environ.get('GNOME_DESKTOP_SESSION_ID', ''):
-            return True
-        FNULL = open(os.devnull, 'w')
-        try:
-            return subprocess.call(
-                [
-                    'dbus-send', '--print-reply', '--dest=org.freedesktop.DBus',
-                    '/org/freedesktop/DBus org.freedesktop.DBus.GetNameOwner',
-                    'string:org.gnome.SessionManager'
-                ], stdout=FNULL, stderr=FNULL) == 0
-        except:
-            return False
-        finally:
-            FNULL.close()
-
-    @staticmethod
-    def get_command_line():
-        term = subprocess.check_output([
-            'gconftool-2', '--get',
-            '/desktop/gnome/applications/terminal/exec'])
-        term_arg = subprocess.check_output([
-            'gconftool-2', '--get',
-            '/desktop/gnome/applications/terminal/exec_arg'])
-        return ['nohup', term, term_arg]
-
-class XfceTerminal(LinuxTerminal):
-    name = "Xfce"
-
-    @staticmethod
-    def detect():
-        try:
-            s = subprocess.check_output(
-                ['ps', '-eo', 'comm='], stderr=subprocess.STDOUT)
-            return 'xfce' in s
-        except:
-            return False
-
-    @staticmethod
-    def get_command_line():
-        return ['nohup', 'exo-open', '--launch', 'TerminalEmulator']
-
-class LXDETerminal(LinuxTerminal):
-    name = "LXDE"
-
-    @staticmethod
-    def detect():
-        if not os.environ.get('DESKTOP_SESSION', '') == 'LXDE':
-            return False
-        FNULL = open(os.devnull, 'w')
-        try:
-            return subprocess.call(
-                ['which', 'lxterminal'], stdout=FNULL, stderr=FNULL,
-                close_fds=True) == 0
-        except:
-            return False
-        finally:
-            FNULL.close()
-
-    @staticmethod
-    def get_command_line():
-        return ['nohup', 'lxterminal', '-e']
-
-class MateTerminal(LinuxTerminal):
-    name = "MATE"
-
-    @staticmethod
-    def detect():
-        if os.environ.get('MATE_DESKTOP_SESSION_ID', ''):
-            return True
-        FNULL = open(os.devnull, 'w')
-        try:
-            return subprocess.call(
-                [
-                    'dbus-send', '--print-reply', '--dest=org.freedesktop.DBus',
-                    '/org/freedesktop/DBus org.freedesktop.DBus.GetNameOwner',
-                    'string:org.mate.SessionManager'
-                ], stdout=FNULL, stderr=FNULL) == 0
-        except:
-            return False
-        finally:
-            FNULL.close()
-    @staticmethod
-    def get_command_line():
-        return ['nohup', 'mate-terminal', '-e']
-
-class i3Terminal(LinuxTerminal):
-    name = "i3"
-
-    @staticmethod
-    def detect():
-        return os.environ.get('DESKTOP_STARTUP_ID', '').startswith('i3/')
-
-    @staticmethod
-    def get_command_line():
-        return ['nohup', 'i3-sensible-terminal', '-e']
-
-# Generic terminals (rxvt, xterm, etc.)
-class rxvtTerminal(LinuxTerminal):
-    name = "rxvt/urxvt"
-
-    @staticmethod
-    def detect():
-        FNULL = open(os.devnull, 'w')
-        try:
-            if subprocess.call(
-                    ['which', 'urxvt'], stdout=FNULL, stderr=FNULL) == 0:
-                rxvtTerminal.exe = 'urxvt'
-                return True
-            if subprocess.call(
-                    ['which', 'rxvt'], stdout=FNULL, stderr=FNULL) == 0:
-                rxvtTerminal.exe = 'rxvt'
-                return True
-        except:
-            return False
-        finally:
-            FNULL.close()
-
-    @staticmethod
-    def get_command_line():
-        return ['nohup', rxvtTerminal.exe, '-e']
-
-class xtermTerminal(LinuxTerminal):
-    name = "xterm"
-
-    @staticmethod
-    def detect():
-        FNULL = open(os.devnull, 'w')
-        try:
-            return subprocess.call(
-                ['which', 'xterm'], stdout=FNULL, stderr=FNULL,
-                close_fds=True) == 0
-        except:
-            return False
-        finally:
-            FNULL.close()
-
-    @staticmethod
-    def get_command_line():
-        return ['nohup', 'xterm', '-e']
-
-class CustomTerminal(LinuxTerminal):
-    name = "Custom command"
-
-    @staticmethod
-    def detect():
-        # Custom commands are always an option
-        return True
-
-    @staticmethod
-    def get_command_line():
-        cmd = get_configured_terminal()
-        if cmd:
-            cmd = cmd.split(' ')
-        return cmd
