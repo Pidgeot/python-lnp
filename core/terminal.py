@@ -7,12 +7,18 @@ import sys, os, subprocess, tempfile, time
 from .lnp import lnp
 from . import log
 
-def get_terminal_command(cmd):
-    """Returns a command to launch a program in a new terminal."""
+def get_terminal_command(cmd, force_custom=False):
+    """
+    Returns a command to launch <cmd> in a new terminal.
+    On Linux, if force_custom is set, the custom terminal command will be used.
+    """
     if sys.platform == 'darwin':
         return ['open', '-a', 'Terminal.app'] + cmd
     elif sys.platform.startswith('linux'):
-        term = get_configured_terminal().get_command_line()
+        if force_custom:
+            term = CustomTerminal.get_command_line()
+        else:
+            term = get_configured_terminal().get_command_line()
         if "$" in term:
             c = []
             for s in term:
@@ -359,7 +365,7 @@ def terminal_test_run(status_callback=None):
     cmd = sys.argv[:] + ['--terminal-test-child', t]
     if sys.executable not in cmd:
         cmd.insert(0, sys.executable)
-    cmd = get_terminal_command(cmd)
+    cmd = get_terminal_command(cmd, True)
     p = subprocess.Popen(cmd)
     while not p.poll():
         with open(t, 'r') as f:
@@ -389,7 +395,7 @@ def terminal_test_parent(t):
     cmd = sys.argv[:-2] + ['--terminal-test-child', t]
     if sys.executable not in cmd:
         cmd.insert(0, sys.executable)
-    cmd = get_terminal_command(cmd)
+    cmd = get_terminal_command(cmd, True)
     print("Launching child process...")
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     _terminal_test_report(t, 1)
