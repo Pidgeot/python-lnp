@@ -46,7 +46,8 @@ def prepare_baselines():
         log.i('Extracting archives in baselines: ' + str(archives))
     for item in archives:
         version = os.path.basename(item)
-        for s in ('_win', '_osx', '_linux', '_legacy', '_s',
+        for s in ('_win32', '_osx32', '_linux32', '_legacy32',
+                  '_win', '_osx', '_linux', '_legacy', '_s',
                   '.zip', '.tar.bz2'):
             version = version.replace(s, '')
         f = paths.get('baselines', version)
