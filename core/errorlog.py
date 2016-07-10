@@ -54,7 +54,7 @@ class CaptureStream(object):
                     "Running PyLNP {} (OS: {}, Compiled: {})\n".format(
                         VERSION, lnp.os, lnp.os == lnp.bundle))
         # For Python3: pylint:disable=undefined-variable
-        if sys.version_info[0] == 2 and type(string) != unicode:
+        if sys.version_info[0] == 2 and not isinstance(string, unicode):
             self.outfile.write(unicode(string, locale.getpreferredencoding()))
         else:
             self.outfile.write(string)
