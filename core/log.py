@@ -76,14 +76,20 @@ class Log(object):
 
         Keyword arguments:
             stack
-                If True, logs a stack trace."""
+                If True, logs a stack trace. If sys.excinfo contains an
+                exception, this will be formatted and logged instead."""
         if log_level < self.max_level:
             return
         p = self.__get_level_string(log_level) + self.__get_prefixes()
         self.__write(p + str(message) % args + "\n")
         if kwargs.get('stack', False):
-            for l in traceback.format_stack():
-                self.__write(l)
+            ex = sys.exc_info()
+            if ex[2]:
+                for l in traceback.format_exception(*ex):
+                    self.__write(l)
+            else:
+                for l in traceback.format_stack():
+                    self.__write(l)
 
     @staticmethod
     def __get_level_string(level):
