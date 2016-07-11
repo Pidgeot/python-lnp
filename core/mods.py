@@ -3,13 +3,30 @@
 """Mod Pack management and merging tools."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import os, shutil, glob
+import os, shutil, glob, time
 from difflib import ndiff, SequenceMatcher
 # pylint:disable=redefined-builtin
 from io import open
 
 from . import paths, baselines, log, manifest
 from .lnp import lnp
+
+def _shutil_wrap(fn):
+    def _wrapped_fn(*args, **kwargs):
+        i = 0
+        while i < 5:
+            try:
+                fn(*args, **kwargs)
+            except: # pylint: disable=bare-except
+                i += 1
+                time.sleep(0.1)
+            else:
+                break
+    return _wrapped_fn
+
+if lnp.os == 'win':
+    shutil.rmtree = _shutil_wrap(shutil.rmtree)
+    shutil.copytree = _shutil_wrap(shutil.copytree)
 
 def toggle_premerge_gfx():
     """Sets the option for pre-merging of graphics."""
