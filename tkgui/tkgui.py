@@ -197,8 +197,8 @@ class TkGui(object):
         play_button = controls.create_trigger_button(
             main, 'Play Dwarf Fortress!', 'Play the game!',
             launcher.run_df)
-        play_button.configure(style='Big.TButton')
         if sys.platform != 'darwin':
+            play_button.configure(style='Big.TButton')
             play_button.pack(side=BOTTOM, fill=X, padx=(1, 3), pady=(0, 3))
         else:
             play_button.pack(side=BOTTOM, fill=X, padx=(30, 30), pady=(0, 3))
