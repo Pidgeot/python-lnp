@@ -16,6 +16,7 @@ if sys.version_info[0] == 3:  # Alternate import names
     from tkinter.ttk import *
     import tkinter.messagebox as messagebox
     import tkinter.simpledialog as simpledialog
+    import tkinter.filedialog as filedialog
     import tkinter.font as tkFont
     #pylint:disable=redefined-builtin
     basestring = str
@@ -26,6 +27,7 @@ else:
     from ttk import *
     import tkMessageBox as messagebox
     import tkSimpleDialog as simpledialog
+    import tkFileDialog as filedialog
     import tkFont
 # pylint:enable=wrong-import-order
 
@@ -61,6 +63,7 @@ from .mods import ModsTab
 from core.helpers import get_resource
 from core.lnp import lnp, VERSION
 from core import df, launcher, log, paths, update, mods, download, baselines
+from core import importer
 
 has_PNG = has_PIL or (TkVersion >= 8.6)  # Tk 8.6 supports PNG natively
 
@@ -347,6 +350,10 @@ class TkGui(object):
         if len(lnp.folders) > 1:
             menu_file.add_command(
                 label="Reload/Choose DF folder", command=self.reload_program)
+
+        menu_file.add_command(
+            label='Import from previous install...',
+            command=self.migrate_settings)
 
         if sys.platform != 'darwin':
             menu_file.add_command(
@@ -680,5 +687,28 @@ class TkGui(object):
             messagebox.showinfo(
                 self.root.title(),
                 'All settings reset to defaults!')
+
+    def ask_migrate_if_new(self):
+        """If no saves are detected, offer to import from an older pack."""
+        saves_exist = os.path.isdir(paths.get('save')) and \
+            os.listdir(paths.get('save'))
+        if not saves_exist and messagebox.askyesno(
+                message='Import user content from an older pack?\n'
+                'This function will copy saves from an older DF install'
+                'or Starter Pack.  It can be used at any time from the'
+                'menu: "file>Import from previous install..."',
+                title='Import from an older pack?', icon='question'):
+            self.migrate_settings()
+
+    def migrate_settings(self):
+        """Migrates settings from a previous DF install."""
+        old_df = filedialog.askdirectory(
+            title='Locate previous DF for import...', mustexist=True)
+        if old_df:
+            done, msg = importer.do_imports(old_df)
+            box = 'Successfully imported:' if done else 'Import failed.'
+            messagebox.showinfo(
+                self.root.title(),
+                '{}\n\n{}\n\nSee the log for more details.'.format(box, msg))
 
 # vim:expandtab

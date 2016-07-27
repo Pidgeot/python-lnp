@@ -182,7 +182,7 @@ Windows:
   open a command-line to the Scripts directory in your Python installation and
   run the command ``easy_install pillow``.  In Python 3.4+, just run the
   command ``pip install pillow``.
-  
+
 .. __: https://pypi.python.org/pypi/setuptools/0.9.8#windows
 
 Linux:
@@ -563,6 +563,30 @@ Example::
             "file": "onMapLoad"
         }
     }
+
+``to_import``
+-------------
+This configuration lists paths and strategies used to import user content
+from an older install or package (triggered from the ``file>Import...``
+menu).  Each item in the list is of the form [strategy, source, dest];
+if the destination is not different to the source it may be omitted.
+
+Available strategies are:
+
+:copy_add:      Copies the given file or directory contents.  A source file
+                which exists at the destination will be skipped.
+                A destination directory will be created if it does not exist;
+                files and subdirectories are copied without overwriting.
+                This is safe for e.g. save files.
+:text_prepend:  Prepends the text of source to dest (for logfiles).
+
+Example::
+
+    "to_import": [
+        ["text_prepend", "<df>/gamelog.txt"],
+        ["copy_add", "<df>/data/save"],
+        ["copy_add", "<df>/soundsense", "LNP/Utilities/Soundsense/packs"]
+    ]
 
 Content Manifests
 =================

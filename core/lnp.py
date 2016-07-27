@@ -66,6 +66,7 @@ class PyLNP(object):
 
         self.initialize_ui()
         update.check_update()
+        self.ui.ask_migrate_if_new()
         self.ui.start()
 
     def initialize_program(self):
