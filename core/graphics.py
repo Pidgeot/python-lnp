@@ -100,6 +100,14 @@ def install_graphics(pack):
                     shutil.copy2(item, paths.get('data', 'art'))
                 else:
                     shutil.copytree(item, paths.get('data', 'art'))
+        # ensure that mouse.png and font.ttf exist (required by DF)
+        base = baselines.find_vanilla()
+        if base:
+            for item in ('mouse.png', 'font.ttf'):
+                cur = paths.get('data', 'art', item)
+                bas = os.path.join(base, 'data', 'art', item)
+                if not os.path.isfile(cur) and os.path.isfile(bas):
+                    shutil.copy2(bas, cur)
         # Handle init files
         patch_inits(paths.get('graphics', pack))
         # Install colorscheme
