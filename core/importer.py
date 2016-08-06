@@ -33,12 +33,14 @@ from __future__ import print_function, unicode_literals, absolute_import
 import os
 import shutil
 
-from . import lnp, log, paths
+from . import log, paths
+from .lnp import lnp
 
 
 def strat_fallback(strat):
     """Log error if an unknown strategy is attempted."""
     def __fallback(src, dest):
+        #pylint:disable=unused-argument
         log.w('Attempted to use unknown strategy ' + strat)
         return False
     return __fallback
@@ -109,7 +111,7 @@ def do_imports(from_df_dir):
     if not lnp.config.get('to_import'):
         return (False, 'Nothing is configured for import in PyLNP.json')
     raw_config = [(c + [c[1]])[:3] for c in lnp.config['to_import']]
-    # Turn "paths" in PyLNP into real paths
+    # Turn "paths" in PyLNP.json into real paths
     path_pairs = [
         (st, os.path.normpath(src.replace('<df>', from_df_dir)),
          os.path.normpath(os.path.join(
@@ -117,13 +119,15 @@ def do_imports(from_df_dir):
         for st, src, dest in raw_config]
 
     # Sanity-check the provided paths...
-    src_prefix = os.path.commonpath(src for _, src, _ in path_pairs)
-    dest_prefix = os.path.commonpath(dest for _, _, dest in path_pairs)
-    if not src_prefix:
+    src_prefix = os.path.commonprefix(src for _, src, _ in path_pairs)
+    dest_prefix = os.path.commonprefix(dest for _, _, dest in path_pairs)
+    if not (os.path.isdir(src_prefix) or os.path.dirname(src_prefix)):
+        # parent dir is a real path, even when os.path.commonprefix isn't
         msg = 'Can only import content from single basedir'
         log.w(msg)
         return (False, msg)
     if not dest_prefix or not paths.get('base').startswith(dest_prefix):
+        # checking <base>.startswith avoids the os.path.commonprefix issue
         msg = 'Can only import content to destinations below current basedir'
         log.w(msg)
         return (False, msg)
