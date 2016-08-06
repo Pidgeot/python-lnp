@@ -110,6 +110,7 @@ class PyLNP(object):
 
         self.initialize_ui()
         update.check_update()
+        self.ui.ask_migrate_if_new()
         self.ui.start()
 
     def initialize_program(self):
@@ -152,6 +153,16 @@ class PyLNP(object):
                 ["DF Homepage", "http://www.bay12games.com/dwarves/"],
                 ["DF Wiki", "http://dwarffortresswiki.org/"],
                 ["DF Forums", "http://www.bay12forums.com/smf/"]
+            ],
+            "to_import": [
+                ['text_prepend', '<df>/gamelog.txt'],
+                ['text_prepend', '<df>/ss_fix.log'],
+                ['text_prepend', '<df>/dfhack.history'],
+                ['copy_add', '<df>/data/save'],
+                ['copy_add', '<df>/soundsense',
+                 'LNP/Utilities/Soundsense/packs'],
+                ['copy_add', 'LNP/Utilities/Soundsense/packs'],
+                ['copy_add', 'User Generated Content']
             ],
             "hideUtilityPath": False,
             "hideUtilityExt": False,
