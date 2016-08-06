@@ -168,7 +168,7 @@ def patch_inits(gfx_dir):
         'WOUND_COLOR_NONE', 'WOUND_COLOR_MINOR',
         'WOUND_COLOR_INHIBITED', 'WOUND_COLOR_FUNCTION_LOSS',
         'WOUND_COLOR_BROKEN', 'WOUND_COLOR_MISSING', 'SKY', 'CHASM',
-        'PILLAR_TILE',
+        'PILLAR_TILE', 'VARIED_GROUND_TILES', 'ENGRAVINGS_START_OBSCURED',
         # Tracks
         'TRACK_N', 'TRACK_S', 'TRACK_E', 'TRACK_W', 'TRACK_NS',
         'TRACK_NE', 'TRACK_NW', 'TRACK_SE', 'TRACK_SW', 'TRACK_EW',
@@ -223,7 +223,8 @@ def patch_inits(gfx_dir):
         'TREE_TRUNK_INTERIOR', 'TREE_TRUNK_INTERIOR_DEAD']
     init_fields = [
         'FONT', 'FULLFONT', 'GRAPHICS', 'GRAPHICS_FONT',
-        'GRAPHICS_FULLFONT', 'TRUETYPE', 'PRINT_MODE']
+        'GRAPHICS_FULLFONT', 'TRUETYPE', 'PRINT_MODE',
+        'GRAPHICS_BLACK_SPACE', 'TEXTURE_PARAM', 'MOUSE_PICTURE']
     init_fields = [f for f in init_fields if lnp.settings.version_has_option(f)]
     d_init_fields = [
         f for f in d_init_fields if lnp.settings.version_has_option(f)]
