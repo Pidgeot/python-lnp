@@ -82,6 +82,7 @@ def install_graphics(pack):
         False if an exception occured
         None if baseline vanilla raws are missing
     """
+    # pylint:disable=too-many-branches
     if not baselines.find_vanilla_raws():
         log.w('Cannot install graphics when baseline raws are missing!')
         return None

@@ -15,7 +15,6 @@ if sys.version_info[0] == 3:  # Alternate import names
     from tkinter import *
     from tkinter.ttk import *
     import tkinter.messagebox as messagebox
-    import tkinter.simpledialog as simpledialog
     import tkinter.filedialog as filedialog
     import tkinter.font as tkFont
     #pylint:disable=redefined-builtin
@@ -26,7 +25,6 @@ else:
     from Tkinter import *
     from ttk import *
     import tkMessageBox as messagebox
-    import tkSimpleDialog as simpledialog
     import tkFileDialog as filedialog
     import tkFont
 # pylint:enable=wrong-import-order
