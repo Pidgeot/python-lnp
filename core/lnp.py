@@ -121,7 +121,7 @@ class PyLNP(object):
         from . import paths
         save_dir = paths.get('save')
         saves_exist = os.path.isdir(save_dir) and os.listdir(save_dir)
-        if not saves_exist:
+        if paths.get('df') and not saves_exist:
             self.ui.on_query_migration()
         self.ui.start()
 
