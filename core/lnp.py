@@ -57,6 +57,14 @@ class UI(object):
         """
         pass
 
+    def on_query_migration(self):
+        """
+        When no saves are detected, this function will be called.
+        This should provide the user with an option to import a previous
+        DF install or starter pack into the newly selected DF version.
+        """
+        pass
+
 lnp = None
 class PyLNP(object):
     """
@@ -110,7 +118,11 @@ class PyLNP(object):
 
         self.initialize_ui()
         update.check_update()
-        self.ui.ask_migrate_if_new()
+        from . import paths
+        save_dir = paths.get('save')
+        saves_exist = os.path.isdir(save_dir) and os.listdir(save_dir)
+        if not saves_exist:
+            self.ui.on_query_migration()
         self.ui.start()
 
     def initialize_program(self):

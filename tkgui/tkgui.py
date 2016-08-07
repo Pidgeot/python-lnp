@@ -705,15 +705,13 @@ class TkGui(object):
                 self.root.title(),
                 'All settings reset to defaults!')
 
-    def ask_migrate_if_new(self):
+    def on_query_migration(self):
         """If no saves are detected, offer to import from an older pack."""
-        saves_exist = os.path.isdir(paths.get('save')) and \
-            os.listdir(paths.get('save'))
-        if not saves_exist and messagebox.askyesno(
+        if messagebox.askyesno(
                 message='Import user content from an older pack?\n'
                 'This function will copy saves from an older DF install'
                 'or Starter Pack.  It can be used at any time from the'
-                'menu: "file>Import from previous install..."',
+                'menu File > Import from previous install.',
                 title='Import from an older pack?', icon='question'):
             self.migrate_settings()
 
