@@ -55,8 +55,6 @@ if sys.platform == 'win32':
     # Importing pkg_resources fails with Pillow on Windows due to
     # unnormalized case; this works around the problem
     a.datas = list({tuple(map(str.upper, t)) for t in a.datas})
-if sys.platform.startswith('linux'):
-    a.datas += [('xdg-terminal','xdg-terminal','DATA')]
 pyz = PYZ(a.pure)
 if sys.platform != 'darwin':
     exe = EXE(
