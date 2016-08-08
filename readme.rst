@@ -69,25 +69,28 @@ On Linux and OS X, it is necessary to spawn a new terminal when using DFHack.
 Unfortunately, Linux provides no standard way of doing this; it varies
 depending on your setup.
 
-For this reason, a secondary script, ``xdg-terminal``, is used to perform
-this task. Unfortunately, this script cannot be guaranteed to work on *all*
-Linux systems, and unsupported systems may not behave as intended,
-particularly if the launcher is closed while DF is running.
+PyLNP will attempt to detect which terminals are available on your system. On
+first launch, you will be asked to select which terminal to use; only terminals
+available on your system will appear in the list.
 
-The script should work as intended with any of the following desktop
-environments and window managers:
+PyLNP should be able to detect any of the following desktop environments
+and window managers:
 
 - GNOME
 - KDE
-- MATE
-- xfce
-- lxde
-- i3wm
+- i3
+- LXDE
+- Mate
+- Xfce
 
-For other setups, the script will attempt a fallback, but it is not guaranteed
-to work. If it does not work for you, you can configure an alternate command
-using File > Configure terminal. For example, if your terminal can be spawned
-using:
+as well as the following stand-alone terminals:
+
+- (u)rxvt (urxvt is used if available, else rxvt)
+- xterm
+
+For other setups, you must configure a custom command.
+
+For example, if your terminal can be spawned using:
 
   term -e <command>
 
@@ -96,13 +99,15 @@ appended. If you need the command to be placed elsewhere, use ``$`` as a
 placeholder for the command.
 
 Depending on your choice of terminal, desktop environment, etc., it may also be
-necessary to use ``nohup`` with the command, e.g. ``nohup term
--e``.
+necessary to use ``nohup`` with the command, e.g. ``nohup term -e``.
 
-To verify if your command works as intended, launch Dwarf Fortress with DFHack
-installed and enabled. A working command will cause a new terminal window to
-appear, PyLNP itself will remain responsive, and everything will continue to
-work correctly even if you close PyLNP while Dwarf Fortress is running.
+The terminal configuration UI includes a button to test if your custom command
+is able to launch terminals correctly. The test consists of two processes - a
+parent and a child - which will communicate with each other in various ways to
+ensure that they are running independently of the other.
+
+If the test fails, you will get an error message describing the issue briefly.
+You will have to adjust your command accordingly.
 
 Pre-built executables
 =====================
@@ -117,8 +122,7 @@ slightly less pretty logo.
   If the program refuses to start, or gives an error message like:
 
     The application has failed to start because the side-by-side configuration
-    is incorrect. Please see the application event log for more
-    details.
+    is incorrect. Please see the application event log for more details.
 
   you most likely need to install the `Microsoft Visual C++ 2008
   redistributable package`__.

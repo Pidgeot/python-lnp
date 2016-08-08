@@ -326,6 +326,8 @@ class TerminalSelector(ChildWindow):
     """Used to select a terminal for launcing child programs on Linux."""
     def __init__(self, parent):
         super(TerminalSelector, self).__init__(parent, 'Configure terminal')
+        self.running_test = False
+        self.running_status = ''
         self.make_modal(self.top.destroy)
 
     def create_controls(self, container):
@@ -344,15 +346,51 @@ class TerminalSelector(ChildWindow):
             column=0, row=1)
 
         Label(f, text='If you use a custom command, put it here. Use $ as a '
-              'placeholder for the actual command.').grid(column=0, row=2)
+              'placeholder for the actual command.\nIf no $ is used, '
+              'the command will automatically be put at the end.').grid(
+                  column=0, row=2)
         self.cmd = StringVar()
         self.cmd.set(terminal.get_custom_terminal_cmd())
         Entry(f, textvariable=self.cmd).grid(column=0, row=3, sticky='nsew')
 
         f.pack(fill=BOTH, expand=Y)
-        Button(container, text='OK', command=self.close).pack(side=BOTTOM)
+
+        buttons = Frame(container)
+        Button(buttons, text='OK', command=self.close).pack(side=LEFT)
+        Button(
+            buttons, text='Test custom terminal',
+            command=self.run_test).pack(side=LEFT)
+        buttons.pack(side=BOTTOM)
 
     def close(self):
         terminal.configure_terminal(self.term.get())
         terminal.configure_custom_terminal(self.cmd.get())
+        del self.term
+        del self.cmd
         super(TerminalSelector, self).close()
+
+    def run_test(self):
+        """Tests the custom terminal provided to see if it works correctly."""
+        if not messagebox.askokcancel(
+                message="This will run a test to determine if your custom "
+                "terminal command is working correctly.\n\n"
+                "When you start the test, you will see one or two terminal "
+                "windows spawn. If you do not see either of these windows, "
+                "the terminal is not being launched correctly."
+                "\n\nThe test may take anywhere from a few seconds to about a "
+                "minute to execute. PyLNP will not respond until the test is "
+                "complete.\n\nPress OK to start the test, or Cancel to abort."
+                , title="PyLNP"):
+            return
+        try:
+            terminal.configure_custom_terminal(self.cmd.get())
+            r = terminal.terminal_test_run()
+            if r[0]:
+                messagebox.showinfo(message="Test successful.", title="PyLNP")
+            else:
+                messagebox.showerror(
+                    message="Test failed: %s" % r[1], title="PyLNP")
+        except: #pylint:disable=bare-except
+            messagebox.showerror(
+                message="Test failed, see the log for details.", title="PyLNP")
+

@@ -351,7 +351,7 @@ def terminal_test_run(status_callback=None):
         '4': 'Done!'
     }
     endmsg = {
-        '0': 'Failed to start test.',
+        '0': 'Failed to start test. Check that the command is typed correctly.',
         '1': 'Parent process was blocked by child.',
         '2': 'Parent process died before child reported back.',
         '3': 'Child process was terminated along with parent.',
@@ -362,15 +362,16 @@ def terminal_test_run(status_callback=None):
     f = tempfile.NamedTemporaryFile(delete=False)
     t = f.name
     f.close()
-    cmd = sys.argv[:] + ['--terminal-test-child', t]
+    cmd = sys.argv[:] + ['--terminal-test-parent', t]
     if sys.executable not in cmd:
         cmd.insert(0, sys.executable)
     cmd = get_terminal_command(cmd, True)
     p = subprocess.Popen(cmd)
-    while not p.poll():
+    while p.poll() is None:
         with open(t, 'r') as f:
             value = f.read()
         try:
+            log.d("Test status: %s" % progress[value])
             status_callback(progress[value])
         except:
             pass
@@ -380,12 +381,15 @@ def terminal_test_run(status_callback=None):
         time.sleep(interval)
         try:
             with open(t, 'r') as f:
-                if f.read().strip() == '4':
+                value = f.read().strip()
+                log.d("Test status: %s" % progress[value])
+                if value == '4':
                     break
         except:
             pass
         timer += interval
     os.remove(t)
+    log.d("Test complete: %s" % endmsg.get(value, 'Unknown error.'))
     return (value == '4', endmsg.get(value, 'Unknown error.'))
 
 def terminal_test_parent(t):
