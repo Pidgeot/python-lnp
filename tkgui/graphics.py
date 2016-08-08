@@ -210,7 +210,9 @@ class GraphicsTab(Tab):
             gfx_dir = self.packs[int(self.graphicpacks.curselection()[0])]
             result = None
             if messagebox.askokcancel(
-                    message='Your graphics, settings and raws will be changed.',
+                    message='Your graphics, settings and raws will be changed.'
+                    '\n\nAny manually installed mods will be removed in the '
+                    'process.\n\nAre you sure you want to continue?',
                     title='Are you sure?'):
                 result = graphics.install_graphics(gfx_dir)
                 if result is False:
