@@ -3,7 +3,7 @@
 """Mod Pack management and merging tools."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import os, shutil, glob, time
+import sys, os, shutil, glob, time
 from difflib import ndiff, SequenceMatcher
 # pylint:disable=redefined-builtin
 from io import open
@@ -24,7 +24,8 @@ def _shutil_wrap(fn):
                 break
     return _wrapped_fn
 
-if lnp.os == 'win':
+# Use sys.platform directly to prevent possible issues with initialization order
+if sys.platform == 'win32':
     shutil.rmtree = _shutil_wrap(shutil.rmtree)
     shutil.copytree = _shutil_wrap(shutil.copytree)
 
