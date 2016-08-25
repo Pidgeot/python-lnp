@@ -4,7 +4,6 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import collections
-from functools import lru_cache
 # pylint:disable=redefined-builtin
 from io import open
 import os
@@ -138,15 +137,14 @@ def delete_keybinds(filename):
 
 def get_installed_file():
     """Returns the name of the currently installed keybindings."""
-    @lru_cache()
     def unordered(fname):
         """An order-independent representation of keybindings from a file."""
         return {k: set(v) for k, v in _sdl_get_binds(fname).items()}
 
     try:
-        installed = paths.get('df', 'data', 'init', 'interface.txt')
+        installed = unordered(paths.get('df', 'data', 'init', 'interface.txt'))
         for fname in helpers.get_text_files(paths.get('keybinds')):
-            if unordered(installed) == unordered(fname):
+            if installed == unordered(fname):
                 return os.path.basename(fname)
     except: #pylint: disable=bare-except
         # Baseline missing, or interface.txt is missing from baseline - use
