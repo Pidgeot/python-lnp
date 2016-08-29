@@ -89,7 +89,7 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
         # pylint:disable=redefined-variable-type
         run_args = path
         if spawn_terminal and not sys.platform.startswith('win'):
-            run_args = terminal.get_terminal_command(path)
+            run_args = terminal.get_terminal_command([path,])
         elif path.endswith('.jar'):  # Explicitly launch JAR files with Java
             run_args = ['java', '-jar', os.path.basename(path)]
         elif path.endswith('.app'):  # OS X application bundle
