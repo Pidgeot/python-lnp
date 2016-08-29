@@ -20,6 +20,13 @@ def get_title(pack):
         return title
     return pack
 
+def get_folder_prefix(pack):
+    """Returns the pack folder_prefix; either per manifest or from dirname."""
+    folder_prefix = manifest.get_cfg('graphics', pack).get_string('folder_prefix')
+    if folder_prefix:
+        return folder_prefix
+    return pack
+
 def get_tooltip(pack):
     """Returns the tooltip for the given graphics pack."""
     return manifest.get_cfg('graphics', pack).get_string('tooltip')
@@ -46,7 +53,7 @@ def current_pack():
     log.w('Could not determine installed graphics, tileset is ' + result)
     return result
 
-def logged_graphics(logfile, start='graphics/'):
+def logged_graphics(logfile, start='graphics:_'):
     """Returns the graphics pack from an 'installed_raws.txt' file"""
     if os.path.isfile(logfile):
         with open(logfile) as f:
@@ -301,9 +308,8 @@ def can_rebuild(log_file, strict=True):
     if not os.path.isfile(log_file):
         log.w('Cannot change graphics without log: {}'.format(log_file))
         return not strict
-    # Graphics dirname can change, and later part of manifest title is
-    # more often a size or author than part of the name.
-    names = [(pack, get_title(pack), get_title(pack).split(' ')[0])
+    # Graphics dirname can change as long as it begins with the folder_prefix.
+    names = [(pack, get_folder_prefix(pack)[0])
              for pack in [k[0] for k in read_graphics()]]
     graphic_ok = any(logged_graphics(log_file) in n for n in names)
     if graphic_ok and mods.can_rebuild(log_file, strict=strict):
