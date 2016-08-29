@@ -7,6 +7,7 @@ import sys
 import os
 import subprocess
 import copy
+import re
 
 from .lnp import lnp
 from . import hacks, paths, log, terminal
@@ -89,7 +90,7 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
         # pylint:disable=redefined-variable-type
         run_args = path
         if spawn_terminal and not sys.platform.startswith('win'):
-            run_args = terminal.get_terminal_command(path)
+            run_args = terminal.get_terminal_command([path,])
         elif path.endswith('.jar'):  # Explicitly launch JAR files with Java
             run_args = ['java', '-jar', os.path.basename(path)]
         elif path.endswith('.app'):  # OS X application bundle
@@ -133,7 +134,8 @@ def program_is_running(path, nonchild=False):
         if encoding is None:
             #Encoding was not detected, assume UTF-8
             encoding = 'UTF-8'
-        return path in s.decode(encoding, 'replace')
+        s = s.decode(encoding, 'replace')
+        return re.search('\\B%s( |$)' % re.escape(path), s, re.M) is not None
     else:
         if path not in lnp.running:
             return False
