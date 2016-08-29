@@ -7,6 +7,7 @@ import sys
 import os
 import subprocess
 import copy
+import re
 
 from .lnp import lnp
 from . import hacks, paths, log, terminal
@@ -133,7 +134,8 @@ def program_is_running(path, nonchild=False):
         if encoding is None:
             #Encoding was not detected, assume UTF-8
             encoding = 'UTF-8'
-        return path in s.decode(encoding, 'replace')
+        s = s.decode(encoding, 'replace')
+        return re.search('\\B%s( |$)' % re.escape(path), s, re.M) is not None
     else:
         if path not in lnp.running:
             return False
