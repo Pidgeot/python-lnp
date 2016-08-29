@@ -76,7 +76,7 @@ def strat_copy_add(src, dest):
         if os.path.isfile(item):
             shutil.copy2(item, dest)
         else:
-            shutil.copytree(item, dest)
+            shutil.copytree(item, os.path.join(dest, it))
     return ret
 
 
@@ -119,14 +119,15 @@ def do_imports(from_df_dir):
         for st, src, dest in raw_config]
 
     # Sanity-check the provided paths...
-    src_prefix = os.path.commonprefix(src for _, src, _ in path_pairs)
-    dest_prefix = os.path.commonprefix(dest for _, _, dest in path_pairs)
+    src_prefix = os.path.commonprefix([src for _, src, _ in path_pairs])
+    dest_prefix = os.path.commonprefix([dest for _, _, dest in path_pairs])
+    log.i('Importing from {} to {}'.format(src_prefix, dest_prefix))
     if not (os.path.isdir(src_prefix) or os.path.dirname(src_prefix)):
         # parent dir is a real path, even when os.path.commonprefix isn't
         msg = 'Can only import content from single basedir'
         log.w(msg)
         return (False, msg)
-    if not dest_prefix or not paths.get('base').startswith(dest_prefix):
+    if not dest_prefix:
         # checking <base>.startswith avoids the os.path.commonprefix issue
         msg = 'Can only import content to destinations below current basedir'
         log.w(msg)
