@@ -631,8 +631,9 @@ For example, in ``LNP/Mods/foo_mod/manifest.json``::
 "title" and "tooltip" control presentation in the list for that kind of
 content.  Both should be strings.  Title is the name in the list; tooltip
 is the hovertext - linebreaks are inserted with "\n", since it must be one
-line in the manifest file.  For graphics, the part of the title before a
-``space`` character is the identifier of record (to allow noting resolution
+line in the manifest file.  
+
+"folder_prefix" For graphics, the folder_prefix is the identifier of record (to allow noting resolution
 or authorship in the title).
 
 "author" and "content_version" are strings for the author and version of the

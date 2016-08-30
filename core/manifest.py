@@ -29,6 +29,8 @@ def get_cfg(content_type, item):
     is the hovertext - linebreaks are inserted with "\n", since it must be one
     line in the manifest file.
 
+    'folder_prefix' controls what the name of the graphics pack's folder must begin with.
+
     'author' and 'version' are strings for the author and version of the
     content.  Both are for information only at this stage.
 
@@ -52,6 +54,7 @@ def get_cfg(content_type, item):
         'df_incompatible_versions': [],
         'needs_dfhack': False,
         'title': '',
+        'folder_prefix': '',
         'tooltip': ''
         }
     if content_type == 'utilities':

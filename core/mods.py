@@ -379,7 +379,7 @@ def add_graphics(gfx):
             shutil.copy2(os.path.join(root, f), dst)
     with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
               'a') as f:
-        f.write('graphics:_{}\n'.format(graphics.get_folder_prefix(gfx).split(' ')[0]))
+        f.write('graphics:_{}\n'.format(graphics.get_folder_prefix(gfx)))
     log.i('{} graphics added (small mod compatibility risk)'.format(gfx))
 
 def can_rebuild(log_file, strict=True):
