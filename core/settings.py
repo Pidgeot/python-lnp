@@ -406,6 +406,10 @@ class DFConfiguration(object):
             "liquidDepth", "SHOW_FLOW_AMOUNTS", "YES", boolvals, dinit)
         self.create_option(
             "variedGround", "VARIED_GROUND_TILES", "YES", boolvals, dinit)
+        self.create_option(
+            "engravingsObscured", "ENGRAVINGS_START_OBSCURED", "NO", boolvals, dinit)
+        self.create_option(
+            "improvementQuality", "SHOW_IMP_QUALITY", "YES", boolvals, dinit)
         if df_info.version <= '0.34.06':
             self.create_option(
                 "laborLists", "SET_LABOR_LISTS", "YES", boolvals, dinit)
