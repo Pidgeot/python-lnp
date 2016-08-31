@@ -187,11 +187,11 @@ class GraphicsTab(Tab):
             'If ground tiles use a variety of punctuation, or only periods',
             'variedGround'))
         grid.add(controls.create_option_button(
-            display, 'Obscured Engravings',
+            display, 'Hide Engravings',
             'Make all engravings look the same',
             'engravingsObscured'))
         grid.add(controls.create_option_button(
-            display, 'Improvement quality',
+            display, 'Show Improvement',
             'Show the quality of improvement in name of items',
             'improvementQuality'))
 
