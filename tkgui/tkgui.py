@@ -709,8 +709,8 @@ class TkGui(object):
         """If no saves are detected, offer to import from an older pack."""
         if messagebox.askyesno(
                 message='Import user content from an older pack?\n'
-                'This function will copy saves from an older DF install'
-                'or Starter Pack.  It can be used at any time from the'
+                'This function will copy saves from an older DF install '
+                'or Starter Pack.  It can be used at any time from the '
                 'menu File > Import from previous install.',
                 title='Import from an older pack?', icon='question'):
             self.migrate_settings()
