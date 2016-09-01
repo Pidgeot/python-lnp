@@ -53,7 +53,7 @@ def current_pack():
     log.w('Could not determine installed graphics, tileset is ' + result)
     return result
 
-def logged_graphics(logfile, start='graphics:_'):
+def logged_graphics(logfile, start='graphics/'):
     """Returns the graphics pack from an 'installed_raws.txt' file"""
     if os.path.isfile(logfile):
         with open(logfile) as f:
@@ -309,7 +309,7 @@ def can_rebuild(log_file, strict=True):
         log.w('Cannot change graphics without log: {}'.format(log_file))
         return not strict
     # Graphics dirname can change as long as it begins with the folder_prefix.
-    names = [(pack, get_folder_prefix(pack)[0])
+    names = [(pack, get_folder_prefix(pack))
              for pack in [k[0] for k in read_graphics()]]
     graphic_ok = any(logged_graphics(log_file) in n for n in names)
     if graphic_ok and mods.can_rebuild(log_file, strict=strict):
