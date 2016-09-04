@@ -19,9 +19,7 @@
 		["text_prepend", "<df>/ss_fix.log"],
 		["text_prepend", "<df>/dfhack.history"],
 		["copy_add", "<df>/data/save"],
-		["copy_add", "<df>/soundsense", "LNP/Utilities/Soundsense/packs"],
-		["copy_add", "User Generated Content"],
-		["copy_add", "LNP/Utilities/Soundsense/packs"]
+		["copy_add", "<df>/soundsense"]
 	],
 	"hideUtilityPath": false,
 	"hideUtilityExt": false,
