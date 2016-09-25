@@ -562,7 +562,7 @@ class TkGui(object):
         messagebox.showinfo(
             title='About', message="PyLNP "+VERSION +" - Lazy Newb Pack Python "
             "Edition\n\nPort by Pidgeot\nContributions by PeridexisErrant, "
-            "rx80, dricus, James Morgensen, jecowa\n\n"
+            "rx80, dricus, James Morgensen, jecowa, carterscottm, McArcady\n\n"
             "Original program: LucasUP, TolyK/aTolyK")
 
     @staticmethod
