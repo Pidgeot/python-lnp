@@ -17,8 +17,8 @@ ERROR = 4
 class Log(object):
     """Logging class."""
     def __init__(self):
-        """Constructor for Log. Sets the maximum logging level to WARNING."""
-        self.max_level = WARNING
+        """Constructor for Log. Sets the maximum logging level to INFO."""
+        self.max_level = INFO
         self.output_err = False
         self.output_out = False
         self.level_stack = []
