@@ -12,13 +12,20 @@ def get_terminal_command(cmd, force_custom=False):
     Returns a command to launch <cmd> in a new terminal.
     On Linux, if force_custom is set, the custom terminal command will be used.
     """
+    log.d("Preparing terminal command for command line %s", cmd)
+    if not isinstance(cmd, list):
+        cmd = [cmd, ]
     if sys.platform == 'darwin':
         return ['open', '-a', 'Terminal.app'] + cmd
     elif sys.platform.startswith('linux'):
         if force_custom:
             term = CustomTerminal.get_command_line()
+            log.d("Using custom terminal: %s", term)
         else:
             term = get_configured_terminal().get_command_line()
+            log.d(
+                "Using configured terminal: %s, command line %s", term,
+                get_configured_terminal.name) #pylint: disable=no-member
         if "$" in term:
             c = []
             for s in term:
@@ -111,7 +118,8 @@ class KDETerminal(LinuxTerminal):
     def get_command_line():
         s = subprocess.check_output(
             ['kreadconfig', '--file', 'kdeglobals', '--group', 'General',
-             '--key', 'TerminalApplication', '--default', 'konsole'])
+             '--key', 'TerminalApplication', '--default', 'konsole']).replace(
+                 '\n', '')
         return ['nohup', s, '-e']
 
 class GNOMETerminal(LinuxTerminal):
@@ -139,10 +147,10 @@ class GNOMETerminal(LinuxTerminal):
     def get_command_line():
         term = subprocess.check_output([
             'gconftool-2', '--get',
-            '/desktop/gnome/applications/terminal/exec'])
+            '/desktop/gnome/applications/terminal/exec']).replace('\n', '')
         term_arg = subprocess.check_output([
             'gconftool-2', '--get',
-            '/desktop/gnome/applications/terminal/exec_arg'])
+            '/desktop/gnome/applications/terminal/exec_arg']).replace('\n', '')
         return ['nohup', term, term_arg]
 
 class XfceTerminal(LinuxTerminal):
