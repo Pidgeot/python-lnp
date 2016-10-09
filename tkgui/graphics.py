@@ -200,7 +200,7 @@ class GraphicsTab(Tab):
     def read_graphics(self):
         """Reads list of graphics packs."""
         packs = self.packs = [p[0] for p in graphics.read_graphics()]
-        self.graphics.set(tuple([graphics.get_title(p) for p in packs]))
+        self.graphics.set(tuple(sorted([graphics.get_title(p) for p in packs])))
         current = graphics.current_pack()
         for i, p in enumerate(packs):
             if p == current:
