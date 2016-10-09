@@ -22,7 +22,8 @@ def get_title(pack):
 
 def get_folder_prefix(pack):
     """Returns the pack folder_prefix; either per manifest or from dirname."""
-    folder_prefix = manifest.get_cfg('graphics', pack).get_string('folder_prefix')
+    folder_prefix = manifest.get_cfg('graphics', pack).get_string(
+        'folder_prefix')
     if folder_prefix:
         return folder_prefix
     return pack

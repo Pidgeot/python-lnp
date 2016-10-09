@@ -29,7 +29,8 @@ def get_cfg(content_type, item):
     is the hovertext - linebreaks are inserted with "\n", since it must be one
     line in the manifest file.
 
-    'folder_prefix' controls what the name of the graphics pack's folder must begin with.
+    'folder_prefix' controls what the name of the graphics pack's folder must
+    begin with.
 
     'author' and 'version' are strings for the author and version of the
     content.  Both are for information only at this stage.
