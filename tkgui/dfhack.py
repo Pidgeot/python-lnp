@@ -107,8 +107,9 @@ class DFHackTab(Tab):
         for hack in self.hacklist.get_children():
             self.hacklist.delete(hack)
 
+        enabled = set(hacks.read_hacks())
         for title, hack in hacks.get_hacks().items():
-            tags = ('enabled') if hack.get('enabled') else ()
+            tags = ('enabled') if title in enabled else ()
             self.hacklist.insert('', 'end', text=title, tags=tags,
                                  values=(hack['tooltip'],))
 
@@ -121,9 +122,8 @@ class DFHackTab(Tab):
 
         if item:
             title = self.hacklist.item(item, 'text')
-            hacks.toggle_hack(title)
-            self.hacklist.tag_set('enabled', item,
-                                  hacks.get_hack(title).get('enabled'))
+            is_enabled = hacks.toggle_hack(title)
+            self.hacklist.tag_set('enabled', item, is_enabled)
 
     @staticmethod
     def toggle_dfhack():
