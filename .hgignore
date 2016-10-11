@@ -11,3 +11,7 @@ Dwarf Fortress *
 LNP
 __pycache__
 *.bat
+
+docs/_build
+docs/core
+docs/tkgui
