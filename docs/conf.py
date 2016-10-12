@@ -33,7 +33,7 @@ for mod in ('core', 'tkgui'):
         print('Regenerating {} API docs'.format(mod))
         shutil.rmtree(mod, ignore_errors=True)
         subprocess.check_output(['sphinx-apidoc', '--separate', '--force',
-                                 '-o', mod, code_dir])
+                                 '--no-toc', '-o', mod, code_dir])
 
 
 # If extensions (or modules to document with autodoc) are in another directory,
