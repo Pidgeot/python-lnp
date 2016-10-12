@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 """A module to compress and sort legends exports from DF 0.40.09 and later.
 
-.bmp converted to .png where possible.
-Archive for Legends Viewer created if possible, or just
-    compress the (huge) xml.
-Sort files into region folder, with maps subfolders,
-    and move to user content folder if found.
+- .bmp converted to .png where possible.
+- Create an archive for Legends Viewer if possible, or just compress
+  the (huge) xml.
+- Sort files into region folder, with maps subfolders, and move to user
+  content folder if this folder exists.
 """
 
 from __future__ import print_function, unicode_literals, absolute_import

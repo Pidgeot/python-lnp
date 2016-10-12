@@ -40,7 +40,8 @@ def set_df_folder(path):
     """
     Selects the Dwarf Fortress instance to operate on.
 
-    :param path: The path of the Dwarf Fortress instance to use.
+    Args:
+        path: The path of the Dwarf Fortress instance to use.
     """
     paths.register('df', lnp.BASEDIR, path, allow_create=False)
     paths.register('data', paths.get('df'), 'data', allow_create=False)
@@ -78,7 +79,11 @@ def perform_checks():
     sys.exit(0)
 
 def do_rawlint(path):
-    """Runs the raw linter on the specified directory."""
+    """Runs the raw linter on the specified directory.
+
+    Returns:
+        bool: True if all files in the directory passed the linter.
+    """
     from . import rawlint
     p, f = rawlint.check_df(path)
     log.i("%d files passed, %d files failed check" % (len(p), len(f)))
@@ -106,7 +111,8 @@ def cycle_option(field):
     """
     Cycles an option field between its possible values.
 
-    :param field: The field to cycle.
+    Args:
+        field: the field to cycle.
     """
     lnp.settings.cycle_item(field)
     save_params()
@@ -115,11 +121,9 @@ def set_option(field, value):
     """
     Sets a field to a specific value.
 
-    Params:
-        field
-            The field to set.
-        value
-            The new value for the field.
+    Args:
+        field: the field to set.
+        value: the new value for the field.
     """
     lnp.settings.set_value(field, value)
     save_params()

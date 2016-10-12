@@ -15,17 +15,14 @@ class CaptureStream(object):
         """
         Constructor for CaptureStream. Call redirect() to start redirection.
 
-        Params:
-            name
-                The name of the sys stream to capture (e.g. 'stdout' for
+        Args:
+            name: the name of the sys stream to capture (e.g. 'stdout' for
                 sys.stdout)
-            add_header
-                If True, extra information will be printed to the file when it
-                is initially written to. The text contains the PyLNP version
-                number, the OS it's running on, and whether it's a compiled
-                executable.
-            tee
-                If True, forward writing to the original stream after
+            add_header: if True, extra information will be printed to the file
+                when it is initially written to. The text contains the PyLNP
+                version number, the OS it's running on, and whether it's a
+                compiled executable.
+            tee: if True, forward writing to the original stream after
                 capturing. If False, the redirected stream is not used.
         """
         self.softspace = 0
@@ -40,9 +37,8 @@ class CaptureStream(object):
         """
         Writes a string to the captured stream.
 
-        Params:
-            string
-                The string to write.
+        Args:
+            string: The string to write.
         """
         self.lines.append(string)
         if not self.outfile:

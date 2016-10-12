@@ -11,14 +11,8 @@ from .lnp import lnp
 def get_cfg(content_type, item):
     """Returns a JSONConfiguration object for the given item.
 
-    Params:
-        content_type
-            'graphics', 'mods', or 'utilities'
-        item
-            content identifier path segment, such that
-            the full path is 'LNP/content_type/item/*'
+    **Manifest format:**
 
-    Manifest format:
     The manifest is a dictionary of values, which can be saved as manifest.json
     in the top level of the content folder.  Content is as below, except
     that True or False should not be capitalised.  Whitespace is irrelevant.
@@ -26,7 +20,7 @@ def get_cfg(content_type, item):
 
     'title' and 'tooltip' control presentation in the list for that kind of
     content.  Both should be strings.  Title is the name in the list; tooltip
-    is the hovertext - linebreaks are inserted with "\n", since it must be one
+    is the hovertext - linebreaks are inserted with ``\\n``, since it must be one
     line in the manifest file.
 
     'folder_prefix' controls what the name of the graphics pack's folder must
@@ -46,6 +40,14 @@ def get_cfg(content_type, item):
     'needs_dfhack' is a boolean value, and should only be True if the content
     does not function *at all* without DFHack.  Partial requirements can be
     explained to the user with the 'tooltip' field.
+
+    Args:
+        content_type: 'graphics', 'mods', or 'utilities'
+        item: content identifier path segment, such that
+            the full path is ``'LNP/content_type/item/*'``
+
+    Returns:
+        core.json_config.JSONConfiguration: manifest object
     """
     default_config = {
         'author': '',

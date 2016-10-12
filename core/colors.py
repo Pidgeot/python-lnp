@@ -16,7 +16,7 @@ _df_colors = (
 )
 
 def read_colors():
-    """Returns a list of color schemes."""
+    """Returns a sorted tuple of color scheme basenames, in LNP/Colors."""
     return tuple(sorted([
         os.path.splitext(os.path.basename(p))[0] for p in
         helpers.get_text_files(paths.get('colors'))]))
@@ -53,10 +53,9 @@ def load_colors(filename):
     """
     Replaces the current DF color scheme.
 
-    Params:
-        filename
-        The name of the new colorscheme to install (extension optional).
-        If no path is specified, file is assumed to be in LNP/Colors.
+    Args:
+        filename: The name of the new colorscheme to install (extension optional).
+            If no path is specified, file is assumed to be in LNP/Colors.
     """
     log.i('Loading colorscheme ' + filename)
     if not filename.endswith('.txt'):
@@ -75,9 +74,8 @@ def save_colors(filename):
     """
     Save current keybindings to a file.
 
-    Params:
-        filename
-            The name of the new color scheme file.
+    Args:
+        filename: the name of the new color scheme file.
     """
     log.i('Saving colorscheme ' + filename)
     if not filename.endswith('.txt'):
@@ -95,9 +93,8 @@ def color_exists(filename):
     """
     Returns whether or not a color scheme already exists.
 
-    Params:
-        filename
-            The filename to check.
+    Args:
+        filename: the filename to check.
     """
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
@@ -107,9 +104,8 @@ def delete_colors(filename):
     """
     Deletes a color scheme file.
 
-    Params:
-        filename
-            The filename to delete.
+    Args:
+        filename: the filename to delete.
     """
     log.i('Deleting colorscheme ' + filename)
     if not filename.endswith('.txt'):
@@ -117,7 +113,7 @@ def delete_colors(filename):
     os.remove(paths.get('colors', filename))
 
 def get_installed_file():
-    """Returns the name of the currently installed color scheme."""
+    """Returns the name of the currently installed color scheme, or None."""
     files = helpers.get_text_files(paths.get('colors'))
     current_scheme = get_colors()
     for scheme in files:

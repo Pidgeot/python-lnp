@@ -19,14 +19,11 @@ class JSONConfiguration(object):
         """
         Constructor for JSONConfiguration.
 
-        Params:
-            filename
-                JSON filename to load data from. Use None to only use object
-                from default.
-            default
-                Default value to use in case loading fails.
-            warn
-                If True, log a warning if the file is missing. Defaults to True.
+        Args:
+            filename: JSON filename to load data from.
+                Use None to only use object from default.
+            default: default value to use in case loading fails.
+            warn (bool): Log a warning if the file is missing, default True.
         """
         self.filename = filename
         self.data = default if default else {}
@@ -60,11 +57,9 @@ class JSONConfiguration(object):
         Retrieves a value from the configuration.
         Returns default if the path does not exist.
 
-        Params:
-            path
-                /-delimited path to the string.
-            default
-                Value returned if path does not exist.
+        Args:
+            path: ``/``-delimited path to the string.
+            default: value returned if path does not exist.
         """
         try:
             path = path.split('/')
@@ -84,11 +79,9 @@ class JSONConfiguration(object):
         Retrieves a value from the configuration.
         Returns default if the path does not exist.
 
-        Params:
-            path
-                /-delimited path to the string.
-            default
-                Value returned if path does not exist.
+        Args:
+            path: ``/``-delimited path to the string.
+            default: value returned if path does not exist.
         """
         return self.get(path, default)
 
@@ -97,9 +90,8 @@ class JSONConfiguration(object):
         Retrieves a value from the configuration.
         Returns an empty string if the path does not exist.
 
-        Params:
-            path
-                /-delimited path to the string.
+        Args:
+            path: ``/``-delimited path to the string.
         """
         return self.get_value(path, "")
 
@@ -108,9 +100,8 @@ class JSONConfiguration(object):
         Retrieves a value from the configuration.
         Returns 0 if the path does not exist.
 
-        Params:
-            path
-                /-delimited path to the string.
+        Args:
+            path: ``/``-delimited path to the string.
         """
         return self.get_value(path, 0)
 
@@ -119,9 +110,8 @@ class JSONConfiguration(object):
         Retrieves a value from the configuration.
         Returns False if the path does not exist.
 
-        Params:
-            path
-                /-delimited path to the string.
+        Args:
+            path: ``/``-delimited path to the string.
         """
         return self.get_value(path, False)
 
@@ -130,9 +120,8 @@ class JSONConfiguration(object):
         Retrieves a value from the configuration.
         Returns an empty list if the path does not exist.
 
-        Params:
-            path
-                /-delimited path to the string.
+        Args:
+            path: ``/``-delimited path to the string.
         """
         return self.get_value(path, [])
 
@@ -141,9 +130,8 @@ class JSONConfiguration(object):
         Retrieves a value from the configuration.
         Returns an empty dictionary if the path does not exist.
 
-        Params:
-            path
-                /-delimited path to the string.
+        Args:
+            path: ``/``-delimited path to the string.
         """
         return self.get_value(path, {})
 
@@ -152,11 +140,9 @@ class JSONConfiguration(object):
         Writes a value to a key.
         Note: Arbitrary paths not supported - you must refresh entire key.
 
-        Params:
-            key
-                The key to save the value under.
-            value
-                The value to save.
+        Args:
+            key: the key to save the value under.
+            value: the value to save.
         """
         self.__setitem__(key, value)
 

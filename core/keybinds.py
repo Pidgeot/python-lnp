@@ -102,9 +102,8 @@ def keybind_exists(filename):
     """
     Returns whether or not a keybindings file already exists.
 
-    Params:
-        filename
-            The filename to check.
+    Args:
+        filename: the filename to check.
     """
     return os.access(_keybind_fname(filename), os.F_OK)
 
@@ -112,9 +111,8 @@ def save_keybinds(filename):
     """
     Save current keybindings to a file.
 
-    Params:
-        filename
-            The name of the new keybindings file.
+    Args:
+        filename: the name of the new keybindings file.
     """
     installed = paths.get('init', 'interface.txt')
     filename = _keybind_fname(filename)
@@ -128,9 +126,8 @@ def delete_keybinds(filename):
     """
     Deletes a keybindings file.
 
-    Params:
-        filename
-            The filename to delete.
+    Args:
+        filename: the filename to delete.
     """
     log.i('Deleting ' + filename + 'keybinds')
     os.remove(_keybind_fname(filename))

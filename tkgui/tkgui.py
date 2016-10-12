@@ -75,9 +75,8 @@ def get_image(filename):
     """
     Open the image with the appropriate extension.
 
-    Params:
-        filename
-            The base name of the image file.
+    Args:
+        filename: The base name of the image file.
 
     Returns:
         A PhotoImage object ready to use with Tkinter.
@@ -100,9 +99,8 @@ def validate_number(value_if_allowed):
     Validation method used by Tkinter. Accepts empty and float-coercable
     strings.
 
-    Params:
-        value_if_allowed
-            Value to validate.
+    Args:
+        value_if_allowed: Value to validate.
 
     Returns:
         True if value_if_allowed is empty, or can be interpreted as a float.
@@ -122,9 +120,8 @@ class TkGui(object):
         """
         Constructor for TkGui.
 
-        Params:
-            lnp
-                A PyLNP instance to perform actual work.
+        Args:
+            lnp: A PyLNP instance to perform actual work.
         """
         self.root = root = Tk()
         self.updateDays = IntVar()
@@ -295,11 +292,9 @@ class TkGui(object):
         """
         Creates a new tab and adds it to the main Notebook.
 
-        Params:
-            class_
-                Reference to the class representing the tab.
-            caption
-                Caption for the newly created tab.
+        Args:
+            ``class_``: Reference to the class representing the tab.
+            caption: Caption for the newly created tab.
         """
         tab = class_(self.n, pad=(4, 2))
         self.n.add(tab, text=caption)
@@ -336,9 +331,8 @@ class TkGui(object):
         """
         Creates and returns the menu bar.
 
-        Params:
-            root
-                Root window for the menu bar.
+        Args:
+            root: Root window for the menu bar.
         """
         menubar = Menu(root, type='menubar')
         root['menu'] = menubar
@@ -480,13 +474,10 @@ class TkGui(object):
         """
         Populates a menu with items from a collection.
 
-        Params:
-            collection
-                A collection of menu item data.
-            menu
-                The menu to create the items under.
-            method
-                The method to be called when the menu item is selected.
+        Args:
+            collection: A collection of menu item data.
+            menu: The menu to create the items under.
+            method: The method to be called when the menu item is selected.
         """
         #pylint:disable=unused-variable
         for i, f in enumerate(collection):
@@ -500,11 +491,9 @@ class TkGui(object):
         """
         Commits a change for the control specified by key.
 
-        Params:
-            key
-                The key for the control that changed.
-            var
-                The variable bound to the control.
+        Args:
+            key: The key for the control that changed.
+            var: The variable bound to the control.
         """
         if not isinstance(key, basestring):
             for k in key:
@@ -538,9 +527,8 @@ class TkGui(object):
         """
         Launches another program.
 
-        Params:
-            path
-                Path to the program to launch.
+        Args:
+            path: Path to the program to launch.
         """
         path = os.path.abspath(path)
         launcher.run_program(path)
@@ -569,9 +557,8 @@ class TkGui(object):
         """
         Cycles through possible values for an option.
 
-        Params:
-            field
-                The option to cycle.
+        Args:
+            field: The option to cycle.
         """
         if not isinstance(field, basestring):
             for f in field:
@@ -585,9 +572,8 @@ class TkGui(object):
         """
         Sets an option directly.
 
-        Params:
-            field
-                The field name to change. The corresponding value is
+        Args:
+            field: The field name to change. The corresponding value is
                 automatically read.
         """
         if not isinstance(field, basestring):

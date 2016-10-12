@@ -13,9 +13,8 @@ def get_text_files(directory):
     Returns a list of .txt files in <directory>.
     Excludes all filenames beginning with "readme" (case-insensitive).
 
-    Params:
-        directory
-            The directory to search.
+    Args:
+        directory: the directory to search.
     """
     temp = glob.glob(os.path.join(directory, '*.txt'))
     result = []
@@ -66,8 +65,12 @@ def get_resource(filename):
     If running in a bundle, this will point to the place internal
     resources are located; if running the script directly,
     no modification takes place.
-    :param str filename:
-    :return str: Path for bundled filename
+
+    Args:
+        filename (str): the ordinary path to the resource
+
+    Returns:
+        (str): Path for bundled filename
     """
     from .lnp import lnp
     if lnp.bundle == 'osx':

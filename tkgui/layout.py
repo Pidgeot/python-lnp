@@ -12,11 +12,9 @@ class GridLayouter(object):
         """
         Constructor for GridLayouter.
 
-        Params:
-            cols
-                Number of columns for the grid.
-            pad
-                The amount (x, y) of padding between elements
+        Args:
+            cols: number of columns for the grid.
+            pad: the amount (x, y) of padding between elements
         """
         self.cols = cols
         self.controls = []
@@ -30,13 +28,10 @@ class GridLayouter(object):
         """
         Adds a control to the grid.
 
-        Params:
-            control
-                The control to add.
-            span
-                The number of columns to span (defaults to 1).
-            opts
-                Extra options for the grid layout.
+        Args:
+            control: the control to add.
+            span: the number of columns to span (defaults to 1).
+            opts: extra options for the grid layout.
         """
         if control is controls.fake_control:
             return

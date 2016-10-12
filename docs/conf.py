@@ -14,6 +14,7 @@
 # serve to show the default.
 
 import datetime
+import glob
 import os
 import shutil
 import subprocess
@@ -24,10 +25,15 @@ import shlex
 
 
 # Before we get started, let's generate fresh API documentation from the code
+def ages(dname):
+    return [os.stat(f).st_mtime for f in glob.glob(os.path.join(dname, '*'))]
 for mod in ('core', 'tkgui'):
-    shutil.rmtree(mod, ignore_errors=True)
-    subprocess.check_output(['sphinx-apidoc', '--separate', '--force',
-                             '-o', mod, os.path.join('..', mod)])
+    code_dir = os.path.join('..', mod)
+    if not os.path.isdir(mod) or min(ages(mod)) <= max(ages(code_dir)):
+        print('Regenerating {} API docs'.format(mod))
+        shutil.rmtree(mod, ignore_errors=True)
+        subprocess.check_output(['sphinx-apidoc', '--separate', '--force',
+                                 '-o', mod, code_dir])
 
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -59,7 +65,7 @@ extensions = [
 #napoleon_use_admonition_for_references = False
 #napoleon_use_ivar = False
 #napoleon_use_param = True
-#napoleon_use_rtype = True
+napoleon_use_rtype = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

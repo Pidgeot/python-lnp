@@ -91,9 +91,8 @@ def add_tilesets():
 def install_graphics(pack):
     """Installs the graphics pack located in LNP/Graphics/<pack>.
 
-    Params:
-        pack
-            The name of the pack to install.
+    Args:
+        pack: the name of the pack to install.
 
     Returns:
         True if successful,
@@ -278,15 +277,12 @@ def savegames_to_update():
 def update_graphics_raws(raw_dir, pack):
     """Updates raws in place for a new graphics pack.
 
-    Params:
-        raw_dir
-            Full path to the dir to update
-        pack
-            The name of the graphics pack to add (eg 'Phoebus')
+    Args:
+        raw_dir: full path to the dir to update
+        pack: the name of the graphics pack to add (eg 'Phoebus')
 
     Returns:
-        True if successful
-        False if aborted
+        True if successful, False if aborted
     """
     if not validate_pack(pack):
         log.w('Cannot update raws to an invalid graphics pack (' + pack + ')')

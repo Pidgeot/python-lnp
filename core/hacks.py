@@ -72,9 +72,8 @@ def get_hack(title):
     """
     Returns the hack titled <title>, or None if this does not exist.
 
-    Params:
-        title
-            The title of the hack.
+    Args:
+        title: the title of the hack.
     """
     try:
         return get_hacks()[title]
@@ -86,12 +85,12 @@ def toggle_hack(name):
     """
     Toggles the hack <name>.
 
-    Params:
-        name
-            The name of the hack to toggle.
+    Args:
+        name: the name of the hack to toggle.
+
     Returns:
-        True if the hack is now enabled
-        False if the hack is now disabled
+        True if the hack is now enabled,
+        False if the hack is now disabled,
         None on error (no change in status)
     """
     # Setup - get the hack, which file, and validate

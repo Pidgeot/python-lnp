@@ -17,9 +17,9 @@ def find_vanilla(download_missing=True):
     If download_missing is set to True, missing baselines will be downloaded.
 
     Returns:
-        Path to the vanilla folder, eg 'LNP/Baselines/df_40_15'
-        False if baseline not available (and start download)
-        None if version detection is not accurate
+        Path to the vanilla folder, eg ``'LNP/Baselines/df_40_15'``,
+        ``False`` if baseline not available (and start download),
+        ``None`` if version detection is not accurate
     """
     if lnp.df_info.source == "init detection":
         log.w('Baseline DF version from init detection; highly unreliable!')
@@ -69,14 +69,13 @@ def set_auto_download(value):
 def simplify_pack(pack, folder):
     """Removes unnecessary files from LNP/<folder>/<pack>.
 
-    Params:
-        pack, folder
-            path segments in './LNP/folder/pack/' as strings
+    Args:
+        pack, folder: path segments in ``'./LNP/folder/pack/'`` as strings
 
     Returns:
-        The number of files removed if successful
-        False if an exception occurred
-        None if folder is empty
+        The number of files removed if successful,
+        ``False`` if an exception occurred,
+        ``None`` if folder is empty
     """
     if folder not in ('graphics', 'mods', 'baselines'):
         return False
@@ -110,12 +109,11 @@ def simplify_pack(pack, folder):
 def remove_vanilla_raws_from_pack(pack, folder):
     """Remove files identical to vanilla raws, return files removed
 
-    Params:
-        pack, folder
-            path segments in './LNP/folder/pack/' as strings
+    Args:
+        pack, folder: path segments in ``'./LNP/folder/pack/'`` as strings
 
     Returns:
-        The number of files removed
+        int: the number of files removed
     """
     if not find_vanilla():
         return 0
@@ -145,12 +143,11 @@ def remove_vanilla_raws_from_pack(pack, folder):
 def remove_empty_dirs(pack, folder):
     """Removes empty subdirs in a mods or graphics pack.
 
-    Params:
-        pack, folder
-            path segments in './LNP/folder/pack/' as strings
+    Args:
+        pack, folder: path segments in ``'./LNP/folder/pack/'`` as strings
 
     Returns:
-        The number of dirs removed
+        int: the number of dirs removed
     """
     i = 0
     for _ in range(3):

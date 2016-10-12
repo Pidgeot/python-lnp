@@ -3,11 +3,12 @@
 """Utility management.
 
 There are now two seperate metadata systems:
- - the manifest system, which applies to each dir with a manifest (and subdirs)
- - the global system, which applies to everything else
+
+- the manifest system, which applies to each dir with a manifest (and subdirs)
+- the global system, which applies to everything else
 
 Utilities are uniformly and uniquely identified by the relative path
-from `LNP/Utilities/` to the executable file.
+from ``LNP/Utilities/`` to the executable file.
 
 Metadata for each is found by looking back up the pach for a manifest, and
 in the global metadata if one is not found.
@@ -91,7 +92,8 @@ def read_utility_lists(path):
     """
     Reads a list of filenames/tags from a utility list (e.g. include.txt).
 
-    :param path: The file to read.
+    Args:
+        path: The file to read.
     """
     result = []
     try:
@@ -160,9 +162,8 @@ def toggle_autorun(item):
     """
     Toggles autorun for the specified item.
 
-    Params:
-        item
-            The item to toggle autorun for.
+    Args:
+        item: the item to toggle autorun for.
     """
     if item in lnp.autorun:
         lnp.autorun.remove(item)

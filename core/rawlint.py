@@ -87,8 +87,9 @@ def check_folder(path):
     are printed to the log with level ERROR.
 
     Returns:
-        (passed, failed)
-            two lists of paths of files that passed or failed, respectively"""
+        (passed, failed): two lists of paths of files that passed or failed,
+        respectively.
+    """
     log.push_prefix('RawLint')
     files = []
     for d in os.walk(path):
@@ -117,8 +118,9 @@ def check_df(path):
     WARNING. General problems are printed to the log with level ERROR.
 
     Returns:
-        (passed, failed)
-            two lists of paths of files that passed or failed, respectively"""
+        (passed, failed): two lists of paths of files that passed or failed,
+        respectively.
+    """
     return check_folder(os.path.join(path, 'raw', 'objects'))
 
 def check_folder_bool(path):

@@ -343,9 +343,8 @@ class DFConfiguration(object):
         """
         Constructor for DFConfiguration.
 
-        Params:
-            base_dir
-                Path containing the Dwarf Fortress instance to operate on.
+        Args:
+            base_dir: Path containing the Dwarf Fortress instance to operate on
         """
         self.base_dir = base_dir
         self.settings = dict()
@@ -456,38 +455,31 @@ class DFConfiguration(object):
         the current DF version are simply registered with a field name mapping,
         but they will not be expected in the init files.
 
-        Params:
-          name
-            The name you want to use to refer to this field (becomes available
-            as an attribute on this class).
-          field_name
-            The field name used in the file. If this is different from the name
-            argument, this will also become available as an attribute.
-          default
-            The value to initialize this setting to.
-          values
-            An iterable of valid values for this field. Used in cycle_list.
-            Special values defined in this file:
-              None
-                Unspecified value; cycling has no effect.
-              disabled:
-                Boolean option toggled by replacing the [] around the field
-                name with !!.
-              force_bool:
-                Values other than "YES" and "NO" are interpreted as "YES".
-          files
-            A tuple of files this value is read from. Used for e.g. aquifer
-            toggling, which requires editing multiple files.
-          cond
-            A boolean which must be True in order for the field to be valid.
-            If False, this will merely register the field name mapping.
-            Defaults to True.
-          validate
-            An optional function(x) which may be used to validate a value
-            for this field. Will be sent the value as parameter, must return a
-            tuple (ok, errormsg).
-        """
+        Args:
+            name: The name you want to use to refer to this field
+                (becomes available as an attribute on this class).
+            field_name: The field name used in the file. If this is different
+                from the name argument, this will also become available as an
+                attribute.
+            default: The value to initialize this setting to.
+            values: An iterable of valid values for this field. Used in
+                cycle_list.  Special values defined in this file:
 
+                :None: Unspecified value; cycling has no effect.
+                :disabled: Boolean option toggled by replacing the ``[]``
+                    around the field name with ``!!``.
+                :force_bool: Values other than "YES" and "NO" are
+                    interpreted as "YES".
+
+            files: A tuple of files this value is read from. Used for e.g. aquifer
+                toggling, which requires editing multiple files.
+            cond (bool): If True, the field will be treated as valid.
+                If False, this will merely register the field name mapping.
+                Defaults to True.
+            validate: An optional function(x) which may be used to validate a
+                value for this field. Will be sent the value as parameter,
+                must return a tuple (ok, errormsg).
+        """
         # Don't allow re-registration of a known field
         if name in self.settings or name in self.inverse_field_names:
             return
@@ -512,11 +504,9 @@ class DFConfiguration(object):
         """
         Sets the setting <name> to <value>.
 
-        Params:
-            name
-                Name of the setting to alter.
-            value
-                New value for the setting.
+        Args:
+            name: name of the setting to alter.
+            value: new value for the setting.
         """
         self.settings[name] = value
 
@@ -524,9 +514,8 @@ class DFConfiguration(object):
         """
         Cycle the setting <name>.
 
-        Params:
-            name
-                Name of the setting to cycle.
+        Args:
+            name: name of the setting to cycle.
         """
         self.settings[name] = self.cycle_list(
             self.settings[name], self.options[name])
@@ -535,11 +524,9 @@ class DFConfiguration(object):
     def cycle_list(current, items):
         """Cycles setting between a list of items.
 
-        Params:
-            current
-                Current value.
-            items
-                List of possible values (optionally a special value).
+        Args:
+            current: current value.
+            items: list of possible values (optionally a special value).
 
         Returns:
             If no list of values is given, returns current.
@@ -633,15 +620,11 @@ class DFConfiguration(object):
         """
         Reads DF settings from the file <filename>.
 
-        Params:
-          filename
-            The file to read from.
-          fields
-            An iterable containing the field names to read.
-          auto_add
-            Whether to automatically register all unknown fields for changes by
-            calling create_option(field_name, field_name, value, None,
-            (filename,)).
+        Args:
+          filename: the file to read from.
+          fields: an iterable containing the field names to read.
+          auto_add: whether to automatically register all unknown fields for
+              changes.
         """
         text = DFRaw.read(filename)
         if auto_add:
@@ -676,17 +659,15 @@ class DFConfiguration(object):
         Returns True if <field> exists in <filename> and has the specified
         number of parameters.
 
-        Params:
-            filename
-                The file to check.
-            field
-                The field to look for.
-            num_params
-                The exact number of parameters for the field. -1 for no limit.
-            min_params
-                The minimum number of parameters for the field. -1 for no limit.
-            max_params
-                The maximum number of parameters for the field. -1 for no limit.
+        Args:
+            filename: the file to check.
+            field: the field to look for.
+            num_params: the exact number of parameters for the field.
+                -1 for no limit.
+            min_params: the minimum number of parameters for the field.
+                -1 for no limit.
+            max_params: the maximum number of parameters for the field.
+                -1 for no limit.
         """
         try:
             match = re.search(
@@ -715,11 +696,9 @@ class DFConfiguration(object):
         """
         Write settings to a specific file.
 
-        Params:
-            filename
-                Name of the file to write.
-            fields
-                List of all field names to change.
+        Args:
+            filename: name of the file to write.
+            fields: list of all field names to change.
         """
         with DFRaw(filename) as raw:
             for field in fields:
@@ -736,11 +715,9 @@ class DFConfiguration(object):
         """
         Create a new file containing the specified fields.
 
-        Params:
-            filename
-                Name of the file to write.
-            fields
-                List of all field names to write.
+        Args:
+            filename: name of the file to write.
+            fields: list of all field names to write.
         """
         with DFRaw.open(filename, 'wt') as newfile:
             for field in fields:

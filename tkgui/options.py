@@ -281,9 +281,8 @@ class OptionsTab(Tab):
         """
         Installs selected embark profiles.
 
-        Params:
-            listbox
-                Listbox containing the list of embark profiles.
+        Args:
+            listbox: Listbox containing the list of embark profiles.
         """
         if len(listbox.curselection()) != 0:
             files = []

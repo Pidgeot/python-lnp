@@ -17,9 +17,8 @@ def install_embarks(files):
     """
     Installs a list of embark profiles.
 
-    Params:
-        files
-            List of files to install.
+    Args:
+        files: list of files to install.
     """
     with DFRaw.open(paths.get('init', 'embark_profiles.txt'), 'wt') as out:
         log.i('Installing embark profiles: ' + str(files))

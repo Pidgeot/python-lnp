@@ -24,12 +24,13 @@ def download_str(url, **kwargs):
     downloads return None. NOTE: This is a blocking method. Use a download queue
     for non-blocking downloads.
 
-    Keyword arguments:
-        encoding
-            Used to decode the data to text. Defaults to UTF-8.
-        timeout
-            Timeout used for the URL request, in seconds. Defaults to 3.
-    <encoding> is not provided, UTF-8 is used.
+    Args:
+        url: the URL to download
+        encoding: used to decode the data to text. Defaults to UTF-8.
+        timeout: timeout used for the URL request, in seconds. Defaults to 3.
+
+    Returns:
+        The contents of the downloaded file as text, or None.
     """
     # pylint: disable=bare-except
     try:
@@ -84,14 +85,12 @@ class DownloadQueue(object):
     def add(self, url, target, end_callback):
         """Adds a download to the queue.
 
-        Params:
-            url
-                The URL to download.
-            target
-                The target path for the download.
-            end_callback
-                A function(url, filename, success) which is called
-                when the download finishes."""
+        Args:
+            url: the URL to download.
+            target: the target path for the download.
+            end_callback: a function(url, filename, success) which is called
+                when the download finishes.
+        """
         with self.lock:
             if url not in [q[0] for q in self.queue]:
                 self.queue.append((url, target, end_callback))
@@ -132,8 +131,8 @@ class DownloadQueue(object):
         self.on_begin_download.remove(func)
 
     def register_progress(self, func):
-        """Registers a function func(queue_name, url, downloaded, total_size) to
-        be called for download progress reports.
+        """Registers a function func(queue_name, url, downloaded, total_size)
+        to be called for download progress reports.
         If total size is unknown, None will be sent."""
         self.on_progress.append(func)
 

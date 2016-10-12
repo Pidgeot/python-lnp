@@ -5,27 +5,31 @@
 The content to import is defined in PyLNP.json
 
 Two import strategies are currently supported:
-    copy_add: copy a file or directory contents, non-recursive, no overwriting
-    text_prepend: prepend imported file content (for logfiles)
+
+:copy_add:
+    copy a file or directory contents, non-recursive, no overwriting
+:text_prepend:
+    prepend imported file content (for logfiles)
+
 
 These strategies support the 'low hanging fruit' of imports.  Other content
 or more advanced strategies have been identified, but are difficult to
 implement without risking a 'bad import' scenario:
 
-    init files:
-        Not simply copyable. Sophisticated merging (similar to graphics
-        upgrades) may lead to bad config when using settings from an older
-        version of DF.  Will not be supported.
-    keybinds:
-        Could be imported by minimising interface.txt (and LNP/Keybinds/*)
-        (see core/keybinds.py), and copying if a duplicate set is not yet
-        available.  Planned for future update.
-    world_gen, embark_profiles:
-        Importing world gen and embark profiles may be supported eventually.
-        No obvious downsides beyond tricky implementation.
-    other:
-        Custom settings importer - eg which graphics pack, are aquifers
-        disabled, other PyLNP settings...  May be added later but no plans.
+:init files:
+    Not simply copyable. Sophisticated merging (similar to graphics
+    upgrades) may lead to bad config when using settings from an older
+    version of DF.  Will not be supported.
+:keybinds:
+    Could be imported by minimising interface.txt (and ``LNP/Keybinds/*``)
+    (see core/keybinds.py), and copying if a duplicate set is not yet
+    available.  Planned for future update.
+:world_gen, embark_profiles:
+    Importing world gen and embark profiles may be supported eventually.
+    No obvious downsides beyond tricky implementation.
+:other:
+    Custom settings importer - eg which graphics pack, are aquifers
+    disabled, other PyLNP settings...  May be added later but no plans.
 
 """
 from __future__ import print_function, unicode_literals, absolute_import

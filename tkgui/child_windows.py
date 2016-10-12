@@ -29,11 +29,9 @@ class ChildWindow(object):
         """
         Constructor for child windows.
 
-        Params:
-            parent
-                Parent widget for the window.
-            title
-                Title for the window.
+        Args:
+            parent: parent widget for the window.
+            title: title for the window.
         """
         top = self.top = Toplevel(parent)
         self.parent = parent
@@ -46,9 +44,8 @@ class ChildWindow(object):
         """
         Constructs controls for the window. To be overridden in child classes.
 
-        Params:
-            container
-                The frame the controls are to be created in.
+        Args:
+            container: the frame the controls are to be created in.
         """
         pass
 
@@ -56,9 +53,8 @@ class ChildWindow(object):
         """
         Change the window to work as a modal dialog.
 
-        Params:
-            on_cancel
-                Method to be called if the user closes the window.
+        Args:
+            on_cancel: method to be called if the user closes the window.
         """
         if self.parent.state() != "withdrawn":
             self.top.transient(self.parent)
@@ -103,9 +99,8 @@ class DualTextWindow(ChildWindow):
         """
         Creates buttons for this window. Must be overriden in child classes.
 
-        Params:
-            container
-                The frame the controls are to be created in.
+        Args:
+            container: the frame the controls are to be created in.
         """
         pass
 
@@ -115,9 +110,8 @@ class LogWindow(DualTextWindow):
         """
         Constructor for LogWindow.
 
-        Params:
-            parent
-                Parent widget for the window.
+        Args:
+            parent: parent widget for the window.
         """
         super(LogWindow, self).__init__(parent, 'Output log')
         self.load()
@@ -176,11 +170,9 @@ class SelectDF(ChildWindow):
         """
         Constructor for SelectDF.
 
-        Params:
-            parent
-                Parent widget for the window.
-            folders
-                List of suitable folder paths.
+        Args:
+            parent: parent widget for the window.
+            folders: list of suitable folder paths.
         """
         self.parent = parent
         self.listvar = Variable(parent)
@@ -225,11 +217,9 @@ class UpdateWindow(ChildWindow):
         """
         Constructor for UpdateWindow.
 
-        Params:
-            parent
-                Parent widget for the window.
-            lnp
-                Reference to the PyLNP object.
+        Args:
+            parent: parent widget for the window.
+            lnp: reference to the PyLNP object.
         """
         self.parent = parent
         super(UpdateWindow, self).__init__(parent, 'Update available')
@@ -281,15 +271,11 @@ class ConfirmRun(ChildWindow):
         """
         Constructor for ConfirmRun.
 
-        Params:
-            parent
-                Parent widget for the window.
-            lnp
-                Reference to the PyLNP object.
-            path
-                Path to the executable.
-            is_df
-                True if the program is DF itself.
+        Args:
+            parent: Parent widget for the window.
+            lnp: Reference to the PyLNP object.
+            path: Path to the executable.
+            is_df: True if the program is DF itself.
         """
         self.parent = parent
         self.path = path

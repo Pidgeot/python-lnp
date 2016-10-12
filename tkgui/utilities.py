@@ -133,9 +133,8 @@ class UtilitiesTab(Tab):
         """
         Toggles autorun for a utility.
 
-        Params:
-            event
-                Data for the click event that triggered this.
+        Args:
+            event: Data for the click event that triggered this.
         """
         if event.keysym == '??':
             item = self.proglist.identify_row(event.y)

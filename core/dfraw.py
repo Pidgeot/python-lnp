@@ -54,15 +54,13 @@ final_level_tags = ['TILE_PAGE']
 def tokenize_raw(text):
     """Generator which returns nodes from a raw file.
 
-    Params:
-        text
-            Text of the raw file to parse.
+    Args:
+        text: text of the raw file to parse.
+
     Returns:
-        (kind, token)
-            kind
-                "Tag" or "Comment"
-            token
-                Token text (including any delimiters)"""
+        (kind, token): tuple of "Tag" or "Comment", and token text including
+        any delimiters.
+    """
     while text:
         curr_string = ''
         if text[0] == '[':

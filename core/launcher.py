@@ -67,11 +67,9 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
     """
     Launches an external program.
 
-    Params:
-        path
-            The path of the program to launch.
-        spawn_terminal
-            Whether or not to spawn a new terminal for this app.
+    Args:
+        path: the path of the program to launch.
+        spawn_terminal: whether or not to spawn a new terminal for this app.
             Used only for DFHack.
     """
     path = os.path.abspath(path)
@@ -122,11 +120,9 @@ def program_is_running(path, nonchild=False):
     """
     Returns True if a program is currently running.
 
-    Params:
-        path
-            The path of the program.
-        nonchild
-            If set to True, attempts to check for the process among all
+    Args:
+        path: the path of the program.
+        nonchild: if set to True, attempts to check for the process among all
             running processes, not just known child processes. Used for
             DFHack on Linux and OS X; currently unsupported for Windows.
     """
@@ -170,9 +166,8 @@ def open_file(path):
     """
     Opens a file with the system default viewer for the respective file type.
 
-    Params:
-        path
-            The file path to open.
+    Args:
+        path: the file path to open.
     """
     path = os.path.normpath(path)
     # pylint: disable=broad-except, bare-except

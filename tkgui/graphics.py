@@ -364,9 +364,8 @@ class GraphicsTab(Tab):
         Draws a preview of a color scheme. If no scheme is specified,
         draws the currently installed color scheme.
 
-        Params:
-            colorscheme
-                Listbox containing the list of color schemes.
+        Args:
+            colorscheme: Listbox containing the list of color schemes.
         """
         colorlist = colors.get_colors(colorscheme)
         self.color_preview.delete(ALL)
@@ -403,9 +402,9 @@ class GraphicsTab(Tab):
         """
         Installs selected tilesets.
 
-        Params:
-            mode
-                If mode & 1, installs FONT. If mode & 2, installs GRAPHICS_FONT.
+        Args:
+            mode: If ``mode & 1``, installs FONT.
+                If ``mode & 2``, installs GRAPHICS_FONT.
         """
         font = None
         graphicsfont = None

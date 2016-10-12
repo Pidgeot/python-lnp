@@ -100,9 +100,8 @@ class _ToolTip(object):
         """
         Sets the tooltip text and redraws it if necessary.
 
-        Params:
-            text
-                The new tooltip text.
+        Args:
+            text: the new tooltip text.
         """
         if text == self.text:
             return
@@ -137,11 +136,9 @@ def create_tooltip(widget, text):
     """
     Creates and returns a tooltip for a widget.
 
-    Params:
-        widget
-            The widget to associate the tooltip to.
-        text
-            The tooltip text.
+    Args:
+        widget: the widget to associate the tooltip to.
+        text: the tooltip text.
     """
     tooltip = _ToolTip(widget, text)
     # pylint:disable=unused-argument
@@ -149,9 +146,8 @@ def create_tooltip(widget, text):
         """
         Event handler on mouse enter.
 
-        Params:
-            event
-                The event data."""
+        Args:
+            event: the event data."""
         if tooltip.event:
             widget.after_cancel(tooltip.event)
         tooltip.event = widget.after(_TOOLTIP_DELAY, tooltip.showtip)
@@ -160,9 +156,8 @@ def create_tooltip(widget, text):
         """
         Event handler on mouse exit.
 
-        Params:
-            event
-                The event data.
+        Args:
+            event: the event data.
         """
         if tooltip.event is not None:
             widget.after_cancel(tooltip.event)
@@ -176,11 +171,9 @@ def create_control_group(parent, text, dual_column=False):
     """
     Creates and returns a Frame or Labelframe to group controls.
 
-    Params:
-        text
-            The caption for the Labelframe. If None, returns a Frame.
-        dual_column
-            If True, configures the frame for a dual-column grid layout.
+    Args:
+        text: the caption for the Labelframe. If None, returns a Frame.
+        dual_column: configure the frame for a dual-column grid layout if True.
     """
     f = None
     # pylint:disable=redefined-variable-type
@@ -198,17 +191,12 @@ def create_option_button(
     """
     Creates and returns a button bound to an option.
 
-    Params:
-        parent
-            The parent control for the button.
-        text
-            The button text.
-        tooltip
-            The tooltip for the button.
-        option
-            The keyword used for the option.
-        update_func
-            If given, a reference to a function that pre-processes the
+    Args:
+        parent: the parent control for the button.
+        text: the button text.
+        tooltip: the tooltip for the button.
+        option: the keyword used for the option.
+        update_func: if given, a reference to a function that pre-processes the
             given option for display.
     """
     return create_trigger_option_button(
@@ -219,7 +207,7 @@ def create_trigger_button(parent, text, tooltip, command):
     """
     Creates and returns a button that triggers an action when clicked.
 
-    Params:
+    Args:
         parent
             The parent control for the button.
         text
@@ -240,19 +228,13 @@ def create_trigger_option_button(
     Creates and returns a button bound to an option, with a special action
     triggered on click.
 
-    Params:
-        parent
-            The parent control for the button.
-        text
-            The button text.
-        tooltip
-            The tooltip for the button.
-        command
-            Reference to the function called when the button is clicked.
-        option
-            The keyword used for the option.
-        update_func
-            If given, a reference to a function that pre-processes the
+    Args:
+        parent: the parent control for the button.
+        text: the button text.
+        tooltip: the tooltip for the button.
+        command: Reference to the function called when the button is clicked.
+        option: the keyword used for the option.
+        update_func: f given, a reference to a function that pre-processes the
             given option for display.
     """
     if not binding.version_has_option(option):
@@ -265,13 +247,10 @@ def create_scrollbar(parent, control, **gridargs):
     """
     Creates and layouts a vertical scrollbar associated to <control>.
 
-    Params:
-        parent
-            The parent control for the scrollbar.
-        control
-            The control to attach the scrollbar to.
-        gridargs
-            Keyword arguments used to apply grid layout to the scrollbar.
+    Args:
+        parent: the parent control for the scrollbar.
+        control: the control to attach the scrollbar to.
+        gridargs: Keyword arguments used to apply grid layout to the scrollbar.
     """
     s = _AutoScrollbar(parent, orient=VERTICAL, command=control.yview)
     control['yscrollcommand'] = s.set
@@ -291,15 +270,12 @@ def listbox_identify(listbox, y):
 def listbox_dyn_tooltip(listbox, item_get, tooltip_get):
     """Attaches a dynamic tooltip to a listbox.
 
-    Params:
-        listbox
-            The listbox to attach to.
-        item_get
-            A function taking the index of the item and returning a reference to
-            the item.
-        tooltip_get
-            A function taking a reference to an item and returning its tooltip
-            (or a blank string for no tooltip).
+    Args:
+        listbox: The listbox to attach to.
+        item_get: A function taking the index of the item and returning a
+            reference to the item.
+        tooltip_get: A function taking a reference to an item and returning
+            its tooltip (or the empty string for no tooltip).
     """
     tooltip = create_tooltip(listbox, '')
     def motion_handler(event):
@@ -332,13 +308,10 @@ def treeview_tag_set(tree, tag, item, state=True, toggle=False):
     Adds or removes a tag from the Treeview item's tags. Returns True if
     tag is now set or False if it is not.
 
-    Params:
-        item
-            Treeview item id
-        state
-            True to set the tag; False to remove the tag.
-        toggle
-            If set to True, will toggle the tag. Overrides on.
+    Args:
+        item: Treeview item id
+        state: True to set the tag; False to remove the tag.
+        toggle: If set to True, will toggle the tag. Overrides on.
     """
     # This is necessary because tag_add and tag_remove are not in the Python
     # bindings for Tk, and this is more readable (and likely not any slower)
@@ -358,18 +331,16 @@ def treeview_tag_set(tree, tag, item, state=True, toggle=False):
 
 def create_file_list(parent, title, listvar, **args):
     """
-        Creates a file list with a scrollbar. Returns a tuple
-        (frame, listbox).
+    Creates a file list with a scrollbar. Returns a tuple (frame, listbox).
 
-        Params:
-            parent
-                The parent control for the list.
-            title
-                The title for the frame.
-            listvar
-                The Variable containing the list items.
-            args
-                Additions keyword arguments for the file list itself.
+    Args:
+        parent: The parent control for the list.
+        title: The title for the frame.
+        listvar: The variable containing the list items.
+        args: Additions keyword arguments for the file list itself.
+
+    Returns:
+        (tuple, listbox)
     """
     if 'height' not in args:
         args['height'] = 4
@@ -388,24 +359,21 @@ def create_file_list(parent, title, listvar, **args):
 def create_readonly_file_list_buttons(
         parent, title, listvar, load_fn, refresh_fn, **args):
     """
-        Creates a file list with load and refresh buttons. Returns a tuple
-        (frame, listbox, buttons).
+    Creates a file list with load and refresh buttons. Returns a tuple
+    (frame, listbox, buttons).
 
-        Params:
-            parent
-                The parent control for the list.
-            title
-                The title for the frame.
-            listvar
-                The Variable containing the list items.
-            load_fn
-                Reference to a function to be called when the Load button
-                is clicked.
-            refresh_fn
-                Reference to a function to be called when the Refresh button
-                is clicked.
-            args
-                Additions keyword arguments for the file list itself.
+    Args:
+        parent: The parent control for the list.
+        title: The title for the frame.
+        listvar: The variable containing the list items.
+        load_fn: Reference to a function to be called when the Load button
+            is clicked.
+        refresh_fn: Reference to a function to be called when the Refresh
+            button is clicked.
+        args: Additions keyword arguments for the file list itself.
+
+    Returns:
+        (frame, listbox, buttons)
     """
     (lf, lb) = create_file_list(parent, title, listvar, **args)
     buttons = Frame(lf)
@@ -422,30 +390,25 @@ def create_file_list_buttons(
         parent, title, listvar, load_fn, refresh_fn, save_fn,
         delete_fn, **args):
     """
-        Creates a file list with load, refresh, save and delete buttons.
-        Returns a tuple (frame, listbox, buttons).
+    Creates a file list with load, refresh, save and delete buttons.
+    Returns a tuple (frame, listbox, buttons).
 
-        Params:
-            parent
-                The parent control for the list.
-            title
-                The title for the frame.
-            listvar
-                The Variable containing the list items.
-            load_fn
-                Reference to a function to be called when the Load button
-                is clicked.
-            refresh_fn
-                Reference to a function to be called when the Refresh button
-                is clicked.
-            save_fn
-                Reference to a function to be called when the Save button
-                is clicked.
-            delete_fn
-                Reference to a function to be called when the Delete button
-                is clicked.
-            args
-                Additions keyword arguments for the file list itself.
+    Args:
+        parent: The parent control for the list.
+        title: The title for the frame.
+        listvar: The variable containing the list items.
+        load_fn: Reference to a function to be called when the Load button
+            is clicked.
+        refresh_fn: Reference to a function to be called when the Refresh
+            button is clicked.
+        save_fn: Reference to a function to be called when the Save button
+            is clicked.
+        delete_fn: Reference to a function to be called when the Delete button
+            is clicked.
+        args: Additions keyword arguments for the file list itself.
+
+    Returns:
+        (frame, listbox, buttons)
     """
     (lf, lb, buttons) = create_readonly_file_list_buttons(
         parent, title, listvar, load_fn, refresh_fn, **args)
@@ -486,17 +449,16 @@ def create_list_with_entry(parent, title, listvar, buttonspec, **kwargs):
     Creates a control group with a listbox, a text entry, and any number of
     buttons specified with buttonspec. Does not lay out the control group in
     its parent.
-    Returns a tuple (frame, entry, lsitbox)
 
-    Params:
-        parent
-            The parent control for the list.
-        title
-            The title for the frame.
-        listvar
-            The Variable containing the list items.
-        buttonspec
-            A list of tuples (title, tooltip, function) specifying the buttons
+    Args:
+        parent: The parent control for the list.
+        title: The title for the frame.
+        listvar: The variable containing the list items.
+        buttonspec: A list of tuples (title, tooltip, function) specifying the
+            buttons
+
+    Returns:
+        a tuple (frame, entry, lsitbox)
     """
     entry_default = kwargs.pop('entry_default', None)
     if 'height' not in kwargs:
@@ -536,15 +498,11 @@ def create_toggle_list(parent, columns, framegridopts, listopts={}):
     Creates and returns a two-column Treeview in a frame to show toggleable
     items in a list.
 
-    Params:
-        parent
-            The parent control for the Treeview.
-        columns
-            Column data for the Treeview.
-        framegridopts
-            Additional options for grid layout of the frame.
-        listopts
-            Additional options for the Treeview.
+    Args:
+        parent: The parent control for the Treeview.
+        columns: Column data for the Treeview.
+        framegridopts: Additional options for grid layout of the frame.
+        listopts: Additional options for the Treeview.
     """
     # pylint:disable=dangerous-default-value
     lf = Frame(parent)
@@ -562,15 +520,11 @@ def create_numeric_entry(parent, variable, option, tooltip):
     Creates and returns an Entry suitable for input of small, numeric values
     and hooks up notification of changes.
 
-    Params:
-        parent
-            The parent control for the Entry.
-        variable
-            The StringVar used to store the value internally.
-        option
-            The keyword used for the option.
-        tooltip
-            The tooltip for the Entry.
+    Args:
+        parent: The parent control for the Entry.
+        variable: The StringVar used to store the value internally.
+        option: The keyword used for the option.
+        tooltip: The tooltip for the Entry.
     """
     if not binding.version_has_option(option):
         return fake_control

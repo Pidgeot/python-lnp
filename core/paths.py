@@ -13,11 +13,9 @@ def _identify_folder_name(base, name):
     Returns "base/name" where name is lowercase if the lower case version
     exists and the standard case version does not.
 
-    Params:
-        base
-            The path containing the desired folder.
-        name
-            The standard case name of the desired folder.
+    Args:
+        base: the path containing the desired folder.
+        name: the standard case name of the desired folder.
     """
     normal = os.path.join(base, name)
     lower = os.path.join(base, name.lower())
@@ -30,10 +28,13 @@ def register(name, *path_elms, **kwargs):
     """Registers a path constructed by <path_elms> under <name>.
     If multiple path elements are given, the last
     element will undergo case correction (see _identify_folder_name).
-    kwargs:
-        allow_create
-            If True, the registered path will be created if it does not already
-            exist. Defaults to True."""
+
+    Args:
+        name: a registered name corresponding to some path segment
+        path_elems: path elements, which will be joined to the root path
+        allow_create:  If True, the registered path will be created if it
+            does not already exist. Defaults to True.
+    """
     if len(path_elms) > 1:
         __paths[name] = _identify_folder_name(os.path.join(
             *path_elms[:-1]), path_elms[-1])
