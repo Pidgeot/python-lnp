@@ -25,7 +25,7 @@ def get_terminal_command(cmd, force_custom=False):
             term = get_configured_terminal().get_command_line()
             log.d(
                 "Using configured terminal: %s, command line %s", term,
-                get_configured_terminal.name) #pylint: disable=no-member
+                get_configured_terminal().name)
         if "$" in term:
             c = []
             for s in term:
