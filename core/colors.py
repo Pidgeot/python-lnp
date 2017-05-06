@@ -43,7 +43,10 @@ def get_colors(colorscheme=None):
         result = DFRaw(f).get_values(*color_fields)
         return [tuple(int(x) for x in t) for t in result]
     except:
-        log.e('Unable to read current colors', stack=True)
+        if colorscheme:
+            log.e('Unable to read colorscheme %s', colorscheme, stack=True)
+        else:
+            log.e('Unable to read current colors', stack=True)
         return []
 
 def load_colors(filename):
