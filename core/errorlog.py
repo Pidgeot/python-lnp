@@ -80,6 +80,12 @@ def start():
     out.hook()
     err.hook()
 
+def stop():
+    """Stops redirection of stdout and stderr."""
+    out.unhook()
+    err.unhook()
+
+
 out = CaptureStream('stdout')
 err = CaptureStream('stderr', True)
 

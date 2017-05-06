@@ -189,10 +189,12 @@ class PyLNP(object):
 
         if self.args.terminal_test_parent:
             from . import terminal
+            errorlog.stop()
             sys.exit(terminal.terminal_test_parent(
                 self.args.terminal_test_parent[0]))
         if self.args.terminal_test_child:
             from . import terminal
+            errorlog.stop()
             sys.exit(terminal.terminal_test_child(
                 self.args.terminal_test_child[0]))
 
