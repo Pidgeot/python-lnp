@@ -106,6 +106,10 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
             if ('TK_LIBRARY' in environ and
                     sys._MEIPASS in environ['TK_LIBRARY']): # pylint:disable=no-member
                 del environ['TK_LIBRARY']
+            if 'LD_LIBRARY_PATH' in environ:
+                del environ['LD_LIBRARY_PATH']
+            if 'PYTHONPATH' in environ:
+                del environ['PYTHONPATH']
 
         lnp.running[path] = subprocess.Popen(
             run_args, cwd=workdir, env=environ)
