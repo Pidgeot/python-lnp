@@ -142,16 +142,38 @@ class GNOMETerminal(LinuxTerminal):
             return False
         finally:
             FNULL.close()
+        try:
+            GNOMETerminal.get_command_line() # Attempt to get the command line
+            return True
+        except:
+            return False
 
     @staticmethod
     def get_command_line():
-        term = subprocess.check_output([
-            'gconftool-2', '--get',
-            '/desktop/gnome/applications/terminal/exec']).replace('\n', '')
-        term_arg = subprocess.check_output([
-            'gconftool-2', '--get',
-            '/desktop/gnome/applications/terminal/exec_arg']).replace('\n', '')
-        return ['nohup', term, term_arg]
+        try: # Try gsettings first (e.g. Ubuntu 17.04)
+            term = subprocess.check_output([
+                'gsettings', 'get',
+                'org.gnome.desktop.default-applications.terminal', 'exec'
+            ]).replace('\n', '').replace("'", '')
+            term_arg = subprocess.check_output([
+                'gsettings', 'get',
+                'org.gnome.desktop.default-applications.terminal', 'exec-arg'
+            ]).replace('\n', '').replace("'", '')
+            return ['nohup', term, term_arg]
+        except: #fallback to older gconf
+            pass
+        try:
+            term = subprocess.check_output([
+                'gconftool-2', '--get',
+                '/desktop/gnome/applications/terminal/exec'
+            ]).replace('\n', '')
+            term_arg = subprocess.check_output([
+                'gconftool-2', '--get',
+                '/desktop/gnome/applications/terminal/exec_arg'
+            ]).replace('\n', '')
+            return ['nohup', term, term_arg]
+        except:
+            raise Exception("Unable to determine terminal command.")
 
 class XfceTerminal(LinuxTerminal):
     """Handles terminals in the Xfce desktop environment."""
