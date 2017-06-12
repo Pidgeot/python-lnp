@@ -285,6 +285,7 @@ def merge_line_list(mod_text, vanilla_text, gen_text):
     mod_ops = SequenceMatcher(None, vanilla_text, mod_text).get_opcodes()
     outfile = []
     for block in three_way_merge(gen_text, gen_ops, mod_text, mod_ops):
+        log.d('writing block')
         outfile.extend(block)
     status = outfile.pop()
     return status, outfile
@@ -293,26 +294,46 @@ def three_way_merge(gen_text, van_gen_ops, mod_text, van_mod_ops):
     """Yield blocks of lines from a three-way-merge.  Last block is status."""
     status, cur_v, mod_i2, gen_i2 = 0, 0, 1, 1
     while van_mod_ops and van_gen_ops:
+        log.d('before pop')
+        log.d('gen ops: ' + str(van_gen_ops))
+        log.d('mod ops: ' + str(van_mod_ops))
+        log.d('mod_i2: ' + str(mod_i2) + ' gen_i2: ' + str(gen_i2) + ' cur_v: ' + str(cur_v))
         if mod_i2 <= cur_v:
+            log.d('pop mod')
             van_mod_ops.pop(0)
         if gen_i2 <= cur_v:
+            log.d('pop gen')
             van_gen_ops.pop(0)
+        log.d('after pop')
+        log.d('gen ops: ' + str(van_gen_ops))
+        log.d('mod ops: ' + str(van_mod_ops))
+        if len(van_mod_ops) == 0 or len(van_gen_ops) == 0:
+            log.d('out of entries')
+            break
         _, _, mod_i2, mod_j1, mod_j2 = van_mod_ops[0]
         gen_tag, _, gen_i2, gen_j1, gen_j2 = van_gen_ops[0]
         low_i2 = min(mod_i2, gen_i2)
         if van_mod_ops[0][0] == 'equal':
+            log.d('equal mod ops')
             if gen_tag == 'equal':
+                log.d('equal gen tag')
                 yield gen_text[cur_v:low_i2]
                 cur_v = low_i2
+                log.d('back from equal gen tag')
                 continue
+            log.d('not equal gen tag')
             yield gen_text[gen_j1:gen_j2]
             cur_v = gen_i2
             continue
         if gen_tag == 'equal':
+            log.d('not equal mod op, equal gen tag')
             yield mod_text[mod_j1:mod_j2]
             cur_v = mod_i2
             continue
-        yield mod_text[cur_v:low_i2]
+        
+        log.d('yield mod text (cur_v: ' + str(cur_v) + ', mod_j2: ' + str(mod_j2) + '): ' + str(mod_text[cur_v:mod_j2]))
+        yield mod_text[cur_v:mod_j2]
+        log.d('back from yield mod text')
         if gen_text[cur_v:low_i2] != mod_text[cur_v:low_i2]:
             status = 2
             log.d('Overwrite merge at line {}'.format(cur_v))
@@ -320,12 +341,15 @@ def three_way_merge(gen_text, van_gen_ops, mod_text, van_mod_ops):
                   '+ ' + '+ '.join(mod_text[cur_v:low_i2]))
         cur_v = low_i2
     while van_mod_ops:
+        log.d('popping mod ops')
         _, _, _, mod_j1, mod_j2 = van_mod_ops.pop(0)
         yield mod_text[mod_j1:mod_j2]
     while van_gen_ops:
+        log.d('popping gen ops')
         _, _, _, gen_j1, gen_j2 = van_gen_ops.pop(0)
         yield gen_text[gen_j1:gen_j2]
-    yield status
+    log.d('yield status')
+    yield [status]
 
 def clear_temp():
     """Resets the folder in which raws are mixed."""
