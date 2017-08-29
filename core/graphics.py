@@ -78,6 +78,16 @@ def read_graphics():
         result.append((p, font, graphics))
     return tuple(sorted(result))
 
+
+def add_tilesets():
+    """Copies missing tilesets from LNP/Tilesets to the data/art folder."""
+    for item in glob.glob(paths.get('tilesets', '*')):
+        if not os.path.exists(paths.get('data', 'art', os.path.basename(item))):
+            if os.path.isfile(item):
+                shutil.copy2(item, paths.get('data', 'art'))
+            else:
+                shutil.copytree(item, paths.get('data', 'art'))
+
 def install_graphics(pack):
     """Installs the graphics pack located in LNP/Graphics/<pack>.
 
@@ -102,13 +112,7 @@ def install_graphics(pack):
         shutil.rmtree(paths.get('data', 'art'))
         shutil.copytree(paths.get('graphics', pack, 'data', 'art'),
                         paths.get('data', 'art'))
-        for item in glob.glob(paths.get('tilesets', '*')):
-            if not os.path.exists(paths.get('data', 'art',
-                                            os.path.basename(item))):
-                if os.path.isfile(item):
-                    shutil.copy2(item, paths.get('data', 'art'))
-                else:
-                    shutil.copytree(item, paths.get('data', 'art'))
+        add_tilesets()
         # ensure that mouse.png and font.ttf exist (required by DF)
         base = baselines.find_vanilla()
         if base:
@@ -324,7 +328,9 @@ def open_tilesets():
     open_file(paths.get('tilesets'))
 
 def read_tilesets():
-    """Returns a tuple of tileset files."""
+    """Returns a tuple of available tileset files. Also copies missing tilesets
+    from LNP/Tilesets to data/art."""
+    add_tilesets()
     files = glob.glob(paths.get('data', 'art', '*.bmp'))
     if 'legacy' not in lnp.df_info.variations:
         files += glob.glob(paths.get('data', 'art', '*.png'))
