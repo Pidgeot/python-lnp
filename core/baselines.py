@@ -92,6 +92,8 @@ def simplify_pack(pack, folder):
         keep += [('data', 'art')] + [
             ('data', 'init', f + '.txt') for f in
             ('colors', 'd_init', 'init', 'overrides')]
+    if folder == 'baselines':
+        keep.append(('data', 'init', 'interface.txt'))
     keep = [os.path.join(*k) for k in keep]
     for root, _, files in os.walk(packdir):
         for k in files:
