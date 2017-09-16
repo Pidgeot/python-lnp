@@ -10,7 +10,7 @@ try:  # Python 2
     from urllib import quote, unquote
     from urlparse import urlparse
 except ImportError:  # Python 3
-    # pylint:disable=import-error, no-name-in-module
+    # pylint:disable=import-error, no-name-in-module,ungrouped-imports
     from urllib.parse import quote, unquote, urlparse
 
 from .lnp import lnp

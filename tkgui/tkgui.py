@@ -8,7 +8,22 @@ import os
 import sys
 from threading import Semaphore
 
-# pylint:disable=wrong-import-order
+from core.helpers import get_resource
+from core.lnp import lnp, VERSION
+from core import df, launcher, log, paths, update, mods, download, baselines
+from core import terminal, importer
+
+from . import controls, binding
+from .child_windows import LogWindow, InitEditor, SelectDF, UpdateWindow
+from .child_windows import ConfirmRun, TerminalSelector
+
+from .options import OptionsTab
+from .graphics import GraphicsTab
+from .utilities import UtilitiesTab
+from .advanced import AdvancedTab
+from .dfhack import DFHackTab
+from .mods import ModsTab
+
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     import queue as Queue
@@ -27,7 +42,6 @@ else:
     import tkMessageBox as messagebox
     import tkFileDialog as filedialog
     import tkFont
-# pylint:enable=wrong-import-order
 
 # Workaround to use Pillow in PyInstaller
 if False: # pylint:disable=using-constant-test
@@ -46,22 +60,6 @@ except ImportError:  # Some PIL installations live outside of the PIL package
         has_PIL = True
     except ImportError:  # No PIL compatible library
         has_PIL = False
-
-from . import controls, binding
-from .child_windows import LogWindow, InitEditor, SelectDF, UpdateWindow
-from .child_windows import ConfirmRun, TerminalSelector
-
-from .options import OptionsTab
-from .graphics import GraphicsTab
-from .utilities import UtilitiesTab
-from .advanced import AdvancedTab
-from .dfhack import DFHackTab
-from .mods import ModsTab
-
-from core.helpers import get_resource
-from core.lnp import lnp, VERSION
-from core import df, launcher, log, paths, update, mods, download, baselines
-from core import terminal, importer
 
 has_PNG = has_PIL or (TkVersion >= 8.6)  # Tk 8.6 supports PNG natively
 

@@ -625,7 +625,7 @@ class DFConfiguration(object):
     def read_settings(self):
         """Read settings from known filesets. If fileset only contains one
         file, all options will be registered automatically."""
-        for files in self.in_files.keys():
+        for files in self.in_files:
             for filename in files:
                 self.read_file(filename, self.in_files[files], len(files) == 1)
 

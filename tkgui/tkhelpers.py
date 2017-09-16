@@ -7,17 +7,15 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import sys
 
-# pylint:disable=wrong-import-order
+from core import download, baselines
+from core.lnp import lnp
+
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     import tkinter.messagebox as messagebox
 else:
     # pylint:disable=import-error
     import tkMessageBox as messagebox
-# pylint:enable=wrong-import-order
-
-from core import download, baselines
-from core.lnp import lnp
 
 def check_vanilla_raws():
     """Validates status of vanilla raws are ready."""

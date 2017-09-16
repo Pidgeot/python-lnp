@@ -65,7 +65,7 @@ def update():
 
     old_change_entry = __ui.change_entry
     __ui.change_entry = disabled_change_entry
-    for key in __controls.keys():
+    for key in __controls:
         try:
             k = key
             if not isinstance(k, basestring):

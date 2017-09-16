@@ -6,7 +6,13 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import sys
 
-# pylint:disable=wrong-import-order
+from core import colors, graphics, paths
+from core.lnp import lnp
+
+from . import controls, binding, tkhelpers
+from .layout import GridLayouter
+from .tab import Tab
+
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
@@ -17,14 +23,6 @@ else:
     from Tkinter import *
     from ttk import *
     import tkMessageBox as messagebox
-# pylint:enable=wrong-import-order
-
-from . import controls, binding, tkhelpers
-from .layout import GridLayouter
-from .tab import Tab
-
-from core import colors, graphics, paths
-from core.lnp import lnp
 
 # pylint:disable=too-many-public-methods,too-many-instance-attributes
 class GraphicsTab(Tab):

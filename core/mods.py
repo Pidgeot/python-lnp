@@ -292,12 +292,16 @@ def merge_line_list(mod_text, vanilla_text, gen_text):
 
 def three_way_merge(gen_text, van_gen_ops, mod_text, van_mod_ops):
     """Yield blocks of lines from a three-way-merge.  Last block is status."""
+    #pylint:disable=too-many-statements
     status, cur_v, mod_i2, gen_i2 = 0, 0, 1, 1
     while van_mod_ops and van_gen_ops:
         log.d('before pop')
         log.d('gen ops: ' + str(van_gen_ops))
         log.d('mod ops: ' + str(van_mod_ops))
-        log.d('mod_i2: ' + str(mod_i2) + ' gen_i2: ' + str(gen_i2) + ' cur_v: ' + str(cur_v))
+        log.d(
+            'mod_i2: ' + str(mod_i2)
+            + ' gen_i2: ' + str(gen_i2)
+            + ' cur_v: ' + str(cur_v))
         if mod_i2 <= cur_v:
             log.d('pop mod')
             van_mod_ops.pop(0)
@@ -330,8 +334,11 @@ def three_way_merge(gen_text, van_gen_ops, mod_text, van_mod_ops):
             yield mod_text[mod_j1:mod_j2]
             cur_v = mod_i2
             continue
-        
-        log.d('yield mod text (cur_v: ' + str(cur_v) + ', mod_j2: ' + str(mod_j2) + '): ' + str(mod_text[cur_v:mod_j2]))
+
+        log.d(
+            'yield mod text (cur_v: ' + str(cur_v)
+            + ', mod_j2: ' + str(mod_j2) + '): '
+            + str(mod_text[cur_v:mod_j2]))
         yield mod_text[cur_v:mod_j2]
         log.d('back from yield mod text')
         if gen_text[cur_v:low_i2] != mod_text[cur_v:low_i2]:

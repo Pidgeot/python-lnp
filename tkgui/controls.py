@@ -7,7 +7,9 @@ from __future__ import print_function, unicode_literals, absolute_import
 import sys
 import types
 
-# pylint:disable=wrong-import-order
+from core.lnp import lnp
+from . import binding
+
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
@@ -20,10 +22,6 @@ else:
     from ttk import *
     import tkSimpleDialog as simpledialog
     import tkFont
-# pylint:enable=wrong-import-order
-
-from . import binding
-from core.lnp import lnp
 
 # Monkeypatch simpledialog to use themed dialogs from ttk
 if sys.platform != 'darwin':  # OS X looks better without patch

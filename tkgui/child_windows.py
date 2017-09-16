@@ -6,7 +6,12 @@ from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os
 
-# pylint:disable=wrong-import-order
+from core import errorlog, launcher, paths, terminal, update
+from core.dfraw import DFRaw
+from core.lnp import lnp
+
+from . import controls
+
 if sys.version_info[0] == 3:  # Alternate import names
     # pylint:disable=import-error
     from tkinter import *
@@ -17,13 +22,6 @@ else:
     from Tkinter import *
     from ttk import *
     import tkMessageBox as messagebox
-# pylint:enable=wrong-import-order
-
-from . import controls
-
-from core import errorlog, launcher, paths, terminal, update
-from core.dfraw import DFRaw
-from core.lnp import lnp
 
 class ChildWindow(object):
     """Base class for child windows."""
