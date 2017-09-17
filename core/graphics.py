@@ -6,7 +6,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 import os, shutil, glob
 from .launcher import open_file
 from .lnp import lnp
-from . import colors, df, paths, baselines, mods, log, manifest, helpers
+from . import colors, df, paths, baselines, mods, log, manifest
 from .dfraw import DFRaw
 
 def open_graphics():
@@ -76,8 +76,7 @@ def read_graphics():
         #pylint: disable=unbalanced-tuple-unpacking
         font, graphics = DFRaw(init_path).get_values('FONT', 'GRAPHICS_FONT')
         result.append((p, font, graphics))
-    return tuple(sorted(result, cmp=helpers.sort_underscore_first))
-
+    return tuple(sorted(result))
 
 def add_tilesets():
     """Copies missing tilesets from LNP/Tilesets to the data/art folder."""

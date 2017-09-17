@@ -17,9 +17,10 @@ _df_colors = (
 
 def read_colors():
     """Returns a sorted tuple of color scheme basenames, in LNP/Colors."""
-    return tuple(sorted([
-        os.path.splitext(os.path.basename(p))[0] for p in
-        helpers.get_text_files(paths.get('colors'))]))
+    return tuple(sorted(
+        [os.path.splitext(os.path.basename(p))[0] for p in
+         helpers.get_text_files(paths.get('colors'))],
+        cmp=helpers.sort_underscore_first))
 
 def get_colors(colorscheme=None):
     """
@@ -54,7 +55,7 @@ def load_colors(filename):
     Replaces the current DF color scheme.
 
     Args:
-        filename: The name of the new colorscheme to install (extension optional).
+        filename: The name of the new colorscheme to apply (extension optional).
             If no path is specified, file is assumed to be in LNP/Colors.
     """
     log.i('Loading colorscheme ' + filename)
