@@ -163,7 +163,7 @@ running the source code:
 - The GUI requires the standard Python libraries Tkinter and Ttk, which is
   included in the Python installation on Windows and OS X. Linux users *may*
   need to install it through their package manager (look for python-tk or other
-  similarly named package)
+  similarly named package.)
 - *Optional:* For Python installations built against Tk 8.5: A PIL-compatible
   Python library (e.g. PIL itself or Pillow) will improve the visual quality of
   the logo by using a PNG version instead of a GIF. (On Linux, this also
@@ -279,6 +279,11 @@ Building:
   Open the LNP directory in a Command Prompt and type "pyinstaller lnp.spec".
   Wait for the build to finish, and you will find a new folder named dist.
   Inside that folder is the stand-alone executable, named lnp.exe.
+
+Note:
+  Depending on the exact package versions, you may experience issues running 
+  the generated executable. PyInstaller 2.1 with setuptools 18.2 is known to
+  work, other combinations may not.
 
 Linux
 -----
