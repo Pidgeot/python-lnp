@@ -26,6 +26,13 @@ class _NegatedBool(object):
 
 _negated_bool = _NegatedBool()
 
+class _AnnouncementFocus(object):
+    """Marker class for DFConfiguration. Value controls presence of P and R
+    flags in ``announcements.txt``."""
+    pass
+
+_announcement_focus = _AnnouncementFocus()
+
 # Format: Key = tag name, value = list of version numbers
 # First value indicates first version with the tag
 # Second value, if present, indicates first version WITHOUT the tag
@@ -166,6 +173,8 @@ _option_version_data = {
     'FULLGRID': ['0.28.181.40b'],
     'PARTIAL_PRINT': ['0.28.181.40b'],
     'COMPRESSED_SAVES': ['0.31.01'],
+    'DIG_CANCEL_DAMP': ['0.31.01'],
+    'DIG_CANCEL_WARM': ['0.31.01'],
     'TESTING_ARENA': ['0.31.01'],
     'WOUND_COLOR_BROKEN': ['0.31.01'],
     'WOUND_COLOR_FUNCTION_LOSS': ['0.31.01'],
@@ -446,6 +455,15 @@ class DFConfiguration(object):
         self.create_option("aquifers", "AQUIFER", "NO", _disabled, tuple(
             os.path.join(base_dir, 'raw', 'objects', a) for a in aquifer_files))
 
+        announcements = (os.path.join(
+            base_dir, 'data', 'init', 'announcements.txt'),)
+        self.create_option(
+            "focusDamp", "DIG_CANCEL_DAMP", "YES", _announcement_focus,
+            announcements)
+        self.create_option(
+            "focusWarm", "DIG_CANCEL_WARM", "YES", _announcement_focus,
+            announcements)
+
     def create_option(
             self, name, field_name, default, values, files, cond=True,
             validate=None):
@@ -466,7 +484,7 @@ class DFConfiguration(object):
                 cycle_list.  Special values defined in this file:
 
                 :None: Unspecified value; cycling has no effect.
-                :disabled: Boolean option toggled by replacing the ``[]``
+                :_disabled: Boolean option toggled by replacing the ``[]``
                     around the field name with ``!!``.
                 :force_bool: Values other than "YES" and "NO" are
                     interpreted as "YES".
@@ -537,7 +555,7 @@ class DFConfiguration(object):
         """
         if items is None:
             return current
-        if items is _disabled or items is _negated_bool:
+        if items in (_disabled, _negated_bool, _announcement_focus):
             items = ("YES", "NO")
         if current not in items:
             for i in items:
@@ -589,7 +607,7 @@ class DFConfiguration(object):
             items = self.options[f]
             if items is None:
                 continue
-            if items is _disabled or items is _negated_bool:
+            if items in (_disabled, _negated_bool, _announcement_focus):
                 items = ("YES", "NO")
             if current not in items:
                 for i in items:
@@ -611,10 +629,13 @@ class DFConfiguration(object):
 
     def read_settings(self):
         """Read settings from known filesets. If fileset only contains one
-        file, all options will be registered automatically."""
+        file ending with "init.txt", all options will be registered
+        automatically."""
         for files in self.in_files:
             for filename in files:
-                self.read_file(filename, self.in_files[files], len(files) == 1)
+                self.read_file(
+                    filename, self.in_files[files],
+                    len(files) == 1 and files[0].endswith('init.txt'))
 
     def read_file(self, filename, fields, auto_add):
         """
@@ -626,6 +647,7 @@ class DFConfiguration(object):
           auto_add: whether to automatically register all unknown fields for
               changes.
         """
+        #pylint:disable=too-many-branches
         text = DFRaw.read(filename)
         if auto_add:
             for match in re.findall(r'\[(.+?):(.+?)\]', text):
@@ -645,6 +667,12 @@ class DFConfiguration(object):
                     value = match.group(1)
                     if self.options[field] is _negated_bool:
                         value = ["YES", "NO"][["NO", "YES"].index(value)]
+                    elif self.options[field] is _announcement_focus:
+                        values = value.split(':')
+                        if 'P' in values and 'R' in values:
+                            value = "YES"
+                        else:
+                            value = "NO"
                     self.settings[field] = value
                 else:
                     self.missing_fields.append(self.field_names[field])
@@ -703,7 +731,18 @@ class DFConfiguration(object):
         with DFRaw(filename) as raw:
             for field in fields:
                 field_name = self.field_names[field]
-                if self.options[field] is _disabled:
+                if self.options[field] is _announcement_focus:
+                    node = raw.find_first(field_name)
+                    values = node.values
+                    if "P" in values:
+                        values.remove("P")
+                    if "R" in values:
+                        values.remove("R")
+                    if self.settings[field] == "YES":
+                        values.append("P")
+                        values.append("R")
+                    node.value = values
+                elif self.options[field] is _disabled:
                     raw.set_all(field_name, self.settings[field] != "NO")
                 else:
                     value = self.settings[field]
@@ -731,6 +770,8 @@ class DFConfiguration(object):
                     value = self.settings[field]
                     if self.options[field] is _negated_bool:
                         value = ["YES", "NO"][["NO", "YES"].index(value)]
+                    elif self.options[field] is _announcement_focus:
+                        value = "P:R" if value == "YES" else ""
                     newfile.write('[' + field + ':' + value + ']\n')
 
     def version_has_option(self, option_name):

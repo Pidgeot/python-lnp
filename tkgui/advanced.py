@@ -156,6 +156,19 @@ class AdvancedTab(Tab):
             saverelated, 'Open Savegame Folder', 'Open the savegame folder',
             launcher.open_savegames))
 
+        if lnp.df_info.version >= '0.31.01':
+            announcements_group = controls.create_control_group(
+                self, 'Announcements')
+            main_grid.add(announcements_group, 2)
+            controls.create_option_button(
+                announcements_group, 'Damp Stone',
+                'Pause and center view when damp stone is found',
+                'focusDamp').pack(fill=X)
+            controls.create_option_button(
+                announcements_group, 'Warm Stone',
+                'Pause and center view when warm stone is found',
+                'focusWarm').pack(fill=X)
+
         misc_group = controls.create_control_group(self, 'Miscellaneous')
         main_grid.add(misc_group, 2)
         controls.create_option_button(
