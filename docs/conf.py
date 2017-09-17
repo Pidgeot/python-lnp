@@ -68,7 +68,7 @@ extensions = [
 napoleon_use_rtype = False
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = []
+templates_path = ['.']
 
 # The suffix(es) of source filenames.
 source_suffix = '.rst'
@@ -136,7 +136,7 @@ html_theme = 'classic'
 #html_title = None
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-#html_short_title = None
+html_short_title = '%s <span class="version-placeholder">%s</span> documentation' % (project, release)
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
