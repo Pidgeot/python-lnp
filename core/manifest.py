@@ -20,8 +20,8 @@ def get_cfg(content_type, item):
 
     'title' and 'tooltip' control presentation in the list for that kind of
     content.  Both should be strings.  Title is the name in the list; tooltip
-    is the hovertext - linebreaks are inserted with ``\\n``, since it must be one
-    line in the manifest file.
+    is the hovertext - linebreaks are inserted with ``\\n``, since it must be
+    one ine in the manifest file.
 
     'folder_prefix' controls what the name of the graphics pack's folder must
     begin with.

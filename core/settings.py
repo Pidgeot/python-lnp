@@ -471,8 +471,8 @@ class DFConfiguration(object):
                 :force_bool: Values other than "YES" and "NO" are
                     interpreted as "YES".
 
-            files: A tuple of files this value is read from. Used for e.g. aquifer
-                toggling, which requires editing multiple files.
+            files: A tuple of files this value is read from. Used for e.g.
+                aquifer toggling, which requires editing multiple files.
             cond (bool): If True, the field will be treated as valid.
                 If False, this will merely register the field name mapping.
                 Defaults to True.
