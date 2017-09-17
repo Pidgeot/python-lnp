@@ -426,7 +426,7 @@ def make_mod_from_installed_raws(name):
     """Capture whatever unavailable mods a user currently has installed
     as a mod called $name.
 
-        * If `installed_raws.txt` is not present, compare to vanilla
+        * If ``installed_raws.txt`` is not present, compare to vanilla
         * Otherwise, rebuild as much as possible then compare to installed
     """
     if get_installed_mods_from_log():
