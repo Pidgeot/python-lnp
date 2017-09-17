@@ -20,7 +20,7 @@ DFHack
 ======
 If DFHack is detected in the Dwarf Fortress folder, a DFHack tab is added to the launcher.
 This tab includes a list where preconfigured hacks can be turned on or off.
-See `this documentation <pylnp-json-dfhack> for configuration instructions.
+See `this documentation <pylnp-json-dfhack>` for configuration instructions.
 
 
 .. _content-manifest:

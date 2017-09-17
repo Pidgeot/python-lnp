@@ -174,6 +174,11 @@ the ``Scripts`` directory in your Python installation.
 .. _setuptools: https://pypi.python.org/pypi/setuptools/0.9.8#windows
 .. _pywin32: http://sourceforge.net/projects/pywin32/files/pywin32
 
+.. note::
+  Depending on the exact package versions, you may experience issues running
+  the generated executable. PyInstaller 2.1 with setuptools 18.2 is known to
+  work, other combinations may not.
+
 Linux
 -----
 The easiest way to install it is to use your package manager to install it
