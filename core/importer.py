@@ -103,6 +103,7 @@ def do_imports(from_df_dir):
     """Import content (defined in PyLNP.json) from the given previous df_dir,
     and associated LNP install if any.
     """
+    # pylint:disable=too-many-locals,too-many-branches
     # validate that from_df_dir is, in fact, a DF dir
     if not all(os.path.exists(os.path.join(from_df_dir, *p)) for p in
                [('data', 'init', 'init.txt'), ('raw', 'objects')]):
@@ -111,12 +112,21 @@ def do_imports(from_df_dir):
     if not lnp.config.get('to_import'):
         return (False, 'Nothing is configured for import in PyLNP.json')
     raw_config = [(c + [c[1]])[:3] for c in lnp.config['to_import']]
+
+    path_pairs = []
     # Turn "paths" in PyLNP.json into real paths
-    path_pairs = [
-        (st, os.path.normpath(src.replace('<df>', from_df_dir)),
-         os.path.normpath(os.path.join(
-             paths.get('root'), dest.replace('<df>', paths.get('df')))))
-        for st, src, dest in raw_config]
+    for st, src, dest in raw_config:
+        if '<df>' in src:
+            newsrc = src.replace('<df>', from_df_dir)
+        else:
+            newsrc = os.path.join(from_df_dir, '../', src)
+        newsrc = os.path.abspath(os.path.normpath(newsrc))
+        if '<df>' in dest:
+            newdest = dest.replace('<df>', paths.get('df'))
+        else:
+            newdest = paths.get('root', dest)
+        newdest = os.path.abspath(os.path.normpath(newdest))
+        path_pairs.append((st, newsrc, newdest))
 
     # Sanity-check the provided paths...
     src_prefix = os.path.commonprefix([src for _, src, _ in path_pairs])
