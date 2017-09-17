@@ -83,3 +83,12 @@ def get_resource(filename):
 def os_is_64bit():
     """Returns true if running on a 64-bit OS."""
     return platform.machine().endswith('64')
+
+def sort_underscore_first(a, b):
+    """Special sorting function which considers _-prefixed strings to be smaller
+    than all other strings."""
+    if a.startswith('_') == b.startswith('_'):
+        return cmp(a, b)
+    if a.startswith('_'):
+        return -1
+    return 1

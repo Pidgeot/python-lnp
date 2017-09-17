@@ -6,7 +6,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 import os, shutil, glob
 from .launcher import open_file
 from .lnp import lnp
-from . import colors, df, paths, baselines, mods, log, manifest
+from . import colors, df, paths, baselines, mods, log, manifest, helpers
 from .dfraw import DFRaw
 
 def open_graphics():
@@ -76,7 +76,7 @@ def read_graphics():
         #pylint: disable=unbalanced-tuple-unpacking
         font, graphics = DFRaw(init_path).get_values('FONT', 'GRAPHICS_FONT')
         result.append((p, font, graphics))
-    return tuple(sorted(result))
+    return tuple(sorted(result, cmp=helpers.sort_underscore_first))
 
 
 def add_tilesets():
@@ -123,19 +123,25 @@ def install_graphics(pack):
                     shutil.copy2(bas, cur)
         # Handle init files
         patch_inits(paths.get('graphics', pack))
+
+        # Remove file with old space-prefixed "Current graphics pack" name
+        if os.path.isfile(paths.get('colors',
+                                    ' Current graphics pack.txt')):
+            os.remove(paths.get('colors', ' Current graphics pack.txt'))
         # Install colorscheme
         if lnp.df_info.version >= '0.31.04':
             colors.load_colors(paths.get('graphics', pack, 'data', 'init',
                                          'colors.txt'))
             shutil.copyfile(paths.get('graphics', pack, 'data', 'init',
                                       'colors.txt'),
-                            paths.get('colors', ' Current graphics pack.txt'))
+                            paths.get('colors', '_Current graphics pack.txt'))
         else:
             colors.load_colors(paths.get('graphics', pack, 'data', 'init',
                                          'init.txt'))
             if os.path.isfile(paths.get('colors',
-                                        ' Current graphics pack.txt')):
-                os.remove(paths.get('colors', ' Current graphics pack.txt'))
+                                        '_Current graphics pack.txt')):
+                os.remove(paths.get('colors', '_Current graphics pack.txt'))
+
         # TwbT overrides
         #pylint: disable=bare-except
         try:
