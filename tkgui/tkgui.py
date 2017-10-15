@@ -540,7 +540,10 @@ class TkGui(object):
     @staticmethod
     def show_help():
         """Shows help for the program."""
-        messagebox.showinfo(title='How to Use', message="It's really easy.")
+        if lnp.bundle:
+            launcher.open_url('http://pylnp.birdiesoft.dk/docs/'+VERSION+'/')
+        else:
+            launcher.open_url('http://pylnp.birdiesoft.dk/docs/dev/')
 
     @staticmethod
     def show_about():

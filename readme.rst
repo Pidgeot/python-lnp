@@ -6,4 +6,4 @@ game.  It can also manage, configure, install, and run a wide variety of
 related content - from graphics to color schemes, and utility programs to
 content-replacing mods.
 
-The full documentation can be found at `./docs/index.rst`.
+The full documentation can be found at `./docs/index.rst`, or online at http://pylnp.birdiesoft.dk/docs/.
