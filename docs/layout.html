@@ -1,0 +1,6 @@
+{% extends "!layout.html" %}
+{% set script_files = script_files + ["http://pylnp.birdiesoft.dk/docs/_static/switcher.js"] %}
+{% block rootrellink %}
+<li class="nav-item nav-item-0"><a href="{{ pathto(master_doc) }}">{{ project }}</a> <span class="version-placeholder">{{ release }}</span> <a href="{{ pathto(master_doc) }}">documentation</a>{{ reldelim1 }}</li>
+{% endblock %}
+

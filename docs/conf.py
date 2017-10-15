@@ -89,7 +89,10 @@ copyright = '{}, {}'.format(datetime.datetime.now().year, author)
 from core import lnp
 release = lnp.VERSION
 # The short X.Y version.
-version = re.match(r'\d*\.\d*', release).group()
+try:
+    version = re.match(r'\d*\.\d*', release).group()
+except AttributeError:
+    version = release
 
 # today_fmt is used as the format for a strftime call replacing |today|.
 today_fmt = '%B %d, %Y-%m-%d'
@@ -136,7 +139,7 @@ html_theme = 'classic'
 #html_title = None
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-html_short_title = '%s <span class="version-placeholder">%s</span> documentation' % (project, release)
+#html_short_title = None
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
@@ -150,7 +153,7 @@ html_short_title = '%s <span class="version-placeholder">%s</span> documentation
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = []
+html_static_path = ['static']
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
