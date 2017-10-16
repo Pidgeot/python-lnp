@@ -126,12 +126,14 @@ class KDETerminal(LinuxTerminal):
         return ['nohup', s, '-e']
 
 class GNOMETerminal(LinuxTerminal):
-    """Handles terminals on GNOME (e.g. gnome-terminal)."""
-    name = "GNOME"
+    """Handles terminals on GNOME and Cinnamon (e.g. gnome-terminal)."""
+    name = "GNOME/Cinnamon"
 
     @staticmethod
     def detect():
         if os.environ.get('GNOME_DESKTOP_SESSION_ID', ''):
+            return True
+        if os.environ.get('CINNAMON_VERSION', ''):
             return True
         FNULL = open(os.devnull, 'w')
         try:
