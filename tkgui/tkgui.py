@@ -190,8 +190,7 @@ class TkGui(object):
         play_font.config(weight=tkFont.BOLD, size=int(play_font['size'] * 1.5))
         Style().configure('Big.TButton', font=play_font)
         play_button = controls.create_trigger_button(
-            main, 'Play Dwarf Fortress!', 'Play the game!',
-            launcher.run_df)
+            main, 'Play Dwarf Fortress!', 'Play the game!', self.run_df)
         if sys.platform != 'darwin':
             play_button.configure(style='Big.TButton')
             play_button.pack(side=BOTTOM, fill=X, padx=(1, 3), pady=(0, 3))
@@ -532,6 +531,17 @@ class TkGui(object):
         """
         path = os.path.abspath(path)
         launcher.run_program(path)
+
+    @staticmethod
+    def run_df():
+        """Launches Dwarf Fortress, reporting any errors when launching."""
+        try:
+            launcher.run_df()
+        except: #pylint: disable=bare-except
+            exc_info = sys.exc_info()
+            messagebox.showerror(
+                title='Error launching Dwarf Fortress',
+                message=exc_info[1].message)
 
     def run_init(self):
         """Opens the init editor."""

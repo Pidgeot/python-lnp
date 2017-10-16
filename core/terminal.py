@@ -26,6 +26,9 @@ def get_terminal_command(cmd, force_custom=False):
             log.d(
                 "Using configured terminal: %s, command line %s", term,
                 get_configured_terminal().name)
+        if not term:
+            raise Exception(
+                'No terminal configured! Use File > Configure Terminal.')
         if "$" in term:
             c = []
             for s in term:
@@ -309,10 +312,8 @@ class CustomTerminal(LinuxTerminal):
     def get_command_line():
         cmd = get_custom_terminal_cmd()
         if cmd:
-            cmd = cmd.split(' ')
-        return cmd
-
-# pylint: enable=missing-docstring
+            return cmd.split(' ')
+        return []
 
 #Terminal testing algorithm:
 #    Main app, in thread:
