@@ -141,7 +141,7 @@ class TkGui(object):
                 'PyLNP',
                 'You need to configure a terminal to allow things like DFHack '
                 'to work correctly. Press OK to do this now.')
-            self.configure_terminal()
+            self.configure_terminal(True)
             self.root.deiconify()
 
         root.option_add('*tearOff', FALSE)
@@ -441,9 +441,12 @@ class TkGui(object):
         self.do_reload = True
         self.exit_program()
 
-    def configure_terminal(self):
-        """Configures the command used to launch a terminal on Linux."""
-        TerminalSelector(self.root)
+    def configure_terminal(self, first_run=False):
+        """
+        Configures the command used to launch a terminal on Linux.
+        If first_run is set, a terminal will be selected automatically.
+        """
+        TerminalSelector(self.root, first_run)
 
     def configure_updates(self, days):
         """Sets the number of days until next update check."""

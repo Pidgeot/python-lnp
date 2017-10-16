@@ -308,7 +308,8 @@ class ConfirmRun(ChildWindow):
 
 class TerminalSelector(ChildWindow):
     """Used to select a terminal for launcing child programs on Linux."""
-    def __init__(self, parent):
+    def __init__(self, parent, first_run):
+        self.first_run = first_run
         super(TerminalSelector, self).__init__(parent, 'Configure terminal')
         self.running_test = False
         self.running_status = ''
@@ -319,13 +320,16 @@ class TerminalSelector(ChildWindow):
         Label(f, text='Please select which terminal should be used when '
               'launching programs requiring it (e.g. DFHack).').grid(
                   column=0, row=0)
-        self.term = StringVar(self.parent)
-        cur = terminal.get_configured_terminal()
-        try:
-            self.term.set(cur.name)
-        except NameError:
-            pass
         terminals = [t.name for t in terminal.get_valid_terminals()]
+        self.term = StringVar(self.parent)
+        if self.first_run:
+            cur = terminals[0]
+        else:
+            try:
+                cur = terminal.get_configured_terminal().name
+            except NameError:
+                pass
+        self.term.set(cur)
         OptionMenu(f, self.term, self.term.get(), *terminals).grid(
             column=0, row=1)
 
