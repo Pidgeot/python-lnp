@@ -20,7 +20,7 @@ def read_colors():
     return tuple(sorted(
         [os.path.splitext(os.path.basename(p))[0] for p in
          helpers.get_text_files(paths.get('colors'))],
-        cmp=helpers.sort_underscore_first))
+        key=helpers.key_from_underscore_prefixed_string))
 
 def get_colors(colorscheme=None):
     """

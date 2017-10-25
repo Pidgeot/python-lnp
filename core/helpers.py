@@ -87,11 +87,7 @@ def os_is_64bit():
     """Returns true if running on a 64-bit OS."""
     return platform.machine().endswith('64')
 
-def sort_underscore_first(a, b):
-    """Special sorting function which considers _-prefixed strings to be smaller
-    than all other strings."""
-    if a.startswith('_') == b.startswith('_'):
-        return cmp(a, b)
-    if a.startswith('_'):
-        return -1
-    return 1
+def key_from_underscore_prefixed_string(s):
+    """Converts a string to a key such that strings prefixed with an underscore
+    will be sorted before other strings."""
+    return not s.startswith('_'), s
