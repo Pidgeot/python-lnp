@@ -106,6 +106,11 @@ def install_graphics(pack):
         # Update raws
         if not update_graphics_raws(paths.get('df', 'raw'), pack):
             return 0
+        # Backup TwbT-specific art files
+        for item in ('white1px.png', 'transparent1px.png'):
+            if os.path.exists(paths.get('data', 'art', item)):
+                shutil.copy(paths.get('data', 'art', item),
+                            paths.get('graphics', pack, 'data', 'art'))
         # Copy art
         shutil.rmtree(paths.get('data', 'art'))
         shutil.copytree(paths.get('graphics', pack, 'data', 'art'),
