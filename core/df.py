@@ -226,6 +226,7 @@ class DFInstall(object):
         init = os.path.join(self.init_dir, 'init.txt')
         d_init = os.path.join(self.init_dir, 'd_init.txt')
         versions = [
+            (d_init, 'VISITOR_CAP', '0.42.01', {}),
             (d_init, 'GRAZE_COEFFICIENT', '0.40.13', {}),
             (d_init, 'POST_PREPARE_EMBARK_CONFIRMATION', '0.40.09', {}),
             (d_init, 'STRICT_POPULATION_CAP', '0.40.05', {}),
