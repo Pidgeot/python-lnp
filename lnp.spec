@@ -61,10 +61,11 @@ if sys.platform != 'darwin':
         pyz, a.scripts, a.binaries, a.zipfiles, a.datas, name='PyLNP'+extension,
         debug=False, strip=None, upx=True, console=False, icon='LNP.ico')
 else:
+    info = {'NSHighResolutionCapable': 'True'}
     exe = EXE(
         pyz, a.scripts, exclude_binaries=True, name='PyLNP'+extension,
         debug=False, strip=None, upx=True, console=False)
     coll = COLLECT(exe, a.binaries, a.zipfiles, a.datas, strip=None, upx=True, name='PyLNP')
-    app = BUNDLE(coll,name='PyLNP.app',icon='LNP.icns')
+    app = BUNDLE(coll,name='PyLNP.app',icon='LNP.icns', info_plist=info)
 
 # vim:expandtab
