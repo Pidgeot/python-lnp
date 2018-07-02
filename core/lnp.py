@@ -266,6 +266,19 @@ class PyLNP(object):
         """Saves LNP configuration."""
         self.userconfig.save_data()
 
+    def macos_check_translocated(self):
+        assert self.os == 'osx'
+        if '/AppTranslocation/' in sys.executable:
+            try:
+                import tkinter.messagebox as messagebox
+            except ImportError:
+                import tkMessageBox as messagebox
+            messagebox.showinfo(
+                'Cannot launch PyLNP',
+                'PyLNP cannot be run from a disk image or from the Downloads '
+                'folder. Please copy the PyLNP app and its other Dwarf '
+                'Fortress files elsewhere, such as to the Applications folder.')
+
     def detect_basedir(self):
         """Detects the location of Dwarf Fortress by walking up the directory
         tree."""
@@ -290,6 +303,8 @@ class PyLNP(object):
                 "Alternatively, you may run PyLNP from source using Python 3.")
             sys.exit(1)
         log.e("Could not find any Dwarf Fortress installations.")
+        if self.os == 'osx':
+            self.macos_check_translocated()
         sys.exit(2)
 
 
