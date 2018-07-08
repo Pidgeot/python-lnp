@@ -169,8 +169,6 @@ This folder contains color schemes. As of DF 0.31.04, these are stored as
 data/init/colors.txt in the Dwarf Fortress folder; in 0.31.03 and below, they
 are contained in data/init/init.txt.
 
-Saving the current color scheme only works with DF 0.31.04 or later.
-
 Defaults
 --------
 This folder should contain two files: init.txt and d_init.txt. These files
