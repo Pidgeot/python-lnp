@@ -267,6 +267,7 @@ class PyLNP(object):
         self.userconfig.save_data()
 
     def macos_check_translocated(self):
+        """Verify that macOS isn't isolating our application."""
         assert self.os == 'osx'
         if '/AppTranslocation/' in sys.executable:
             try:
