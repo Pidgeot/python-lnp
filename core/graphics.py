@@ -157,6 +157,18 @@ def install_graphics(pack):
                 paths.get('init', 'overrides.txt'))
         except:
             pass
+
+        # TwbT file replacements
+        if 'TWBT' in lnp.settings.printmode:
+            for folder in ['graphics', 'objects']:
+                twbt_folder = paths.get(folder, '..', 'twbt_'+folder)
+                target_folder = paths.get(folder)
+                for path, _, files in os.walk(twbt_folder):
+                    for f in files:
+                        twbt_f = os.path.join(path, f)
+                        target_f = twbt_f.replace(twbt_folder, target_folder)
+                        shutil.copyfile(twbt_f, target_f)
+
     except:
         log.e('Something went wrong while installing graphics', stack=True)
         df.load_params()
