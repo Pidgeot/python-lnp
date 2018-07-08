@@ -83,7 +83,6 @@ def save_colors(filename):
         filename = filename + '.txt'
     filename = paths.get('colors', filename)
     if lnp.df_info.version <= '0.31.03':
-        log.e('Exporting colors is only supported for DF 0.31.04 and later')
         colors = ([c+'_R' for c in _df_colors] + [c+'_G' for c in _df_colors] +
                   [c+'_B' for c in _df_colors])
         lnp.settings.create_file(filename, colors)
