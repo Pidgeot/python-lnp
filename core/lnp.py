@@ -9,7 +9,7 @@ from . import log
 
 from .json_config import JSONConfiguration
 
-VERSION = '0.13a'
+VERSION = '0.13b'
 
 # pylint:disable=too-many-instance-attributes
 
