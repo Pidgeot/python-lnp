@@ -338,6 +338,10 @@ _option_version_data = {
     'VISITOR_CAP': ['0.42.01'],
     'INVASION_SOLDIER_CAP': ['0.42.01'],
     'INVASION_MONSTER_CAP': ['0.42.01'],
+    'PRIESTHOOD_UNIT_COUNTS': ['0.47.01'],
+    'TEMPLE_VALUE_LEVELS': ['0.47.01'],
+    'GUILD_UNIT_COUNTS': ['0.47.01'],
+    'GUILDHALL_VALUE_LEVELS': ['0.47.01'],
 }
 
 def _option_item_to_value(item):
@@ -443,6 +447,10 @@ class DFConfiguration(object):
             "invSoldierCap", "INVASION_SOLDIER_CAP", "120", None, dinit)
         self.create_option(
             "invMonsterCap", "INVASION_MONSTER_CAP", "40", None, dinit)
+        self.create_option(
+            "templeCount", "PRIESTHOOD_UNIT_COUNTS", "10:25", None, dinit)
+        self.create_option(
+            "guildCount", "GUILD_UNIT_COUNTS", "10:25", None, dinit)
         # special
         if df_info.version < '0.31':
             aquifer_files = [
