@@ -15,8 +15,8 @@ if sys.platform == 'win32':
       s = self.old_toprettyxml(indent, newl, encoding)
       # Make sure we only modify our own manifest
       if 'name="lnp"' in s:
-        d = indent + '<dpiAware>false</dpiAware>' + newl
-        s =s.replace('</assembly>',d+'</assembly>')
+        d = indent + '<asmv3:application xmlns:asmv3="urn:schemas-microsoft-com:asm.v3"><windowsSettings xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings"><dpiAware>false</dpiAware></windowsSettings></asmv3:application>' + newl
+        s = s.replace('</assembly>',d+'</assembly>')
       return s
     Manifest.toprettyxml = new_toprettyxml
 
@@ -59,7 +59,7 @@ pyz = PYZ(a.pure)
 if sys.platform != 'darwin':
     exe = EXE(
         pyz, a.scripts, a.binaries, a.zipfiles, a.datas, name='PyLNP'+extension,
-        debug=False, strip=None, upx=True, console=False, icon='LNP.ico')
+        debug=False, strip=None, upx=False, console=False, icon='LNP.ico')
 else:
     info = {'NSHighResolutionCapable': 'True'}
     exe = EXE(
