@@ -121,7 +121,7 @@ class KDETerminal(LinuxTerminal):
     def get_command_line():
         s = subprocess.check_output(
             ['kreadconfig', '--file', 'kdeglobals', '--group', 'General',
-             '--key', 'TerminalApplication', '--default', 'konsole']).replace(
+             '--key', 'TerminalApplication', '--default', 'konsole']).decode('utf-8').replace(
                  '\n', '')
         return ['nohup', s, '-e']
 
@@ -159,11 +159,11 @@ class GNOMETerminal(LinuxTerminal):
             term = subprocess.check_output([
                 'gsettings', 'get',
                 'org.gnome.desktop.default-applications.terminal', 'exec'
-            ]).replace('\n', '').replace("'", '')
+            ]).decode('utf-8').replace('\n', '').replace("'", '')
             term_arg = subprocess.check_output([
                 'gsettings', 'get',
                 'org.gnome.desktop.default-applications.terminal', 'exec-arg'
-            ]).replace('\n', '').replace("'", '')
+            ]).decode('utf-8').replace('\n', '').replace("'", '')
             return ['nohup', term, term_arg]
         except: #fallback to older gconf
             pass
@@ -171,11 +171,11 @@ class GNOMETerminal(LinuxTerminal):
             term = subprocess.check_output([
                 'gconftool-2', '--get',
                 '/desktop/gnome/applications/terminal/exec'
-            ]).replace('\n', '')
+            ]).decode('utf-8').replace('\n', '')
             term_arg = subprocess.check_output([
                 'gconftool-2', '--get',
                 '/desktop/gnome/applications/terminal/exec_arg'
-            ]).replace('\n', '')
+            ]).decode('utf-8').replace('\n', '')
             return ['nohup', term, term_arg]
         except:
             raise Exception("Unable to determine terminal command.")
@@ -188,7 +188,7 @@ class XfceTerminal(LinuxTerminal):
     def detect():
         try:
             s = subprocess.check_output(
-                ['ps', '-eo', 'comm='], stderr=subprocess.STDOUT)
+                ['ps', '-eo', 'comm='], stderr=subprocess.STDOUT).decode('utf-8')
             return 'xfce' in s
         except:
             return False
@@ -364,7 +364,7 @@ def _terminal_test_report(fn, value):
     while True:
         try:
             with open(fn, 'w+b') as f:
-                f.write(str(value))
+                f.write(str(value).encode('utf-8'))
             return
         except IOError:
             pass
