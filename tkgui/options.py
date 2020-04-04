@@ -63,6 +63,15 @@ class OptionsTab(Tab):
             options, 'Invaders',
             'Toggles whether invaders (goblins, etc.) show up',
             'invaders'))
+        if lnp.df_info.version >= '0.47.01':
+            grid.add(controls.create_trigger_option_button(
+                options, 'Temple Petition',
+                'Number of worshippers that trigger demand for a temple',
+                self.set_temple_count, 'templeCount'))
+            grid.add(controls.create_trigger_option_button(
+                options, 'Guild Size',
+                'Number of members of same profession that trigger creation of a guild',
+                self.set_guild_count, 'guildCount'))
         grid.add(controls.create_trigger_option_button(
             options, 'Invasion Soldier Cap',
             'Limit on number of enemy soldiers during an invasion',
@@ -178,6 +187,38 @@ class OptionsTab(Tab):
                 df.set_option('childcap', str(v)+':'+str(v2))
                 binding.update()
 
+    @staticmethod
+    def set_temple_count():
+        """Requests new worshippers limits from the user."""
+        split = list(lnp.settings.templeCount.split(':'))
+        split.append('0')  # In case syntax is invalid
+        v1 = simpledialog.askinteger(
+            "Settings", "Min number of worshippers for a regular temple:",
+            initialvalue=split[0])
+        if v1 is not None:
+            v2 = simpledialog.askinteger(
+                "Settings", "Min number of worshippers for a grand temple:",
+                initialvalue=split[1])
+            if v2 is not None:
+                df.set_option('templeCount', str(v1)+':'+str(v2))
+                binding.update()
+
+    @staticmethod
+    def set_guild_count():
+        """Requests new guild members limits from the user."""
+        split = list(lnp.settings.guildCount.split(':'))
+        split.append('0')  # In case syntax is invalid
+        v1 = simpledialog.askinteger(
+            "Settings", "Min number of guild members:",
+            initialvalue=split[0])
+        if v1 is not None:
+            v2 = simpledialog.askinteger(
+                "Settings", "Min number of guild members requesting a grand guildhall:",
+                initialvalue=split[1])
+            if v2 is not None:
+                df.set_option('guildCount', str(v1)+':'+str(v2))
+                binding.update()
+    
     @staticmethod
     def set_graze_coef():
         """Requests new graze coefficient from the user."""
