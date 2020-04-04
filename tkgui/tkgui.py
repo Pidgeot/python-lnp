@@ -113,6 +113,17 @@ def validate_number(value_if_allowed):
     except ValueError:
         return False
 
+def fixed_map(option):
+    # Fix for setting text colour for Tkinter 8.6.9
+    # From: https://core.tcl.tk/tk/info/509cafafae
+    #
+    # Returns the style map for 'option' with any styles starting with
+    # ('!disabled', '!selected', ...) filtered out.
+
+    # style.map() returns an empty list for missing options, so this
+    # should be future-safe.
+    return [elm for elm in Style().map('Treeview', query_opt=option) if
+            elm[:2] != ('!disabled', '!selected')]
 
 class TkGui(object):
     """Main GUI window."""
@@ -134,6 +145,10 @@ class TkGui(object):
 
         if not self.ensure_df():
             return
+
+        if sys.version_info[0] == 3:
+            Style().map('Treeview', foreground=fixed_map('foreground'),
+                        background=fixed_map('background'))
 
         if lnp.os == 'linux' and not terminal.terminal_configured():
             self.root.withdraw()
