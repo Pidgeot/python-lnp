@@ -3,7 +3,7 @@ Running or Building PyLNP
 
 This document describes how to run PyLNP.  For most users, we suggest
 just using `the latest stand-alone executable version
-<https://bitbucket.org/Pidgeot/python-lnp/downloads>`_,
+<https://github.com/Pidgeot/python-lnp/releases>`_,
 which are available for Windows, OSX, and Linux.
 You may wish to download PyLNP as part of a complete package for beginners,
 `which can be found here <http://dwarffortresswiki.org/Lazy_Newb_Pack>`_.

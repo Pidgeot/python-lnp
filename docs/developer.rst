@@ -12,11 +12,9 @@ their own licenses; refer to those projects separately.)
 
 Acquiring the source code
 =========================
-The source code is available at `Bitbucket <https://bitbucket.org/Pidgeot/python-lnp>` in the form of a Mercurial repository.
+The source code is available at `Github <https://github.com/Pidgeot/python-lnp>`.
 
-In addition to Bitbucket and Mercurial, a Git mirror is available on `Github <https://github.com/Pidgeot/python-lnp>`.
-
-If you wish to contribute to PyLNP development, you are free to submit pull requests to whichever of these two repositories you prefer. Changes made on one automatically get synced to the other, usually within 15 minutes.
+If you wish to contribute to PyLNP development, a pull request will be much appreciated.
 
 Coding guidelines
 =================
