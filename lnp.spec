@@ -48,8 +48,12 @@ if sys.platform == 'win32':
     icon='LNP.ico'
     extension='.exe'
 
+hiddenimports = []
+if sys.platform.startswith('linux'):
+    hiddenimports = ['PIL', 'PIL._imagingtk', 'PIL._tkinter_finder']
+
 a = Analysis(
-  [script], pathex=['.'], hiddenimports=[], hookspath=None, runtime_hooks=None)
+  [script], pathex=['.'], hiddenimports=hiddenimports, hookspath=None, runtime_hooks=None)
 a.datas+=[(logo,logo,'DATA'),(icon,icon,'DATA')]
 if sys.platform == 'win32':
     # Importing pkg_resources fails with Pillow on Windows due to
