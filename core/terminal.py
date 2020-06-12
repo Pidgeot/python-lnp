@@ -3,7 +3,7 @@
 """Handles terminal detection on Linux and terminal command lines."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, os, subprocess, tempfile, time, shlex
+import sys, os, subprocess, tempfile, time, shlex, shutil
 from .lnp import lnp
 from . import log
 
@@ -119,10 +119,11 @@ class KDETerminal(LinuxTerminal):
 
     @staticmethod
     def get_command_line():
-        s = subprocess.check_output(
-            ['kreadconfig', '--file', 'kdeglobals', '--group', 'General',
-             '--key', 'TerminalApplication', '--default', 'konsole']).decode('utf-8').replace(
-                 '\n', '')
+        kreadconfig_path = shutil.which('kreadconfig5') or shutil.which('kreadconfig')
+        s = subprocess.check_output([
+            kreadconfig_path, '--file', 'kdeglobals', '--group', 'General',
+            '--key', 'TerminalApplication', '--default', 'konsole'],
+            universal_newlines=True).replace('\n', '')
         return ['nohup', s, '-e']
 
 class GNOMETerminal(LinuxTerminal):
@@ -159,11 +160,11 @@ class GNOMETerminal(LinuxTerminal):
             term = subprocess.check_output([
                 'gsettings', 'get',
                 'org.gnome.desktop.default-applications.terminal', 'exec'
-            ]).decode('utf-8').replace('\n', '').replace("'", '')
+            ], universal_newlines=True).replace('\n', '').replace("'", '')
             term_arg = subprocess.check_output([
                 'gsettings', 'get',
                 'org.gnome.desktop.default-applications.terminal', 'exec-arg'
-            ]).decode('utf-8').replace('\n', '').replace("'", '')
+            ], universal_newlines=True).replace('\n', '').replace("'", '')
             return ['nohup', term, term_arg]
         except: #fallback to older gconf
             pass
@@ -171,11 +172,11 @@ class GNOMETerminal(LinuxTerminal):
             term = subprocess.check_output([
                 'gconftool-2', '--get',
                 '/desktop/gnome/applications/terminal/exec'
-            ]).decode('utf-8').replace('\n', '')
+            ], universal_newlines=True).replace('\n', '')
             term_arg = subprocess.check_output([
                 'gconftool-2', '--get',
                 '/desktop/gnome/applications/terminal/exec_arg'
-            ]).decode('utf-8').replace('\n', '')
+            ], universal_newlines=True).replace('\n', '')
             return ['nohup', term, term_arg]
         except:
             raise Exception("Unable to determine terminal command.")
@@ -188,7 +189,8 @@ class XfceTerminal(LinuxTerminal):
     def detect():
         try:
             s = subprocess.check_output(
-                ['ps', '-eo', 'comm='], stderr=subprocess.STDOUT).decode('utf-8')
+                ['ps', '-eo', 'comm='], stderr=subprocess.STDOUT,
+                universal_newlines=True)
             return 'xfce' in s
         except:
             return False
