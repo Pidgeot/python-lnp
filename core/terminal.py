@@ -3,7 +3,7 @@
 """Handles terminal detection on Linux and terminal command lines."""
 from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, os, subprocess, tempfile, time
+import sys, os, subprocess, tempfile, time, shlex
 from .lnp import lnp
 from . import log
 
@@ -314,7 +314,7 @@ class CustomTerminal(LinuxTerminal):
     def get_command_line():
         cmd = get_custom_terminal_cmd()
         if cmd:
-            return cmd.split(' ')
+            return shlex.split(cmd)
         return []
 
 #Terminal testing algorithm:
