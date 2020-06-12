@@ -85,13 +85,13 @@ def create_archive():
         l.append(pattern + 'legends_plus.xml')
     if all([os.path.isfile(f) for f in l]):
         with zipfile.ZipFile(pattern + 'legends_archive.zip',
-                             'w', zipfile.ZIP_DEFLATED) as zipped:
+                             'w', zipfile.ZIP_DEFLATED, allowZip64=True) as zipped:
             for f in l:
                 zipped.write(f, os.path.basename(f))
                 os.remove(f)
     elif os.path.isfile(pattern + 'legends.xml'):
         with zipfile.ZipFile(pattern + 'legends_xml.zip',
-                             'w', zipfile.ZIP_DEFLATED) as zipped:
+                             'w', zipfile.ZIP_DEFLATED, allowZip64=True) as zipped:
             zipped.write(pattern + 'legends.xml',
                          os.path.basename(pattern + 'legends.xml'))
             os.remove(pattern + 'legends.xml')
