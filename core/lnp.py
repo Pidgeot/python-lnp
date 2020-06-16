@@ -167,7 +167,7 @@ class PyLNP(object):
                 ["DF Forums", "http://www.bay12forums.com/smf/"]
             ],
             "to_import": [
-                ['text_prepend', '<df>/gamelog.txt'],
+                ['text_prepend_iso_8859_1', '<df>/gamelog.txt'],
                 ['text_prepend', '<df>/ss_fix.log'],
                 ['text_prepend', '<df>/dfhack.history'],
                 ['copy_add', '<df>/data/save'],

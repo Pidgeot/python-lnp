@@ -10,6 +10,8 @@ Two import strategies are currently supported:
     copy a file or directory contents, non-recursive, no overwriting
 :text_prepend:
     prepend imported file content (for logfiles)
+:text_prepend_iso_8859_1: (variant)
+    prepend imported file content with ISO-8859-1 encoding
 
 
 These strategies support the 'low hanging fruit' of imports.  Other content
@@ -84,7 +86,7 @@ def strat_copy_add(src, dest):
     return ret
 
 
-def strat_text_prepend(src, dest):
+def strat_text_prepend(src, dest, encoding='utf8'):
     """Prepend the src textfile to the dest textfile, creating it if needed."""
     if not os.path.isfile(src):
         log.i('Cannot import {} - not a file'.format(src))
@@ -93,9 +95,9 @@ def strat_text_prepend(src, dest):
         log.i('importing {} to {} by copying'.format(src, dest))
         shutil.copy2(src, dest)
         return True
-    with open(src) as f:
+    with open(src, encoding=encoding) as f:
         srctext = f.read()
-    with open(dest) as f:
+    with open(dest, encoding=encoding) as f:
         desttext = f.read()
     with open(src, 'w') as f:
         log.i('importing {} to {} by prepending'.format(src, dest))
@@ -150,6 +152,7 @@ def do_imports(from_df_dir):
     strat_funcs = {
         'copy_add': strat_copy_add,
         'text_prepend': strat_text_prepend,
+        'text_prepend_iso_8859_1': lambda src, dst: strat_text_prepend(src, dst, encoding='ISO-8859-1')
         }
     imported = []
     for strat, src, dest in path_pairs:
