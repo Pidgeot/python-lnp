@@ -93,11 +93,11 @@ def strat_text_prepend(src, dest):
         log.i('importing {} to {} by copying'.format(src, dest))
         shutil.copy2(src, dest)
         return True
-    with open(src) as f:
+    with open(src, encoding='latin1') as f:
         srctext = f.read()
-    with open(dest) as f:
+    with open(dest, encoding='latin1') as f:
         desttext = f.read()
-    with open(src, 'w') as f:
+    with open(src, 'w', encoding='latin1') as f:
         log.i('importing {} to {} by prepending'.format(src, dest))
         f.writelines([srctext, '\n', desttext])
     return True
