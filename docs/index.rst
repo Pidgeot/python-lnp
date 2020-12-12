@@ -8,8 +8,8 @@ content-replacing mods.
 
 It forms the core of various bundles for new, lazy, or impatient players -
 such as the old "Lazy Newb Pack".  While this project is just the launcher,
-you can download a complete bundle for Windows, OSX, or Linux at
-http://lazynewbpack.com/
+you can download a complete bundle for Windows, OSX, or Linux put together by members of
+the community. See http://dwarffortresswiki.org/Lazy_Newb_Pack for current links to these.
 
 If you have a question that is not answered here, go ahead and ask it in the
 `Bay12 forum thread for PyLNP <http://www.bay12forums.com/smf/index.php?topic=140808>`_.
