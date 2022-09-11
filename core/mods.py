@@ -197,6 +197,15 @@ def merge_folder(mod_folder, vanilla_folder, mixed_folder):
     Text files are merged; other files (sprites etc) are copied over."""
     status = 0
     for root, _, files in os.walk(mod_folder):
+
+        # We want to make any directory in our mod folder in the mixed folder
+        # if it doesn't already exist. Fixes #173
+        mixed_dir = os.path.join(mixed_folder,
+                                 os.path.relpath(root, mod_folder))
+
+        if not os.path.isdir(mixed_dir):
+            os.makedirs(mixed_dir)
+
         for k in files:
             f = os.path.relpath(os.path.join(root, k), mod_folder)
             log.push_prefix('file "' + f + '": ')
