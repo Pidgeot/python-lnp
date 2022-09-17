@@ -169,7 +169,7 @@ class PyLNP(object):
             "to_import": [
                 ['text_prepend', '<df>/gamelog.txt'],
                 ['text_prepend', '<df>/ss_fix.log'],
-                ['text_prepend', '<df>/dfhack.history'],
+                ['text_prepend', '<dfhack_config>/dfhack.history'],
                 ['copy_add', '<df>/data/save'],
                 ['copy_add', '<df>/soundsense',
                  'LNP/Utilities/Soundsense/packs'],

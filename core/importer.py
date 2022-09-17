@@ -122,11 +122,20 @@ def do_imports(from_df_dir):
     for st, src, dest in raw_config:
         if '<df>' in src:
             newsrc = src.replace('<df>', from_df_dir)
+        elif '<dfhack_config>' in src:
+            if os.path.exists(os.path.join(from_df_dir, 'hack', 'init')):
+                newsrc = src.replace('<dfhack_config>', os.path.join(
+                    from_df_dir, 'dfhack-config', 'init'))
+            else:
+                newsrc = src.replace('<dfhack_config>', from_df_dir)
         else:
             newsrc = os.path.join(from_df_dir, '../', src)
         newsrc = os.path.abspath(os.path.normpath(newsrc))
         if '<df>' in dest:
             newdest = dest.replace('<df>', paths.get('df'))
+        elif '<dfhack_config>' in src:
+            newdest = dest.replace(
+                '<dfhack_config>', paths.get('dfhack_config'))
         else:
             newdest = paths.get('root', dest)
         newdest = os.path.abspath(os.path.normpath(newdest))

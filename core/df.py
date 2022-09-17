@@ -49,6 +49,11 @@ def set_df_folder(path):
     paths.register('save', paths.get('data'), 'save', allow_create=False)
     paths.register('extras', paths.get('lnp'), 'Extras')
     paths.register('defaults', paths.get('lnp'), 'Defaults')
+    if os.path.exists(paths.get('df', 'hack', 'init')):
+        paths.register(
+            'dfhack_config', paths.get('df', 'dfhack-config', 'init'))
+    else:
+        paths.register('dfhack_config', paths.get('df'), allow_create=False)
     lnp.df_info = DFInstall(paths.get('df'))
     lnp.settings = lnp.df_info.settings
     if lnp.args.release_prep or lnp.args.raw_lint:

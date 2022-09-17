@@ -23,7 +23,7 @@ def read_hacks():
     hacklines = []
     for init_file in ('dfhack', 'onLoad', 'onMapLoad'):
         try:
-            with open(paths.get('df', init_file + '_PyLNP.init'),
+            with open(paths.get('dfhack_config', init_file + '_PyLNP.init'),
                       encoding='latin1') as f:
                 hacklines.extend(l.strip() for l in f.readlines())
         except IOError:
@@ -108,7 +108,7 @@ def toggle_hack(name):
         is_enabled = True
         hacks[name] = hack
     # Write back to the file
-    fname = paths.get('df', init_file + '_PyLNP.init')
+    fname = paths.get('dfhack_config', init_file + '_PyLNP.init')
     log.i('Rebuilding {} with the enabled hacks'.format(fname))
     lines = ['# {}\n# {}\n{}\n\n'.format(
         k, h['tooltip'].replace('\n', '\n#'), h['command'])
