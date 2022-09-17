@@ -4,6 +4,7 @@
 from __future__ import print_function, unicode_literals, absolute_import
 
 import os
+from . import log
 
 __paths = {}
 
@@ -40,6 +41,7 @@ def register(name, *path_elms, **kwargs):
             *path_elms[:-1]), path_elms[-1])
     else:
         __paths[name] = path_elms[0]
+    log.i('Registering path %s as %s', name, __paths[name])
     if kwargs.get('allow_create', True) and not os.path.exists(__paths[name]):
         os.makedirs(__paths[name])
 
