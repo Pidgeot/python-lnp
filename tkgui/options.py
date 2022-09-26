@@ -265,11 +265,12 @@ class OptionsTab(Tab):
         files = keybinds.read_keybinds()
         self.keybinds.set(files)
         current = keybinds.get_installed_file()
+        default_bg = Style().lookup('TListbox', 'fill')
         for i, f in enumerate(files):
             if f == current:
                 self.keybinding_files.itemconfig(i, bg='pale green')
             else:
-                self.keybinding_files.itemconfig(i, bg=None)
+                self.keybinding_files.itemconfig(i, bg=default_bg)
 
     def load_keybinds(self):
         """Replaces keybindings with selected file."""
@@ -312,11 +313,12 @@ class OptionsTab(Tab):
         files = embarks.read_embarks()
         self.embarks.set(files)
         current = embarks.get_installed_files()
+        default_bg = Style().lookup('TListbox', 'fill')
         for i, f in enumerate(files):
             if f in current:
                 self.embark_files.itemconfig(i, bg='pale green')
             else:
-                self.embark_files.itemconfig(i, bg=None)
+                self.embark_files.itemconfig(i, bg=default_bg)
 
     def install_embarks(self, listbox):
         """
