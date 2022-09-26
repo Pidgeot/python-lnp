@@ -269,7 +269,7 @@ class OptionsTab(Tab):
             if f == current:
                 self.keybinding_files.itemconfig(i, bg='pale green')
             else:
-                self.keybinding_files.itemconfig(i, bg='white')
+                self.keybinding_files.itemconfig(i, bg=None)
 
     def load_keybinds(self):
         """Replaces keybindings with selected file."""
@@ -316,7 +316,7 @@ class OptionsTab(Tab):
             if f in current:
                 self.embark_files.itemconfig(i, bg='pale green')
             else:
-                self.embark_files.itemconfig(i, bg='white')
+                self.embark_files.itemconfig(i, bg=None)
 
     def install_embarks(self, listbox):
         """

@@ -204,7 +204,7 @@ class GraphicsTab(Tab):
             if p == current:
                 self.graphicpacks.itemconfig(i, bg='pale green')
             else:
-                self.graphicpacks.itemconfig(i, bg='white')
+                self.graphicpacks.itemconfig(i, bg=None)
 
         self.select_graphics()
 
@@ -304,7 +304,7 @@ class GraphicsTab(Tab):
             if f == current:
                 self.color_files.itemconfig(i, bg='pale green')
             else:
-                self.color_files.itemconfig(i, bg='white')
+                self.color_files.itemconfig(i, bg=None)
 
         self.select_colors()
 
@@ -391,12 +391,12 @@ class GraphicsTab(Tab):
             if f == current[0]:
                 self.fonts.itemconfig(i, bg='pale green')
             else:
-                self.fonts.itemconfig(i, bg='white')
+                self.fonts.itemconfig(i, bg=None)
             if lnp.settings.version_has_option('GRAPHICS_FONT'):
                 if f == current[1]:
                     self.graphicsfonts.itemconfig(i, bg='pale green')
                 else:
-                    self.graphicsfonts.itemconfig(i, bg='white')
+                    self.graphicsfonts.itemconfig(i, bg=None)
 
     def install_tilesets(self, mode=3):
         """
