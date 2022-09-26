@@ -10,6 +10,8 @@ __package__ = ""
 
 try:
     lnp.PyLNP()
+except SystemExit:
+    raise
 except:
     import traceback
     message = traceback.format_exception(*sys.exc_info())
