@@ -25,8 +25,8 @@ If the program refuses to start, or gives an error message like:
     *The application has failed to start because the side-by-side configuration
     is incorrect. Please see the application event log for more details.*
 
-you most likely need to install the `Microsoft Visual C++ 2008 redistributable
-package <http://www.microsoft.com/en-us/download/details.aspx?id=29>`_.
+you most likely need to install the `Microsoft Visual C++ 2015 redistributable
+package <http://www.microsoft.com/en-us/download/details.aspx?id=48145>`_.
 
 The user interface library used by PyLNP has issues with high-DPI displays.
 For builds made after February 28, 2016 (ie PyLNP v0.11 and later),
@@ -147,7 +147,7 @@ particularly useful on OS X, which doesn't have any good way of launching a
 Python script directly from Finder.
 
 The executables are built using `PyInstaller <http://www.pyinstaller.org>`_
-(v2.0 or later), which can be usually be installed with
+(v4.2 or later), which can be usually be installed with
 ``pip install pyintstaller``.  See below for specific instructions.
 
 Open the PyLNP directory in a terminal and type ``pyinstaller lnp.spec``.
@@ -162,32 +162,19 @@ Inside that folder is the stand-alone executable, named ``lnp.exe`` on Windows,
     PyLNP executable may be located in ``/Games``, ``/Games/PyLNP``,
     ``/Games/Utilities/Launcher``, etc.
 
-These instructions are tested with Python 2.7, but should work with 3.x as
-well. You may be able to substitute ``easy_install`` with ``pip install``.
+If ``pip`` is not available on your system, you may need to install it, either from a package manager or by running ``python -m ensurepip`` from the command-line. If you can't use the regular pip comamnd, ``python -m pip <command>`` works too.
 
 Windows
 -------
-The best way I've found to install Pyinstaller is to first install setuptools_,
-manually install pywin32_, and then run ``easy_install pyinstaller`` from
-the ``Scripts`` directory in your Python installation.
+PyInstaller 4.8 introduces a hook script which will break DFHack. A `bug report <https://github.com/pyinstaller/pyinstaller/issues/7118>`_ already exists for Pyinstaller for this issue, but at time of writing, it's still an issue. For now, use an older version; anything from 4.2 to 4.7 should definitely work; 4.6 is being used for the official builds. Use ``pip install PyInstaller==4.6`` to install that one.
 
-.. _setuptools: https://pypi.python.org/pypi/setuptools/0.9.8#windows
-.. _pywin32: http://sourceforge.net/projects/pywin32/files/pywin32
-
-.. note::
-  Depending on the exact package versions, you may experience issues running
-  the generated executable. PyInstaller 2.1 with setuptools 18.2 is known to
-  work, other combinations may not.
+Note that your resulting build will have the same Windows requirements as the Python version used to build. To support Windows Vista and 7, you need to use Python 3.8 or earlier.
 
 Linux
 -----
-The easiest way to install it is to use your package manager to install it
-directly (if available), or first install python-pip from your package
-manager and then run ``sudo pip install pyinstaller`` in a terminal.
+If your package manager provides PyInstaller, install it from there. Otherwise, use pip.
 
 OS X
 ----
-A simple way to install Pyinstaller is to open a terminal and type
-``sudo easy_install pyinstaller``.  You may also need to
-:ref:`install command-line compilers <osx_compilers>`.
+You may need to :ref:`install command-line compilers <osx_compilers>`.
 
