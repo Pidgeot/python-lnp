@@ -201,7 +201,7 @@ def open_readme(path):
     if not readme:
         dir_contents = os.listdir(path)
         for s in sorted(dir_contents):
-            if re.match('read( |_)?me', s, re.IGNORECASE):
+            if re.match('read[ _]?me', s, re.IGNORECASE):
                 readme = s
                 break
         else:
