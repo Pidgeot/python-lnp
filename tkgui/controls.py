@@ -120,7 +120,7 @@ class _FakeControl(object):
     # pylint:disable=unused-argument
     @staticmethod
     def grid(*args, **kwargs):
-        """Prevents breaking for code that tries to layout the control."""
+        """Prevents breaking for code that tries to lay out the control."""
         return
     pack = grid
 

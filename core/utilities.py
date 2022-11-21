@@ -62,7 +62,7 @@ def manifest_for(path):
 
 def get_title(path):
     """
-    Returns a title for the given utility. If an non-blank override exists, it
+    Returns a title for the given utility. If a non-blank override exists, it
     will be used; otherwise, the filename will be manipulated according to
     PyLNP.json settings."""
     config = manifest_for(path)

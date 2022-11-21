@@ -36,7 +36,7 @@ def _sdl_get_binds(filename, compressed=True):
 
     Allows keybindings to be stored as files with only the non-vanilla
     bindings, improving readability and compatibility across DF versions.
-    Only compatible with SDL versions however.
+    Only compatible with SDL versions, however.
     """
     with open(filename, encoding='cp437') as f:
         lines = f.readlines()
@@ -100,7 +100,7 @@ def load_keybinds(filename):
 
 def keybind_exists(filename):
     """
-    Returns whether or not a keybindings file already exists.
+    Returns whether a keybindings file already exists.
 
     Args:
         filename: the filename to check.

@@ -91,7 +91,7 @@ def save_colors(filename):
 
 def color_exists(filename):
     """
-    Returns whether or not a color scheme already exists.
+    Returns whether a color scheme already exists.
 
     Args:
         filename: the filename to check.

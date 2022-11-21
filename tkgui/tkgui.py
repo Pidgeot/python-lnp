@@ -52,7 +52,7 @@ try:  # PIL-compatible library (e.g. Pillow); used to load PNG images (optional)
     # pylint:disable=import-error,no-name-in-module
     from PIL import Image, ImageTk
     has_PIL = True
-except ImportError:  # Some PIL installations live outside of the PIL package
+except ImportError:  # Some PIL installations live outside the PIL package
     # pylint:disable=import-error,no-name-in-module
     try:
         import Image

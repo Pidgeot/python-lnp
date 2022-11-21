@@ -12,7 +12,7 @@ Two import strategies are currently supported:
     prepend imported file content (for logfiles)
 
 
-These strategies support the 'low hanging fruit' of imports.  Other content
+These strategies support the 'low-hanging fruit' of imports.  Other content
 or more advanced strategies have been identified, but are difficult to
 implement without risking a 'bad import' scenario:
 
@@ -28,7 +28,7 @@ implement without risking a 'bad import' scenario:
     Importing world gen and embark profiles may be supported eventually.
     No obvious downsides beyond tricky implementation.
 :other:
-    Custom settings importer - eg which graphics pack, are aquifers
+    Custom settings importer - e.g. which graphics pack, are aquifers
     disabled, other PyLNP settings...  May be added later but no plans.
 
 """

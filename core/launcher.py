@@ -69,7 +69,7 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
 
     Args:
         path: the path of the program to launch.
-        spawn_terminal: whether or not to spawn a new terminal for this app.
+        spawn_terminal: whether to spawn a new terminal for this app.
             Used only for DFHack.
     """
     path = os.path.abspath(path)

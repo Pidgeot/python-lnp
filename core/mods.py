@@ -36,7 +36,7 @@ def toggle_premerge_gfx():
     lnp.userconfig.save_data()
 
 def will_premerge_gfx():
-    """Returns whether or not graphics will be merged prior to any mods."""
+    """Returns whether graphics will be merged prior to any mods."""
     return lnp.userconfig.get_bool('premerge_graphics')
 
 def read_mods():
@@ -140,7 +140,7 @@ def merge_all_mods(list_of_mods, gfx=None):
             -1: Unmerged
             0:  Merge was successful, all well
             1:  Potential compatibility issues, no merge problems
-            2:  Non-fatal error, overlapping lines or non-existent mod etc
+            2:  Non-fatal error, overlapping lines or non-existent mod etc.
             3:  Fatal error, not returned (rebuilds to previous, rest unmerged)
     """
     from . import graphics
@@ -165,7 +165,7 @@ def merge_a_mod(mod):
 
         0:  Merge was successful, all well
         1:  Potential compatibility issues, no merge problems
-        2:  Non-fatal error, overlapping lines or non-existent mod etc
+        2:  Non-fatal error, overlapping lines or non-existent mod etc.
         3:  Fatal error, respond by rebuilding to previous mod
         """
     log.push_prefix('In "' + mod + '": ')
@@ -194,7 +194,7 @@ def merge_a_mod(mod):
 
 def merge_folder(mod_folder, vanilla_folder, mixed_folder):
     """Merge the specified folders, output going in 'LNP/Baselines/temp'
-    Text files are merged; other files (sprites etc) are copied over."""
+    Text files are merged; other files (sprites etc.) are copied over."""
     status = 0
     for root, _, files in os.walk(mod_folder):
 
@@ -240,7 +240,7 @@ def merge_file(mod_file_name, van_file_name, gen_file_name):
 
         0:  Merge was successful, all well
         1:  Potential compatibility issues, no merge problems
-        2:  Non-fatal error, overlapping lines or non-existent mod etc
+        2:  Non-fatal error, overlapping lines or non-existent mod etc.
         3:  Fatal error, respond by rebuilding to previous mod
     """
     #pylint:disable=bare-except
@@ -436,7 +436,7 @@ def make_mod_from_installed_raws(name):
     as a mod called $name.
 
         * If ``installed_raws.txt`` is not present, compare to vanilla
-        * Otherwise, rebuild as much as possible then compare to installed
+        * Otherwise, rebuild as much as possible, then compare to installed
     """
     if get_installed_mods_from_log():
         clear_temp()
