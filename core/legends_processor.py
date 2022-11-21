@@ -29,8 +29,8 @@ def get_region_info():
     if files:
         fname = os.path.basename(files[0])
         region = re.search(
-            r'^.*(?=(-\d{5,}-\d{2}\-\d{2}))', fname).group()
-        date = re.search(r'\d{5,}-\d{2}\-\d{2}', fname).group()
+            r'^.*(?=(-\d{5,}-\d{2}-\d{2}))', fname).group()
+        date = re.search(r'\d{5,}-\d{2}-\d{2}', fname).group()
         return region, date
 
 def compress_bitmaps():

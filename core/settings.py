@@ -698,7 +698,7 @@ class DFConfiguration(object):
             return
         text = DFRaw.read(filename)
         if auto_add:
-            for match in re.findall(r'\[(.+?):(.+?)\]', text):
+            for match in re.findall(r'\[(.+?):(.+?)]', text):
                 self.create_option(
                     match[0], match[0], match[1], None, auto_add_key)
         for field in fields:
@@ -709,7 +709,7 @@ class DFConfiguration(object):
                 if "[{0}]".format(self.field_names[field]) in text:
                     self.settings[field] = "YES"
             else:
-                match = re.search(r'\[{0}:(.+?)\]'.format(
+                match = re.search(r'\[{0}:(.+?)]'.format(
                     self.field_names[field]), text)
                 if match:
                     value = match.group(1)
@@ -747,7 +747,7 @@ class DFConfiguration(object):
         """
         try:
             match = re.search(
-                r'\['+str(field)+r'(:.+?)\]', DFRaw.read(filename))
+                r'\['+str(field)+r'(:.+?)]', DFRaw.read(filename))
             if match is None:
                 return False
             params = match.group(1)

@@ -99,7 +99,7 @@ def read_utility_lists(path):
     try:
         with open(path, encoding='utf-8') as util_file:
             for line in util_file:
-                for match in re.findall(r'\[(.+?)\]', line):
+                for match in re.findall(r'\[(.+?)]', line):
                     result.append(match)
     except IOError:
         pass
