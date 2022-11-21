@@ -18,7 +18,7 @@ from . import hacks, paths, log
 from .lnp import lnp, VERSION
 
 def find_df_folders():
-    """Locates all suitable Dwairf Fortress installations (folders starting
+    """Locates all suitable Dwarf Fortress installations (folders starting
     with "Dwarf Fortress" or "df")"""
     lnp.folders = tuple([
         os.path.basename(o) for o in glob(os.path.join(lnp.BASEDIR, '*')) if

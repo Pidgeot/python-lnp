@@ -90,7 +90,7 @@ class UtilitiesTab(Tab):
         proglist.bind("<1>", self.proglist_click)
 
     def proglist_click(self, event):
-        """Deselect everything if event occured in blank area"""
+        """Deselect everything if event occurred in blank area"""
         region = self.proglist.identify_region(event.x, event.y)
         if region == 'nothing':
             self.proglist.selection_set('')

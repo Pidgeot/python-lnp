@@ -307,7 +307,7 @@ class ConfirmRun(ChildWindow):
         self.close()
 
 class TerminalSelector(ChildWindow):
-    """Used to select a terminal for launcing child programs on Linux."""
+    """Used to select a terminal for launching child programs on Linux."""
     def __init__(self, parent, first_run):
         self.first_run = first_run
         super(TerminalSelector, self).__init__(parent, 'Configure terminal')

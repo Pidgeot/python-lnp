@@ -40,7 +40,7 @@ def find_vanilla_raws(download_missing=True):
     return retval
 
 def prepare_baselines():
-    """Unzip any DF releases found, and discard non-universial files."""
+    """Unzip any DF releases found, and discard non-universal files."""
     archives = glob.glob(os.path.join(paths.get('baselines'), 'df_??_?*.???'))
     if archives:
         log.i('Extracting archives in baselines: ' + str(archives))

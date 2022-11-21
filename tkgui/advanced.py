@@ -78,7 +78,7 @@ class AdvancedTab(Tab):
                 controls.create_numeric_entry(
                     caps, self.gps_var, 'gpsCap', 'How fast the game visually '
                     'updates.\nLower value may give small boost to FPS but '
-                    'will be less reponsive.').grid(
+                    'will be less responsive.').grid(
                         row=2, column=2, pady=(3, 0))
                 Label(caps, text='FPS').grid(row=2, column=3, sticky='w')
             if caps.children:

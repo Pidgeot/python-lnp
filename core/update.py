@@ -85,7 +85,7 @@ def next_update(days):
     lnp.save_config()
 
 def start_update():
-    """Launches a webbrowser to the specified update URL."""
+    """Launches a web browser to the specified update URL."""
     launcher.open_url(lnp.updater.get_download_url())
 
 def download_df_baseline(immediate=False):

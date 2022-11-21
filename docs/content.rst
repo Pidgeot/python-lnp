@@ -324,7 +324,7 @@ across DF versions and with other mods, and to minimise file size for storage
 and distribution.  It is quite simply a complete ``raw`` folder, identically
 structured to vanilla DF, with all unmodified files removed.  It can thus be
 installed simply by overwriting a vanilla install of DF, and mods that change
-little will have tiny filesizes.  The ``data/speech`` folder is installed as if
+little will have tiny file sizes.  The ``data/speech`` folder is installed as if
 it was part of the raws, but should be included in the usual place (ie ``data``
 and ``raw`` as sibling dirs) if any files there have been changed.
 

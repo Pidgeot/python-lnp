@@ -96,7 +96,7 @@ def get_image(filename):
 
 def validate_number(value_if_allowed):
     """
-    Validation method used by Tkinter. Accepts empty and float-coercable
+    Validation method used by Tkinter. Accepts empty and float-coercible
     strings.
 
     Args:

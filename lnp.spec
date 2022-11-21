@@ -80,7 +80,7 @@ a = Analysis(
 a.datas+=[(logo,logo,'DATA'),(icon,icon,'DATA')]
 if sys.platform == 'win32':
     # Importing pkg_resources fails with Pillow on Windows due to
-    # unnormalized case; this works around the problem
+    # un-normalized case; this works around the problem
     a.datas = list({tuple(map(str.upper, t)) for t in a.datas})
 pyz = PYZ(a.pure)
 if sys.platform != 'darwin':

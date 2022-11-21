@@ -400,7 +400,7 @@ def update_raw_dir(path, gfx=('', '')):
     built_mods = read_installation_log(built_log)
     if mods_list != built_mods or gfx[0] != gfx[1]:
         if -1 in merge_all_mods(mods_list, gfx[0]):
-            log.w('Some mods in {} could not be remerged'.format(path))
+            log.w('Some mods in {} could not be re-merged'.format(path))
             return False
     shutil.rmtree(path)
     shutil.copytree(paths.get('baselines', 'temp', 'raw'), path)

@@ -67,7 +67,7 @@ def call_optipng():
         log.e('A PIL-compatible library is required to compress bitmaps.')
 
 def choose_region_map():
-    """Returns the most-prefered region map available, or fallback."""
+    """Returns the most-preferred region map available, or fallback."""
     pattern = paths.get('df', '-'.join(get_region_info()) + '-')
     for name in ('detailed', 'world_map'):
         for ext in ('.png', '.bmp'):

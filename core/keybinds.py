@@ -145,7 +145,7 @@ def get_installed_file():
                 return os.path.basename(fname)
     except: #pylint: disable=bare-except
         # Baseline missing, or interface.txt is missing from baseline - use
-        # plain file comparsion
+        # plain file comparison
         pass
 
     files = helpers.get_text_files(paths.get('keybinds'))

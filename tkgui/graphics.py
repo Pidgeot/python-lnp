@@ -281,7 +281,7 @@ class GraphicsTab(Tab):
             result = graphics.simplify_pack(pack)
             if result is None:
                 messagebox.showinfo(
-                    title='Error occurrred', message='No files in: '+str(pack))
+                    title='Error occurred', message='No files in: '+str(pack))
             elif result is False:
                 messagebox.showerror(
                     title='Error occurred',

@@ -96,7 +96,7 @@ def install_graphics(pack):
 
     Returns:
         True if successful,
-        False if an exception occured
+        False if an exception occurred
         None if baseline vanilla raws are missing
     """
     # pylint:disable=too-many-branches

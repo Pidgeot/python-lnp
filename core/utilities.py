@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Utility management.
 
-There are now two seperate metadata systems:
+There are now two separate metadata systems:
 
 - the manifest system, which applies to each dir with a manifest (and subdirs)
 - the global system, which applies to everything else
@@ -10,7 +10,7 @@ There are now two seperate metadata systems:
 Utilities are uniformly and uniquely identified by the relative path
 from ``LNP/Utilities/`` to the executable file.
 
-Metadata for each is found by looking back up the pach for a manifest, and
+Metadata for each is found by looking back up the path for a manifest, and
 in the global metadata if one is not found.
 
 Utilities are found by walking down from the base dir.
@@ -24,7 +24,7 @@ requirements for DFHack or a terminal.
 Otherwise, each file (and on OSX, dir) is matched against standard patterns
 and user include patterns.  Any matches that do not also match a user exclude
 pattern are added to the list of identified utilities.  This global config is
-found in some combination of include.txt, exclude.txt, and uilities.txt.
+found in some combination of include.txt, exclude.txt, and utilities.txt.
 """
 from __future__ import print_function, unicode_literals, absolute_import
 

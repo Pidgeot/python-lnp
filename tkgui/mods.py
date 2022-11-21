@@ -83,7 +83,7 @@ class ModsTab(Tab):
             self, 'Install Mods', 'Copy merged mods to DF folder.',
             self.install_mods))
         main_grid.add(controls.create_trigger_option_button(
-            self, 'Premerge Graphics',
+            self, 'Pre-merge Graphics',
             'Whether to start with the current graphics pack, or '
             'vanilla (ASCII) raws', self.toggle_preload, 'premerge_graphics',
             lambda v: ('NO', 'YES')[mods.will_premerge_gfx()]))
@@ -220,7 +220,7 @@ class ModsTab(Tab):
             else:
                 messagebox.showinfo(
                     'Mods not ready',
-                    'The selected mods have merge confilcts and should not be '
+                    'The selected mods have merge conflicts and should not be '
                     'installed.\n\nResolve merge issues and try again.')
 
     @staticmethod

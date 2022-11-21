@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Static utililty methods that are needed in several parts of the TkGui module.
+Static utility methods that are needed in several parts of the TkGui module.
 """
 from __future__ import print_function, unicode_literals, absolute_import
 

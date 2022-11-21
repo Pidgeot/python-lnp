@@ -429,7 +429,7 @@ def terminal_test_run(status_callback=None):
 
 def terminal_test_parent(t):
     """Tests the parent side of terminal launching."""
-    print("Terminal succesfully started! Test will begin in 3 seconds.")
+    print("Terminal successfully started! Test will begin in 3 seconds.")
     time.sleep(3)
     cmd = sys.argv[:-2] + ['--terminal-test-child', t]
     if sys.executable not in cmd:
