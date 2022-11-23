@@ -92,7 +92,7 @@ def download_df_baseline(immediate=False):
     """Download the current version of DF from Bay12 Games to serve as a
     baseline, in LNP/Baselines/"""
     filename = lnp.df_info.get_archive_name()
-    url = 'http://www.bay12games.com/dwarves/' + filename
+    url = 'https://www.bay12games.com/dwarves/' + filename
     target = os.path.join(paths.get('baselines'), filename)
     queue_name = 'immediate' if immediate else 'baselines'
     download.download(queue_name, url, target)
@@ -253,7 +253,7 @@ class DFFDUpdater(Updater):
         self.dffd_id = lnp.config.get_string('updates/dffdID')
         if not self.dffd_id:
             log.e('Field "updates/dffdID" must be set in PyLNP.json')
-        return 'http://dffd.bay12games.com/file_data/{}.json'.format(
+        return 'https://dffd.bay12games.com/file_data/{}.json'.format(
             self.dffd_id)
 
     def get_version(self):
@@ -261,10 +261,10 @@ class DFFDUpdater(Updater):
         return self.json.get_string('version')
 
     def get_download_url(self):
-        return 'http://dffd.bay12games.com/file.php?id='+self.dffd_id
+        return 'https://dffd.bay12games.com/file.php?id='+self.dffd_id
 
     def get_direct_url(self):
-        result = 'http://dffd.bay12games.com/download.php?id={0}&f={1}'
+        result = 'https://dffd.bay12games.com/download.php?id={0}&f={1}'
         return result.format(
             self.dffd_id, quote(self.json.get_string('filename')))
 

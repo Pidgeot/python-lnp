@@ -6,7 +6,7 @@ just using `the latest stand-alone executable version
 <https://github.com/Pidgeot/python-lnp/releases>`_,
 which are available for Windows, OSX, and Linux.
 You may wish to download PyLNP as part of a complete package for beginners,
-`which can be found here <http://dwarffortresswiki.org/Lazy_Newb_Pack>`_.
+`which can be found here <https://dwarffortresswiki.org/Lazy_Newb_Pack>`_.
 
 If you have configuration problems or other errors, want to run the source
 code directly, or want to build your own stand-alone executable, the
@@ -26,7 +26,7 @@ If the program refuses to start, or gives an error message like:
     is incorrect. Please see the application event log for more details.*
 
 you most likely need to install the `Microsoft Visual C++ 2015 redistributable
-package <http://www.microsoft.com/en-us/download/details.aspx?id=48145>`_.
+package <https://www.microsoft.com/en-us/download/details.aspx?id=48145>`_.
 
 The user interface library used by PyLNP has issues with high-DPI displays.
 For builds made after February 28, 2016 (ie PyLNP v0.11 and later),
@@ -90,7 +90,7 @@ PyLNP will still work, it will just look a little less pretty.
 
 Windows
 -------
-Download a Windows installer for Python from http://python.org, which will
+Download a Windows installer for Python from https://python.org, which will
 contain everything required to run PyLNP.  To get a better looking logo,
 run the command ``pip install pillow`` in a terminal.
 
@@ -117,7 +117,7 @@ OS X
 ----
 If you're running OS X 10.7 or later, you should have everything that's
 required. For 10.6 or earlier, upgrade Python to 2.7 or the latest 3.x
-release; an installer is available on http://python.org .
+release; an installer is available on https://python.org .
 
 To make the logo look better, you will need to install Pillow, a python
 library for images. If you have MacPorts installed, use it to install the
@@ -146,7 +146,7 @@ If you want to make your own executable, you can do that. This is
 particularly useful on OS X, which doesn't have any good way of launching a
 Python script directly from Finder.
 
-The executables are built using `PyInstaller <http://www.pyinstaller.org>`_
+The executables are built using `PyInstaller <https://www.pyinstaller.org>`_
 (v4.2 or later), which can be usually be installed with
 ``pip install pyinstaller``.  See below for specific instructions.
 
