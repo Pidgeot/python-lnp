@@ -1,0 +1,15 @@
+build
+dist
+*.pyc
+PyLNP.user
+stderr.txt
+stdout.txt
+
+Dwarf\ Fortress\ *
+LNP
+__pycache__
+*.bat
+
+docs/_build
+docs/core
+docs/tkgui
