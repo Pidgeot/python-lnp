@@ -271,7 +271,7 @@ class PyLNP(object):
         assert self.os == 'osx'
         if '/AppTranslocation/' in sys.executable:
             try:
-                import tkinter.messagebox as messagebox
+                from tkinter import messagebox
             except ImportError:
                 import tkMessageBox as messagebox
             messagebox.showinfo(

@@ -23,7 +23,7 @@ except:
 
     # Also show error in Tkinter message box if possible
     try:
-        import tkinter.messagebox as messagebox
+        from tkinter import messagebox
         messagebox.showerror(message=message)
     except:
         pass

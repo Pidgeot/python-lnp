@@ -9,7 +9,7 @@ import sys
 from core import download, baselines
 from core.lnp import lnp
 
-import tkinter.messagebox as messagebox
+from tkinter import messagebox
 
 def check_vanilla_raws():
     """Validates status of vanilla raws are ready."""

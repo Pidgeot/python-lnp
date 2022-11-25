@@ -13,7 +13,7 @@ from . import controls
 
 from tkinter import *
 from tkinter.ttk import *
-import tkinter.messagebox as messagebox
+from tkinter import messagebox
 
 class ChildWindow(object):
     """Base class for child windows."""

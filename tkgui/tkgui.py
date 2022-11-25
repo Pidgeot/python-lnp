@@ -26,8 +26,8 @@ from .mods import ModsTab
 import queue as Queue
 from tkinter import *
 from tkinter.ttk import *
-import tkinter.messagebox as messagebox
-import tkinter.filedialog as filedialog
+from tkinter import messagebox
+from tkinter import filedialog
 import tkinter.font as tkFont
 
 # Workaround to use Pillow in PyInstaller

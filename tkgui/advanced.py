@@ -14,7 +14,7 @@ from .tab import Tab
 
 from tkinter import *
 from tkinter.ttk import *
-import tkinter.messagebox as messagebox
+from tkinter import messagebox
 
 #pylint: disable=too-many-public-methods,too-many-statements
 class AdvancedTab(Tab):

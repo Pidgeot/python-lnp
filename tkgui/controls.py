@@ -11,7 +11,7 @@ from . import binding
 
 from tkinter import *
 from tkinter.ttk import *
-import tkinter.simpledialog as simpledialog
+from tkinter import simpledialog
 import tkinter.font as tkFont
 
 # Monkeypatch simpledialog to use themed dialogs from ttk

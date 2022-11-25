@@ -13,8 +13,8 @@ from .tab import Tab
 
 from tkinter import *
 from tkinter.ttk import *
-import tkinter.messagebox as messagebox
-import tkinter.simpledialog as simpledialog
+from tkinter import messagebox
+from tkinter import simpledialog
 
 # pylint:disable=too-many-public-methods
 class ModsTab(Tab):
