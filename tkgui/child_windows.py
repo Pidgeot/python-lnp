@@ -39,7 +39,6 @@ class ChildWindow(object):
         Args:
             container: the frame the controls are to be created in.
         """
-        pass
 
     def make_modal(self, on_cancel):
         """
@@ -94,7 +93,6 @@ class DualTextWindow(ChildWindow):
         Args:
             container: the frame the controls are to be created in.
         """
-        pass
 
 class LogWindow(DualTextWindow):
     """Window used for displaying an error log."""

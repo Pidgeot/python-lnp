@@ -101,7 +101,6 @@ class LinuxTerminal(object):
     @staticmethod
     def detect():
         """Detects if this terminal is available."""
-        pass
 
     @staticmethod
     def get_command_line():
@@ -111,7 +110,6 @@ class LinuxTerminal(object):
         If the command to be launched should go somewhere other than the end
         of the command line, use $ to indicate the correct place.
         """
-        pass
 
 # pylint: disable=bare-except
 

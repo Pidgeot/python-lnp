@@ -23,14 +23,11 @@ class Tab(Frame):
         Creates all TKinter variables needed by this tab.
         Overridden in child classes.
         """
-        pass
 
     def read_data(self):
         """Reads all external data needed. Overridden in child classes."""
-        pass
 
     def create_controls(self):
         """Creates all controls for this tab. Overriden in child classes."""
-        pass
 
 

@@ -157,7 +157,6 @@ class Updater(object):
     def get_version(self):
         """Returns the version listed at the update URL. Must be overridden by
         subclasses."""
-        pass
 
     def get_download_url(self):
         """Returns a URL from which the user can download the update."""

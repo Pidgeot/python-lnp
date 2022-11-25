@@ -48,7 +48,6 @@ def update():
     """Updates configuration displays (buttons, etc.)."""
     def disabled_change_entry(*args, **kwargs): #pylint: disable=unused-argument
         """Prevents entry change callbacks from being processed."""
-        pass
 
     old_change_entry = __ui.change_entry
     __ui.change_entry = disabled_change_entry

@@ -19,14 +19,12 @@ class UI(object):
     """
     def start(self):
         """Notifies the UI to start. On return, PyLNP will terminate."""
-        pass
 
     def on_update_available(self):
         """
         Called when an update is available. Use this to show a notification
         and prompt the user for further action.
         """
-        pass
 
     def on_program_running(self, path, is_df):
         """
@@ -35,7 +33,6 @@ class UI(object):
         can request a forced launch.
         <is_df> specifies if the program is DF (True) or a utility (False).
         """
-        pass
 
     def on_invalid_config(self, errors):
         """
@@ -44,7 +41,6 @@ class UI(object):
         to the user.
         A true return value will launch DF anyway; a false return value cancels.
         """
-        pass
 
     def on_request_update_permission(self, interval):
         """
@@ -54,7 +50,6 @@ class UI(object):
         A true return value will change the configuration to use the specified
         interval. A false return value will turn off automatic update checks.
         """
-        pass
 
     def on_query_migration(self):
         """
@@ -62,7 +57,6 @@ class UI(object):
         This should provide the user with an option to import a previous
         DF install or starter pack into the newly selected DF version.
         """
-        pass
 
 lnp = None
 class PyLNP(object):

@@ -15,20 +15,17 @@ from .dfraw import DFRaw
 class _DisableValues(object):
     """Marker class for DFConfiguration. Value is disabled by replacing [ and ]
     with !."""
-    pass
 
 _disabled = _DisableValues()
 
 class _NegatedBool(object):
     """Marker class for DFConfiguration. Swaps YES and NO."""
-    pass
 
 _negated_bool = _NegatedBool()
 
 class _AnnouncementFocus(object):
     """Marker class for DFConfiguration. Value controls presence of P and R
     flags in ``announcements.txt``."""
-    pass
 
 _announcement_focus = _AnnouncementFocus()
 
