@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Framework for logging errors."""
 
-import sys, locale
+import sys
 
 from . import paths
 

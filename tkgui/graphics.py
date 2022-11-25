@@ -3,8 +3,6 @@
 # pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,attribute-defined-outside-init
 """Graphics tab for the TKinter GUI."""
 
-import sys
-
 from core import colors, graphics, paths
 from core.lnp import lnp
 

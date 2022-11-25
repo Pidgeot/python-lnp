@@ -3,7 +3,7 @@
 # pylint:disable=unused-wildcard-import,wildcard-import, invalid-name
 """Contains base class used for child windows."""
 
-import sys, os
+import os
 
 from core import errorlog, launcher, paths, terminal, update
 from core.dfraw import DFRaw

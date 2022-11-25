@@ -3,8 +3,6 @@
 # pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,attribute-defined-outside-init
 """Advanced tab for the TKinter GUI."""
 
-import sys
-
 from core import launcher, legends_processor
 from core.lnp import lnp
 

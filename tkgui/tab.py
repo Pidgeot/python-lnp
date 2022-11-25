@@ -3,8 +3,6 @@
 # pylint:disable=unused-wildcard-import,wildcard-import,invalid-name
 """Base class for notebook tabs for the TKinter GUI."""
 
-import sys
-
 # pylint:disable=wrong-import-order
 from tkinter import TOP, BOTH, Y
 from tkinter.ttk import Frame

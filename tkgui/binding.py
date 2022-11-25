@@ -3,8 +3,6 @@
 # pylint:disable=invalid-name
 """Handles control binding for the TKinter GUI."""
 
-import sys
-
 # pylint:disable=wrong-import-order
 from tkinter import END
 from tkinter.ttk import Entry

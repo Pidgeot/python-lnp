@@ -3,8 +3,6 @@
 # pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,attribute-defined-outside-init
 """Mods tab for the TKinter GUI."""
 
-import sys
-
 from core import mods
 
 from . import controls, tkhelpers

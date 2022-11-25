@@ -4,8 +4,6 @@
 Static utility methods that are needed in several parts of the TkGui module.
 """
 
-import sys
-
 from core import download, baselines
 from core.lnp import lnp
 

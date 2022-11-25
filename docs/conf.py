@@ -21,8 +21,6 @@ import subprocess
 import sys
 import re
 
-import shlex
-
 
 # Before we get started, let's generate fresh API documentation from the code
 def ages(dname):

@@ -4,7 +4,6 @@
 
 import io
 import re
-import sys
 import os
 from fnmatch import fnmatch
 

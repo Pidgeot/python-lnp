@@ -3,7 +3,7 @@
 """Proxy to abstract access to JSON configuration and gracefully handle missing
 keys."""
 
-import sys, os, json
+import os, json
 
 from . import log
 
