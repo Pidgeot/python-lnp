@@ -67,7 +67,7 @@ class DualTextWindow(ChildWindow):
         self.left_scroll = None
         self.right = None
         self.right_scroll = None
-        super(DualTextWindow, self).__init__(parent, title)
+        super().__init__(parent, title)
 
     def create_controls(self, container):
         self.create_buttons(container)
@@ -103,7 +103,7 @@ class LogWindow(DualTextWindow):
         Args:
             parent: parent widget for the window.
         """
-        super(LogWindow, self).__init__(parent, 'Output log')
+        super().__init__(parent, 'Output log')
         self.load()
 
     def create_buttons(self, container):
@@ -121,7 +121,7 @@ class LogWindow(DualTextWindow):
 class InitEditor(DualTextWindow):
     """Basic editor for d_init.txt and init.txt."""
     def __init__(self, parent, gui):
-        super(InitEditor, self).__init__(parent, 'Init Editor')
+        super().__init__(parent, 'Init Editor')
         self.gui = gui
         self.load()
 
@@ -167,7 +167,7 @@ class SelectDF(ChildWindow):
         self.parent = parent
         self.listvar = Variable(parent)
         self.folderlist = None
-        super(SelectDF, self).__init__(parent, 'Select DF instance')
+        super().__init__(parent, 'Select DF instance')
         self.result = ''
         self.listvar.set(folders)
         self.make_modal(self.cancel)
@@ -212,7 +212,7 @@ class UpdateWindow(ChildWindow):
             lnp: reference to the PyLNP object.
         """
         self.parent = parent
-        super(UpdateWindow, self).__init__(parent, 'Update available')
+        super().__init__(parent, 'Update available')
         self.make_modal(self.close)
 
     def create_controls(self, container):
@@ -270,7 +270,7 @@ class ConfirmRun(ChildWindow):
         self.parent = parent
         self.path = path
         self.is_df = is_df
-        super(ConfirmRun, self).__init__(parent, 'Program already running')
+        super().__init__(parent, 'Program already running')
         self.make_modal(self.close)
 
     def create_controls(self, container):
@@ -300,7 +300,7 @@ class TerminalSelector(ChildWindow):
     """Used to select a terminal for launching child programs on Linux."""
     def __init__(self, parent, first_run):
         self.first_run = first_run
-        super(TerminalSelector, self).__init__(parent, 'Configure terminal')
+        super().__init__(parent, 'Configure terminal')
         self.running_test = False
         self.running_status = ''
         self.make_modal(self.top.destroy)
@@ -345,7 +345,7 @@ class TerminalSelector(ChildWindow):
         terminal.configure_custom_terminal(self.cmd.get())
         del self.term
         del self.cmd
-        super(TerminalSelector, self).close()
+        super().close()
 
     def run_test(self):
         """Tests the custom terminal provided to see if it works correctly."""

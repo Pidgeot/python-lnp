@@ -325,7 +325,7 @@ class DFRaw(DFRawNode):
         Params:
             path
                 Path to the raw file that should be parsed."""
-        super(DFRaw, self).__init__(None, '*ROOT*', path, NODE_ROOT)
+        super().__init__(None, '*ROOT*', path, NODE_ROOT)
         self._modified = False
         self.__parse()
 
@@ -425,7 +425,7 @@ class DFRawTag(DFRawNode):
                 Name of the tag.
             value
                 Value for this tag (True/False for flags)"""
-        super(DFRawTag, self).__init__(parent, tag, value, NODE_TAG)
+        super().__init__(parent, tag, value, NODE_TAG)
 
 class DFRawComment(DFRawNode):
     """Represents a comment (non-tag) in a raw file."""
@@ -437,5 +437,4 @@ class DFRawComment(DFRawNode):
                 Parent node.
             text
                 Text for this comment."""
-        super(DFRawComment, self).__init__(
-            parent, '**COMMENT**', text, NODE_COMMENT)
+        super().__init__(parent, '**COMMENT**', text, NODE_COMMENT)

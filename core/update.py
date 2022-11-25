@@ -192,7 +192,7 @@ class RegexUpdater(Updater):
         if result:
             return result
         else:
-            return super(RegexUpdater, self).get_download_url()
+            return super().get_download_url()
 
     def get_direct_url(self):
         urlRegex = lnp.config.get_string('updates/directURLRegex')
@@ -202,7 +202,7 @@ class RegexUpdater(Updater):
         if result:
             return result
         else:
-            return super(RegexUpdater, self).get_direct_url()
+            return super().get_direct_url()
 
 class JSONUpdater(Updater):
     """Updater class which uses a JSON object to locate the version (and
@@ -222,7 +222,7 @@ class JSONUpdater(Updater):
         if result:
             return result
         else:
-            return super(JSONUpdater, self).get_download_url()
+            return super().get_download_url()
 
     def get_direct_url(self):
         jsonPath = lnp.config.get_string('updates/directURLJsonPath')
@@ -232,7 +232,7 @@ class JSONUpdater(Updater):
         if result:
             return result
         else:
-            return super(JSONUpdater, self).get_direct_url()
+            return super().get_direct_url()
 
     def get_direct_filename(self):
         jsonPath = lnp.config.get_string('updates/directFilenameJsonPath')
@@ -242,7 +242,7 @@ class JSONUpdater(Updater):
         if result:
             return result
         else:
-            return super(JSONUpdater, self).get_direct_filename()
+            return super().get_direct_filename()
 
 class DFFDUpdater(Updater):
     """Updater class for DFFD-hosted downloads."""
