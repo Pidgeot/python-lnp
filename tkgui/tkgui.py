@@ -633,7 +633,9 @@ class TkGui(object):
             if not lnp.userconfig.get_bool('downloadBaselines'):
                 self.cross_thread_data = queue
                 self.queue.put('<<ConfirmDownloads>>')
+                # pylint: disable=consider-using-with
                 self.reply_semaphore.acquire()
+                # pylint: enable=consider-using-with
                 result = self.cross_thread_data
         elif queue == 'updates':
             result = True
@@ -644,7 +646,9 @@ class TkGui(object):
 
     def send_update_event(self, force=False):
         """Schedules an update for the download text, if not already pending."""
+        # pylint: disable=consider-using-with
         if self.update_pending.acquire(force):
+            # pylint: enable=consider-using-with
             self.queue.put('<<ForceUpdate>>')
 
     #pylint: disable=unused-argument

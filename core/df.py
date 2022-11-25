@@ -104,11 +104,10 @@ def install_extras():
     if not os.access(install_file, os.F_OK):
         log.i('Installing extras content for first time')
         dir_util.copy_tree(extras_dir, paths.get('df'))
-        textfile = open(install_file, 'w', encoding='utf-8')
-        textfile.write(
-            'PyLNP V{0} extras installed!\nTime: {1}'.format(
-                VERSION, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
-        textfile.close()
+        with open(install_file, 'w', encoding='utf-8') as textfile:
+            textfile.write(
+                'PyLNP V{0} extras installed!\nTime: {1}'.format(
+                    VERSION, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
 
 def cycle_option(field):
     """

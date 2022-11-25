@@ -107,8 +107,8 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
             if 'PYTHONPATH' in environ:
                 del environ['PYTHONPATH']
 
-        lnp.running[path] = subprocess.Popen(
-            run_args, cwd=workdir, env=environ)
+        with subprocess.Popen(run_args, cwd=workdir, env=environ) as p:
+            lnp.running[path] = p
         return True
     except OSError:
         sys.excepthook(*sys.exc_info())
@@ -125,9 +125,8 @@ def program_is_running(path, nonchild=False):
             DFHack on Linux and OS X; currently unsupported for Windows.
     """
     if nonchild:
-        ps = subprocess.Popen(['ps', 'axww'], stdout=subprocess.PIPE)
-        s = ps.stdout.read()
-        ps.wait()
+        with subprocess.Popen(['ps', 'axww'], stdout=subprocess.PIPE) as ps:
+            s = ps.stdout.read()
         encoding = sys.getfilesystemencoding()
         if encoding is None:
             #Encoding was not detected, assume UTF-8

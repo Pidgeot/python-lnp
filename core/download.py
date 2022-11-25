@@ -190,16 +190,17 @@ class DownloadQueue(object):
             outfile = os.fdopen(outhandle, 'wb')
             try:
                 req = Request(url, headers={'User-Agent':'PyLNP/'+VERSION})
-                response = urlopen(req, timeout=5)
-                data = 0
-                while True:
-                    chunk = response.read(8192)
-                    if not chunk:
-                        break
-                    total = response.info().get('Content-Length')
-                    data += len(chunk)
-                    outfile.write(chunk)
-                    self.__process_callbacks(self.on_progress, url, data, total)
+                with urlopen(req, timeout=5) as response:
+                    data = 0
+                    while True:
+                        chunk = response.read(8192)
+                        if not chunk:
+                            break
+                        total = response.info().get('Content-Length')
+                        data += len(chunk)
+                        outfile.write(chunk)
+                        self.__process_callbacks(
+                            self.on_progress, url, data, total)
             except:
                 outfile.close()
                 os.remove(outpath)

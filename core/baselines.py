@@ -50,9 +50,11 @@ def prepare_baselines():
         f = paths.get('baselines', version)
         if not os.path.isdir(f):
             if item.endswith('.zip'):
-                zipfile.ZipFile(item).extractall(f)
+                with zipfile.ZipFile(item) as zipped:
+                    zipped.extractall(f)
             elif item.endswith('.tar.bz2'):
-                tarfile.TarFile(item).extractall(f)
+                with tarfile.TarFile(item) as tarred:
+                    tarred.extractall(f)
                 for k in glob.glob(os.path.join(f, 'df_*x', '*')):
                     shutil.move(k, f)
             simplify_pack(version, 'baselines')

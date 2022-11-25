@@ -109,23 +109,23 @@ def extract_new_pack(_, fname, bool_val):
 def extract_archive(fname, target):
     """Extract the archive fname to dir target, avoiding explosions."""
     if zipfile.is_zipfile(fname):
-        zf = zipfile.ZipFile(fname)
-        namelist = zf.namelist()
-        topdir = namelist[0].split(os.path.sep)[0]
-        if not all(f.startswith(topdir) for f in namelist):
-            target = os.path.join(target, os.path.basename(fname).split('.')[0])
-        zf.extractall(target)
-        os.remove(fname)
-        return True
+        with zipfile.ZipFile(fname) as zf:
+            namelist = zf.namelist()
+            topdir = namelist[0].split(os.path.sep)[0]
+            if not all(f.startswith(topdir) for f in namelist):
+                target = os.path.join(target, os.path.basename(fname).split('.')[0])
+            zf.extractall(target)
+            os.remove(fname)
+            return True
     if tarfile.is_tarfile(fname):
-        tf = tarfile.open(fname)
-        namelist = tf.getmembers()
-        topdir = namelist[0].split(os.path.sep)[0]
-        if not all(f.startswith(topdir) for f in namelist):
-            target = os.path.join(target, fname.split('.')[0])
-        tf.extractall(target)
-        os.remove(fname)
-        return True
+        with tarfile.open(fname) as tf:
+            namelist = tf.getmembers()
+            topdir = namelist[0].split(os.path.sep)[0]
+            if not all(f.startswith(topdir) for f in namelist):
+                target = os.path.join(target, fname.split('.')[0])
+            tf.extractall(target)
+            os.remove(fname)
+            return True
     # TODO:  support '*.xz' and '*.7z' files.
     return False
 

@@ -40,8 +40,11 @@ class CaptureStream(object):
         """
         self.lines.append(string)
         if not self.outfile:
+            # TODO: See if it's possible to use a with statment here
+            # pylint: disable=consider-using-with
             self.outfile = open(
                 paths.get('root', self.name+'.txt'), 'w', encoding='utf-8')
+            # pylint: enable=consider-using-with
             if self.add_header:
                 from  .lnp import VERSION, lnp
                 self.outfile.write(
