@@ -839,8 +839,7 @@ class DFConfiguration(object):
         option = _option_version_data[option_name]
         if len(option) == 2:
             return option[0] <= self.df_info.version < option[1]
-        else:
-            return option[0] <= self.df_info.version
+        return option[0] <= self.df_info.version
 
     def __str__(self):
         return (

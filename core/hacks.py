@@ -44,8 +44,7 @@ def is_dfhack_enabled():
         if not os.path.isfile(sdlreal):
             return False
         return not filecmp.cmp(sdl, sdlreal, 0)
-    else:
-        return lnp.userconfig.get_value('use_dfhack', True)
+    return lnp.userconfig.get_value('use_dfhack', True)
 
 def toggle_dfhack():
     """Toggles the use of DFHack."""

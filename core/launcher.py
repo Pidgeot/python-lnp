@@ -134,12 +134,10 @@ def program_is_running(path, nonchild=False):
             encoding = 'UTF-8'
         s = s.decode(encoding, 'replace')
         return re.search('\\B%s( |$)' % re.escape(path), s, re.M) is not None
-    else:
-        if path not in lnp.running:
-            return False
-        else:
-            lnp.running[path].poll()
-            return lnp.running[path].returncode is None
+    if path not in lnp.running:
+        return False
+    lnp.running[path].poll()
+    return lnp.running[path].returncode is None
 
 def open_folder_idx(i):
     """Opens the folder specified by index i, as listed in PyLNP.json."""

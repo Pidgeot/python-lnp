@@ -24,7 +24,7 @@ def get_terminal_command(cmd, force_custom=False):
         cmd = [cmd, ]
     if sys.platform == 'darwin':
         return ['open', '-a', 'Terminal.app'] + cmd
-    elif sys.platform.startswith('linux'):
+    if sys.platform.startswith('linux'):
         if force_custom:
             term = CustomTerminal.get_command_line()
             log.d("Using custom terminal: %s", term)
@@ -44,9 +44,8 @@ def get_terminal_command(cmd, force_custom=False):
                 else:
                     c.append(s)
             return c
-        else:
-            return term + cmd
-        raise Exception('No terminal launcher for platform: ' + sys.platform)
+        return term + cmd
+    raise Exception('No terminal launcher for platform: ' + sys.platform)
 
 def get_configured_terminal():
     """Retrieves the configured terminal command."""

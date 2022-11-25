@@ -79,12 +79,11 @@ def get_resource(filename):
     if lnp.bundle == 'osx':
         # file is inside application bundle on OS X
         return os.path.join(os.path.dirname(sys.executable), filename)
-    elif lnp.bundle in ['win', 'linux']:
+    if lnp.bundle in ['win', 'linux']:
         # file is inside executable on Linux and Windows
         # pylint: disable=protected-access, no-member, maybe-no-member
         return os.path.join(sys._MEIPASS, filename)
-    else:
-        return os.path.abspath(filename)
+    return os.path.abspath(filename)
 
 def os_is_64bit():
     """Returns true if running on a 64-bit OS."""

@@ -73,8 +73,7 @@ def get_image(filename):
         if has_PIL:
             # pylint:disable=maybe-no-member
             return ImageTk.PhotoImage(Image.open(filename))
-        else:
-            return PhotoImage(file=filename)
+        return PhotoImage(file=filename)
     except: # pylint:disable=bare-except
         log.w('Unable to load image: ' + filename)
 
@@ -309,13 +308,12 @@ class TkGui(object):
                         'No Dwarf Fortress install was selected, quitting.')
                     self.root.destroy()
                     return False
-                else:
-                    try:
-                        df.set_df_folder(selector.result)
-                    except IOError as e:
-                        messagebox.showerror(self.root.title(), str(e))
-                        self.exit_program()
-                        return False
+                try:
+                    df.set_df_folder(selector.result)
+                except IOError as e:
+                    messagebox.showerror(self.root.title(), str(e))
+                    self.exit_program()
+                    return False
             else:
                 messagebox.showerror(
                     'PyLNP',

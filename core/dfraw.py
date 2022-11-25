@@ -267,15 +267,13 @@ class DFRawNode(object):
         """Returns the text for this node."""
         if self.is_root:
             return ''
-        elif self.is_comment:
+        if self.is_comment:
             return self.__value
-        elif self.is_flag:
+        if self.is_flag:
             if self.__value:
                 return '[{0}]'.format(self.name)
-            else:
-                return '!{0}!'.format(self.name)
-        else:
-            return '[{0}:{1}]'.format(self.name, self.value)
+            return '!{0}!'.format(self.name)
+        return '[{0}:{1}]'.format(self.name, self.value)
 
     @property
     def fulltext(self):
