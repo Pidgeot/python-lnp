@@ -421,7 +421,6 @@ disable=raw-checker-failed,
         too-many-ancestors,
         duplicate-code,
         fixme,
-        trailing-newlines,
         useless-object-inheritance,
         import-outside-toplevel,
         broad-except

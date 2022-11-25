@@ -178,5 +178,3 @@ def open_file(path):
             log.e('Unknown platform, cannot open file')
     except:
         log.e('Could not open file ' + path)
-
-

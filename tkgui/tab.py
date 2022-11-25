@@ -29,5 +29,3 @@ class Tab(Frame):
 
     def create_controls(self):
         """Creates all controls for this tab. Overriden in child classes."""
-
-
