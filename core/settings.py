@@ -634,9 +634,8 @@ class DFConfiguration(object):
         Returns a list of strings with error messages.
         """
         errors = []
-        for f in self.settings:
+        for f, current in self.settings.items():
             fn = self.field_names[f]
-            current = self.settings[f]
             if self.validate[f]:
                 ok, error = self.validate[f](current)
                 if not ok:
@@ -671,10 +670,10 @@ class DFConfiguration(object):
         """Read settings from known filesets. If fileset only contains one
         file ending with "init.txt", all options will be registered
         automatically."""
-        for files in self.in_files:
+        for files, fields in self.in_files.items():
             for filename in files:
                 self.read_file(
-                    filename, self.in_files[files],
+                    filename, fields,
                     any((f.endswith('init.txt') for f in files)), files)
 
     def read_file(self, filename, fields, auto_add, auto_add_key=None):
@@ -760,13 +759,13 @@ class DFConfiguration(object):
 
     def write_settings(self):
         """Write all settings to their respective files."""
-        for files in self.in_files:
+        for files, fields in self.in_files.items():
             if any((f for f in files if f.endswith('init.txt'))):
                 filename = [f for f in files if f.endswith('init.txt')][0]
-                self.update_file(filename, self.in_files[files])
+                self.update_file(filename, fields)
             else:
                 for filename in files:
-                    self.update_file(filename, self.in_files[files])
+                    self.update_file(filename, fields)
 
     def update_file(self, filename, fields):
         """

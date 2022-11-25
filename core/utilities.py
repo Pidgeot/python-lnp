@@ -130,9 +130,11 @@ def scan_normal_dir(root, dirnames, filenames):
     if lnp.os == 'win':
         patterns = ['*.jar', '*.exe', '*.bat']
     exclude = read_utility_lists(paths.get('utilities', 'exclude.txt'))
+    # pylint: disable=consider-using-dict-items
     exclude += [u for u in metadata if metadata[u]['title'] == 'EXCLUDE']
     include = read_utility_lists(paths.get('utilities', 'include.txt'))
     include += [u for u in metadata if metadata[u]['title'] != 'EXCLUDE']
+    # pylint: enable=consider-using-dict-items
     if lnp.os == 'osx':
         # OS X application bundles are really directories, and always end .app
         for dirname in dirnames:

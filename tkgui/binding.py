@@ -51,7 +51,7 @@ def update():
 
     old_change_entry = __ui.change_entry
     __ui.change_entry = disabled_change_entry
-    for key in __controls:
+    for key, option in __controls.items():
         try:
             k = key
             if not isinstance(k, str):
@@ -59,7 +59,7 @@ def update():
             value = getattr(__lnp.settings, k)
         except KeyError:
             value = ''
-        for entry in __controls[key]:
+        for entry in option:
             if hasattr(entry, '__iter__'):
                 # Allow (control, func) tuples, etc. to customize value
                 control = entry[0]
