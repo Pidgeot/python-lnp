@@ -374,14 +374,14 @@ class DFConfiguration(object):
             base_dir: Path containing the Dwarf Fortress instance to operate on
         """
         self.base_dir = base_dir
-        self.settings = dict()
-        self.options = dict()
-        self.field_names = dict()
-        self.inverse_field_names = dict()
-        self.files = dict()
-        self.in_files = dict()
+        self.settings = {}
+        self.options = {}
+        self.field_names = {}
+        self.inverse_field_names = {}
+        self.files = {}
+        self.in_files = {}
         self.missing_fields = []
-        self.validate = dict()
+        self.validate = {}
 
         self.df_info = df_info
         # init.txt

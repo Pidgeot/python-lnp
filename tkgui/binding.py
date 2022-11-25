@@ -6,7 +6,7 @@
 from tkinter import END
 from tkinter.ttk import Entry
 
-__controls = dict()
+__controls = {}
 __lnp = None
 __ui = None
 
