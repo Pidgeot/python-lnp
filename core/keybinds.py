@@ -51,6 +51,7 @@ def _sdl_get_binds(filename, compressed=True):
             (k, v) for k, v in od.items()
             # only keep items with a vanilla counterpart, which is different
             if van.get(k) and set(van.get(k)) != set(v))
+    return None
 
 def _sdl_write_binds(filename, binds_od, expanded=False):
     """Write keybindings to the given file, optionally expanding them."""
@@ -69,6 +70,7 @@ def _sdl_write_binds(filename, binds_od, expanded=False):
         return text
     with open(filename, 'w', encoding='cp437') as f:
         f.write(text)
+    return None
 
 def _get_vanilla_binds():
     """Return the vanilla keybindings for use in compression or expansion."""
@@ -78,6 +80,7 @@ def _get_vanilla_binds():
         return _sdl_get_binds(vanfile, compressed=False)
     except TypeError:
         log.w("Can't load or change keybinds with missing baseline!")
+        return None
 
 def load_keybinds(filename):
     """

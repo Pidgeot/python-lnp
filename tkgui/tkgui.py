@@ -76,6 +76,7 @@ def get_image(filename):
         return PhotoImage(file=filename)
     except: # pylint:disable=bare-except
         log.w('Unable to load image: ' + filename)
+        return None
 
 def validate_number(value_if_allowed):
     """

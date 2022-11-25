@@ -449,7 +449,7 @@ def make_mod_from_installed_raws(name):
     else:
         reconstruction = baselines.find_vanilla()
         if not reconstruction:
-            return
+            return None
     clear_temp()
     merge_folder(os.path.join(reconstruction, 'raw'),
                  paths.get('df', 'raw'),
@@ -467,6 +467,7 @@ def make_mod_from_installed_raws(name):
             return False
         shutil.copytree(paths.get('baselines', 'temp'), paths.get('mods', name))
         return True
+    return None
 
 def get_installed_mods_from_log():
     """Return best mod load order to recreate installed with available."""

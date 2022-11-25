@@ -111,6 +111,7 @@ def scan_manifest_dir(root):
         if os.path.isfile(os.path.join(root, util)):
             return os.path.join(m_path, util)
         log.w('Utility not found:  {}'.format(os.path.join(m_path, util)))
+    return None
 
 def any_match(filename, include, exclude):
     """Return True if at least one pattern matches the filename, or False."""

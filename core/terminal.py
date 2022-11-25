@@ -278,6 +278,7 @@ class rxvtTerminal(LinuxTerminal):
                     return True
             except:
                 return False
+        return None
 
     @staticmethod
     def get_command_line():

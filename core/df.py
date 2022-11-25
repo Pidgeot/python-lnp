@@ -275,6 +275,7 @@ class DFInstall(object):
             if DFConfiguration.has_field(v[0], v[1], **v[3]):
                 log.w('DF version detected based on init analysis; unreliable')
                 return (Version(v[2]), 'init detection')
+        return None
 
     def detect_version(self):
         """

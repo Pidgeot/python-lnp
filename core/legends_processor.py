@@ -31,6 +31,7 @@ def get_region_info():
             r'^.*(?=(-\d{5,}-\d{2}-\d{2}))', fname).group()
         date = re.search(r'\d{5,}-\d{2}-\d{2}', fname).group()
         return region, date
+    return None
 
 def compress_bitmaps():
     """Compresses all bitmap maps."""
@@ -148,3 +149,4 @@ def process_legends():
             move_files()
             i += 1
         return i
+    return None
