@@ -215,10 +215,10 @@ def merge_folder(mod_folder, vanilla_folder, mixed_folder):
             mod_f = os.path.join(mod_folder, f)
             van_f = os.path.join(vanilla_folder, f)
             gen_f = os.path.join(mixed_folder, f)
-            if any([f.endswith(a) for a in ('.txt', '.init')]):
+            if any(f.endswith(a) for a in ('.txt', '.init')):
                 # merge raws and DFHack init files
                 status = max(status, merge_file(mod_f, van_f, gen_f))
-            elif any([f.endswith(a) for a in ('.lua', '.rb', '.bmp', '.png')]):
+            elif any(f.endswith(a) for a in ('.lua', '.rb', '.bmp', '.png')):
                 # copy DFHack scripts or sprite sheets
                 if not os.path.isdir(os.path.dirname(gen_f)):
                     os.makedirs(os.path.dirname(gen_f))
@@ -431,7 +431,7 @@ def can_rebuild(log_file, strict=True):
         log.w('{} not found; assume rebuildable = {}'.format(log_file, guess))
         return guess
     mod_list = read_installation_log(log_file)
-    return all([m in read_mods() for m in mod_list])
+    return all(m in read_mods() for m in mod_list)
 
 def make_mod_from_installed_raws(name):
     """Capture whatever unavailable mods a user currently has installed
