@@ -87,10 +87,8 @@ class ModsTab(Tab):
     def update_lists(self):
         """Updates the lists."""
         self.available.sort(key=mods.get_title)
-        self.available_var.set(tuple(
-            [mods.get_title(m) for m in self.available]))
-        self.installed_var.set(tuple(
-            [mods.get_title(m) for m in self.installed]))
+        self.available_var.set(tuple(mods.get_title(m) for m in self.available))
+        self.installed_var.set(tuple(mods.get_title(m) for m in self.installed))
 
     @staticmethod
     def toggle_preload():
