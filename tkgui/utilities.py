@@ -135,12 +135,16 @@ class UtilitiesTab(Tab):
 
         if item:
             utilities.toggle_autorun(item)
+            # pylint: disable=not-callable
             self.proglist.tag_set('autorun', item, item in lnp.autorun)
+            # pylint: enable=not-callable
 
     def update_autorun_list(self):
         """Updates the autorun list."""
         for item in self.proglist.get_children():
+            # pylint: disable=not-callable
             self.proglist.tag_set('autorun', item, item in lnp.autorun)
+            # pylint: enable=not-callable
 
     def run_selected_utilities(self):
         """Runs selected utilities."""

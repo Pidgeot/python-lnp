@@ -328,7 +328,9 @@ class OptionsTab(Tab):
         """Toggles selected embark profile."""
         item = self.embark_files.index('active')
         if event.keysym == '??':
+            # pylint: disable=not-callable
             item = self.embark_files.identify(event.y)
+            # pylint: enable=not-callable
 
         if item is not None:
             embark_file = self.embark_files.get(item)

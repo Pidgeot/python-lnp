@@ -114,7 +114,9 @@ class DFHackTab(Tab):
         if item:
             title = self.hacklist.item(item, 'text')
             is_enabled = hacks.toggle_hack(title)
+            # pylint: disable=not-callable
             self.hacklist.tag_set('enabled', item, is_enabled)
+            # pylint: enable=not-callable
 
     @staticmethod
     def toggle_dfhack():
