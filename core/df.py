@@ -9,7 +9,6 @@ import struct
 import sys
 import zlib
 from datetime import datetime
-from distutils import dir_util
 from functools import total_ordering
 from glob import glob
 
@@ -107,7 +106,15 @@ def install_extras():
     install_file = paths.get('df', 'PyLNP{0}.txt'.format(VERSION))
     if not os.access(install_file, os.F_OK):
         log.i('Installing extras content for first time')
-        dir_util.copy_tree(extras_dir, paths.get('df'))
+        # distutils deprecated in Python 3.10
+        # dirs_exist_ok in shutil.copytree introduced in Python 3.8
+        if sys.version_info.major == 3 and sys.version_info.minor < 8:
+            # pylint: disable=deprecated-module
+            from distutils import dir_util
+            # pylint: enable=deprecated-module
+            dir_util.copy_tree(extras_dir, paths.get('df'))
+        else:
+            shutil.copytree(extras_dir, paths.get('df'), dirs_exist_ok=True)
         with open(install_file, 'w', encoding='utf-8') as textfile:
             textfile.write(
                 'PyLNP V{0} extras installed!\nTime: {1}'.format(
