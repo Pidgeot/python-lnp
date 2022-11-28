@@ -182,8 +182,8 @@ class GNOMETerminal(LinuxTerminal):
                 '/desktop/gnome/applications/terminal/exec_arg'
             ], universal_newlines=True).replace('\n', '')
             return ['nohup', term, term_arg]
-        except:
-            raise Exception("Unable to determine terminal command.")
+        except Exception as exc:
+            raise Exception("Unable to determine terminal command.") from exc
 
 class XfceTerminal(LinuxTerminal):
     """Handles terminals in the Xfce desktop environment."""

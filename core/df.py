@@ -138,11 +138,11 @@ def load_params():
     """Loads settings from the selected Dwarf Fortress instance."""
     try:
         lnp.settings.read_settings()
-    except IOError:
+    except IOError as exc:
         msg = 'Failed to read settings, {} not really a DF dir?'.format(
             paths.get('df'))
         log.e(msg, stack=True)
-        raise IOError(msg)
+        raise IOError(msg) from exc
 
 def save_params():
     """Saves settings to the selected Dwarf Fortress instance."""
