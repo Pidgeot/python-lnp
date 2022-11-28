@@ -747,7 +747,7 @@ class DFConfiguration(object):
                 return False
             params = match.group(1)
             param_count = params.count(":")
-            if num_params != -1 and param_count != num_params:
+            if num_params not in (-1, param_count):
                 return False
             if min_params != -1 and param_count < min_params:
                 return False
