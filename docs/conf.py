@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Sphinx docs configuration for PyLNP"""
 #
 # PyLNP documentation build configuration file, created by
 # sphinx-quickstart on Tue Oct 11 18:59:22 2016.
