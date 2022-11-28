@@ -182,7 +182,7 @@ class DFRawNode(object):
         self.children.append(child)
         if child.parent is not self and child.parent is not None:
             child.parent.remove_child(child)
-        # pylint: disable=protected-access
+        # pylint: disable=protected-access,unused-private-member
         child.__parent = self
 
     def remove_child(self, child):
@@ -190,7 +190,7 @@ class DFRawNode(object):
         if self.is_root:
             return
         self.children.remove(child)
-        # pylint: disable=protected-access
+        # pylint: disable=protected-access,unused-private-member
         child.__parent = None
 
     @property
