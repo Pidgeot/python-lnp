@@ -81,7 +81,9 @@ master_doc = 'index'
 # General information about the project.
 project = 'PyLNP'
 author = 'Michael Madsen (Pidgeot) and collaborators'
+# pylint: disable=redefined-builtin
 copyright = '{}, {}'.format(datetime.datetime.now().year, author)
+# pylint: enable=redefined-builtin
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
