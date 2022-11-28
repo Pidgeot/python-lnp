@@ -209,7 +209,7 @@ class LXDETerminal(LinuxTerminal):
 
     @staticmethod
     def detect():
-        if not os.environ.get('DESKTOP_SESSION', '') == 'LXDE':
+        if os.environ.get('DESKTOP_SESSION', '') != 'LXDE':
             return False
         with open(os.devnull, 'w', encoding="utf-8") as FNULL:
             try:
