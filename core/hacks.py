@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """DFHack management."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os, shutil, filecmp, collections
-# pylint:disable=redefined-builtin
-from io import open
 from . import paths, log
 from .lnp import lnp
 

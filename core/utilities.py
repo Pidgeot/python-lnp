@@ -26,13 +26,10 @@ and user include patterns.  Any matches that do not also match a user exclude
 pattern are added to the list of identified utilities.  This global config is
 found in some combination of include.txt, exclude.txt, and utilities.txt.
 """
-from __future__ import print_function, unicode_literals, absolute_import
 
 import os
 import re
 from fnmatch import fnmatch
-# pylint:disable=redefined-builtin
-from io import open
 
 from . import log, manifest, paths
 from .launcher import open_file

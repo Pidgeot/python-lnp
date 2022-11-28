@@ -1,18 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Background download management."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import os, shutil, tempfile
 from threading import Thread, Lock
 
-try:  # Python 2
-    # pylint:disable=import-error
-    from urllib2 import urlopen, Request, URLError
-except ImportError:  # Python 3
-    # pylint:disable=import-error, no-name-in-module
-    from urllib.request import urlopen, Request
-    from urllib.error import URLError
+from urllib.request import urlopen, Request
+from urllib.error import URLError
 
 from .lnp import VERSION
 from . import log

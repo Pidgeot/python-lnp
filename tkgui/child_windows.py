@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 # pylint:disable=unused-wildcard-import,wildcard-import, invalid-name
 """Contains base class used for child windows."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os
 
@@ -12,16 +11,9 @@ from core.lnp import lnp
 
 from . import controls
 
-if sys.version_info[0] == 3:  # Alternate import names
-    # pylint:disable=import-error
-    from tkinter import *
-    from tkinter.ttk import *
-    import tkinter.messagebox as messagebox
-else:
-    # pylint:disable=import-error
-    from Tkinter import *
-    from ttk import *
-    import tkMessageBox as messagebox
+from tkinter import *
+from tkinter.ttk import *
+import tkinter.messagebox as messagebox
 
 class ChildWindow(object):
     """Base class for child windows."""

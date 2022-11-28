@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Keybinding management."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import collections
-# pylint:disable=redefined-builtin
-from io import open
 import os
 import shutil
 

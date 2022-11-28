@@ -9,8 +9,6 @@
   content folder if this folder exists.
 """
 
-from __future__ import print_function, unicode_literals, absolute_import
-
 import glob
 import os
 import re

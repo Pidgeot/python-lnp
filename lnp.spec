@@ -30,10 +30,7 @@ except ImportError: # Some PIL installations live outside of the PIL package
     except ImportError: #No PIL compatible library
         has_PIL = False
 
-if sys.hexversion < 0x3000000: # Python 2
-    from Tkinter import *
-else: # Python 3
-    from tkinter import *
+from tkinter import *
 
 if has_PIL or TkVersion >= 8.6:
     logo='LNPSMALL.png'

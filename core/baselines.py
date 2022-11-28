@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Advanced raw and data folder management, for mods or graphics packs."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import os, glob, zipfile, tarfile, fnmatch, shutil
-# pylint:disable=redefined-builtin
-from io import open
 
 from . import paths, update, log
 from .lnp import lnp

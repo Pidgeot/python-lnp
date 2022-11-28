@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Mod Pack management and merging tools."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os, shutil, glob, time
 from difflib import ndiff, SequenceMatcher
-# pylint:disable=redefined-builtin
-from io import open
 
 from . import paths, baselines, log, manifest
 from .lnp import lnp

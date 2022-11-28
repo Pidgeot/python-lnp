@@ -2,15 +2,11 @@
 # -*- coding: utf-8 -*-
 """Proxy to abstract access to JSON configuration and gracefully handle missing
 keys."""
-from __future__ import print_function, unicode_literals, absolute_import
+
 import sys, os, json
 
 from . import log
 
-if sys.version_info[0] == 3:  # Alternate import names
-    enc_dict = {}
-else:
-    enc_dict = {'encoding': 'utf-8'}
 
 class JSONConfiguration(object):
     """Proxy for JSON-based configuration files."""
@@ -35,7 +31,7 @@ class JSONConfiguration(object):
             return
         try:
             #pylint: disable=bare-except
-            self.data = json.load(open(filename), **enc_dict)
+            self.data = json.load(open(filename))
         except:
             log.e('Note: Failed to read JSON from ' + filename +
                   ', ignoring data - details follow', stack=True)
@@ -50,7 +46,7 @@ class JSONConfiguration(object):
         filename was given during construction."""
         if self.filename:
             json.dump(
-                self.data, open(self.filename, 'w'), indent=2, **enc_dict)
+                self.data, open(self.filename, 'w'), indent=2)
 
     def get(self, path, default=None):
         """

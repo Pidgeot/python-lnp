@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Launching of programs, folders, URLs, etc.."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import sys
 import os

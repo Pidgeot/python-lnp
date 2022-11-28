@@ -77,9 +77,9 @@ slightly less pretty logo.
 You will need to match the directory structure of the normal LNP. A download
 without utilities is available in the Bay12 Forums thread for PyLNP.
 
-You need Python installed to run the source code, either Python 2.7 or 3.3
-and later, optionally with Pillow for better icons.  Linux users may also
-need to install ``tk``; see below.
+You need Python 3.3 or later installed to run the source code, optionally with
+Pillow for better icons.  Linux users may also need to install ``tk``; see
+below.
 
 If Pillow is not available and you are using an old version of tk, the log
 (:menuselection:`File --> Output`) will contain a line that starts with::
@@ -116,8 +116,8 @@ a terminal and execute it from there with ``python launch.py`` or
 OS X
 ----
 If you're running OS X 10.7 or later, you should have everything that's
-required. For 10.6 or earlier, upgrade Python to 2.7 or the latest 3.x
-release; an installer is available on https://python.org .
+required. For 10.6 or earlier, upgrade Python to the latest 3.x release; an
+installer is available on https://python.org .
 
 To make the logo look better, you will need to install Pillow, a python
 library for images. If you have MacPorts installed, use it to install the

@@ -2,21 +2,12 @@
 # -*- coding: utf-8 -*-
 # pylint:disable=invalid-name
 """Handles control binding for the TKinter GUI."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import sys
 
 # pylint:disable=wrong-import-order
-if sys.version_info[0] == 3:  # Alternate import names
-    # pylint:disable=import-error
-    from tkinter import END
-    from tkinter.ttk import Entry
-    #pylint:disable=redefined-builtin
-    basestring = str
-else:
-    # pylint:disable=import-error
-    from Tkinter import END
-    from ttk import Entry
+from tkinter import END
+from tkinter.ttk import Entry
 # pylint:enable=wrong-import-order
 
 __controls = dict()
@@ -46,7 +37,7 @@ def bind(control, option, update_func=None):
 def version_has_option(field):
     """Returns True if the current DF version has the provided field."""
     o = field
-    if not isinstance(field, basestring):
+    if not isinstance(field, str):
         o = field[0]
     return __lnp.settings.version_has_option(o)
 
@@ -68,7 +59,7 @@ def update():
     for key in __controls:
         try:
             k = key
-            if not isinstance(k, basestring):
+            if not isinstance(k, str):
                 k = key[0]
             value = getattr(__lnp.settings, k)
         except KeyError:

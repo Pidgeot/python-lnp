@@ -32,7 +32,6 @@ implement without risking a 'bad import' scenario:
     disabled, other PyLNP settings...  May be added later but no plans.
 
 """
-from __future__ import print_function, unicode_literals, absolute_import
 
 import os
 import shutil

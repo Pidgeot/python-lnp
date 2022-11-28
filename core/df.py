@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Code relating to a specific Dwarf Fortress installation."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os, shutil, re
 import struct
@@ -10,8 +9,6 @@ from datetime import datetime
 from distutils import dir_util
 from glob import glob
 from functools import total_ordering
-# pylint:disable=redefined-builtin
-from io import open
 
 from .settings import DFConfiguration
 from . import hacks, paths, log
@@ -187,16 +184,13 @@ class DFInstall(object):
         """
         def convert(func, string):
             """Convert between string and bytes on Py3."""
-            if sys.version_info[0] == 2:
-                return string
             return func(string, encoding='cp437')
 
         def index_scramble(text):
             """Unscrambles data from the index file."""
             text = list(text)
             for i, ch in enumerate(text):
-                ord_ch = (ord(ch) if sys.version_info[0] == 2 else ch)
-                text[i] = chr(255 - (i % 5) - ord_ch)
+                text[i] = chr(255 - (i % 5) - ch)
             return convert(bytes, ''.join(text))
 
         with open(paths.get('df', 'data', 'index'), 'rb') as f:

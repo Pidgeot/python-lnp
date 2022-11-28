@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 # pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,too-many-instance-attributes,too-many-public-methods,too-many-statements
 """TKinter-based GUI for PyLNP."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import os
 import sys
@@ -24,24 +23,12 @@ from .advanced import AdvancedTab
 from .dfhack import DFHackTab
 from .mods import ModsTab
 
-if sys.version_info[0] == 3:  # Alternate import names
-    # pylint:disable=import-error
-    import queue as Queue
-    from tkinter import *
-    from tkinter.ttk import *
-    import tkinter.messagebox as messagebox
-    import tkinter.filedialog as filedialog
-    import tkinter.font as tkFont
-    #pylint:disable=redefined-builtin
-    basestring = str
-else:
-    # pylint:disable=import-error
-    import Queue
-    from Tkinter import *
-    from ttk import *
-    import tkMessageBox as messagebox
-    import tkFileDialog as filedialog
-    import tkFont
+import queue as Queue
+from tkinter import *
+from tkinter.ttk import *
+import tkinter.messagebox as messagebox
+import tkinter.filedialog as filedialog
+import tkinter.font as tkFont
 
 # Workaround to use Pillow in PyInstaller
 if False: # pylint:disable=using-constant-test
@@ -512,7 +499,7 @@ class TkGui(object):
             key: The key for the control that changed.
             var: The variable bound to the control.
         """
-        if not isinstance(key, basestring):
+        if not isinstance(key, str):
             for k in key:
                 TkGui.change_entry(k, var)
             return
@@ -591,7 +578,7 @@ class TkGui(object):
         Args:
             field: The option to cycle.
         """
-        if not isinstance(field, basestring):
+        if not isinstance(field, str):
             for f in field:
                 TkGui.cycle_option(f)
             return
@@ -607,7 +594,7 @@ class TkGui(object):
             field: The field name to change. The corresponding value is
                 automatically read.
         """
-        if not isinstance(field, basestring):
+        if not isinstance(field, str):
             for f in field:
                 df.set_option(f, binding.get(field))
         else:

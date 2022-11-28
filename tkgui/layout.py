@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 # pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,attribute-defined-outside-init
 """Layout helpers for the TKinter GUI."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 from . import controls
 

@@ -1,15 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Configuration and raw manipulation for Dwarf Fortress."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import sys, os, re
 from .dfraw import DFRaw
 from . import log, hacks
 
-if sys.version_info[0] == 3:
-    #pylint:disable=redefined-builtin
-    basestring = str
 
 # Markers to read certain settings correctly
 # pylint:disable=too-few-public-methods,too-many-instance-attributes,too-many-statements,too-many-arguments
@@ -364,7 +360,7 @@ _option_version_data = {
 
 def _option_item_to_value(item):
     """Removes any validation expression from <item>."""
-    if not isinstance(item, basestring):
+    if not isinstance(item, str):
         return item[0]
     return item
 
@@ -603,7 +599,7 @@ class DFConfiguration(object):
             items = ("YES", "NO")
         if current not in items:
             for i in items:
-                if not isinstance(i, basestring) and i[0] == current:
+                if not isinstance(i, str) and i[0] == current:
                     current = i
                     break
             else: #item not found
@@ -613,7 +609,7 @@ class DFConfiguration(object):
         i = 1
         while i < len(items):
             result = items[(items.index(current) + i) % len(items)]
-            if isinstance(result, basestring):
+            if isinstance(result, str):
                 break
             if result[1]():
                 break
@@ -655,7 +651,7 @@ class DFConfiguration(object):
                 items = ("YES", "NO")
             if current not in items:
                 for i in items:
-                    if not isinstance(i, basestring) and i[0] == current:
+                    if not isinstance(i, str) and i[0] == current:
                         current = i
                         break
                 else:
@@ -663,7 +659,7 @@ class DFConfiguration(object):
                         "Invalid value %s for option %s: Unknown value" % (
                             current, fn))
                     continue
-            if isinstance(current, basestring):
+            if isinstance(current, str):
                 continue
             if not current[1]():
                 errors.append(

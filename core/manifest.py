@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Manages content manifests for graphics, mods, and utilities."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import os
 

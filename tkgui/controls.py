@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 # pylint:disable=unused-wildcard-import,wildcard-import,invalid-name
 """Controls used by the TKinter GUI."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import sys
 import types
@@ -10,18 +9,10 @@ import types
 from core.lnp import lnp
 from . import binding
 
-if sys.version_info[0] == 3:  # Alternate import names
-    # pylint:disable=import-error
-    from tkinter import *
-    from tkinter.ttk import *
-    import tkinter.simpledialog as simpledialog
-    import tkinter.font as tkFont
-else:
-    # pylint:disable=import-error
-    from Tkinter import *
-    from ttk import *
-    import tkSimpleDialog as simpledialog
-    import tkFont
+from tkinter import *
+from tkinter.ttk import *
+import tkinter.simpledialog as simpledialog
+import tkinter.font as tkFont
 
 # Monkeypatch simpledialog to use themed dialogs from ttk
 if sys.platform != 'darwin':  # OS X looks better without patch

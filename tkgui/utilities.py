@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 # pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,attribute-defined-outside-init
 """Utilities tab for the TKinter GUI."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import sys
 
@@ -12,16 +11,9 @@ from core.lnp import lnp
 from . import controls
 from .tab import Tab
 
-if sys.version_info[0] == 3:  # Alternate import names
-    # pylint:disable=import-error
-    from tkinter import *
-    from tkinter.ttk import *
-    import tkinter.messagebox as messagebox
-else:
-    # pylint:disable=import-error
-    from Tkinter import *
-    from ttk import *
-    import tkMessageBox as messagebox
+from tkinter import *
+from tkinter.ttk import *
+import tkinter.messagebox as messagebox
 
 #pylint: disable=too-many-public-methods
 class UtilitiesTab(Tab):

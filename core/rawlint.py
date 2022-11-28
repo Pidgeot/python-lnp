@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """Linter for raw files. Ported from Lethosor's Lua script:
 https://github.com/lethosor/dfhack-scripts/blob/master/raw-lint.lua"""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import os
 

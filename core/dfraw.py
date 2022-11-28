@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Modification of Dwarf Fortress raw files."""
-from __future__ import print_function, unicode_literals, absolute_import
+
 import io
 import re
 import sys
@@ -9,10 +9,6 @@ import os
 from fnmatch import fnmatch
 
 from . import log
-
-if sys.version_info[0] == 3:
-    #pylint: disable=redefined-builtin
-    basestring = str
 
 NODE_COMMENT = 1 << 1
 NODE_TAG = 1 << 2
@@ -410,7 +406,7 @@ class DFRaw(DFRawNode):
         Equivalent to calling get_value for each field."""
         result = []
         for field in fields:
-            if isinstance(field, (str, basestring)):
+            if isinstance(field, (str, str)):
                 result.append(self.get_value(field))
             elif isinstance(field, (tuple, list)):
                 result.append(self.get_values(*field))

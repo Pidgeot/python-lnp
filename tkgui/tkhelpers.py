@@ -3,19 +3,13 @@
 """
 Static utility methods that are needed in several parts of the TkGui module.
 """
-from __future__ import print_function, unicode_literals, absolute_import
 
 import sys
 
 from core import download, baselines
 from core.lnp import lnp
 
-if sys.version_info[0] == 3:  # Alternate import names
-    # pylint:disable=import-error
-    import tkinter.messagebox as messagebox
-else:
-    # pylint:disable=import-error
-    import tkMessageBox as messagebox
+import tkinter.messagebox as messagebox
 
 def check_vanilla_raws():
     """Validates status of vanilla raws are ready."""

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Color scheme management."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import os, shutil
 from . import helpers, paths, log

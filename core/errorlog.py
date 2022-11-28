@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Framework for logging errors."""
-from __future__ import print_function, unicode_literals, absolute_import
+
 import sys, locale
-# pylint:disable=redefined-builtin
-from io import open
 
 from . import paths
 
@@ -49,11 +47,7 @@ class CaptureStream(object):
                 self.outfile.write(
                     "Running PyLNP {} (OS: {}, Compiled: {})\n".format(
                         VERSION, lnp.os, lnp.os == lnp.bundle))
-        # For Python3: pylint:disable=undefined-variable
-        if sys.version_info[0] == 2 and not isinstance(string, unicode):
-            self.outfile.write(unicode(string, locale.getpreferredencoding()))
-        else:
-            self.outfile.write(string)
+        self.outfile.write(string)
         self.flush()
         if self.tee:
             return self.stream.write(string)
