@@ -142,7 +142,7 @@ class JSONConfiguration(object):
             key: the key to save the value under.
             value: the value to save.
         """
-        self.__setitem__(key, value)
+        self.__setitem__(key, value)  # pylint: disable=unnecessary-dunder-call
 
     def __getitem__(self, key):
         """Accessor for indexing directly into the configuration."""
