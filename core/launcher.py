@@ -84,7 +84,6 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
 
     try:
         workdir = os.path.dirname(path)
-        # pylint:disable=redefined-variable-type
         run_args = path
         if spawn_terminal and not sys.platform.startswith('win'):
             run_args = terminal.get_terminal_command([path,])

@@ -167,7 +167,6 @@ def create_control_group(parent, text, dual_column=False):
         dual_column: configure the frame for a dual-column grid layout if True.
     """
     f = None
-    # pylint:disable=redefined-variable-type
     if text is not None:
         f = Labelframe(parent, text=text)
     else:

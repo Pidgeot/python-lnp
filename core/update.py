@@ -130,7 +130,7 @@ def extract_archive(fname, target):
     return False
 
 
-#pylint: disable=attribute-defined-outside-init, no-self-use
+# pylint: disable=attribute-defined-outside-init
 
 class Updater(object):
     """General class for checking for updates."""

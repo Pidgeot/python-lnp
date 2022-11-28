@@ -291,7 +291,6 @@ class PyLNP(object):
                 df.find_df_folders()
                 if len(self.folders) != 0:
                     return
-                # pylint:disable=redefined-variable-type
                 prev_path = os.path.abspath(self.BASEDIR)
                 self.BASEDIR = os.path.join(self.BASEDIR, '..')
         except UnicodeDecodeError:
