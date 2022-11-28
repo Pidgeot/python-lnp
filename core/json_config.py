@@ -32,7 +32,7 @@ class JSONConfiguration(object):
             return
         try:
             #pylint: disable=bare-except
-            with open(filename) as file:
+            with open(filename, encoding="utf-8") as file:
                 self.data = json.load(file)
         except:
             log.e('Note: Failed to read JSON from ' + filename +
@@ -47,7 +47,7 @@ class JSONConfiguration(object):
         """Saves the data to the original JSON file. Has no effect if no
         filename was given during construction."""
         if self.filename:
-            with open(self.filename, 'w') as file:
+            with open(self.filename, 'w', encoding="utf-8") as file:
                 json.dump(self.data, file, indent=2)
 
     def get(self, path, default=None):

@@ -143,7 +143,7 @@ class GNOMETerminal(LinuxTerminal):
             return True
         if os.environ.get('CINNAMON_VERSION', ''):
             return True
-        with open(os.devnull, 'w') as FNULL:
+        with open(os.devnull, 'w', encoding="utf-8") as FNULL:
             try:
                 return subprocess.call(
                     [
@@ -214,7 +214,7 @@ class LXDETerminal(LinuxTerminal):
     def detect():
         if not os.environ.get('DESKTOP_SESSION', '') == 'LXDE':
             return False
-        with open(os.devnull, 'w') as FNULL:
+        with open(os.devnull, 'w', encoding="utf-8") as FNULL:
             try:
                 return subprocess.call(
                     ['which', 'lxterminal'], stdout=FNULL, stderr=FNULL,
@@ -234,7 +234,7 @@ class MateTerminal(LinuxTerminal):
     def detect():
         if os.environ.get('MATE_DESKTOP_SESSION_ID', ''):
             return True
-        with open(os.devnull, 'w') as FNULL:
+        with open(os.devnull, 'w', encoding="utf-8") as FNULL:
             try:
                 return subprocess.call(
                     [
@@ -269,7 +269,7 @@ class rxvtTerminal(LinuxTerminal):
 
     @staticmethod
     def detect():
-        with open(os.devnull, 'w') as FNULL:
+        with open(os.devnull, 'w', encoding="utf-8") as FNULL:
             try:
                 if subprocess.call(
                         ['which', 'urxvt'], stdout=FNULL, stderr=FNULL) == 0:
@@ -292,7 +292,7 @@ class xtermTerminal(LinuxTerminal):
 
     @staticmethod
     def detect():
-        with open(os.devnull, 'w') as FNULL:
+        with open(os.devnull, 'w', encoding="utf-8") as FNULL:
             try:
                 return subprocess.call(
                     ['which', 'xterm'], stdout=FNULL, stderr=FNULL,
@@ -354,7 +354,7 @@ def _terminal_test_wait(fn, value):
     while timer < 10:
         time.sleep(interval)
         try:
-            with open(fn, 'r') as f:
+            with open(fn, 'r', encoding="utf-8") as f:
                 if value == f.read().strip():
                     return True
         except:
@@ -403,7 +403,7 @@ def terminal_test_run(status_callback=None):
     cmd = get_terminal_command(cmd, True)
     with subprocess.Popen(cmd) as p:
         while p.poll() is None:
-            with open(t, 'r') as f:
+            with open(t, 'r', encoding="utf-8") as f:
                 value = f.read()
             try:
                 log.d("Test status: %s" % progress[value])
@@ -415,7 +415,7 @@ def terminal_test_run(status_callback=None):
     while timer < 10:
         time.sleep(interval)
         try:
-            with open(t, 'r') as f:
+            with open(t, 'r', encoding="utf-8") as f:
                 value = f.read().strip()
                 log.d("Test status: %s" % progress[value])
                 if value == '4':

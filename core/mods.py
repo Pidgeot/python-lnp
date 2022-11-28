@@ -107,7 +107,8 @@ def make_blank_files(pack):
         for k in files:
             f = os.path.relpath(os.path.join(root, k), vanilla_raws)
             if not os.path.isfile(paths.get('mods', pack, f)):
-                with open(paths.get('mods', pack, f), 'w') as blank:
+                filepath = paths.get('mods', pack, f)
+                with open(filepath, 'w', encoding="utf-8") as blank:
                     blank.write('')
                     i += 1
     return i
@@ -187,7 +188,7 @@ def merge_a_mod(mod):
             paths.get('baselines', 'temp', 'data', 'speech')))
     if status < 3:
         with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
-                  'a') as f:
+                  'a', encoding="utf-8") as f:
             f.write('mods/' + mod + '\n')
     log.i('Finished merging')
     log.pop_prefix()
@@ -381,7 +382,7 @@ def clear_temp():
     shutil.copytree(os.path.join(baselines.find_vanilla(), 'data', 'speech'),
                     paths.get('baselines', 'temp', 'data', 'speech'))
     with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
-              'w') as f:
+              'w', encoding="utf-8") as f:
         f.write('# List of raws merged by PyLNP:\nbaselines/' +
                 os.path.basename(baselines.find_vanilla()) + '\n')
 
@@ -419,7 +420,7 @@ def add_graphics(gfx):
         for f in files:
             shutil.copy2(os.path.join(root, f), dst)
     with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
-              'a') as f:
+              'a', encoding="utf-8") as f:
         f.write('graphics/{}\n'.format(graphics.get_folder_prefix(gfx)))
     log.i('{} graphics added (small mod compatibility risk)'.format(gfx))
 
@@ -475,7 +476,7 @@ def get_installed_mods_from_log():
 def read_installation_log(fname):
     """Read an 'installed_raws.txt' and return the mods."""
     try:
-        with open(fname) as f:
+        with open(fname, encoding="utf-8") as f:
             file_contents = list(f.readlines())
     except IOError:
         log.d('Log not found: ' + fname)

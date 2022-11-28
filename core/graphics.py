@@ -61,7 +61,7 @@ def current_pack():
 def logged_graphics(logfile, start='graphics/'):
     """Returns the graphics pack from an 'installed_raws.txt' file"""
     if os.path.isfile(logfile):
-        with open(logfile) as f:
+        with open(logfile, encoding="utf-8") as f:
             for l in f.readlines():
                 if l.startswith(start):
                     return l.strip().replace(start, '')

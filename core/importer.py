@@ -57,7 +57,7 @@ def strat_copy_add(src, dest):
     # handle the simple case, one file
     if os.path.isfile(src):
         if os.path.isfile(dest):
-            with open(dest) as f:
+            with open(dest, encoding="utf-8") as f:
                 if f.read().strip():
                     log.i('Skipping import of {} to {}; dest is non-empty file'
                           .format(src, dest))

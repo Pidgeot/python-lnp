@@ -182,7 +182,8 @@ def load_autorun():
 
 def save_autorun():
     """Saves autorun settings."""
-    with open(paths.get('utilities', 'autorun.txt'), 'w') as autofile:
+    filepath = paths.get('utilities', 'autorun.txt')
+    with open(filepath, 'w', encoding="utf-8") as autofile:
         autofile.write("\n".join(lnp.autorun))
 
 def open_readme(path):
