@@ -208,7 +208,7 @@ class OptionsTab(Tab):
             if v2 is not None:
                 df.set_option('guildCount', str(v1)+':'+str(v2))
                 binding.update()
-    
+
     @staticmethod
     def set_graze_coef():
         """Requests new graze coefficient from the user."""
