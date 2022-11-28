@@ -21,6 +21,8 @@ import shutil
 import subprocess
 import sys
 
+from core import lnp
+
 
 # Before we get started, let's generate fresh API documentation from the code
 # pylint: disable=missing-function-docstring
@@ -86,8 +88,6 @@ copyright = '{}, {}'.format(datetime.datetime.now().year, author)
 # built documents.
 #
 # The full version, including alpha/beta/rc tags.
-from core import lnp
-
 release = lnp.VERSION
 # The short X.Y version.
 try:
