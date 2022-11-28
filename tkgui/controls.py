@@ -33,17 +33,16 @@ class Button(TtkButton):  # pylint:disable=function-redefined,missing-docstring
 # http://effbot.org/zone/tkinter-autoscrollbar.htm
 class _AutoScrollbar(Scrollbar):
     """A scrollbar that hides itself if it's not needed."""
-    # pylint:disable=arguments-differ
-    def set(self, lo, hi):
+    def set(self, first, last):
         """Only show scrollbar when there's more content than will fit."""
         #pylint:disable=no-member
         if not lnp.userconfig.get_bool('tkgui_show_scroll'):
-            if (float(lo) <= 0.0 and float(hi) >= 1.0) or (
+            if (float(first) <= 0.0 and float(last) >= 1.0) or (
                     hasattr(self, 'hidden') and self.hidden):
                 self.grid_remove()
             else:
                 self.grid()
-        Scrollbar.set(self, lo, hi)
+        Scrollbar.set(self, first, last)
 
 # http://www.voidspace.org.uk/python/weblog/arch_d7_2006_07_01.shtml#e387
 class _ToolTip(object):
