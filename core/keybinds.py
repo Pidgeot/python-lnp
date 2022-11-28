@@ -143,7 +143,7 @@ def get_installed_file():
         for fname in helpers.get_text_files(paths.get('keybinds')):
             if installed == unordered(fname):
                 return os.path.basename(fname)
-    except: #pylint: disable=bare-except
+    except Exception:
         # Baseline missing, or interface.txt is missing from baseline - use
         # plain file comparison
         pass

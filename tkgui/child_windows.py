@@ -368,6 +368,6 @@ class TerminalSelector(ChildWindow):
             else:
                 messagebox.showerror(
                     message="Test failed: %s" % r[1], title="PyLNP")
-        except: #pylint:disable=bare-except
+        except Exception:
             messagebox.showerror(
                 message="Test failed, see the log for details.", title="PyLNP")

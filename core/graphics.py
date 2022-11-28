@@ -150,16 +150,15 @@ def install_graphics(pack):
                 os.remove(paths.get('colors', '_Current graphics pack.txt'))
 
         # TwbT overrides
-        #pylint: disable=bare-except
         try:
             os.remove(paths.get('init', 'overrides.txt'))
-        except:
+        except Exception:
             pass
         try:
             shutil.copyfile(
                 paths.get('graphics', pack, 'data', 'init', 'overrides.txt'),
                 paths.get('init', 'overrides.txt'))
-        except:
+        except Exception:
             pass
 
         # TwbT file replacements
@@ -175,7 +174,7 @@ def install_graphics(pack):
                             twbt_f, twbt_folder))
                         shutil.copyfile(twbt_f, target_f)
 
-    except:
+    except Exception:
         log.e('Something went wrong while installing graphics', stack=True)
         df.load_params()
         return False

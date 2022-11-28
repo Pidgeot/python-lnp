@@ -31,10 +31,9 @@ class JSONConfiguration(object):
                 log.w("JSONConfiguration: File " + filename + " does not exist")
             return
         try:
-            #pylint: disable=bare-except
             with open(filename, encoding="utf-8") as file:
                 self.data = json.load(file)
-        except:
+        except Exception:
             log.e('Note: Failed to read JSON from ' + filename +
                   ', ignoring data - details follow', stack=True)
 

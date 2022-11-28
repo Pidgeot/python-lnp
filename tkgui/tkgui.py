@@ -74,7 +74,7 @@ def get_image(filename):
             # pylint:disable=maybe-no-member
             return ImageTk.PhotoImage(Image.open(filename))
         return PhotoImage(file=filename)
-    except: # pylint:disable=bare-except
+    except Exception:
         log.w('Unable to load image: ' + filename)
         return None
 
@@ -539,7 +539,7 @@ class TkGui(object):
         """Launches Dwarf Fortress, reporting any errors when launching."""
         try:
             launcher.run_df()
-        except: #pylint: disable=bare-except
+        except Exception:
             exc_info = sys.exc_info()
             messagebox.showerror(
                 title='Error launching Dwarf Fortress',
@@ -689,10 +689,9 @@ class TkGui(object):
     def check_cross_thread(self):
         """Used to raise cross-thread events in the UI thread."""
         while True:
-            # pylint:disable=bare-except
             try:
                 v = self.queue.get(False)
-            except:
+            except Exception:
                 break
             self.root.event_generate(v, when='tail')
         self.cross_thread_timer = self.root.after(100, self.check_cross_thread)

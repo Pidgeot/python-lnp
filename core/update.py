@@ -38,7 +38,6 @@ def check_update():
 
 def perform_update_check():
     """Performs the actual update check. Runs in a thread."""
-    # pylint:disable=bare-except
     prepare_updater()
     if lnp.updater.update_needed():
         lnp.new_version = lnp.updater.get_version()

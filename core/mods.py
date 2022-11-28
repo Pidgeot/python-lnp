@@ -19,7 +19,7 @@ def _shutil_wrap(fn):
         while i < 5:
             try:
                 fn(*args, **kwargs)
-            except: # pylint: disable=bare-except
+            except Exception:
                 i += 1
                 time.sleep(0.1)
             else:
@@ -245,7 +245,6 @@ def merge_file(mod_file_name, van_file_name, gen_file_name):
         2:  Non-fatal error, overlapping lines or non-existent mod etc.
         3:  Fatal error, respond by rebuilding to previous mod
     """
-    #pylint:disable=bare-except
     van_lines, mod_lines, gen_lines = [], [], []
     for fname, lines in ((van_file_name, van_lines),
                          (mod_file_name, mod_lines),
@@ -259,7 +258,7 @@ def merge_file(mod_file_name, van_file_name, gen_file_name):
     try:
         with open(gen_file_name, "w", encoding='cp437') as gen_file:
             gen_file.writelines(gen_lines)
-    except:
+    except Exception:
         log.e('Writing to {} failed'.format(gen_file_name))
         status = 3
     return status

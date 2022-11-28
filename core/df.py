@@ -296,7 +296,7 @@ class DFInstall(object):
                 ver = func()
                 if ver is not None:
                     return ver
-            except: # pylint:disable=bare-except
+            except Exception:
                 pass
         log.w('DF version could not be detected, assuming 0.21.93.19a')
         return (Version('0.21.93.19a'), 'fallback')

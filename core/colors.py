@@ -28,7 +28,6 @@ def get_colors(colorscheme=None):
     Returns RGB tuples for all 16 colors in <colorscheme>.txt, or
     data/init/colors.txt if no scheme is provided. On errors, returns an empty
     list."""
-    # pylint:disable=bare-except
     try:
         if colorscheme is not None:
             f = colorscheme
@@ -44,7 +43,7 @@ def get_colors(colorscheme=None):
         color_fields = [(c+'_R', c+'_G', c+'_B') for c in _df_colors]
         result = DFRaw(f).get_values(*color_fields)
         return [tuple(int(x) for x in t) for t in result]
-    except:
+    except Exception:
         if colorscheme:
             log.e('Unable to read colorscheme %s', colorscheme, stack=True)
         else:

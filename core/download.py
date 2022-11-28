@@ -27,7 +27,6 @@ def download_str(url, **kwargs):
     Returns:
         The contents of the downloaded file as text, or None.
     """
-    # pylint: disable=bare-except
     try:
         req = Request(url, headers={'User-Agent':'PyLNP/'+VERSION})
         return urlopen(
@@ -35,7 +34,7 @@ def download_str(url, **kwargs):
                 kwargs.get('encoding', 'utf-8'))
     except URLError as ex:
         log.e('Error downloading '+url+': '+ex.reason)
-    except:
+    except Exception:
         log.e('Error downloading '+url)
     return None
 
@@ -160,16 +159,14 @@ class DownloadQueue(object):
         """Calls the provided set of callback functions with <args>."""
         results = []
         for c in callbacks:
-            # pylint: disable=bare-except
             try:
                 results.append(c(self.name, *args))
-            except:
+            except Exception:
                 results.append(None)
         return results
 
     def __process_queue(self):
         """Processes the download queue."""
-        # pylint: disable=bare-except
         if False in self.__process_callbacks(self.on_start_queue):
             with self.lock:
                 self.queue = []
@@ -202,7 +199,7 @@ class DownloadQueue(object):
                         outfile.write(chunk)
                         self.__process_callbacks(
                             self.on_progress, url, data, total)
-            except:
+            except Exception:
                 outfile.close()
                 os.remove(outpath)
                 log.e(self.name+': Error downloading ' + url, stack=True)

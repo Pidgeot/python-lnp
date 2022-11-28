@@ -110,7 +110,6 @@ class LinuxTerminal(object):
         of the command line, use $ to indicate the correct place.
         """
 
-# pylint: disable=bare-except
 
 # Desktop environment-specific terminals
 class KDETerminal(LinuxTerminal):
@@ -150,12 +149,12 @@ class GNOMETerminal(LinuxTerminal):
                         'org.freedesktop.DBus.GetNameOwner',
                         'string:org.gnome.SessionManager'
                     ], stdout=FNULL, stderr=FNULL) == 0
-            except:
+            except Exception:
                 return False
             try:
                 GNOMETerminal.get_command_line() # Attempt to get the command line
                 return True
-            except:
+            except Exception:
                 return False
 
     @staticmethod
@@ -170,7 +169,7 @@ class GNOMETerminal(LinuxTerminal):
                 'org.gnome.desktop.default-applications.terminal', 'exec-arg'
             ], universal_newlines=True).replace('\n', '').replace("'", '')
             return ['nohup', term, term_arg]
-        except: #fallback to older gconf
+        except Exception: #fallback to older gconf
             pass
         try:
             term = subprocess.check_output([
@@ -196,7 +195,7 @@ class XfceTerminal(LinuxTerminal):
                 ['ps', '-eo', 'comm='], stderr=subprocess.STDOUT,
                 universal_newlines=True)
             return 'xfce' in s
-        except:
+        except Exception:
             return False
 
     @staticmethod
@@ -216,7 +215,7 @@ class LXDETerminal(LinuxTerminal):
                 return subprocess.call(
                     ['which', 'lxterminal'], stdout=FNULL, stderr=FNULL,
                     close_fds=True) == 0
-            except:
+            except Exception:
                 return False
 
     @staticmethod
@@ -241,7 +240,7 @@ class MateTerminal(LinuxTerminal):
                         'org.freedesktop.DBus.GetNameOwner',
                         'string:org.mate.SessionManager'
                     ], stdout=FNULL, stderr=FNULL) == 0
-            except:
+            except Exception:
                 return False
     @staticmethod
     def get_command_line():
@@ -276,7 +275,7 @@ class rxvtTerminal(LinuxTerminal):
                         ['which', 'rxvt'], stdout=FNULL, stderr=FNULL) == 0:
                     rxvtTerminal.exe = 'rxvt'
                     return True
-            except:
+            except Exception:
                 return False
         return None
 
@@ -295,7 +294,7 @@ class xtermTerminal(LinuxTerminal):
                 return subprocess.call(
                     ['which', 'xterm'], stdout=FNULL, stderr=FNULL,
                     close_fds=True) == 0
-            except:
+            except Exception:
                 return False
 
     @staticmethod
@@ -355,7 +354,7 @@ def _terminal_test_wait(fn, value):
             with open(fn, 'r', encoding="utf-8") as f:
                 if value == f.read().strip():
                     return True
-        except:
+        except Exception:
             pass
         timer += interval
     return False
@@ -406,7 +405,7 @@ def terminal_test_run(status_callback=None):
             try:
                 log.d("Test status: %s" % progress[value])
                 status_callback(progress[value])
-            except:
+            except Exception:
                 pass
     timer = 0
     interval = 0.5
@@ -418,7 +417,7 @@ def terminal_test_run(status_callback=None):
                 log.d("Test status: %s" % progress[value])
                 if value == '4':
                     break
-        except:
+        except Exception:
             pass
         timer += interval
     os.remove(t)

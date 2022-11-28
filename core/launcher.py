@@ -166,7 +166,6 @@ def open_file(path):
         path: the file path to open.
     """
     path = os.path.normpath(path)
-    # pylint: disable=broad-except, bare-except
     try:
         if sys.platform == 'darwin':
             subprocess.check_call(['open', '--', path])
@@ -176,5 +175,5 @@ def open_file(path):
             os.startfile(path)
         else:
             log.e('Unknown platform, cannot open file')
-    except:
+    except Exception:
         log.e('Could not open file ' + path)
