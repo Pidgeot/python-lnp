@@ -123,18 +123,18 @@ def remove_vanilla_raws_from_pack(pack, folder):
     if not find_vanilla():
         return 0
     i = 0
-    for folder, van_folder in (
+    for _folder, van_folder in (
             [paths.get(folder, pack, 'raw'), find_vanilla_raws()],
             [paths.get(folder, pack, 'data', 'speech'),
              os.path.join(find_vanilla(), 'data', 'speech')]):
-        for root, _, files in os.walk(folder):
+        for root, _, files in os.walk(_folder):
             for k in files:
                 f = os.path.join(root, k)
                 silently_kill = ('Thumbs.db', 'installed_raws.txt')
                 if any(f.endswith(x) for x in silently_kill):
                     os.remove(f)
                     continue
-                van_f = os.path.join(van_folder, os.path.relpath(f, folder))
+                van_f = os.path.join(van_folder, os.path.relpath(f, _folder))
                 if os.path.isfile(van_f):
                     with open(van_f, encoding='cp437', errors='replace') as v:
                         vtext = v.read()
