@@ -11,7 +11,7 @@ from .dfraw import DFRaw
 
 
 # Markers to read certain settings correctly
-# pylint:disable=too-few-public-methods,too-many-instance-attributes,too-many-statements
+# pylint:disable=too-few-public-methods,too-many-statements
 class _DisableValues(object):
     """Marker class for DFConfiguration. Value is disabled by replacing [ and ]
     with !."""
@@ -366,6 +366,7 @@ def _option_item_to_value(item):
 
 class DFConfiguration(object):
     """Reads and modifies Dwarf Fortress configuration textfiles."""
+    # pylint: disable=too-many-instance-attributes
     def __init__(self, base_dir, df_info):
         """
         Constructor for DFConfiguration.

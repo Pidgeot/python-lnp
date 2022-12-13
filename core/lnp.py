@@ -10,8 +10,6 @@ from .json_config import JSONConfiguration
 
 VERSION = '0.14e-pre1'
 
-# pylint:disable=too-many-instance-attributes
-
 class UI(object):
     """
     Specifies the interface required by the core PyLNP library for communicating
@@ -66,6 +64,7 @@ class PyLNP(object):
     Acts as an abstraction layer between the UI and the Dwarf Fortress
     instance.
     """
+    # pylint: disable=too-many-instance-attributes
     def __init__(self):
         """Constructor for the PyLNP library."""
         # pylint:disable=global-statement

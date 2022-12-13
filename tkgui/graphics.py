@@ -15,9 +15,10 @@ from .layout import GridLayouter
 from .tab import Tab
 
 
-# pylint:disable=too-many-public-methods,too-many-instance-attributes
+# pylint:disable=too-many-public-methods
 class GraphicsTab(Tab):
     """Graphics tab for the TKinter GUI."""
+    # pylint: disable=too-many-instance-attributes
     def create_variables(self):
         self.graphics = Variable()
         self.colors = Variable()

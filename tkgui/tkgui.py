@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,too-many-instance-attributes,too-many-public-methods,too-many-statements
+# pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,too-many-public-methods,too-many-statements
 """TKinter-based GUI for PyLNP."""
 
 import os
@@ -111,6 +111,7 @@ def fixed_map(option):
 
 class TkGui(object):
     """Main GUI window."""
+    # pylint: disable=too-many-instance-attributes
     def __init__(self):
         """
         Constructor for TkGui.

@@ -52,9 +52,9 @@ def get_queue(queue):
     __download_queues.setdefault(queue, DownloadQueue(queue))
     return __download_queues[queue]
 
-# pylint:disable=too-many-instance-attributes
 class DownloadQueue(object):
     """Queue used for downloading files."""
+    # pylint: disable=too-many-instance-attributes
     def __init__(self, name):
         self.name = name
         self.queue = []
