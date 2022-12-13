@@ -11,7 +11,7 @@ from .dfraw import DFRaw
 
 
 # Markers to read certain settings correctly
-# pylint:disable=too-few-public-methods,too-many-instance-attributes,too-many-statements,too-many-arguments
+# pylint:disable=too-few-public-methods,too-many-instance-attributes,too-many-statements
 class _DisableValues(object):
     """Marker class for DFConfiguration. Value is disabled by replacing [ and ]
     with !."""
@@ -504,6 +504,7 @@ class DFConfiguration(object):
             "focusWarm", "DIG_CANCEL_WARM", "YES", _announcement_focus,
             announcements)
 
+    #pylint: disable=too-many-arguments
     def create_option(
             self, name, field_name, default, values, files, cond=True,
             validate=None):
