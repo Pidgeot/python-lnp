@@ -24,7 +24,7 @@ if sys.platform != 'darwin':  # OS X looks better without patch
 # Make Enter on button with focus activate it
 TtkButton = Button
 
-class Button(TtkButton):  # pylint:disable=function-redefined,missing-docstring
+class Button(TtkButton):  # pylint:disable=function-redefined,missing-class-docstring
     def __init__(self, master=None, **kw):
         TtkButton.__init__(self, master, **kw)
         if 'command' in kw:
