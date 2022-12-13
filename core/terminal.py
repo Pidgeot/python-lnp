@@ -76,7 +76,6 @@ def get_valid_terminals():
     return result
 
 def _get_terminals():
-    # pylint: disable=no-member
     return LinuxTerminal.__subclasses__()
 
 def configure_terminal(termname):

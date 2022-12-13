@@ -71,7 +71,6 @@ def get_image(filename):
         filename = filename + '.gif'
     try:
         if has_PIL:
-            # pylint:disable=maybe-no-member
             return ImageTk.PhotoImage(Image.open(filename))
         return PhotoImage(file=filename)
     except Exception:

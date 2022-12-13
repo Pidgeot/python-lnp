@@ -98,10 +98,10 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
         if lnp.bundle:
             environ = copy.deepcopy(os.environ)
             if ('TCL_LIBRARY' in environ and
-                    sys._MEIPASS in environ['TCL_LIBRARY']): # pylint:disable=no-member
+                    sys._MEIPASS in environ['TCL_LIBRARY']):
                 del environ['TCL_LIBRARY']
             if ('TK_LIBRARY' in environ and
-                    sys._MEIPASS in environ['TK_LIBRARY']): # pylint:disable=no-member
+                    sys._MEIPASS in environ['TK_LIBRARY']):
                 del environ['TK_LIBRARY']
             if 'LD_LIBRARY_PATH' in environ:
                 del environ['LD_LIBRARY_PATH']

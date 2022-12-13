@@ -81,7 +81,7 @@ def get_resource(filename):
         return os.path.join(os.path.dirname(sys.executable), filename)
     if lnp.bundle in ['win', 'linux']:
         # file is inside executable on Linux and Windows
-        # pylint: disable=protected-access, no-member, maybe-no-member
+        # pylint: disable=protected-access, no-member
         return os.path.join(sys._MEIPASS, filename)
     return os.path.abspath(filename)
 
