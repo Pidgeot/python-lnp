@@ -15,7 +15,7 @@ from .layout import GridLayouter
 from .tab import Tab
 
 
-#pylint: disable=too-many-public-methods,too-many-statements
+#pylint: disable=too-many-statements
 class AdvancedTab(Tab):
     """Advanced tab for the TKinter GUI."""
     def create_variables(self):

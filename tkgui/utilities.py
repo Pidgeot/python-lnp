@@ -15,7 +15,6 @@ from . import controls
 from .tab import Tab
 
 
-#pylint: disable=too-many-public-methods
 class UtilitiesTab(Tab):
     """Utilities tab for the TKinter GUI."""
     def read_data(self):

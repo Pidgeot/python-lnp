@@ -14,7 +14,6 @@ from .layout import GridLayouter
 from .tab import Tab
 
 
-# pylint:disable=too-many-public-methods
 class DFHackTab(Tab):
     """DFHack tab for the TKinter GUI."""
     def read_data(self):

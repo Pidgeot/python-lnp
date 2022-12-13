@@ -14,7 +14,6 @@ from .layout import GridLayouter
 from .tab import Tab
 
 
-# pylint:disable=too-many-public-methods
 class ModsTab(Tab):
     """Mods tab for the TKinter GUI."""
     def create_variables(self):

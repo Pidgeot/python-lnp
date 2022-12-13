@@ -23,7 +23,7 @@ if sys.platform != 'darwin':  # OS X looks better without patch
 
 # Make Enter on button with focus activate it
 TtkButton = Button
-#pylint: disable=too-many-public-methods
+
 class Button(TtkButton):  # pylint:disable=function-redefined,missing-docstring
     def __init__(self, master=None, **kw):
         TtkButton.__init__(self, master, **kw)
