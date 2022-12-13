@@ -688,6 +688,8 @@ class TkGui(object):
             '<<HideDLPanel>>', when='tail'))
         self.send_update_event()
 
+    #pylint: enable=unused-argument
+
     def check_cross_thread(self):
         """Used to raise cross-thread events in the UI thread."""
         while True:
