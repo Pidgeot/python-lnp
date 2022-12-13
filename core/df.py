@@ -77,7 +77,7 @@ def perform_checks():
         if found_baseline is None:
             log.e('DF version not detected accurately, aborting')
             sys.exit(4)
-        if found_baseline == False: #pylint:disable=singleton-comparison
+        if found_baseline is False:
             update.download_df_baseline(True)
         baselines.prepare_baselines()
         graphics.simplify_graphics()
