@@ -4,6 +4,9 @@
 """Utilities tab for the TKinter GUI."""
 
 import sys
+from tkinter import *
+from tkinter import messagebox
+from tkinter.ttk import *
 
 from core import launcher, paths, utilities
 from core.lnp import lnp
@@ -11,9 +14,6 @@ from core.lnp import lnp
 from . import controls
 from .tab import Tab
 
-from tkinter import *
-from tkinter.ttk import *
-from tkinter import messagebox
 
 #pylint: disable=too-many-public-methods
 class UtilitiesTab(Tab):

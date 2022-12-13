@@ -6,7 +6,7 @@ import collections
 import os
 import shutil
 
-from . import baselines, helpers, paths, log
+from . import baselines, helpers, log, paths
 from .lnp import lnp
 
 

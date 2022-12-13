@@ -3,6 +3,7 @@
 """Path management."""
 
 import os
+
 from . import log
 
 __paths = {}

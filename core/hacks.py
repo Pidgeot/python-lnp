@@ -2,9 +2,15 @@
 # -*- coding: utf-8 -*-
 """DFHack management."""
 
-import sys, os, shutil, filecmp, collections
-from . import paths, log
+import collections
+import filecmp
+import os
+import shutil
+import sys
+
+from . import log, paths
 from .lnp import lnp
+
 
 def open_dfhack_readme():
     """Open the DFHack Readme in the default browser."""

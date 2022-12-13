@@ -4,10 +4,11 @@
 Static utility methods that are needed in several parts of the TkGui module.
 """
 
-from core import download, baselines
+from tkinter import messagebox
+
+from core import baselines, download
 from core.lnp import lnp
 
-from tkinter import messagebox
 
 def check_vanilla_raws():
     """Validates status of vanilla raws are ready."""

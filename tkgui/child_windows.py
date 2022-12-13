@@ -4,6 +4,9 @@
 """Contains base class used for child windows."""
 
 import os
+from tkinter import *
+from tkinter import messagebox
+from tkinter.ttk import *
 
 from core import errorlog, launcher, paths, terminal, update
 from core.dfraw import DFRaw
@@ -11,9 +14,6 @@ from core.lnp import lnp
 
 from . import controls
 
-from tkinter import *
-from tkinter.ttk import *
-from tkinter import messagebox
 
 class ChildWindow(object):
     """Base class for child windows."""

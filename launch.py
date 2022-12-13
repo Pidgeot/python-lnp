@@ -2,8 +2,11 @@
 # -*- coding: utf-8 -*-
 """This file is used to launch the program."""
 
-import sys, os
+import os
+import sys
+
 from core import lnp
+
 sys.path.insert(0, os.path.dirname(__file__))
 #pylint: disable=redefined-builtin, bare-except
 __package__ = ""

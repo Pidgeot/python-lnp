@@ -2,11 +2,16 @@
 # -*- coding: utf-8 -*-
 """Mod Pack management and merging tools."""
 
-import sys, os, shutil, glob, time
-from difflib import ndiff, SequenceMatcher
+import glob
+import os
+import shutil
+import sys
+import time
+from difflib import SequenceMatcher, ndiff
 
-from . import paths, baselines, log, manifest
+from . import baselines, log, manifest, paths
 from .lnp import lnp
+
 
 def _shutil_wrap(fn):
     def _wrapped_fn(*args, **kwargs):

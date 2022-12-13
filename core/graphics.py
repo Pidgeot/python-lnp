@@ -2,11 +2,15 @@
 # -*- coding: utf-8 -*-
 """Graphics pack management."""
 
-import os, shutil, glob
+import glob
+import os
+import shutil
+
+from . import baselines, colors, df, log, manifest, mods, paths
+from .dfraw import DFRaw
 from .launcher import open_file
 from .lnp import lnp
-from . import colors, df, paths, baselines, mods, log, manifest
-from .dfraw import DFRaw
+
 
 def open_graphics():
     """Opens the graphics pack folder."""

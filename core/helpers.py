@@ -2,10 +2,14 @@
 # -*- coding: utf-8 -*-
 """Helper functions."""
 
-import sys, os, glob, platform
+import glob
+import os
+import platform
+import sys
 
-from .dfraw import DFRaw
 from . import log
+from .dfraw import DFRaw
+
 
 def get_text_files(directory):
     """

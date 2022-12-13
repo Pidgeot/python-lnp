@@ -4,31 +4,28 @@
 """TKinter-based GUI for PyLNP."""
 
 import os
-import sys
-from threading import Semaphore
-
-from core.helpers import get_resource
-from core.lnp import lnp, VERSION
-from core import df, launcher, log, paths, update, mods, download, baselines
-from core import terminal, importer
-
-from . import controls, binding
-from .child_windows import LogWindow, InitEditor, SelectDF, UpdateWindow
-from .child_windows import ConfirmRun, TerminalSelector
-
-from .options import OptionsTab
-from .graphics import GraphicsTab
-from .utilities import UtilitiesTab
-from .advanced import AdvancedTab
-from .dfhack import DFHackTab
-from .mods import ModsTab
-
 import queue as Queue
-from tkinter import *
-from tkinter.ttk import *
-from tkinter import messagebox
-from tkinter import filedialog
+import sys
 import tkinter.font as tkFont
+from threading import Semaphore
+from tkinter import *
+from tkinter import filedialog, messagebox
+from tkinter.ttk import *
+
+from core import (baselines, df, download, importer, launcher, log, mods,
+                  paths, terminal, update)
+from core.helpers import get_resource
+from core.lnp import VERSION, lnp
+
+from . import binding, controls
+from .advanced import AdvancedTab
+from .child_windows import (ConfirmRun, InitEditor, LogWindow, SelectDF,
+                            TerminalSelector, UpdateWindow)
+from .dfhack import DFHackTab
+from .graphics import GraphicsTab
+from .mods import ModsTab
+from .options import OptionsTab
+from .utilities import UtilitiesTab
 
 # Workaround to use Pillow in PyInstaller
 if False: # pylint:disable=using-constant-test

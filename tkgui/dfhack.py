@@ -4,6 +4,8 @@
 """DFHack tab for the TKinter GUI."""
 
 import sys
+from tkinter import *
+from tkinter.ttk import *
 
 from core import hacks
 
@@ -11,8 +13,6 @@ from . import binding, controls
 from .layout import GridLayouter
 from .tab import Tab
 
-from tkinter import *
-from tkinter.ttk import *
 
 # pylint:disable=too-many-public-methods
 class DFHackTab(Tab):

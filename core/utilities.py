@@ -35,6 +35,7 @@ from . import log, manifest, paths
 from .launcher import open_file
 from .lnp import lnp
 
+
 def open_utils():
     """Opens the utilities folder."""
     open_file(paths.get('utilities'))

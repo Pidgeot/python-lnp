@@ -6,6 +6,7 @@ import sys
 
 from . import paths
 
+
 class CaptureStream(object):
     """ Redirects output to a file-like object to an internal list as well as a
     file."""
@@ -46,7 +47,7 @@ class CaptureStream(object):
                 paths.get('root', self.name+'.txt'), 'w', encoding='utf-8')
             # pylint: enable=consider-using-with
             if self.add_header:
-                from  .lnp import VERSION, lnp
+                from .lnp import VERSION, lnp
                 self.outfile.write(
                     "Running PyLNP {} (OS: {}, Compiled: {})\n".format(
                         VERSION, lnp.os, lnp.os == lnp.bundle))

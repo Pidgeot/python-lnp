@@ -16,10 +16,10 @@
 import datetime
 import glob
 import os
+import re
 import shutil
 import subprocess
 import sys
-import re
 
 
 # Before we get started, let's generate fresh API documentation from the code
@@ -85,6 +85,7 @@ copyright = '{}, {}'.format(datetime.datetime.now().year, author)
 #
 # The full version, including alpha/beta/rc tags.
 from core import lnp
+
 release = lnp.VERSION
 # The short X.Y version.
 try:

@@ -3,16 +3,17 @@
 # pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,attribute-defined-outside-init
 """Graphics tab for the TKinter GUI."""
 
+from tkinter import *
+from tkinter import messagebox
+from tkinter.ttk import *
+
 from core import colors, graphics, paths
 from core.lnp import lnp
 
-from . import controls, binding, tkhelpers
+from . import binding, controls, tkhelpers
 from .layout import GridLayouter
 from .tab import Tab
 
-from tkinter import *
-from tkinter.ttk import *
-from tkinter import messagebox
 
 # pylint:disable=too-many-public-methods,too-many-instance-attributes
 class GraphicsTab(Tab):

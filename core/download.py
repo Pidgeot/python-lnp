@@ -2,14 +2,15 @@
 # -*- coding: utf-8 -*-
 """Background download management."""
 
-import os, shutil, tempfile
-from threading import Thread, Lock
-
-from urllib.request import urlopen, Request
+import os
+import shutil
+import tempfile
+from threading import Lock, Thread
 from urllib.error import URLError
+from urllib.request import Request, urlopen
 
-from .lnp import VERSION
 from . import log
+from .lnp import VERSION
 
 __download_queues = {}
 

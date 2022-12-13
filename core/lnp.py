@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 """PyLNP main library."""
 
+import os
 import sys
 
-import os
 from . import log
-
 from .json_config import JSONConfiguration
 
 VERSION = '0.14e-pre1'
@@ -127,7 +126,7 @@ class PyLNP(object):
 
     def initialize_program(self):
         """Initializes the main program (errorlog, path registration, etc.)."""
-        from . import paths, utilities, errorlog
+        from . import errorlog, paths, utilities
         self.BASEDIR = '.'
         self.detect_basedir()
         paths.clear()

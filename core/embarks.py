@@ -3,8 +3,10 @@
 """Embark profile management."""
 
 import os
-from . import helpers, paths, log
+
+from . import helpers, log, paths
 from .dfraw import DFRaw
+
 
 def read_embarks():
     """Returns a list of embark profiles."""

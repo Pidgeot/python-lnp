@@ -2,14 +2,15 @@
 # -*- coding: utf-8 -*-
 """Launching of programs, folders, URLs, etc.."""
 
-import sys
-import os
-import subprocess
 import copy
+import os
 import re
+import subprocess
+import sys
 
+from . import hacks, log, paths, terminal
 from .lnp import lnp
-from . import hacks, paths, log, terminal
+
 
 def toggle_autoclose():
     """Toggle automatic closing of the UI when launching DF."""

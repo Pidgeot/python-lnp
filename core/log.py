@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 """Logging module."""
 
-import sys, traceback
+import sys
+import traceback
 
 _log = None
 

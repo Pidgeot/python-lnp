@@ -2,9 +2,17 @@
 # -*- coding: utf-8 -*-
 """Handles terminal detection on Linux and terminal command lines."""
 
-import sys, os, subprocess, tempfile, time, shlex, shutil
-from .lnp import lnp
+import os
+import shlex
+import shutil
+import subprocess
+import sys
+import tempfile
+import time
+
 from . import log
+from .lnp import lnp
+
 
 def get_terminal_command(cmd, force_custom=False):
     """

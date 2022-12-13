@@ -15,8 +15,9 @@ import re
 import subprocess
 import zipfile
 
-from . import paths, log
+from . import log, paths
 from .lnp import lnp
+
 
 def get_region_info():
     """Returns a tuple of strings for an available region and date.

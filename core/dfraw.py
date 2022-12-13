@@ -3,8 +3,8 @@
 """Modification of Dwarf Fortress raw files."""
 
 import io
-import re
 import os
+import re
 from fnmatch import fnmatch
 
 from . import log

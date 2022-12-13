@@ -5,8 +5,8 @@ https://github.com/lethosor/dfhack-scripts/blob/master/raw-lint.lua"""
 
 import os
 
-from .dfraw import DFRaw
 from . import log
+from .dfraw import DFRaw
 
 # TODO: Handle older versions correctly
 # For example, 40d and earlier use object names MATGLOSS and DESCRIPTOR

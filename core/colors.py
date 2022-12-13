@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 """Color scheme management."""
 
-import os, shutil
-from . import helpers, paths, log
-from .lnp import lnp
+import os
+import shutil
+
+from . import helpers, log, paths
 from .dfraw import DFRaw
+from .lnp import lnp
 
 _df_colors = (
     'BLACK', 'BLUE', 'GREEN', 'CYAN',

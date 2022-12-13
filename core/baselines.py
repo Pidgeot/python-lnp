@@ -2,10 +2,16 @@
 # -*- coding: utf-8 -*-
 """Advanced raw and data folder management, for mods or graphics packs."""
 
-import os, glob, zipfile, tarfile, fnmatch, shutil
+import fnmatch
+import glob
+import os
+import shutil
+import tarfile
+import zipfile
 
-from . import paths, update, log
+from . import log, paths, update
 from .lnp import lnp
+
 
 def find_vanilla(download_missing=True):
     """Finds the vanilla baseline for the current version.

@@ -3,16 +3,16 @@
 # pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,attribute-defined-outside-init
 """Mods tab for the TKinter GUI."""
 
+from tkinter import *
+from tkinter import messagebox, simpledialog
+from tkinter.ttk import *
+
 from core import mods
 
 from . import controls, tkhelpers
 from .layout import GridLayouter
 from .tab import Tab
 
-from tkinter import *
-from tkinter.ttk import *
-from tkinter import messagebox
-from tkinter import simpledialog
 
 # pylint:disable=too-many-public-methods
 class ModsTab(Tab):

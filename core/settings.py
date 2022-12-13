@@ -2,9 +2,12 @@
 # -*- coding: utf-8 -*-
 """Configuration and raw manipulation for Dwarf Fortress."""
 
-import sys, os, re
+import os
+import re
+import sys
+
+from . import hacks, log
 from .dfraw import DFRaw
-from . import log, hacks
 
 
 # Markers to read certain settings correctly

@@ -3,6 +3,10 @@
 # pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,attribute-defined-outside-init
 """Advanced tab for the TKinter GUI."""
 
+from tkinter import *
+from tkinter import messagebox
+from tkinter.ttk import *
+
 from core import launcher, legends_processor
 from core.lnp import lnp
 
@@ -10,9 +14,6 @@ from . import controls
 from .layout import GridLayouter
 from .tab import Tab
 
-from tkinter import *
-from tkinter.ttk import *
-from tkinter import messagebox
 
 #pylint: disable=too-many-public-methods,too-many-statements
 class AdvancedTab(Tab):

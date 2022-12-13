@@ -2,13 +2,18 @@
 # -*- coding: utf-8 -*-
 """Update handling."""
 
-import re, time, os, threading, zipfile, tarfile
-
+import os
+import re
+import tarfile
+import threading
+import time
+import zipfile
 from urllib.parse import quote, unquote, urlparse
 
-from .lnp import lnp
-from . import launcher, paths, download, log
+from . import download, launcher, log, paths
 from .json_config import JSONConfiguration
+from .lnp import lnp
+
 
 def updates_configured():
     """Returns True if update checking have been configured."""

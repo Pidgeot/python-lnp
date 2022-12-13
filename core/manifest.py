@@ -4,8 +4,9 @@
 
 import os
 
-from . import paths, json_config
+from . import json_config, paths
 from .lnp import lnp
+
 
 def get_cfg(content_type, item):
     """Returns a JSONConfiguration object for the given item.

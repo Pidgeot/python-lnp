@@ -2,17 +2,21 @@
 # -*- coding: utf-8 -*-
 """Code relating to a specific Dwarf Fortress installation."""
 
-import sys, os, shutil, re
+import os
+import re
+import shutil
 import struct
+import sys
 import zlib
 from datetime import datetime
 from distutils import dir_util
-from glob import glob
 from functools import total_ordering
+from glob import glob
 
+from . import hacks, log, paths
+from .lnp import VERSION, lnp
 from .settings import DFConfiguration
-from . import hacks, paths, log
-from .lnp import lnp, VERSION
+
 
 def find_df_folders():
     """Locates all suitable Dwarf Fortress installations (folders starting

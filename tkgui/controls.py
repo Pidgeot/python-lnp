@@ -4,15 +4,15 @@
 """Controls used by the TKinter GUI."""
 
 import sys
+import tkinter.font as tkFont
 import types
+from tkinter import *
+from tkinter import simpledialog
+from tkinter.ttk import *
 
 from core.lnp import lnp
-from . import binding
 
-from tkinter import *
-from tkinter.ttk import *
-from tkinter import simpledialog
-import tkinter.font as tkFont
+from . import binding
 
 # Monkeypatch simpledialog to use themed dialogs from ttk
 if sys.platform != 'darwin':  # OS X looks better without patch
