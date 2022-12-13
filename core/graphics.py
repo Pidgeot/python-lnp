@@ -77,8 +77,8 @@ def read_graphics():
         if not validate_pack(p):
             continue
         init_path = paths.get('graphics', p, 'data', 'init', 'init.txt')
-        #pylint: disable=unbalanced-tuple-unpacking
-        font, graphics = DFRaw(init_path).get_values('FONT', 'GRAPHICS_FONT')
+        font = DFRaw(init_path).get_value('FONT')
+        graphics = DFRaw(init_path).get_value('GRAPHICS_FONT')
         result.append((p, font, graphics))
     return tuple(sorted(result))
 
