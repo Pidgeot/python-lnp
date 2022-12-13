@@ -109,6 +109,7 @@ class UtilitiesTab(Tab):
         if proglist.set(item, 'tooltip') != tooltip.text:
             tooltip.hidetip()
         if item:
+            # pylint: disable=protected-access
             tooltip.event = proglist.after(controls._TOOLTIP_DELAY, show)
 
     def read_utilities(self):

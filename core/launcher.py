@@ -96,6 +96,7 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
 
         environ = os.environ
         if lnp.bundle:
+            # pylint: disable=protected-access
             environ = copy.deepcopy(os.environ)
             if ('TCL_LIBRARY' in environ and
                     sys._MEIPASS in environ['TCL_LIBRARY']):

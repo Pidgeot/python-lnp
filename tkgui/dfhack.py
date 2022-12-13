@@ -92,6 +92,7 @@ class DFHackTab(Tab):
         if hacklist.set(item, 'tooltip') != tooltip.text:
             tooltip.hidetip()
         if item:
+            # pylint: disable=protected-access
             tooltip.event = hacklist.after(controls._TOOLTIP_DELAY, show)
 
     def update_hack_list(self):
