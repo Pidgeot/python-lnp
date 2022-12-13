@@ -81,7 +81,8 @@ class DFHackTab(Tab):
         hacklist = self.hacklist
         item = hacklist.identify_row(event.y)
 
-        def show(): # pylint:disable=missing-docstring
+        def show():
+            """Sets and shows a tooltip"""
             tooltip.settext(hacklist.set(item, 'tooltip'))
             tooltip.showtip()
 

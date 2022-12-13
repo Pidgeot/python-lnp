@@ -98,7 +98,8 @@ class UtilitiesTab(Tab):
         proglist = self.proglist
         item = proglist.identify_row(event.y)
 
-        def show(): # pylint:disable=missing-docstring
+        def show():
+            """Sets and shows a tooltip"""
             tooltip.settext(proglist.set(item, 'tooltip'))
             tooltip.showtip()
 

@@ -279,7 +279,8 @@ def listbox_dyn_tooltip(listbox, item_get, tooltip_get):
         if item is not None:
             item = item_get(item)
 
-        def show(): # pylint:disable=missing-docstring
+        def show():
+            """Sets and shows a tooltip"""
             tooltip.settext(tooltip_get(item))
             tooltip.showtip()
 
@@ -417,13 +418,15 @@ def add_default_to_entry(entry, default_text):
     default_font.config(slant=tkFont.ITALIC)
     entry.default_showing = True
 
-    def focus_out(_): # pylint:disable=missing-docstring
+    def focus_out(_):
+        """Insert text and focus"""
         if len(entry.get()) == 0:
             entry.insert(0, default_text)
             entry.configure(font=default_font, foreground='grey')
             entry.default_showing = True
 
-    def focus_in(_): # pylint:disable=missing-docstring
+    def focus_in(_):
+        """Insert text but don't focus"""
         if entry.default_showing:
             entry.delete(0, END)
             entry.configure(font=normal_font, foreground='black')

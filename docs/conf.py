@@ -23,6 +23,7 @@ import sys
 
 
 # Before we get started, let's generate fresh API documentation from the code
+# pylint: disable=missing-function-docstring
 def ages(dname):
     return [os.stat(f).st_mtime for f in glob.glob(os.path.join(dname, '*'))]
 for mod in ('core', 'tkgui'):
@@ -32,6 +33,7 @@ for mod in ('core', 'tkgui'):
         shutil.rmtree(mod, ignore_errors=True)
         subprocess.check_output(['sphinx-apidoc', '--separate', '--force',
                                  '--no-toc', '-o', mod, code_dir])
+# pylint: enable=missing-function-docstring
 
 
 # If extensions (or modules to document with autodoc) are in another directory,

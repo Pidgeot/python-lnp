@@ -98,6 +98,7 @@ def validate_number(value_if_allowed):
         return False
 
 def fixed_map(option):
+    """Sets text colour for Tkinter 8.6.9"""
     # Fix for setting text colour for Tkinter 8.6.9
     # From: https://core.tcl.tk/tk/info/509cafafae
     #
