@@ -35,7 +35,7 @@ def get_region_info():
 
 def compress_bitmaps():
     """Compresses all bitmap maps."""
-    #pylint: disable=import-error, no-name-in-module
+    #pylint: disable=import-error
     try:
         from PIL import Image
     except ImportError:

@@ -33,11 +33,11 @@ if False: # pylint:disable=using-constant-test
     import pkg_resources
 
 try:  # PIL-compatible library (e.g. Pillow); used to load PNG images (optional)
-    # pylint:disable=import-error,no-name-in-module
+    # pylint:disable=import-error
     from PIL import Image, ImageTk
     has_PIL = True
 except ImportError:  # Some PIL installations live outside the PIL package
-    # pylint:disable=import-error,no-name-in-module
+    # pylint:disable=import-error
     try:
         import Image
         import ImageTk
