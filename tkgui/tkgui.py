@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,too-many-statements
+# pylint:disable=unused-wildcard-import,wildcard-import,invalid-name
 """TKinter-based GUI for PyLNP."""
 
 import os
@@ -119,6 +119,7 @@ class TkGui(object):
         Args:
             lnp: A PyLNP instance to perform actual work.
         """
+        #pylint: disable=too-many-statements
         self.root = root = Tk()
         self.updateDays = IntVar()
         self.downloadBaselines = BooleanVar()
@@ -332,6 +333,7 @@ class TkGui(object):
         Args:
             root: Root window for the menu bar.
         """
+        #pylint: disable=too-many-statements
         menubar = Menu(root, type='menubar')
         root['menu'] = menubar
 
