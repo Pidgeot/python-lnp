@@ -485,7 +485,7 @@ def create_list_with_entry(parent, title, listvar, buttonspec, **kwargs):
 
     return (kf, ke, kb)
 
-def create_toggle_list(parent, columns, framegridopts, listopts={}):
+def create_toggle_list(parent, columns, framegridopts, listopts=None):
     """
     Creates and returns a two-column Treeview in a frame to show toggleable
     items in a list.
@@ -496,7 +496,8 @@ def create_toggle_list(parent, columns, framegridopts, listopts={}):
         framegridopts: Additional options for grid layout of the frame.
         listopts: Additional options for the Treeview.
     """
-    # pylint:disable=dangerous-default-value
+    if listopts is None:
+        listopts = {}
     lf = Frame(parent)
     lf.grid(**framegridopts)
     Grid.rowconfigure(lf, 0, weight=1)
