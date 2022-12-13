@@ -106,7 +106,7 @@ def do_imports(from_df_dir):
     """Import content (defined in PyLNP.json) from the given previous df_dir,
     and associated LNP install if any.
     """
-    # pylint:disable=too-many-locals,too-many-branches
+    # pylint:disable=too-many-branches
     # validate that from_df_dir is, in fact, a DF dir
     if not all(os.path.exists(os.path.join(from_df_dir, *p)) for p in
                [('data', 'init', 'init.txt'), ('raw', 'objects')]):
