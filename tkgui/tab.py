@@ -6,12 +6,11 @@
 from tkinter import BOTH, TOP, Y
 from tkinter.ttk import Frame
 
-#pylint: disable=too-many-public-methods
+#pylint: disable=too-many-public-methods, unused-argument
 class Tab(Frame):
     """Base class for notebook tabs for the TKinter GUI."""
     def __init__(self, parent, *args, **kwargs):
-        #pylint:disable=super-init-not-called
-        Frame.__init__(self, parent, *args, **kwargs)
+        super().__init__()
         self.parent = parent
         self.pack(side=TOP, fill=BOTH, expand=Y)
         self.create_variables()
