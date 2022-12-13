@@ -482,7 +482,6 @@ class TkGui(object):
             menu: The menu to create the items under.
             method: The method to be called when the menu item is selected.
         """
-        #pylint:disable=unused-variable
         for i, f in enumerate(collection):
             if f[0] == '-':
                 menu.add_separator()
