@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint:disable=unused-wildcard-import,wildcard-import,invalid-name
+# pylint:disable=unused-wildcard-import,wildcard-import
 """Base class for notebook tabs for the TKinter GUI."""
 
 from tkinter import BOTH, TOP, Y

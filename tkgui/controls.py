@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint:disable=unused-wildcard-import,wildcard-import,invalid-name
+# pylint:disable=unused-wildcard-import,wildcard-import
 """Controls used by the TKinter GUI."""
 
 import sys

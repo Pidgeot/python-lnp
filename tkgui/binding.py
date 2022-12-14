@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint:disable=invalid-name
 """Handles control binding for the TKinter GUI."""
 
 from tkinter import END
