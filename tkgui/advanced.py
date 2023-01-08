@@ -109,11 +109,12 @@ class AdvancedTab(Tab):
         Label(resolution, text='Height').grid(row=0, column=4)
         Label(resolution, text='x').grid(row=1, column=3)
         Label(resolution, text='x').grid(row=3, column=3)
-        Label(resolution, justify=CENTER,
-              text='Values less than 255 represent # tiles,\n'
-                   'values greater than 255 represent # pixels.\n'
-                   'Fullscreen "0" to autodetect.').grid(
-                       row=5, column=0, columnspan=6)
+        if lnp.df_info.version < '50.01':
+            Label(resolution, justify=CENTER,
+                  text='Values less than 255 represent # tiles,\n'
+                       'values greater than 255 represent # pixels.\n'
+                       'Fullscreen "0" to autodetect.').grid(
+                           row=5, column=0, columnspan=6)
         controls.create_numeric_entry(
             resolution, self.winX_var, ('WINDOWEDX', 'GRAPHICS_WINDOWEDX'),
             '').grid(row=1, column=2)

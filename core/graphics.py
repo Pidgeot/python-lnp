@@ -45,7 +45,8 @@ def current_pack():
     packs = read_graphics()
     for p in packs:
         if (lnp.settings.FONT == p[1] and
-                lnp.settings.GRAPHICS_FONT == p[2]):
+                (not lnp.settings.version_has_option('GRAPHICS_FONT') or
+                    lnp.settings.GRAPHICS_FONT == p[2])):
             log.i('Installed graphics is {} by checking tilesets'.format(p[0]))
             return p[0]
     result = str(lnp.settings.FONT)

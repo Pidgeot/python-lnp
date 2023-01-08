@@ -22,8 +22,9 @@ def find_df_folders():
     with "Dwarf Fortress" or "df")"""
     lnp.folders = tuple([
         os.path.basename(o) for o in glob(os.path.join(lnp.BASEDIR, '*')) if
-        os.path.isdir(o) and os.path.exists(os.path.join(
-            o, 'data', 'init', 'init.txt'))])
+        os.path.isdir(o) and (os.path.exists(os.path.join(
+            o, 'data', 'init', 'init.txt')) or os.path.exists(os.path.join(
+            o, 'data', 'init', 'init_default.txt')))])
 
 def find_df_folder():
     """Tries to select a Dwarf Fortress folder. The set of valid folders is
@@ -150,11 +151,15 @@ def save_params():
 def restore_defaults():
     """Copy default settings into the selected Dwarf Fortress instance."""
     log.i('Restoring to default settings')
-    shutil.copy(paths.get('defaults', 'init.txt'),
-                paths.get('init', 'init.txt'))
-    if lnp.df_info.version > '0.31.03':
-        shutil.copy(paths.get('defaults', 'd_init.txt'),
-                    paths.get('init', 'd_init.txt'))
+    if lnp.df_info.version >= '50.01':
+        os.remove(paths.get('df','d_init.txt'))
+        os.remove(paths.get('df','init.txt'))
+    else:
+        shutil.copy(paths.get('defaults', 'init.txt'),
+                    paths.get('init', 'init.txt'))
+        if lnp.df_info.version > '0.31.03':
+            shutil.copy(paths.get('defaults', 'd_init.txt'),
+                        paths.get('init', 'd_init.txt'))
     load_params()
 
 class DFInstall(object):
@@ -229,8 +234,15 @@ class DFInstall(object):
     def _detect_version_from_init(self):
         """Attempt to detect Dwarf Fortress version from init file contents."""
         init = os.path.join(self.init_dir, 'init.txt')
+        if not os.path.exists(init):
+            init = os.path.join(self.init_dir, 'init_default.txt')
         d_init = os.path.join(self.init_dir, 'd_init.txt')
+        if not os.path.exists(d_init):
+            d_init = os.path.join(self.init_dir, 'd_init_default.txt')
         versions = [
+            (init, 'USE_CLASSIC_ASCII', '0.50.04', {}),
+            (init, 'MAXIMUM_INTERFACE_PERCENTAGE', '0.50.02', {}),
+            (init, 'MASTER_VOLUME', '0.50.01', {}),
             (d_init, 'VISITOR_CAP', '0.42.01', {}),
             (d_init, 'GRAZE_COEFFICIENT', '0.40.13', {}),
             (d_init, 'POST_PREPARE_EMBARK_CONFIRMATION', '0.40.09', {}),
@@ -307,7 +319,12 @@ class DFInstall(object):
         Always windows, for comparison of raws in baselines.
         Prefer small and SDL releases when available."""
         # checked and correct for all versions up to 0.40.24
-        base = 'df_' + str(self.version)[2:].replace('.', '_')
+        if self.version >= '50.01':
+            base = 'df_' + str(self.version).replace('.', '_')
+        else:
+            base = 'df_' + str(self.version)[2:].replace('.', '_')
+        if self.version == '50.04':
+            return base + 'b_win_s.zip'
         if self.version >= '0.31.13':
             return base + '_win_s.zip'
         if self.version >= '0.31.05':
