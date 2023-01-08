@@ -14,7 +14,7 @@ except SystemExit:
     raise
 except:
     import traceback
-    message = traceback.format_exception(*sys.exc_info())
+    message = ''.join(traceback.format_exception(*sys.exc_info()))
     #Log exception to stderr if possible
     try:
         print(message, file=sys.stderr)
