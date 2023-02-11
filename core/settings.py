@@ -359,6 +359,7 @@ _option_version_data = {
     'MAXIMUM_INTERFACE_PERCENTAGE': ['50.02'],
     'AVERAGE_TIME_BETWEEN_SONGS': ['50.04'],
     'USE_CLASSIC_ASCII': ['50.04'],
+    'CULL_DEAD_UNITS_AT': ['50.06'],
 }
 
 def _option_item_to_value(item):
