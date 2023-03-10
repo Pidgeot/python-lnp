@@ -460,10 +460,10 @@ def create_list_with_entry(parent, title, listvar, buttonspec, **kwargs):
     kf.columnconfigure(0, weight=1)
     kf.rowconfigure(2, weight=1)
 
-    ke = Entry(kf) # text box
+    ke = Entry(kf)  # text box
     ke.grid(row=1, column=0, sticky='ewn', pady=(1, 4))
 
-    lf = Frame(kf) # Listbox and scrollbar
+    lf = Frame(kf)  # Listbox and scrollbar
     kb = Listbox(lf, listvariable=listvar, activestyle='dotbox',
                  exportselection=0, **kwargs)
     lf.configure(borderwidth=kb['borderwidth'], relief=kb['relief'])
@@ -474,7 +474,7 @@ def create_list_with_entry(parent, title, listvar, buttonspec, **kwargs):
     lf.columnconfigure(0, weight=1)
     lf.grid(row=2, column=0, rowspan=1, sticky='nsew')
 
-    bf = Frame(kf) # buttons
+    bf = Frame(kf)  # buttons
     for i, bn in enumerate(buttonspec):
         pad = 0 if i == 0 else (5, 0)
         create_trigger_button(bf, *bn).grid(row=i, pady=pad)

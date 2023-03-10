@@ -23,11 +23,11 @@ if sys.platform == 'win32':
 try:
     from PIL import Image, ImageTk
     has_PIL = True
-except ImportError: # Some PIL installations live outside of the PIL package
+except ImportError:  # Some PIL installations live outside of the PIL package
     try:
         import Image, ImageTk
         has_PIL = True
-    except ImportError: #No PIL compatible library
+    except ImportError:  #No PIL compatible library
         has_PIL = False
 
 from tkinter import *

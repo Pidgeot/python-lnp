@@ -21,7 +21,7 @@ class GridLayouter(object):
         self.used = []
         try:
             self.pad = (int(pad), int(pad))
-        except TypeError: # not an int; assume tuple
+        except TypeError:  # not an int; assume tuple
             self.pad = pad
 
     def add(self, control, span=1, **opts):

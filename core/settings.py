@@ -606,7 +606,7 @@ class DFConfiguration(object):
                 if not isinstance(i, str) and i[0] == current:
                     current = i
                     break
-            else: #item not found
+            else:  #item not found
                 result = items[0]
                 return _option_item_to_value(result)
 

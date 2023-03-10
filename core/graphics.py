@@ -364,7 +364,7 @@ def read_tilesets():
                 '_']))
 
     i = 0
-    while i < len(files): # Manual loop to allow modification during iteration
+    while i < len(files):  # Manual loop to allow modification during iteration
         filename = os.path.splitext(files[i])
         bgname = filename[0] + '-bg.png'
         topname = filename[0] + '-top.png'

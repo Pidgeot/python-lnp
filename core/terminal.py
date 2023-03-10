@@ -151,14 +151,14 @@ class GNOMETerminal(LinuxTerminal):
             except Exception:
                 return False
             try:
-                GNOMETerminal.get_command_line() # Attempt to get the command line
+                GNOMETerminal.get_command_line()  # Attempt to get the command line
                 return True
             except Exception:
                 return False
 
     @staticmethod
     def get_command_line():
-        try: # Try gsettings first (e.g. Ubuntu 17.04)
+        try:  # Try gsettings first (e.g. Ubuntu 17.04)
             term = subprocess.check_output([
                 'gsettings', 'get',
                 'org.gnome.desktop.default-applications.terminal', 'exec'
@@ -168,7 +168,7 @@ class GNOMETerminal(LinuxTerminal):
                 'org.gnome.desktop.default-applications.terminal', 'exec-arg'
             ], universal_newlines=True).replace('\n', '').replace("'", '')
             return ['nohup', term, term_arg]
-        except Exception: #fallback to older gconf
+        except Exception:  #fallback to older gconf
             pass
         try:
             term = subprocess.check_output([

@@ -28,7 +28,7 @@ from .options import OptionsTab
 from .utilities import UtilitiesTab
 
 # Workaround to use Pillow in PyInstaller
-if False: # pylint:disable=using-constant-test
+if False:  # pylint:disable=using-constant-test
     # pylint:disable=unused-import
     import pkg_resources
 

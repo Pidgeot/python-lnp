@@ -20,7 +20,7 @@ object_parents = {
     'BODY_DETAIL_PLAN': ['BODY_DETAIL_PLAN'],
     'CREATURE': ['CREATURE'],
     'CREATURE_VARIATION': ['CREATURE_VARIATION'],
-    'DESCRIPTOR': ['COLOR', 'SHAPE'], #40d and earlier
+    'DESCRIPTOR': ['COLOR', 'SHAPE'],  #40d and earlier
     'DESCRIPTOR_COLOR': ['COLOR'],
     'DESCRIPTOR_PATTERN': ['PATTERN'],
     'DESCRIPTOR_SHAPE': ['SHAPE'],
@@ -29,9 +29,9 @@ object_parents = {
     'INORGANIC': ['INORGANIC'],
     'INTERACTION': ['INTERACTION'],
     'ITEM': ['ITEM_*'],
-    'LANGUAGE': ['TRANSLATION', 'SYMBOL', 'WORD'], # TODO: Maybe add NOUN, etc?
+    'LANGUAGE': ['TRANSLATION', 'SYMBOL', 'WORD'],  # TODO: Maybe add NOUN, etc?
     'MATERIAL_TEMPLATE': ['MATERIAL_TEMPLATE'],
-    'MATGLOSS': ['MATGLOSS_*'], #40d and earlier
+    'MATGLOSS': ['MATGLOSS_*'],  #40d and earlier
     'PLANT': ['PLANT'],
     'REACTION': ['REACTION'],
     'TISSUE_TEMPLATE': ['TISSUE_TEMPLATE'],
@@ -39,7 +39,7 @@ object_parents = {
 
 init_filename_parents = {
     'embark_profiles.txt': ['PROFILE'],
-    'interface.txt': ['BIND'], #Legacy doesn't use BIND, will be flat
+    'interface.txt': ['BIND'],  #Legacy doesn't use BIND, will be flat
     'world_gen.txt': ['WORLD_GEN'],
 }
 

@@ -45,7 +45,7 @@ def get(field):
 
 def update():
     """Updates configuration displays (buttons, etc.)."""
-    def disabled_change_entry(*args, **kwargs): #pylint: disable=unused-argument
+    def disabled_change_entry(*args, **kwargs):  #pylint: disable=unused-argument
         """Prevents entry change callbacks from being processed."""
 
     old_change_entry = __ui.change_entry
