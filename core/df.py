@@ -24,7 +24,7 @@ def find_df_folders():
         os.path.basename(o) for o in glob(os.path.join(lnp.BASEDIR, '*')) if
         os.path.isdir(o) and (os.path.exists(os.path.join(
             o, 'data', 'init', 'init.txt')) or os.path.exists(os.path.join(
-            o, 'data', 'init', 'init_default.txt'))))
+                o, 'data', 'init', 'init_default.txt'))))
 
 def find_df_folder():
     """Tries to select a Dwarf Fortress folder. The set of valid folders is
