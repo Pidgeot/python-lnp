@@ -357,8 +357,8 @@ class TerminalSelector(ChildWindow):
                 "the terminal is not being launched correctly."
                 "\n\nThe test may take anywhere from a few seconds to about a "
                 "minute to execute. PyLNP will not respond until the test is "
-                "complete.\n\nPress OK to start the test, or Cancel to abort."
-                , title="PyLNP"):
+                "complete.\n\nPress OK to start the test, or Cancel to abort.",
+                title="PyLNP"):
             return
         try:
             terminal.configure_custom_terminal(self.cmd.get())
