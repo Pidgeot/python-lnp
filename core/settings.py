@@ -389,8 +389,9 @@ class DFConfiguration(object):
         boolvals = ("YES", "NO")
         if df_info.version >= '50.01':
             init = (os.path.join(base_dir, 'data', 'init',
-                'init_default.txt'),os.path.join(base_dir, 'prefs',
-                    'init.txt'))
+                                 'init_default.txt'),
+                    os.path.join(base_dir, 'prefs',
+                                 'init.txt'))
         else:
             init = (os.path.join(base_dir, 'data', 'init', 'init.txt'),)
         self.create_option(
@@ -423,8 +424,9 @@ class DFConfiguration(object):
         # d_init.txt
         if df_info.version >= '50.01':
             dinit = (os.path.join(base_dir, 'data', 'init',
-                'd_init_default.txt'),os.path.join(base_dir, 'prefs',
-                    'd_init.txt'))
+                                  'd_init_default.txt'),
+                     os.path.join(base_dir, 'prefs',
+                                  'd_init.txt'))
         elif df_info.version > '0.31.03':
             dinit = (os.path.join(base_dir, 'data', 'init', 'd_init.txt'),)
         else:
