@@ -11,6 +11,7 @@ if sys.platform == 'win32':
       # Newer PyInstaller versions
       from PyInstaller.utils.win32.winmanifest import Manifest
     Manifest.old_toprettyxml = Manifest.toprettyxml
+
     def new_toprettyxml(self, indent="  ", newl=os.linesep, encoding="UTF-8"):
       s = self.old_toprettyxml(indent, newl, encoding)
       # Make sure we only modify our own manifest
@@ -60,6 +61,7 @@ if sys.platform == 'darwin' and sys.hexversion >= 0x3070000:
       # See https://github.com/pyinstaller/pyinstaller/issues/3753 for the relevant bug report for PyInstaller
       from PyInstaller.depend import bindepend
       old_selectImports = bindepend.selectImports
+
       def patched_selectImports(pth, xtrapath=None):
           rv = old_selectImports(pth, xtrapath)
           if '_tkinter' in pth:
@@ -94,6 +96,7 @@ else:
     if needs_tcl_copy:
         import shutil
         import os
+
         def copytree(src, dst, symlinks=False, ignore=None):
             if not os.path.exists(dst):
                 os.makedirs(dst)

@@ -241,6 +241,7 @@ class MateTerminal(LinuxTerminal):
                     ], stdout=FNULL, stderr=FNULL) == 0
             except Exception:
                 return False
+
     @staticmethod
     def get_command_line():
         return ['nohup', 'mate-terminal', '-x']
