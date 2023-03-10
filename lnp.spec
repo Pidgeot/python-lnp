@@ -66,7 +66,7 @@ if sys.platform == 'darwin' and sys.hexversion >= 0x3070000:
               import inspect
               caller = inspect.stack()[1]
               if 'hook-_tkinter.py' in caller.filename and 'Library/Frameworks' in rv[0][1] and 'Python' in rv[0][1]:
-                  return [('libtcl8.6.dylib', ''), ('libtk8.6.dylib','')]
+                  return [('libtcl8.6.dylib', ''), ('libtk8.6.dylib', '')]
           return rv
       bindepend.selectImports = patched_selectImports
     except ImportError:
@@ -74,7 +74,7 @@ if sys.platform == 'darwin' and sys.hexversion >= 0x3070000:
 
 a = Analysis(
   [script], pathex=['.'], hiddenimports=hiddenimports, hookspath=None, runtime_hooks=None)
-a.datas += [(logo,logo,'DATA'),(icon,icon,'DATA')]
+a.datas += [(logo, logo, 'DATA'), (icon, icon, 'DATA')]
 if sys.platform == 'win32':
     # Importing pkg_resources fails with Pillow on Windows due to
     # un-normalized case; this works around the problem
@@ -90,7 +90,7 @@ else:
         pyz, a.scripts, exclude_binaries=True, name='PyLNP' + extension,
         debug=False, strip=None, upx=True, console=False)
     coll = COLLECT(exe, a.binaries, a.zipfiles, a.datas, strip=None, upx=True, name='PyLNP')
-    app = BUNDLE(coll,name='PyLNP.app',icon='LNP.icns', info_plist=info)
+    app = BUNDLE(coll, name='PyLNP.app', icon='LNP.icns', info_plist=info)
     if needs_tcl_copy:
         import shutil
         import os

@@ -159,8 +159,8 @@ def restore_defaults():
     """Copy default settings into the selected Dwarf Fortress instance."""
     log.i('Restoring to default settings')
     if lnp.df_info.version >= '50.01':
-        os.remove(paths.get('df','d_init.txt'))
-        os.remove(paths.get('df','init.txt'))
+        os.remove(paths.get('df', 'd_init.txt'))
+        os.remove(paths.get('df', 'init.txt'))
     else:
         shutil.copy(paths.get('defaults', 'init.txt'),
                     paths.get('init', 'init.txt'))
@@ -258,7 +258,7 @@ class DFInstall(object):
             (d_init, 'PILLAR_TILE', '0.31.08', {}),
             (d_init, 'AUTOSAVE', '0.31.04', {}),
             (init, 'COMPRESSED_SAVES', '0.31.01', {}),
-            (init, 'PARTIAL_PRINT', '0.28.181.40c', {'num_params':2}),
+            (init, 'PARTIAL_PRINT', '0.28.181.40c', {'num_params': 2}),
             (init, 'FULLGRID', '0.28.181.40b', {}),
             (init, 'STORE_DIST_ITEM_DECREASE', '0.28.181.40a', {}),
             (init, 'GRID', '0.28.181.39f', {}),
