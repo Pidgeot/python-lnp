@@ -681,7 +681,7 @@ class DFConfiguration(object):
                     filename, self.in_files[files],
                     any((f.endswith('init.txt') for f in files)), files)
 
-    def read_file(self, filename, fields, auto_add, auto_add_key):
+    def read_file(self, filename, fields, auto_add, auto_add_key=None):
         """
         Reads DF settings from the file <filename>.
 
