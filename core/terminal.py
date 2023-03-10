@@ -168,7 +168,7 @@ class GNOMETerminal(LinuxTerminal):
                 'org.gnome.desktop.default-applications.terminal', 'exec-arg'
             ], universal_newlines=True).replace('\n', '').replace("'", '')
             return ['nohup', term, term_arg]
-        except Exception:  #fallback to older gconf
+        except Exception:  # fallback to older gconf
             pass
         try:
             term = subprocess.check_output([
