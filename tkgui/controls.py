@@ -35,7 +35,7 @@ class _AutoScrollbar(Scrollbar):
     """A scrollbar that hides itself if it's not needed."""
     def set(self, first, last):
         """Only show scrollbar when there's more content than will fit."""
-        #pylint:disable=no-member
+        # pylint:disable=no-member
         if not lnp.userconfig.get_bool('tkgui_show_scroll'):
             if (float(first) <= 0.0 and float(last) >= 1.0) or (
                     hasattr(self, 'hidden') and self.hidden):
@@ -210,7 +210,7 @@ def create_trigger_button(parent, text, tooltip, command):
     create_tooltip(b, tooltip)
     return b
 
-#pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments
 def create_trigger_option_button(
         parent, text, tooltip, command, option, update_func=None):
     """
@@ -375,7 +375,7 @@ def create_readonly_file_list_buttons(
     buttons.grid(column=2, row=0, sticky="n")
     return (lf, lb, buttons)
 
-#pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments
 def create_file_list_buttons(
         parent, title, listvar, load_fn, refresh_fn, save_fn,
         delete_fn, **args):

@@ -73,7 +73,7 @@ def tokenize_raw(text):
                 curr_string = text[:text.find('[')]
             else:
                 curr_string = text
-            #check for
+            # check for
             match = re.search('!\\w+!', text)
             if match:
                 curr_string = curr_string[:match.start()]
@@ -252,7 +252,7 @@ class DFRawNode(object):
         if value == self.__value:
             return
         self.__value = value
-        #pylint: disable=protected-access
+        # pylint: disable=protected-access
         self.root._modified = True
 
     @property

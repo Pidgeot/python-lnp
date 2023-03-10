@@ -316,28 +316,28 @@ class CustomTerminal(LinuxTerminal):
             return shlex.split(cmd)
         return []
 
-#Terminal testing algorithm:
-#    Main app, in thread:
-#        Generate temporary file name for synchronization.
-#        Write 0 to file.
-#        Start parent w/ file name.
-#        Wait for parent to terminate.
-#        Report success if file contains 4 within 10 seconds, else report error.
-#        Delete temporary file.
+# Terminal testing algorithm:
+#     Main app, in thread:
+#         Generate temporary file name for synchronization.
+#         Write 0 to file.
+#         Start parent w/ file name.
+#         Wait for parent to terminate.
+#         Report success if file contains 4 within 10 seconds, else report error.
+#         Delete temporary file.
 #
-#    Parent:
-#        If child process stops running, terminate.
-#        Start child process.
-#        Write 1 to file.
-#        Ensure file contains 2 within 10 seconds.
-#        Write 3 to file. Terminate self.
+#     Parent:
+#         If child process stops running, terminate.
+#         Start child process.
+#         Write 1 to file.
+#         Ensure file contains 2 within 10 seconds.
+#         Write 3 to file. Terminate self.
 #
-#    Child:
-#        Ensure file contains 1 within 10 seconds.
-#        Write 2 to file.
-#        Ensure file contains 3 within 10 seconds.
-#        Wait 3 seconds for parent to terminate.
-#        Write 4 to file. Terminate self.
+#     Child:
+#         Ensure file contains 1 within 10 seconds.
+#         Write 2 to file.
+#         Ensure file contains 3 within 10 seconds.
+#         Wait 3 seconds for parent to terminate.
+#         Write 4 to file. Terminate self.
 
 def _terminal_test_wait(fn, value):
     """

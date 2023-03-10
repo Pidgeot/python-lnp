@@ -507,7 +507,7 @@ class DFConfiguration(object):
             "focusWarm", "DIG_CANCEL_WARM", "YES", _announcement_focus,
             announcements)
 
-    #pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments
     def create_option(
             self, name, field_name, default, values, files, cond=True,
             validate=None):
@@ -691,7 +691,7 @@ class DFConfiguration(object):
               changes.
           auto_add_key: key to register the fields under (if auto_add is True).
         """
-        #pylint:disable=too-many-branches
+        # pylint:disable=too-many-branches
         if not os.path.exists(filename):
             log.w('File ' + str(filename) + ' does not exist', file=sys.stderr)
             return

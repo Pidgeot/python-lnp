@@ -119,7 +119,7 @@ class TkGui(object):
         Args:
             lnp: A PyLNP instance to perform actual work.
         """
-        #pylint: disable=too-many-statements
+        # pylint: disable=too-many-statements
         self.root = root = Tk()
         self.updateDays = IntVar()
         self.downloadBaselines = BooleanVar()
@@ -333,7 +333,7 @@ class TkGui(object):
         Args:
             root: Root window for the menu bar.
         """
-        #pylint: disable=too-many-statements
+        # pylint: disable=too-many-statements
         menubar = Menu(root, type='menubar')
         root['menu'] = menubar
 
@@ -343,14 +343,14 @@ class TkGui(object):
         menu_folders = Menu(menubar)
         menu_links = Menu(menubar)
         menu_help = Menu(menubar)
-        #menu_beta = Menu(menubar)
+        # menu_beta = Menu(menubar)
         menubar.add_cascade(menu=menu_file, label='File')
         menubar.add_cascade(menu=menu_options, label='Options')
         menubar.add_cascade(menu=menu_run, label='Run')
         menubar.add_cascade(menu=menu_folders, label='Folders')
         menubar.add_cascade(menu=menu_links, label='Links')
         menubar.add_cascade(menu=menu_help, label='Help')
-        #menubar.add_cascade(menu=menu_beta, label='Testing')
+        # menubar.add_cascade(menu=menu_beta, label='Testing')
 
         menu_file.add_command(
             label='Re-load param set', command=self.load_params,
@@ -650,7 +650,7 @@ class TkGui(object):
             # pylint: enable=consider-using-with
             self.queue.put('<<ForceUpdate>>')
 
-    #pylint: disable=unused-argument
+    # pylint: disable=unused-argument
     def start_download(self, queue, url, target):
         """Event handler for the start of a download."""
         self.download_text_string = "Downloading %s..." % os.path.basename(url)
@@ -688,7 +688,7 @@ class TkGui(object):
             '<<HideDLPanel>>', when='tail'))
         self.send_update_event()
 
-    #pylint: enable=unused-argument
+    # pylint: enable=unused-argument
 
     def check_cross_thread(self):
         """Used to raise cross-thread events in the UI thread."""

@@ -347,7 +347,7 @@ class DFInstall(object):
 class Version(object):
     """Container for a version number for easy comparisons."""
     def __init__(self, version):
-        #Known errors in release notes
+        # Known errors in release notes
         if version == "0.23.125.23a":
             version = "0.23.130.23a"
         self.version_str = version

@@ -302,7 +302,7 @@ def merge_line_list(mod_text, vanilla_text, gen_text):
 
 def three_way_merge(gen_text, van_gen_ops, mod_text, van_mod_ops):
     """Yield blocks of lines from a three-way-merge.  Last block is status."""
-    #pylint:disable=too-many-statements
+    # pylint:disable=too-many-statements
     status, cur_v, mod_i2, gen_i2 = 0, 0, 1, 1
     while van_mod_ops and van_gen_ops:
         log.d('before pop')

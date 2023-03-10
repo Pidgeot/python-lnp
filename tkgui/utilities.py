@@ -150,7 +150,7 @@ class UtilitiesTab(Tab):
     def run_selected_utilities(self):
         """Runs selected utilities."""
         for item in self.proglist.selection():
-            #utility_path = self.proglist.item(item, 'text')
+            # utility_path = self.proglist.item(item, 'text')
             launcher.run_program(paths.get('utilities', item))
 
     def open_readmes(self):

@@ -50,7 +50,7 @@ def prepare_updater():
     updaters = {'regex': RegexUpdater, 'json': JSONUpdater, 'dffd': DFFDUpdater}
     updater_id = lnp.config.get('updates/updateMethod', None)
     if updater_id is None:
-        #TODO: Remove this after packs have had time to migrate
+        # TODO: Remove this after packs have had time to migrate
         log.w(
             'Update method not configured in PyLNP.json! Will attempt to '
             'auto-detect. Please set this value correctly, auto-detection will '

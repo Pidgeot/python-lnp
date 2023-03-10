@@ -43,7 +43,7 @@ from .lnp import lnp
 def strat_fallback(strat):
     """Log error if an unknown strategy is attempted."""
     def __fallback(src, dest):
-        #pylint:disable=unused-argument
+        # pylint:disable=unused-argument
         log.w('Attempted to use unknown strategy ' + strat)
         return False
     return __fallback

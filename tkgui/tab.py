@@ -6,7 +6,7 @@
 from tkinter import BOTH, TOP, Y
 from tkinter.ttk import Frame
 
-#pylint: disable=unused-argument
+# pylint: disable=unused-argument
 class Tab(Frame):
     """Base class for notebook tabs for the TKinter GUI."""
     def __init__(self, parent, *args, **kwargs):

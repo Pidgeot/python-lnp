@@ -131,7 +131,7 @@ def program_is_running(path, nonchild=False):
             s = ps.stdout.read()
         encoding = sys.getfilesystemencoding()
         if encoding is None:
-            #Encoding was not detected, assume UTF-8
+            # Encoding was not detected, assume UTF-8
             encoding = 'UTF-8'
         s = s.decode(encoding, 'replace')
         return re.search('\\B%s( |$)' % re.escape(path), s, re.M) is not None

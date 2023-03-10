@@ -27,7 +27,7 @@ class AdvancedTab(Tab):
         self.fullY_var = StringVar()
 
     def create_controls(self):
-        #pylint: disable=too-many-statements
+        # pylint: disable=too-many-statements
         Grid.columnconfigure(self, 0, weight=1)
         Grid.columnconfigure(self, 1, weight=1)
 

@@ -8,7 +8,7 @@ import sys
 from core import lnp
 
 sys.path.insert(0, os.path.dirname(__file__))
-#pylint: disable=redefined-builtin
+# pylint: disable=redefined-builtin
 __package__ = ""
 
 try:
@@ -18,7 +18,7 @@ except SystemExit:
 except Exception:
     import traceback
     message = ''.join(traceback.format_exception(*sys.exc_info()))
-    #Log exception to stderr if possible
+    # Log exception to stderr if possible
     try:
         print(message, file=sys.stderr)
     except Exception:
