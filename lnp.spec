@@ -12,7 +12,7 @@ if sys.platform == 'win32':
         from PyInstaller.utils.win32.winmanifest import Manifest
     Manifest.old_toprettyxml = Manifest.toprettyxml
 
-    def new_toprettyxml(self, indent="  ", newl=os.linesep, encoding="UTF-8"):
+    def new_toprettyxml(self, indent="  ", newl=os.linesep, encoding="UTF-8"):  # noqa: F821
         s = self.old_toprettyxml(indent, newl, encoding)
         # Make sure we only modify our own manifest
         if 'name="lnp"' in s:
