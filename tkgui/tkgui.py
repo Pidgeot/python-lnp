@@ -30,7 +30,7 @@ from .utilities import UtilitiesTab
 # Workaround to use Pillow in PyInstaller
 if False:  # pylint:disable=using-constant-test
     # pylint:disable=unused-import
-    import pkg_resources
+    import pkg_resources  # noqa: F401
 
 try:  # PIL-compatible library (e.g. Pillow); used to load PNG images (optional)
     # pylint:disable=import-error

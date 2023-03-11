@@ -26,8 +26,8 @@ try:
     has_PIL = True
 except ImportError:  # Some PIL installations live outside of the PIL package
     try:
-        import Image
-        import ImageTk
+        import Image  # noqa: F401
+        import ImageTk  # noqa: F401
         has_PIL = True
     except ImportError:  # No PIL compatible library
         has_PIL = False
