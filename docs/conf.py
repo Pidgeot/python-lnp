@@ -29,6 +29,8 @@ from core import lnp
 # pylint: disable=missing-function-docstring
 def ages(dname):
     return [os.stat(f).st_mtime for f in glob.glob(os.path.join(dname, '*'))]
+
+
 for mod in ('core', 'tkgui'):
     code_dir = os.path.join('..', mod)
     if not os.path.isdir(mod) or min(ages(mod)) <= max(ages(code_dir)):
