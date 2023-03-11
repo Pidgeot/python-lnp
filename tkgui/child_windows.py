@@ -235,14 +235,14 @@ class UpdateWindow(ChildWindow):
         if lnp.updater.get_direct_url():
             Button(
                 buttons, text='Direct Download', command=self.download
-                ).pack(side=LEFT)
+            ).pack(side=LEFT)
         if lnp.updater.get_download_url():
             Button(
                 buttons, text='Open in Browser', command=self.browser
-                ).pack(side=LEFT)
+            ).pack(side=LEFT)
         Button(
             buttons, text='Not now', command=self.close
-            ).pack(side=LEFT)
+        ).pack(side=LEFT)
         buttons.pack(side=BOTTOM)
 
     def browser(self):

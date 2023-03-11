@@ -158,7 +158,7 @@ def do_imports(from_df_dir):
     strat_funcs = {
         'copy_add': strat_copy_add,
         'text_prepend': strat_text_prepend,
-        }
+    }
     imported = []
     for strat, src, dest in path_pairs:
         if not os.path.exists(src):
