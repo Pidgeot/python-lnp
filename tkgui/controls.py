@@ -138,6 +138,7 @@ def create_tooltip(widget, text):
         text: the tooltip text.
     """
     tooltip = _ToolTip(widget, text)
+
     # pylint:disable=unused-argument
     def enter(event):
         """
@@ -281,6 +282,7 @@ def listbox_dyn_tooltip(listbox, item_get, tooltip_get):
             its tooltip (or the empty string for no tooltip).
     """
     tooltip = create_tooltip(listbox, '')
+
     def motion_handler(event):
         """
         Event handler for mouse motion over items in a listbox.
