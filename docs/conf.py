@@ -202,8 +202,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'PyLNP.tex', 'PyLNP Documentation',
-   'Michael Madsen (Pidgeot) and collaborators', 'manual'),
+    (master_doc, 'PyLNP.tex', 'PyLNP Documentation',
+     'Michael Madsen (Pidgeot) and collaborators', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -246,9 +246,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'PyLNP', 'PyLNP Documentation',
-   author, 'PyLNP', 'One line description of project.',
-   'Miscellaneous'),
+    (master_doc, 'PyLNP', 'PyLNP Documentation',
+     author, 'PyLNP', 'One line description of project.',
+     'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.

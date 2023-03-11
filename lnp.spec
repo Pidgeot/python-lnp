@@ -76,7 +76,7 @@ if sys.platform == 'darwin' and sys.hexversion >= 0x3070000:
         pass
 
 a = Analysis(
-  [script], pathex=['.'], hiddenimports=hiddenimports, hookspath=None, runtime_hooks=None)
+    [script], pathex=['.'], hiddenimports=hiddenimports, hookspath=None, runtime_hooks=None)
 a.datas += [(logo, logo, 'DATA'), (icon, icon, 'DATA')]
 if sys.platform == 'win32':
     # Importing pkg_resources fails with Pillow on Windows due to
