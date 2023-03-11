@@ -3,9 +3,9 @@
 # pylint:disable=unused-wildcard-import,wildcard-import,attribute-defined-outside-init
 """Advanced tab for the TKinter GUI."""
 
-from tkinter import *
+from tkinter import *  # noqa: F403
 from tkinter import messagebox
-from tkinter.ttk import *
+from tkinter.ttk import *  # noqa: F403
 
 from core import launcher, legends_processor
 from core.lnp import lnp

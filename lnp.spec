@@ -32,7 +32,7 @@ except ImportError:  # Some PIL installations live outside of the PIL package
     except ImportError:  # No PIL compatible library
         has_PIL = False
 
-from tkinter import *
+from tkinter import *  # noqa: F403
 
 if has_PIL or TkVersion >= 8.6:
     logo = 'LNPSMALL.png'

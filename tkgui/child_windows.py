@@ -4,9 +4,9 @@
 """Contains base class used for child windows."""
 
 import os
-from tkinter import *
+from tkinter import *  # noqa: F403
 from tkinter import messagebox
-from tkinter.ttk import *
+from tkinter.ttk import *  # noqa: F403
 
 from core import errorlog, launcher, paths, terminal, update
 from core.dfraw import DFRaw

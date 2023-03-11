@@ -4,9 +4,9 @@
 """Options tab for the TKinter GUI."""
 
 import sys
-from tkinter import *
+from tkinter import *  # noqa: F403
 from tkinter import messagebox, simpledialog
-from tkinter.ttk import *
+from tkinter.ttk import *  # noqa: F403
 
 from core import df, embarks, keybinds
 from core.lnp import lnp

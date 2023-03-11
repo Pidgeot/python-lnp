@@ -8,9 +8,9 @@ import queue as Queue
 import sys
 import tkinter.font as tkFont
 from threading import Semaphore
-from tkinter import *
+from tkinter import *  # noqa: F403
 from tkinter import filedialog, messagebox
-from tkinter.ttk import *
+from tkinter.ttk import *  # noqa: F403
 
 from core import (baselines, df, download, importer, launcher, log, mods,
                   paths, terminal, update)

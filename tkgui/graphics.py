@@ -3,9 +3,9 @@
 # pylint:disable=unused-wildcard-import,wildcard-import,attribute-defined-outside-init
 """Graphics tab for the TKinter GUI."""
 
-from tkinter import *
+from tkinter import *  # noqa: F403
 from tkinter import messagebox
-from tkinter.ttk import *
+from tkinter.ttk import *  # noqa: F403
 
 from core import colors, graphics, paths
 from core.lnp import lnp

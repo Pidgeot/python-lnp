@@ -6,9 +6,9 @@
 import sys
 import tkinter.font as tkFont
 import types
-from tkinter import *
+from tkinter import *  # noqa: F403
 from tkinter import simpledialog
-from tkinter.ttk import *
+from tkinter.ttk import *  # noqa: F403
 
 from core.lnp import lnp
 
