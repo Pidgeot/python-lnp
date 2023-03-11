@@ -83,14 +83,14 @@ def create_archive():
     """Creates a legends archive, or zips the xml if files are missing."""
     pattern = paths.get('df', '-'.join(get_region_info()) + '-')
     worldgen = paths.get('df', get_region_info()[0] + '-world_gen_param.txt')
-    l = [pattern + 'legends.xml', pattern + 'world_history.txt', worldgen,
-         choose_region_map(), pattern + 'world_sites_and_pops.txt']
+    filepaths = [pattern + 'legends.xml', pattern + 'world_history.txt', worldgen,
+                 choose_region_map(), pattern + 'world_sites_and_pops.txt']
     if os.path.isfile(pattern + 'legends_plus.xml'):
-        l.append(pattern + 'legends_plus.xml')
-    if all(os.path.isfile(f) for f in l):
+        filepaths.append(pattern + 'legends_plus.xml')
+    if all(os.path.isfile(f) for f in filepaths):
         with zipfile.ZipFile(pattern + 'legends_archive.zip',
                              'w', zipfile.ZIP_DEFLATED, allowZip64=True) as zipped:
-            for f in l:
+            for f in filepaths:
                 zipped.write(f, os.path.basename(f))
                 os.remove(f)
     elif os.path.isfile(pattern + 'legends.xml'):

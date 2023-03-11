@@ -40,7 +40,7 @@ def _sdl_get_binds(filename, compressed=True):
     with open(filename, encoding='cp437') as f:
         lines = f.readlines()
     od, lastkey = collections.OrderedDict(), None
-    for line in (l.strip() for l in lines if l.strip()):
+    for line in (line.strip() for line in lines if line.strip()):
         if line.startswith('[BIND:'):
             od[line], lastkey = [], line
         elif lastkey is not None:

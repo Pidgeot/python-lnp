@@ -81,11 +81,11 @@ class Log(object):
         if kwargs.get('stack', False):
             ex = sys.exc_info()
             if ex[2]:
-                for l in traceback.format_exception(*ex):
-                    self.__write(l)
+                for line in traceback.format_exception(*ex):
+                    self.__write(line)
             else:
-                for l in traceback.format_stack():
-                    self.__write(l)
+                for line in traceback.format_stack():
+                    self.__write(line)
 
     @staticmethod
     def __get_level_string(level):

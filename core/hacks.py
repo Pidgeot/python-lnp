@@ -29,7 +29,7 @@ def read_hacks():
         try:
             with open(paths.get('dfhack_config', init_file + '_PyLNP.init'),
                       encoding='latin1') as f:
-                hacklines.extend(l.strip() for l in f.readlines())
+                hacklines.extend(line.strip() for line in f.readlines())
         except IOError:
             log.debug(init_file + '_PyLNP.init not found.')
     return {name: hack for name, hack in get_hacks().items()
