@@ -102,8 +102,8 @@ class ModsTab(Tab):
         lst = self.installed
         for i in range(1, len(lst)):
             j = i
-            while j in selection and i-1 not in selection and j < len(lst):
-                lst[j-1], lst[j] = lst[j], lst[j-1]
+            while j in selection and i - 1 not in selection and j < len(lst):
+                lst[j - 1], lst[j] = lst[j], lst[j - 1]
                 j += 1
         self.update_lists()
         first_missed = False
@@ -123,8 +123,8 @@ class ModsTab(Tab):
         lst = self.installed
         for i in range(len(lst) - 1, 0, -1):
             j = i
-            while i not in selection and j-1 in selection and j > 0:
-                lst[j-1], lst[j] = lst[j], lst[j-1]
+            while i not in selection and j - 1 in selection and j > 0:
+                lst[j - 1], lst[j] = lst[j], lst[j - 1]
                 j -= 1
         self.update_lists()
         first_missed = False
