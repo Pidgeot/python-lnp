@@ -191,5 +191,5 @@ class AdvancedTab(Tab):
             if i > 1:
                 string += 's'
             messagebox.showinfo(string + ' processed',
-                                'Legends exported from ' + string +
-                                ' were found and processed')
+                                'Legends exported from ' + string
+                                + ' were found and processed')

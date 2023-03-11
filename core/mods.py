@@ -48,8 +48,8 @@ def will_premerge_gfx():
 def read_mods():
     """Returns a list of mod packs"""
     return [os.path.basename(o) for o in glob.glob(paths.get('mods', '*'))
-            if os.path.isdir(o) and
-            manifest.is_compatible('mods', os.path.basename(o))]
+            if os.path.isdir(o)
+            and manifest.is_compatible('mods', os.path.basename(o))]
 
 
 def get_title(mod):
@@ -370,8 +370,8 @@ def three_way_merge(gen_text, van_gen_ops, mod_text, van_mod_ops):
         if gen_text[cur_v:low_i2] != mod_text[cur_v:low_i2]:
             status = 2
             log.d('Overwrite merge at line {}'.format(cur_v))
-            log.v('- ' + '- '.join(gen_text[cur_v:low_i2]) +
-                  '+ ' + '+ '.join(mod_text[cur_v:low_i2]))
+            log.v('- ' + '- '.join(gen_text[cur_v:low_i2])
+                  + '+ ' + '+ '.join(mod_text[cur_v:low_i2]))
         cur_v = low_i2
     while van_mod_ops:
         log.d('popping mod ops')
@@ -399,8 +399,8 @@ def clear_temp():
                     paths.get('baselines', 'temp', 'data', 'speech'))
     with open(paths.get('baselines', 'temp', 'raw', 'installed_raws.txt'),
               'w', encoding="utf-8") as f:
-        f.write('# List of raws merged by PyLNP:\nbaselines/' +
-                os.path.basename(baselines.find_vanilla()) + '\n')
+        f.write('# List of raws merged by PyLNP:\nbaselines/'
+                + os.path.basename(baselines.find_vanilla()) + '\n')
 
 
 def update_raw_dir(path, gfx=('', '')):

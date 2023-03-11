@@ -55,8 +55,8 @@ class GridLayouter(object):
             pady = 0 if row == 0 else (self.pad[1], 0)
 
             if ((i == max_index and col != self.cols - 1) or (
-                    i < max_index and
-                    col + c[1] + self.controls[i + 1][1] > self.cols)):
+                    i < max_index
+                    and col + c[1] + self.controls[i + 1][1] > self.cols)):
                 # Pad colspan if last control, or next control won't fit
                 colspan = self.cols - col
                 for n in range(col + 1, self.cols):

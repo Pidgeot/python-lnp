@@ -22,8 +22,8 @@ def get_df_executable():
     """Returns the path of the executable needed to launch Dwarf Fortress."""
     spawn_terminal = False
     if sys.platform == 'win32':
-        if ('legacy' in lnp.df_info.variations and
-                lnp.df_info.version <= '0.31.14'):
+        if ('legacy' in lnp.df_info.variations
+                and lnp.df_info.version <= '0.31.14'):
             df_filename = 'dwarfort.exe'
         else:
             df_filename = 'Dwarf Fortress.exe'
@@ -31,8 +31,8 @@ def get_df_executable():
         df_filename = 'Dwarf Fortress.app'
     else:
         # Linux/OSX: Run DFHack if available and enabled
-        if (os.path.isfile(paths.get('df', 'dfhack')) and
-                hacks.is_dfhack_enabled()):
+        if (os.path.isfile(paths.get('df', 'dfhack'))
+                and hacks.is_dfhack_enabled()):
             df_filename = 'dfhack'
             spawn_terminal = True
         else:
@@ -76,8 +76,8 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
             Used only for DFHack.
     """
     path = os.path.abspath(path)
-    check_nonchild = ((spawn_terminal and sys.platform.startswith('linux')) or
-                      (sys.platform == 'darwin' and (
+    check_nonchild = ((spawn_terminal and sys.platform.startswith('linux'))
+                      or (sys.platform == 'darwin' and (
                           path.endswith('.app') or spawn_terminal)))
 
     is_running = program_is_running(path, check_nonchild)
@@ -101,11 +101,11 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
         if lnp.bundle:
             # pylint: disable=protected-access
             environ = copy.deepcopy(os.environ)
-            if ('TCL_LIBRARY' in environ and
-                    sys._MEIPASS in environ['TCL_LIBRARY']):
+            if ('TCL_LIBRARY' in environ
+                    and sys._MEIPASS in environ['TCL_LIBRARY']):
                 del environ['TCL_LIBRARY']
-            if ('TK_LIBRARY' in environ and
-                    sys._MEIPASS in environ['TK_LIBRARY']):
+            if ('TK_LIBRARY' in environ
+                    and sys._MEIPASS in environ['TK_LIBRARY']):
                 del environ['TK_LIBRARY']
             if 'LD_LIBRARY_PATH' in environ:
                 del environ['LD_LIBRARY_PATH']

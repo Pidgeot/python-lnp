@@ -104,8 +104,8 @@ def parse_raw(parent, text):
             for g in parent_tags:
                 if fnmatch(name, g):
                     is_parent = True
-                    while (parent_stack[-1].name in final_level_tags or
-                           any(fnmatch(p.name, g) for p in parent_stack)):
+                    while (parent_stack[-1].name in final_level_tags
+                           or any(fnmatch(p.name, g) for p in parent_stack)):
                         parent_stack.pop()
             node = DFRawTag(parent_stack[-1], name, value)
             if is_parent:

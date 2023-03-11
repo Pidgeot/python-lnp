@@ -16,7 +16,11 @@ if sys.platform == 'win32':
         s = self.old_toprettyxml(indent, newl, encoding)
         # Make sure we only modify our own manifest
         if 'name="lnp"' in s:
-            d = indent + '<asmv3:application xmlns:asmv3="urn:schemas-microsoft-com:asm.v3"><windowsSettings xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings"><dpiAware>false</dpiAware></windowsSettings></asmv3:application>' + newl
+            d = (indent
+                 + '<asmv3:application xmlns:asmv3="urn:schemas-microsoft-com:asm.v3"><windowsSetti'
+                   'ngs xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings"><dpiAware>fal'
+                   'se</dpiAware></windowsSettings></asmv3:application>'
+                 + newl)
             s = s.replace('</assembly>', d + '</assembly>')
         return s
     Manifest.toprettyxml = new_toprettyxml
@@ -56,10 +60,14 @@ needs_tcl_copy = False
 if sys.platform == 'darwin' and sys.hexversion >= 0x3070000:
     needs_tcl_copy = True
     try:
-        # HACK: PyInstaller is not handling the bundled Tcl and Tk in Python 3.7 from python.org properly.
-        # This patch intercepts the value that causes PyInstaller to attempt to use the wrong Tcl/Tk version
-        # and triggers a fallback to treat Tcl/Tk as a Unix-style build.
-        # See https://github.com/pyinstaller/pyinstaller/issues/3753 for the relevant bug report for PyInstaller
+        # HACK: PyInstaller is not handling the bundled Tcl and Tk in Python 3.7 from python.org
+        # properly.
+        #
+        # This patch intercepts the value that causes PyInstaller to attempt to use the wrong Tcl/Tk
+        # version and triggers a fallback to treat Tcl/Tk as a Unix-style build.
+        #
+        # See https://github.com/pyinstaller/pyinstaller/issues/3753 for the relevant bug report for
+        # PyInstaller
         from PyInstaller.depend import bindepend
         old_selectImports = bindepend.selectImports
 
@@ -68,7 +76,8 @@ if sys.platform == 'darwin' and sys.hexversion >= 0x3070000:
             if '_tkinter' in pth:
                 import inspect
                 caller = inspect.stack()[1]
-                if 'hook-_tkinter.py' in caller.filename and 'Library/Frameworks' in rv[0][1] and 'Python' in rv[0][1]:
+                if ('hook-_tkinter.py' in caller.filename and 'Library/Frameworks' in rv[0][1]
+                        and 'Python' in rv[0][1]):
                     return [('libtcl8.6.dylib', ''), ('libtk8.6.dylib', '')]
             return rv
         bindepend.selectImports = patched_selectImports

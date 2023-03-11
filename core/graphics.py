@@ -51,9 +51,9 @@ def current_pack():
             return p
     packs = read_graphics()
     for p in packs:
-        if (lnp.settings.FONT == p[1] and
-                (not lnp.settings.version_has_option('GRAPHICS_FONT') or
-                    lnp.settings.GRAPHICS_FONT == p[2])):
+        if (lnp.settings.FONT == p[1]
+                and (not lnp.settings.version_has_option('GRAPHICS_FONT')
+                     or lnp.settings.GRAPHICS_FONT == p[2])):
             log.i('Installed graphics is {} by checking tilesets'.format(p[0]))
             return p[0]
     result = str(lnp.settings.FONT)
@@ -358,8 +358,8 @@ def can_rebuild(log_file, strict=True):
     graphic_ok = any(logged_graphics(log_file) in n for n in names)
     if graphic_ok and mods.can_rebuild(log_file, strict=strict):
         return True
-    log.i('Components unavailable to rebuild raws in ' +
-          os.path.dirname(log_file))
+    log.i('Components unavailable to rebuild raws in '
+          + os.path.dirname(log_file))
     return False
 
 
@@ -409,8 +409,8 @@ def install_tilesets(font, graphicsfont):
     if font is not None and os.path.isfile(paths.get('data', 'art', font)):
         df.set_option('FONT', font)
         df.set_option('FULLFONT', font)
-    if (lnp.settings.version_has_option('GRAPHICS_FONT') and
-            graphicsfont is not None and os.path.isfile(
+    if (lnp.settings.version_has_option('GRAPHICS_FONT')
+            and graphicsfont is not None and os.path.isfile(
                 paths.get('data', 'art', graphicsfont))):
         df.set_option('GRAPHICS_FONT', graphicsfont)
         df.set_option('GRAPHICS_FULLFONT', graphicsfont)

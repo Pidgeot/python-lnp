@@ -318,9 +318,9 @@ class DFInstall(object):
         Currently supports DFHack, TWBT, and legacy builds.
         """
         result = []
-        if (os.path.exists(os.path.join(self.df_dir, 'dfhack')) or
-                os.path.exists(os.path.join(self.df_dir, 'SDLreal.dll')) or
-                os.path.exists(os.path.join(self.df_dir, 'SDLhack.dll'))):
+        if (os.path.exists(os.path.join(self.df_dir, 'dfhack'))
+                or os.path.exists(os.path.join(self.df_dir, 'SDLreal.dll'))
+                or os.path.exists(os.path.join(self.df_dir, 'SDLhack.dll'))):
             result.append('dfhack')
             if glob(os.path.join(
                     self.df_dir, 'hack', 'plugins', 'twbt.plug.*')):

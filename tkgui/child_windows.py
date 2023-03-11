@@ -223,8 +223,8 @@ class UpdateWindow(ChildWindow):
     def create_controls(self, container):
         f = Frame(container)
         Label(
-            f, text='An update is available (version ' +
-            str(lnp.new_version) + '). Download now?').grid(
+            f, text='An update is available (version '
+            + str(lnp.new_version) + '). Download now?').grid(
                 column=0, row=0)
         Label(f, text='You can control the frequency of update checks from the '
               'menu Options > Check for Updates.').grid(column=0, row=1)

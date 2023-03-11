@@ -75,8 +75,8 @@ def update():
                 control.insert(0, value)
             else:
                 control["text"] = (
-                    control["text"].split(':')[0] + ': ' +
-                    str(value))
+                    control["text"].split(':')[0] + ': '
+                    + str(value))
     __ui.change_entry = old_change_entry
 
 # vim:expandtab

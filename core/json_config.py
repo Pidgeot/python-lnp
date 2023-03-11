@@ -34,8 +34,8 @@ class JSONConfiguration(object):
             with open(filename, encoding="utf-8") as file:
                 self.data = json.load(file)
         except Exception:
-            log.e('Note: Failed to read JSON from ' + filename +
-                  ', ignoring data - details follow', stack=True)
+            log.e('Note: Failed to read JSON from ' + filename
+                  + ', ignoring data - details follow', stack=True)
 
     @staticmethod
     def from_text(text):

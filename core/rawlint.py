@@ -101,8 +101,8 @@ def check_folder(path):
         log.e('Could not find any files in ' + path)
     for f in files:
         f_parts = f.split(os.sep)
-        if (f.endswith('.txt') and 'notes' not in f_parts and
-                'examples and notes' not in f_parts and 'text' not in f_parts):
+        if (f.endswith('.txt') and 'notes' not in f_parts
+                and 'examples and notes' not in f_parts and 'text' not in f_parts):
             log.push_prefix(f)
             has_passed = check_file(f)
             log.pop_prefix()
