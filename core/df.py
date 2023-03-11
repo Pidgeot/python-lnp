@@ -228,7 +228,7 @@ class DFInstall(object):
         decompressed = decompressed[4:]
         for _ in range(record_count):
             record_length, record_length_2 = \
-                    struct.unpack(str('<LH'), decompressed[:6])
+                struct.unpack(str('<LH'), decompressed[:6])
             decompressed = decompressed[6:]
             if record_length != record_length_2:
                 raise ValueError('Record lengths do not match')
