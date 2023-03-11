@@ -248,7 +248,6 @@ class OptionsTab(Tab):
             df.set_option('invMonsterCap', str(v))
             binding.update()
 
-
     def read_keybinds(self):
         """Reads list of keybinding files."""
         files = keybinds.read_keybinds()
