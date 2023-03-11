@@ -47,6 +47,7 @@ def get_terminal_command(cmd, force_custom=False):
         return term + cmd
     raise Exception('No terminal launcher for platform: ' + sys.platform)
 
+
 def get_configured_terminal():
     """Retrieves the configured terminal command."""
     s = lnp.userconfig.get_string('terminal_type')
@@ -56,13 +57,16 @@ def get_configured_terminal():
             return t
     return CustomTerminal
 
+
 def terminal_configured():
     """Returns True if a terminal has been set up."""
     return lnp.userconfig.get('terminal_type') is not None
 
+
 def get_custom_terminal_cmd():
     """Returns the command used by the custom terminal."""
     return lnp.userconfig.get_string('terminal')
+
 
 def get_valid_terminals():
     """Gets the terminals that are available on this system."""
@@ -75,18 +79,22 @@ def get_valid_terminals():
             result.append(t)
     return result
 
+
 def _get_terminals():
     return LinuxTerminal.__subclasses__()
+
 
 def configure_terminal(termname):
     """Configures the terminal class used to launch a terminal on Linux."""
     lnp.userconfig['terminal_type'] = termname
     lnp.userconfig.save_data()
 
+
 def configure_custom_terminal(new_path):
     """Configures the custom command used to launch a terminal on Linux."""
     lnp.userconfig['terminal'] = new_path
     lnp.userconfig.save_data()
+
 
 class LinuxTerminal(object):
     """
@@ -127,6 +135,7 @@ class KDETerminal(LinuxTerminal):
             '--key', 'TerminalApplication', '--default', 'konsole'],
             universal_newlines=True).replace('\n', '')
         return ['nohup', s, '-e']
+
 
 class GNOMETerminal(LinuxTerminal):
     """Handles terminals on GNOME and Cinnamon (e.g. gnome-terminal)."""
@@ -183,6 +192,7 @@ class GNOMETerminal(LinuxTerminal):
         except Exception as exc:
             raise Exception("Unable to determine terminal command.") from exc
 
+
 class XfceTerminal(LinuxTerminal):
     """Handles terminals in the Xfce desktop environment."""
     name = "Xfce"
@@ -200,6 +210,7 @@ class XfceTerminal(LinuxTerminal):
     @staticmethod
     def get_command_line():
         return ['nohup', 'exo-open', '--launch', 'TerminalEmulator']
+
 
 class LXDETerminal(LinuxTerminal):
     """Handles terminals in LXDE."""
@@ -220,6 +231,7 @@ class LXDETerminal(LinuxTerminal):
     @staticmethod
     def get_command_line():
         return ['nohup', 'lxterminal', '-e']
+
 
 class MateTerminal(LinuxTerminal):
     """Handles the Mate desktop environment using mate-terminal."""
@@ -246,6 +258,7 @@ class MateTerminal(LinuxTerminal):
     def get_command_line():
         return ['nohup', 'mate-terminal', '-x']
 
+
 class i3Terminal(LinuxTerminal):
     """Handles terminals in the i3 desktop environment."""
     name = "i3"
@@ -257,6 +270,7 @@ class i3Terminal(LinuxTerminal):
     @staticmethod
     def get_command_line():
         return ['nohup', 'i3-sensible-terminal', '-e']
+
 
 # Generic terminals (rxvt, xterm, etc.)
 class rxvtTerminal(LinuxTerminal):
@@ -283,6 +297,7 @@ class rxvtTerminal(LinuxTerminal):
     def get_command_line():
         return ['nohup', rxvtTerminal.exe, '-e']
 
+
 class xtermTerminal(LinuxTerminal):
     """Handles the xterm terminal."""
     name = "xterm"
@@ -300,6 +315,7 @@ class xtermTerminal(LinuxTerminal):
     @staticmethod
     def get_command_line():
         return ['nohup', 'xterm', '-e']
+
 
 class CustomTerminal(LinuxTerminal):
     """Allows custom terminal commands to handle missing cases."""
@@ -340,6 +356,7 @@ class CustomTerminal(LinuxTerminal):
 #         Wait 3 seconds for parent to terminate.
 #         Write 4 to file. Terminate self.
 
+
 def _terminal_test_wait(fn, value):
     """
     Waits for file named <fn> to contain <value>.
@@ -359,6 +376,7 @@ def _terminal_test_wait(fn, value):
         timer += interval
     return False
 
+
 def _terminal_test_report(fn, value):
     """Writes a status value <value> to file named <fn>."""
     while True:
@@ -368,6 +386,7 @@ def _terminal_test_report(fn, value):
             return
         except IOError:
             pass
+
 
 def terminal_test_run(status_callback=None):
     """
@@ -424,6 +443,7 @@ def terminal_test_run(status_callback=None):
     log.d("Test complete: %s" % endmsg.get(value, 'Unknown error.'))
     return (value == '4', endmsg.get(value, 'Unknown error.'))
 
+
 def terminal_test_parent(t):
     """Tests the parent side of terminal launching."""
     print("Terminal successfully started! Test will begin in 3 seconds.")
@@ -447,6 +467,7 @@ def terminal_test_parent(t):
     print("Terminating parent process...")
     _terminal_test_report(t, 3)
     return 0
+
 
 def terminal_test_child(t):
     """Tests the child side of terminal launching."""

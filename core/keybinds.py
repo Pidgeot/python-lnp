@@ -17,6 +17,7 @@ def _keybind_fname(filename):
         filename = filename + '.txt'
     return paths.get('keybinds', filename)
 
+
 def read_keybinds():
     """Returns a list of keybinding files."""
     files = []
@@ -26,6 +27,7 @@ def read_keybinds():
                     ('legacy' in lnp.df_info.variations):
                 files.append(fname)
     return tuple(sorted(os.path.basename(o) for o in files))
+
 
 def _sdl_get_binds(filename, compressed=True):
     """Return serialised keybindings for the given file.
@@ -53,6 +55,7 @@ def _sdl_get_binds(filename, compressed=True):
             if van.get(k) and set(van.get(k)) != set(v))
     return None
 
+
 def _sdl_write_binds(filename, binds_od, expanded=False):
     """Write keybindings to the given file, optionally expanding them."""
     if expanded:
@@ -72,6 +75,7 @@ def _sdl_write_binds(filename, binds_od, expanded=False):
         f.write(text)
     return None
 
+
 def _get_vanilla_binds():
     """Return the vanilla keybindings for use in compression or expansion."""
     try:
@@ -81,6 +85,7 @@ def _get_vanilla_binds():
     except TypeError:
         log.w("Can't load or change keybinds with missing baseline!")
         return None
+
 
 def load_keybinds(filename):
     """
@@ -98,6 +103,7 @@ def load_keybinds(filename):
     else:
         _sdl_write_binds(target, _sdl_get_binds(filename), expanded=True)
 
+
 def keybind_exists(filename):
     """
     Returns whether a keybindings file already exists.
@@ -106,6 +112,7 @@ def keybind_exists(filename):
         filename: the filename to check.
     """
     return os.access(_keybind_fname(filename), os.F_OK)
+
 
 def save_keybinds(filename):
     """
@@ -122,6 +129,7 @@ def save_keybinds(filename):
     else:
         _sdl_write_binds(filename, _sdl_get_binds(installed))
 
+
 def delete_keybinds(filename):
     """
     Deletes a keybindings file.
@@ -131,6 +139,7 @@ def delete_keybinds(filename):
     """
     log.i('Deleting ' + filename + 'keybinds')
     os.remove(_keybind_fname(filename))
+
 
 def get_installed_file():
     """Returns the name of the currently installed keybindings."""

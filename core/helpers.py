@@ -26,6 +26,7 @@ def get_text_files(directory):
             result.append(f)
     return result
 
+
 def detect_installed_file(current_file, test_files):
     """Returns the file in <test_files> which is contained in
     <current_file>, or "Unknown"."""
@@ -40,6 +41,7 @@ def detect_installed_file(current_file, test_files):
     except IOError:
         pass
     return "Unknown"
+
 
 def detect_installed_files(current_file, test_files):
     """Returns a list of files in <test_files> that are contained in
@@ -63,6 +65,7 @@ def detect_installed_files(current_file, test_files):
         log.e('Cannot check installs in {}; read failed'.format(current_file))
     return installed
 
+
 def get_resource(filename):
     """
     If running in a bundle, this will point to the place internal
@@ -85,9 +88,11 @@ def get_resource(filename):
         return os.path.join(sys._MEIPASS, filename)
     return os.path.abspath(filename)
 
+
 def os_is_64bit():
     """Returns true if running on a 64-bit OS."""
     return platform.machine().endswith('64')
+
 
 def key_from_underscore_prefixed_string(s):
     """Converts a string to a key such that strings prefixed with an underscore

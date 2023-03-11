@@ -9,6 +9,7 @@ __controls = {}
 __lnp = None
 __ui = None
 
+
 def init(lnp, ui):
     """Connect to LNP and TkGui instances."""
     # pylint:disable=global-statement
@@ -16,6 +17,7 @@ def init(lnp, ui):
     __lnp = lnp
     __ui = ui
     __controls.clear()
+
 
 def bind(control, option, update_func=None):
     """Binds a control to an option."""
@@ -29,6 +31,7 @@ def bind(control, option, update_func=None):
         value = control
     __controls[option].append(value)
 
+
 def version_has_option(field):
     """Returns True if the current DF version has the provided field."""
     o = field
@@ -36,12 +39,14 @@ def version_has_option(field):
         o = field[0]
     return __lnp.settings.version_has_option(o)
 
+
 def get(field):
     """
     Returns the value of the control known as <field>.
     If multiple controls are bound, the earliest binding is used.
     """
     return __controls[field][0].get()
+
 
 def update():
     """Updates configuration displays (buttons, etc.)."""

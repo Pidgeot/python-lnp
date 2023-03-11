@@ -77,6 +77,7 @@ def get_image(filename):
         log.w('Unable to load image: ' + filename)
         return None
 
+
 def validate_number(value_if_allowed):
     """
     Validation method used by Tkinter. Accepts empty and float-coercible
@@ -96,6 +97,7 @@ def validate_number(value_if_allowed):
     except ValueError:
         return False
 
+
 def fixed_map(option):
     """Sets text colour for Tkinter 8.6.9"""
     # Fix for setting text colour for Tkinter 8.6.9
@@ -108,6 +110,7 @@ def fixed_map(option):
     # should be future-safe.
     return [elm for elm in Style().map('Treeview', query_opt=option) if
             elm[:2] != ('!disabled', '!selected')]
+
 
 class TkGui(object):
     """Main GUI window."""

@@ -21,6 +21,7 @@ def open_dfhack_readme():
     else:
         launcher.open_url('https://dfhack.readthedocs.org')
 
+
 def read_hacks():
     """Reads which hacks are enabled."""
     hacklines = []
@@ -34,6 +35,7 @@ def read_hacks():
     return {name: hack for name, hack in get_hacks().items()
             if hack['command'] in hacklines}
 
+
 def is_dfhack_enabled():
     """Returns YES if DFHack should be used."""
     if sys.platform == 'win32':
@@ -45,6 +47,7 @@ def is_dfhack_enabled():
             return False
         return not filecmp.cmp(sdl, sdlreal, 0)
     return lnp.userconfig.get_value('use_dfhack', True)
+
 
 def toggle_dfhack():
     """Toggles the use of DFHack."""
@@ -65,10 +68,12 @@ def toggle_dfhack():
             'use_dfhack', True)
         lnp.save_config()
 
+
 def get_hacks():
     """Returns dict of available hacks."""
     return collections.OrderedDict(sorted(
         lnp.config.get_dict('dfhack').items(), key=lambda t: t[0]))
+
 
 def get_hack(title):
     """
@@ -82,6 +87,7 @@ def get_hack(title):
     except KeyError:
         log.d('No hack configured with name ' + title)
         return None
+
 
 def toggle_hack(name):
     """

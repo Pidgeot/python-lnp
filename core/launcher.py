@@ -17,6 +17,7 @@ def toggle_autoclose():
     lnp.userconfig['autoClose'] = not lnp.userconfig.get_bool('autoClose')
     lnp.userconfig.save_data()
 
+
 def get_df_executable():
     """Returns the path of the executable needed to launch Dwarf Fortress."""
     spawn_terminal = False
@@ -40,6 +41,7 @@ def get_df_executable():
         df_filename = lnp.args.df_executable
     return df_filename, spawn_terminal
 
+
 def run_df(force=False):
     """Launches Dwarf Fortress."""
     validation_result = lnp.settings.validate_config()
@@ -62,6 +64,7 @@ def run_df(force=False):
     if lnp.userconfig.get_bool('autoClose'):
         sys.exit()
     return result
+
 
 def run_program(path, force=False, is_df=False, spawn_terminal=False):
     """
@@ -116,6 +119,7 @@ def run_program(path, force=False, is_df=False, spawn_terminal=False):
         sys.excepthook(*sys.exc_info())
         return False
 
+
 def program_is_running(path, nonchild=False):
     """
     Returns True if a program is currently running.
@@ -140,24 +144,29 @@ def program_is_running(path, nonchild=False):
     lnp.running[path].poll()
     return lnp.running[path].returncode is None
 
+
 def open_folder_idx(i):
     """Opens the folder specified by index i, as listed in PyLNP.json."""
     open_file(os.path.join(
         paths.get('root'), lnp.config['folders'][i][1].replace(
             '<df>', paths.get('df'))))
 
+
 def open_savegames():
     """Opens the save game folder."""
     open_file(paths.get('save'))
+
 
 def open_link_idx(i):
     """Opens the link specified by index i, as listed in PyLNP.json."""
     open_url(lnp.config['links'][i][1])
 
+
 def open_url(url):
     """Launches a web browser to the Dwarf Fortress webpage."""
     import webbrowser
     webbrowser.open(url)
+
 
 def open_file(path):
     """

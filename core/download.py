@@ -14,6 +14,7 @@ from .lnp import VERSION
 
 __download_queues = {}
 
+
 def download_str(url, **kwargs):
     """Instantly download a file from <url> and return its contents. Failed
     downloads return None. NOTE: This is a blocking method. Use a download queue
@@ -38,19 +39,23 @@ def download_str(url, **kwargs):
         log.e('Error downloading ' + url)
     return None
 
+
 def download(queue, url, destination, end_callback=None, **kwargs):
     """Adds a download to the specified queue."""
     return get_queue(queue).add(url, destination, end_callback, **kwargs)
+
 
 def queue_empty(queue):
     """Returns True if the specified queue does not exist, or is empty;
     otherwise False."""
     return queue not in __download_queues or __download_queues[queue].empty()
 
+
 def get_queue(queue):
     """Returns the specified queue object, creating a new queue if necessary."""
     __download_queues.setdefault(queue, DownloadQueue(queue))
     return __download_queues[queue]
+
 
 class DownloadQueue(object):
     """Queue used for downloading files."""

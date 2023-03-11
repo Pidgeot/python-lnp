@@ -40,6 +40,7 @@ def open_utils():
     """Opens the utilities folder."""
     open_file(paths.get('utilities'))
 
+
 def read_metadata():
     """Read metadata from the utilities directory."""
     metadata = {}
@@ -47,6 +48,7 @@ def read_metadata():
         fname, title, tooltip = (e.split(':', 2) + ['', ''])[:3]
         metadata[fname] = {'title': title, 'tooltip': tooltip}
     return metadata
+
 
 def manifest_for(path):
     """Returns the JsonConfiguration from manifest for the given utility,
@@ -57,6 +59,7 @@ def manifest_for(path):
                 paths.get('utilities'), path, 'manifest.json')):
             return manifest.get_cfg('utilities', path)
     return None
+
 
 def get_title(path):
     """
@@ -79,12 +82,14 @@ def get_title(path):
         result = os.path.splitext(result)[0]
     return result
 
+
 def get_tooltip(path):
     """Returns the tooltip for the given utility, or an empty string."""
     config = manifest_for(path)
     if config is not None:
         return config.get_string('tooltip')
     return read_metadata().get(os.path.basename(path), {}).get('tooltip', '')
+
 
 def read_utility_lists(path):
     """
@@ -103,6 +108,7 @@ def read_utility_lists(path):
         pass
     return result
 
+
 def scan_manifest_dir(root):
     """Yields the configured utility (or utilities) from root and subdirs."""
     m_path = os.path.relpath(root, paths.get('utilities'))
@@ -113,10 +119,12 @@ def scan_manifest_dir(root):
         log.w('Utility not found:  {}'.format(os.path.join(m_path, util)))
     return None
 
+
 def any_match(filename, include, exclude):
     """Return True if at least one pattern matches the filename, or False."""
     return any(fnmatch(filename, p) for p in include) and \
         not any(fnmatch(filename, p) for p in exclude)
+
 
 def scan_normal_dir(root, dirnames, filenames):
     """Yields candidate utilities in the given root directory.
@@ -146,6 +154,7 @@ def scan_normal_dir(root, dirnames, filenames):
             yield os.path.relpath(os.path.join(root, filename),
                                   paths.get('utilities'))
 
+
 def read_utilities():
     """Returns a sorted list of utility programs."""
     utilities = []
@@ -158,6 +167,7 @@ def read_utilities():
         else:
             utilities.extend(scan_normal_dir(root, dirs, files))
     return sorted(utilities, key=get_title)
+
 
 def toggle_autorun(item):
     """
@@ -172,6 +182,7 @@ def toggle_autorun(item):
         lnp.autorun.append(item)
     save_autorun()
 
+
 def load_autorun():
     """Loads autorun settings."""
     lnp.autorun = []
@@ -183,11 +194,13 @@ def load_autorun():
     except IOError:
         pass
 
+
 def save_autorun():
     """Saves autorun settings."""
     filepath = paths.get('utilities', 'autorun.txt')
     with open(filepath, 'w', encoding="utf-8") as autofile:
         autofile.write("\n".join(lnp.autorun))
+
 
 def open_readme(path):
     """

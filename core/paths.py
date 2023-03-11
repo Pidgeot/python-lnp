@@ -8,6 +8,7 @@ from . import log
 
 __paths = {}
 
+
 def _identify_folder_name(base, name):
     """
     Allows folder names to be lowercase on case-sensitive systems.

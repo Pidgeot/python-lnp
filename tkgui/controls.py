@@ -24,11 +24,13 @@ if sys.platform != 'darwin':  # OS X looks better without patch
 # Make Enter on button with focus activate it
 TtkButton = Button
 
+
 class Button(TtkButton):  # pylint:disable=function-redefined,missing-class-docstring
     def __init__(self, master=None, **kw):
         TtkButton.__init__(self, master, **kw)
         if 'command' in kw:
             self.bind('<Return>', lambda e: kw['command']())
+
 
 # http://effbot.org/zone/tkinter-autoscrollbar.htm
 class _AutoScrollbar(Scrollbar):
@@ -43,6 +45,7 @@ class _AutoScrollbar(Scrollbar):
             else:
                 self.grid()
         Scrollbar.set(self, first, last)
+
 
 # http://www.voidspace.org.uk/python/weblog/arch_d7_2006_07_01.shtml#e387
 class _ToolTip(object):
@@ -100,9 +103,10 @@ class _ToolTip(object):
             self.hidetip()
             self.showtip()
 
-_TOOLTIP_DELAY = 500
 
+_TOOLTIP_DELAY = 500
 __ui = None
+
 
 # pylint:disable=too-few-public-methods
 class _FakeControl(object):
@@ -114,13 +118,16 @@ class _FakeControl(object):
         return
     pack = grid
 
+
 fake_control = _FakeControl()
+
 
 def init(ui):
     """Connect to a TkGui instance."""
     # pylint:disable=global-statement
     global __ui
     __ui = ui
+
 
 def create_tooltip(widget, text):
     """
@@ -157,6 +164,7 @@ def create_tooltip(widget, text):
     widget.bind('<Leave>', leave)
     return tooltip
 
+
 def create_control_group(parent, text, dual_column=False):
     """
     Creates and returns a Frame or Labelframe to group controls.
@@ -175,6 +183,7 @@ def create_control_group(parent, text, dual_column=False):
         f.columnconfigure((0, 1), weight=1, uniform=1)
     return f
 
+
 def create_option_button(
         parent, text, tooltip, option, update_func=None):
     """
@@ -191,6 +200,7 @@ def create_option_button(
     return create_trigger_option_button(
         parent, text, tooltip, lambda: __ui.cycle_option(option), option,
         update_func)
+
 
 def create_trigger_button(parent, text, tooltip, command):
     """
@@ -209,6 +219,7 @@ def create_trigger_button(parent, text, tooltip, command):
     b = Button(parent, text=text, command=command)
     create_tooltip(b, tooltip)
     return b
+
 
 # pylint: disable=too-many-arguments
 def create_trigger_option_button(
@@ -232,6 +243,7 @@ def create_trigger_option_button(
     binding.bind(b, option, update_func)
     return b
 
+
 def create_scrollbar(parent, control, **gridargs):
     """
     Creates and layouts a vertical scrollbar associated to <control>.
@@ -248,6 +260,7 @@ def create_scrollbar(parent, control, **gridargs):
         s.grid_remove()
     return s
 
+
 def listbox_identify(listbox, y):
     """Returns the index of the listbox item at the supplied (relative) y
     coordinate"""
@@ -255,6 +268,7 @@ def listbox_identify(listbox, y):
     if item != -1 and listbox.bbox(item)[1] + listbox.bbox(item)[3] > y:
         return item
     return None
+
 
 def listbox_dyn_tooltip(listbox, item_get, tooltip_get):
     """Attaches a dynamic tooltip to a listbox.
@@ -293,6 +307,7 @@ def listbox_dyn_tooltip(listbox, item_get, tooltip_get):
 
     listbox.bind('<Motion>', motion_handler)
 
+
 def treeview_tag_set(tree, tag, item, state=True, toggle=False):
     """
     Adds or removes a tag from the Treeview item's tags. Returns True if
@@ -318,6 +333,7 @@ def treeview_tag_set(tree, tag, item, state=True, toggle=False):
 
     tree.item(item, tags=tags)
     return state
+
 
 def create_file_list(parent, title, listvar, **args):
     """
@@ -345,6 +361,7 @@ def create_file_list(parent, title, listvar, **args):
     lb.grid(column=0, row=0, rowspan=2, sticky="nsew")
     create_scrollbar(lf, lb, column=1, row=0, rowspan=2)
     return (lf, lb)
+
 
 def create_readonly_file_list_buttons(
         parent, title, listvar, load_fn, refresh_fn, **args):
@@ -374,6 +391,7 @@ def create_readonly_file_list_buttons(
     refresh.pack(side=TOP)
     buttons.grid(column=2, row=0, sticky="n")
     return (lf, lb, buttons)
+
 
 # pylint: disable=too-many-arguments
 def create_file_list_buttons(
@@ -409,6 +427,7 @@ def create_file_list_buttons(
     delete.pack(side=TOP)
     return (lf, lb, buttons)
 
+
 def add_default_to_entry(entry, default_text):
     """Adds bindings to entry such that when there is no user text in the
     entry, the entry will display default_text in grey and italics."""
@@ -435,6 +454,7 @@ def add_default_to_entry(entry, default_text):
     entry.bind('<FocusOut>', focus_out)
 
     focus_out(0)
+
 
 def create_list_with_entry(parent, title, listvar, buttonspec, **kwargs):
     """
@@ -485,6 +505,7 @@ def create_list_with_entry(parent, title, listvar, buttonspec, **kwargs):
 
     return (kf, ke, kb)
 
+
 def create_toggle_list(parent, columns, framegridopts, listopts=None):
     """
     Creates and returns a two-column Treeview in a frame to show toggleable
@@ -507,6 +528,7 @@ def create_toggle_list(parent, columns, framegridopts, listopts=None):
     lst.grid(column=0, row=0, sticky="nsew")
     create_scrollbar(lf, lst, column=1, row=0)
     return lst
+
 
 def create_numeric_entry(parent, variable, option, tooltip):
     """

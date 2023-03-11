@@ -33,6 +33,7 @@ def get_region_info():
         return region, date
     return None
 
+
 def compress_bitmaps():
     """Compresses all bitmap maps."""
     # pylint: disable=import-error
@@ -51,6 +52,7 @@ def compress_bitmaps():
             f.save(fname[:-3] + 'png', format='PNG', optimize=True)
             os.remove(fname)
 
+
 def call_optipng():
     """Calling optipng can work well, but isn't very portable."""
     if os.name == 'nt' and os.path.isfile(paths.get('df', 'optipng.exe')):
@@ -66,6 +68,7 @@ def call_optipng():
     else:
         log.e('A PIL-compatible library is required to compress bitmaps.')
 
+
 def choose_region_map():
     """Returns the most-preferred region map available, or fallback."""
     pattern = paths.get('df', '-'.join(get_region_info()) + '-')
@@ -74,6 +77,7 @@ def choose_region_map():
             if os.path.isfile(pattern + name + ext):
                 return pattern + name + ext
     return pattern + 'world_map.bmp'
+
 
 def create_archive():
     """Creates a legends archive, or zips the xml if files are missing."""
@@ -95,6 +99,7 @@ def create_archive():
             zipped.write(pattern + 'legends.xml',
                          os.path.basename(pattern + 'legends.xml'))
             os.remove(pattern + 'legends.xml')
+
 
 def move_files():
     """Moves files to a subdir, and subdir to ../User Generated Content if
@@ -137,6 +142,7 @@ def move_files():
             os.renames(f, target)
     for f in glob.glob(paths.get('df', '*_color_key.txt')):
         os.remove(f)
+
 
 def process_legends():
     """Process all legends exports in sets."""

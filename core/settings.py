@@ -16,16 +16,21 @@ class _DisableValues(object):
     """Marker class for DFConfiguration. Value is disabled by replacing [ and ]
     with !."""
 
+
 _disabled = _DisableValues()
+
 
 class _NegatedBool(object):
     """Marker class for DFConfiguration. Swaps YES and NO."""
 
+
 _negated_bool = _NegatedBool()
+
 
 class _AnnouncementFocus(object):
     """Marker class for DFConfiguration. Value controls presence of P and R
     flags in ``announcements.txt``."""
+
 
 _announcement_focus = _AnnouncementFocus()
 
@@ -358,11 +363,13 @@ _option_version_data = {
     'CULL_DEAD_UNITS_AT': ['50.06'],
 }
 
+
 def _option_item_to_value(item):
     """Removes any validation expression from <item>."""
     if not isinstance(item, str):
         return item[0]
     return item
+
 
 class DFConfiguration(object):
     """Reads and modifies Dwarf Fortress configuration textfiles."""

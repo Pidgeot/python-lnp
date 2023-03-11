@@ -16,12 +16,14 @@ _df_colors = (
     'LRED', 'LMAGENTA', 'YELLOW', 'WHITE'
 )
 
+
 def read_colors():
     """Returns a sorted tuple of color scheme basenames, in LNP/Colors."""
     return tuple(sorted(
         [os.path.splitext(os.path.basename(p))[0] for p in
          helpers.get_text_files(paths.get('colors'))],
         key=helpers.key_from_underscore_prefixed_string))
+
 
 def get_colors(colorscheme=None):
     """
@@ -50,6 +52,7 @@ def get_colors(colorscheme=None):
             log.e('Unable to read current colors', stack=True)
         return []
 
+
 def load_colors(filename):
     """
     Replaces the current DF color scheme.
@@ -71,6 +74,7 @@ def load_colors(filename):
     else:
         shutil.copyfile(filename, paths.get('init', 'colors.txt'))
 
+
 def save_colors(filename):
     """
     Save current keybindings to a file.
@@ -89,6 +93,7 @@ def save_colors(filename):
     else:
         shutil.copyfile(paths.get('init', 'colors.txt'), filename)
 
+
 def color_exists(filename):
     """
     Returns whether a color scheme already exists.
@@ -99,6 +104,7 @@ def color_exists(filename):
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
     return os.access(paths.get('colors', filename), os.F_OK)
+
 
 def delete_colors(filename):
     """
@@ -111,6 +117,7 @@ def delete_colors(filename):
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
     os.remove(paths.get('colors', filename))
+
 
 def get_installed_file():
     """Returns the name of the currently installed color scheme, or None."""

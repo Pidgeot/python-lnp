@@ -71,10 +71,12 @@ def get_cfg(content_type, item):
     manifest = paths.get(content_type, item, 'manifest.json')
     return json_config.JSONConfiguration(manifest, default_config, warn=False)
 
+
 def exists(content_type, item):
     """Returns a bool, that the given item has a manifest.
     Used before calling get_cfg if logging a warning isn't required."""
     return os.path.isfile(paths.get(content_type, item, 'manifest.json'))
+
 
 def is_compatible(content_type, item, ver=''):
     """Boolean compatibility rating; True unless explicitly incompatible."""

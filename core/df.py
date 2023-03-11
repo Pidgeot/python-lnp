@@ -26,6 +26,7 @@ def find_df_folders():
             o, 'data', 'init', 'init.txt')) or os.path.exists(os.path.join(
                 o, 'data', 'init', 'init_default.txt'))))
 
+
 def find_df_folder():
     """Tries to select a Dwarf Fortress folder. The set of valid folders is
     first detected. If a folder name is passed as the first argument to the
@@ -36,6 +37,7 @@ def find_df_folder():
         set_df_folder(lnp.folders[0])
     if lnp.args.df_folder and lnp.args.df_folder in lnp.folders:
         set_df_folder(lnp.args.df_folder)
+
 
 def set_df_folder(path):
     """
@@ -63,6 +65,7 @@ def set_df_folder(path):
     load_params()
     hacks.read_hacks()
 
+
 def perform_checks():
     """Performs various automated tasks and quits the program.
     Return code is 0 if all went well."""
@@ -84,6 +87,7 @@ def perform_checks():
         mods.simplify_mods()
     sys.exit(0)
 
+
 def do_rawlint(path):
     """Runs the raw linter on the specified directory.
 
@@ -94,6 +98,7 @@ def do_rawlint(path):
     p, f = rawlint.check_df(path)
     log.i("%d files passed, %d files failed check" % (len(p), len(f)))
     return len(f) == 0
+
 
 def install_extras():
     """
@@ -120,6 +125,7 @@ def install_extras():
                 'PyLNP V{0} extras installed!\nTime: {1}'.format(
                     VERSION, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
 
+
 def cycle_option(field):
     """
     Cycles an option field between its possible values.
@@ -129,6 +135,7 @@ def cycle_option(field):
     """
     lnp.settings.cycle_item(field)
     save_params()
+
 
 def set_option(field, value):
     """
@@ -141,6 +148,7 @@ def set_option(field, value):
     lnp.settings.set_value(field, value)
     save_params()
 
+
 def load_params():
     """Loads settings from the selected Dwarf Fortress instance."""
     try:
@@ -151,9 +159,11 @@ def load_params():
         log.e(msg, stack=True)
         raise IOError(msg) from exc
 
+
 def save_params():
     """Saves settings to the selected Dwarf Fortress instance."""
     lnp.settings.write_settings()
+
 
 def restore_defaults():
     """Copy default settings into the selected Dwarf Fortress instance."""
@@ -168,6 +178,7 @@ def restore_defaults():
             shutil.copy(paths.get('defaults', 'd_init.txt'),
                         paths.get('init', 'd_init.txt'))
     load_params()
+
 
 class DFInstall(object):
     """Contains properties and paths for a given Dwarf Fortress installation."""
@@ -341,6 +352,7 @@ class DFInstall(object):
         if self.version >= '0.21.104.19b':
             return base + '_s.zip'
         return base + '.zip'
+
 
 # pylint:disable=too-few-public-methods
 @total_ordering

@@ -59,6 +59,7 @@ class ChildWindow(object):
         """Called when the window is closed."""
         self.top.destroy()
 
+
 class DualTextWindow(ChildWindow):
     """Window containing a row of buttons and two scrollable text fields."""
     def __init__(self, parent, title):
@@ -94,6 +95,7 @@ class DualTextWindow(ChildWindow):
             container: the frame the controls are to be created in.
         """
 
+
 class LogWindow(DualTextWindow):
     """Window used for displaying an error log."""
     def __init__(self, parent):
@@ -117,6 +119,7 @@ class LogWindow(DualTextWindow):
         self.right.delete('1.0', END)
         self.left.insert('1.0', '\n'.join(errorlog.out.lines))
         self.right.insert('1.0', '\n'.join(errorlog.err.lines))
+
 
 class InitEditor(DualTextWindow):
     """Basic editor for d_init.txt and init.txt."""
@@ -153,6 +156,7 @@ class InitEditor(DualTextWindow):
             DFRaw.write(
                 paths.get('init', 'd_init.txt'), self.right.get('1.0', 'end'))
         self.gui.load_params()
+
 
 class SelectDF(ChildWindow):
     """Window to select an instance of Dwarf Fortress to operate on."""
@@ -200,6 +204,7 @@ class SelectDF(ChildWindow):
     def cancel(self):
         """Called when the Cancel button is clicked."""
         self.top.destroy()
+
 
 class UpdateWindow(ChildWindow):
     """Notification of a new update."""
@@ -295,6 +300,7 @@ class ConfirmRun(ChildWindow):
         else:
             launcher.run_program(self.path)
         self.close()
+
 
 class TerminalSelector(ChildWindow):
     """Used to select a terminal for launching child programs on Linux."""

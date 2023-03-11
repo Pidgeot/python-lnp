@@ -10,6 +10,7 @@ from .json_config import JSONConfiguration
 
 VERSION = '0.14e-pre1'
 
+
 class UI(object):
     """
     Specifies the interface required by the core PyLNP library for communicating
@@ -56,7 +57,10 @@ class UI(object):
         DF install or starter pack into the newly selected DF version.
         """
 
+
 lnp = None
+
+
 class PyLNP(object):
     """
     PyLNP library class.

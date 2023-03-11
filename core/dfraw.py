@@ -46,6 +46,7 @@ init_filename_parents = {
 # Do not allow parent tags to go under these tags
 final_level_tags = ['TILE_PAGE']
 
+
 def tokenize_raw(text):
     """Generator which returns nodes from a raw file.
 
@@ -116,6 +117,7 @@ def parse_raw(parent, text):
         else:
             log.e('Unknown raw token while parsing: ' + kind)
             raise Exception('Unknown raw token kind: ' + kind)
+
 
 class DFRawNode(object):
     """Class representing a node in a raw file."""
@@ -315,6 +317,7 @@ class DFRawNode(object):
             result += c.find_all(field)
         return result
 
+
 class DFRaw(DFRawNode):
     """Represents a Dwarf Fortress raw file."""
     def __init__(self, path):
@@ -411,6 +414,7 @@ class DFRaw(DFRawNode):
                 result.append(None)
         return result
 
+
 class DFRawTag(DFRawNode):
     """Represents a tag in a raw file."""
     def __init__(self, parent, tag, value):
@@ -424,6 +428,7 @@ class DFRawTag(DFRawNode):
             value
                 Value for this tag (True/False for flags)"""
         super().__init__(parent, tag, value, NODE_TAG)
+
 
 class DFRawComment(DFRawNode):
     """Represents a comment (non-tag) in a raw file."""

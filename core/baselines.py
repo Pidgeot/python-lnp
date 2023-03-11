@@ -35,12 +35,14 @@ def find_vanilla(download_missing=True):
         update.download_df_baseline()
     return False
 
+
 def find_vanilla_raws(download_missing=True):
     """Finds vanilla raws for the current version."""
     retval = find_vanilla(download_missing)
     if retval:
         return os.path.join(retval, 'raw')
     return retval
+
 
 def prepare_baselines():
     """Unzip any DF releases found, and discard non-universal files."""
@@ -66,10 +68,12 @@ def prepare_baselines():
             simplify_pack(version, 'baselines')
         os.remove(item)
 
+
 def set_auto_download(value):
     """Sets the option for auto-download of baselines."""
     lnp.userconfig['downloadBaselines'] = value
     lnp.userconfig.save_data()
+
 
 def simplify_pack(pack, folder):
     """Removes unnecessary files from LNP/<folder>/<pack>.
@@ -111,6 +115,7 @@ def simplify_pack(pack, folder):
     log.v('Removed {} files'.format(files_before - files_after))
     return files_before - files_after
 
+
 def remove_vanilla_raws_from_pack(pack, folder):
     """Remove files identical to vanilla raws, return files removed
 
@@ -144,6 +149,7 @@ def remove_vanilla_raws_from_pack(pack, folder):
                         os.remove(f)
                         i += 1
     return i
+
 
 def remove_empty_dirs(pack, folder):
     """Removes empty subdirs in a mods or graphics pack.

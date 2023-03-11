@@ -16,12 +16,14 @@ def open_graphics():
     """Opens the graphics pack folder."""
     open_file(paths.get('graphics'))
 
+
 def get_title(pack):
     """Returns the pack title; either per manifest or from dirname."""
     title = manifest.get_cfg('graphics', pack).get_string('title')
     if title:
         return title
     return pack
+
 
 def get_folder_prefix(pack):
     """Returns the pack folder_prefix; either per manifest or from dirname."""
@@ -31,9 +33,11 @@ def get_folder_prefix(pack):
         return folder_prefix
     return pack
 
+
 def get_tooltip(pack):
     """Returns the tooltip for the given graphics pack."""
     return manifest.get_cfg('graphics', pack).get_string('tooltip')
+
 
 def current_pack():
     """Returns the currently installed graphics pack.
@@ -58,6 +62,7 @@ def current_pack():
     log.w('Could not determine installed graphics, tileset is ' + result)
     return result
 
+
 def logged_graphics(logfile, start='graphics/'):
     """Returns the graphics pack from an 'installed_raws.txt' file"""
     if os.path.isfile(logfile):
@@ -66,6 +71,7 @@ def logged_graphics(logfile, start='graphics/'):
                 if l.startswith(start):
                     return l.strip().replace(start, '')
     return ''
+
 
 def read_graphics():
     """Returns a list of tuples of (graphics dir, FONT, GRAPHICS_FONT)."""
@@ -82,6 +88,7 @@ def read_graphics():
         result.append((p, font, graphics))
     return tuple(sorted(result))
 
+
 def add_tilesets():
     """Copies missing tilesets from LNP/Tilesets to the data/art folder."""
     for item in glob.glob(paths.get('tilesets', '*')):
@@ -90,6 +97,7 @@ def add_tilesets():
                 shutil.copy2(item, paths.get('data', 'art'))
             else:
                 shutil.copytree(item, paths.get('data', 'art'))
+
 
 def install_graphics(pack):
     """Installs the graphics pack located in LNP/Graphics/<pack>.
@@ -181,6 +189,7 @@ def install_graphics(pack):
     df.load_params()
     return True
 
+
 def validate_pack(pack, df_version=None):
     """Checks for presence of all required files for a pack install."""
     if df_version is None:
@@ -198,6 +207,7 @@ def validate_pack(pack, df_version=None):
         result &= os.path.isfile(os.path.join(
             gfx_dir, 'data', 'init', 'colors.txt'))
     return result
+
 
 def patch_inits(gfx_dir):
     """Installs init files from a graphics pack by selectively changing
@@ -276,10 +286,12 @@ def patch_inits(gfx_dir):
     lnp.settings.read_file(d_init, d_init_fields, False)
     df.save_params()
 
+
 def simplify_graphics():
     """Removes unnecessary files from all graphics packs."""
     for pack in read_graphics():
         simplify_pack(pack[0])
+
 
 def simplify_pack(pack):
     """Removes unnecessary files from one graphics pack."""
@@ -290,10 +302,12 @@ def simplify_pack(pack):
         return False
     return a + b + c
 
+
 def savegames_to_update():
     """Returns a list of savegames that will be updated."""
     return [o for o in glob.glob(paths.get('save', '*'))
             if os.path.isdir(o) and not o.endswith('current')]
+
 
 def update_graphics_raws(raw_dir, pack):
     """Updates raws in place for a new graphics pack.
@@ -320,6 +334,7 @@ def update_graphics_raws(raw_dir, pack):
     log.i('Aborted while updating raws ' + raw_dir + ' to ' + pack)
     return False
 
+
 def update_savegames():
     """Update save games with current raws."""
     count, skipped, saves = 0, 0, savegames_to_update()
@@ -330,6 +345,7 @@ def update_savegames():
         else:
             skipped += 1
     return count, skipped
+
 
 def can_rebuild(log_file, strict=True):
     """Test if user can exactly rebuild a raw folder, returning a bool."""
@@ -346,9 +362,11 @@ def can_rebuild(log_file, strict=True):
           os.path.dirname(log_file))
     return False
 
+
 def open_tilesets():
     """Opens the tilesets folder."""
     open_file(paths.get('tilesets'))
+
 
 def read_tilesets():
     """Returns a tuple of available tileset files. Also copies missing tilesets
@@ -376,11 +394,13 @@ def read_tilesets():
 
     return tuple(files)
 
+
 def current_tilesets():
     """Returns the current tilesets as a tuple (FONT, GRAPHICS_FONT)."""
     if lnp.settings.version_has_option('GRAPHICS_FONT'):
         return (lnp.settings.FONT, lnp.settings.GRAPHICS_FONT)
     return (lnp.settings.FONT, None)
+
 
 def install_tilesets(font, graphicsfont):
     """Installs the provided tilesets as [FULL]FONT and GRAPHICS_[FULL]FONT.

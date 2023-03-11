@@ -26,10 +26,12 @@ def _shutil_wrap(fn):
                 break
     return _wrapped_fn
 
+
 # Use sys.platform directly to prevent possible issues with initialization order
 if sys.platform == 'win32':
     shutil.rmtree = _shutil_wrap(shutil.rmtree)
     shutil.copytree = _shutil_wrap(shutil.copytree)
+
 
 def toggle_premerge_gfx():
     """Sets the option for pre-merging of graphics."""
@@ -37,15 +39,18 @@ def toggle_premerge_gfx():
         'premerge_graphics')
     lnp.userconfig.save_data()
 
+
 def will_premerge_gfx():
     """Returns whether graphics will be merged prior to any mods."""
     return lnp.userconfig.get_bool('premerge_graphics')
+
 
 def read_mods():
     """Returns a list of mod packs"""
     return [os.path.basename(o) for o in glob.glob(paths.get('mods', '*'))
             if os.path.isdir(o) and
             manifest.is_compatible('mods', os.path.basename(o))]
+
 
 def get_title(mod):
     """Returns the mod title; either per manifest or from dirname."""
@@ -54,9 +59,11 @@ def get_title(mod):
         return title
     return mod
 
+
 def get_tooltip(mod):
     """Returns the tooltip for the given mod."""
     return manifest.get_cfg('mods', mod).get_string('tooltip')
+
 
 def simplify_mods():
     """Removes unnecessary files from all mods."""
@@ -65,6 +72,7 @@ def simplify_mods():
         mods += 1
         files += simplify_pack(pack)
     return mods, files
+
 
 def simplify_pack(pack):
     """Removes unnecessary files from one mod.
@@ -91,6 +99,7 @@ def simplify_pack(pack):
     i += baselines.remove_empty_dirs(pack, 'mods')
     return i
 
+
 def make_blank_files(pack):
     """Create blank files where vanilla files are missing.
 
@@ -113,6 +122,7 @@ def make_blank_files(pack):
                     i += 1
     return i
 
+
 def install_mods():
     """Deletes installed raw folder, and copies over merged raws."""
     merge_log = paths.get('baselines', 'temp', 'raw', 'installed_raws.txt')
@@ -126,6 +136,7 @@ def install_mods():
         return True
     log.w('To avoid data loss, PyLNP only installs mods if a log exists')
     return False
+
 
 def merge_all_mods(list_of_mods, gfx=None):
     """Merges the specified list of mods, starting with graphics if set to
@@ -162,6 +173,7 @@ def merge_all_mods(list_of_mods, gfx=None):
             return merged + [-1] * len(list_of_mods[i:])
     return ret_list
 
+
 def merge_a_mod(mod):
     """Merges the specified mod, and returns an exit code 0-3.
 
@@ -193,6 +205,7 @@ def merge_a_mod(mod):
     log.i('Finished merging')
     log.pop_prefix()
     return status
+
 
 def merge_folder(mod_folder, vanilla_folder, mixed_folder):
     """Merge the specified folders, output going in 'LNP/Baselines/temp'
@@ -237,6 +250,7 @@ def merge_folder(mod_folder, vanilla_folder, mixed_folder):
             log.pop_prefix()
     return status
 
+
 def merge_file(mod_file_name, van_file_name, gen_file_name):
     """Merges three files, and returns an exit code 0-3.
 
@@ -262,6 +276,7 @@ def merge_file(mod_file_name, van_file_name, gen_file_name):
         log.e('Writing to {} failed'.format(gen_file_name))
         status = 3
     return status
+
 
 def merge_line_list(mod_text, vanilla_text, gen_text):
     """Merges sequences of lines.
@@ -299,6 +314,7 @@ def merge_line_list(mod_text, vanilla_text, gen_text):
         outfile.extend(block)
     status = outfile.pop()
     return status, outfile
+
 
 def three_way_merge(gen_text, van_gen_ops, mod_text, van_mod_ops):
     """Yield blocks of lines from a three-way-merge.  Last block is status."""
@@ -368,6 +384,7 @@ def three_way_merge(gen_text, van_gen_ops, mod_text, van_mod_ops):
     log.d('yield status')
     yield [status]
 
+
 def clear_temp():
     """Resets the folder in which raws are mixed."""
     if not baselines.find_vanilla_raws(False):
@@ -384,6 +401,7 @@ def clear_temp():
               'w', encoding="utf-8") as f:
         f.write('# List of raws merged by PyLNP:\nbaselines/' +
                 os.path.basename(baselines.find_vanilla()) + '\n')
+
 
 def update_raw_dir(path, gfx=('', '')):
     """Updates a raw dir in place with specified graphics and raws.
@@ -407,6 +425,7 @@ def update_raw_dir(path, gfx=('', '')):
     shutil.copytree(paths.get('baselines', 'temp', 'raw'), path)
     return True
 
+
 def add_graphics(gfx):
     """Adds graphics to the mod merge in baselines/temp."""
     from . import graphics
@@ -423,6 +442,7 @@ def add_graphics(gfx):
         f.write('graphics/{}\n'.format(graphics.get_folder_prefix(gfx)))
     log.i('{} graphics added (small mod compatibility risk)'.format(gfx))
 
+
 def can_rebuild(log_file, strict=True):
     """Test if user can exactly rebuild a raw folder, returning a bool."""
     if not os.path.isfile(log_file):
@@ -431,6 +451,7 @@ def can_rebuild(log_file, strict=True):
         return guess
     mod_list = read_installation_log(log_file)
     return all(m in read_mods() for m in mod_list)
+
 
 def make_mod_from_installed_raws(name):
     """Capture whatever unavailable mods a user currently has installed
@@ -468,10 +489,12 @@ def make_mod_from_installed_raws(name):
         return True
     return None
 
+
 def get_installed_mods_from_log():
     """Return best mod load order to recreate installed with available."""
     logged = read_installation_log(paths.get('df', 'raw', 'installed_raws.txt'))
     return [mod for mod in logged if mod in read_mods()]
+
 
 def read_installation_log(fname):
     """Read an 'installed_raws.txt' and return the mods."""

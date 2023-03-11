@@ -35,6 +35,7 @@ objname_overrides = {
     'c_variation': 'CREATURE_VARIATION',
 }
 
+
 def check_file(path):
     """Validates the raw file located at <path>. Error details are printed to
     the log with level WARNING. Returns True/False."""
@@ -80,6 +81,7 @@ def check_file(path):
         file_ok = False
     return file_ok
 
+
 def check_folder(path):
     """Validates all raw files in <path> and its subfolders. Problems with
     individual files are printed to the log with level WARNING. General problems
@@ -111,6 +113,7 @@ def check_folder(path):
     log.pop_prefix()
     return (passed, failed)
 
+
 def check_df(path):
     """Validates the raw/objects folder in the Dwarf Fortress folder located at
     <path>. Problem with individual files are printed to the log with level
@@ -122,12 +125,14 @@ def check_df(path):
     """
     return check_folder(os.path.join(path, 'raw', 'objects'))
 
+
 def check_folder_bool(path):
     """Returns True if all raw files in <path> pass validation. Problems with
     individual files are printed to the log with level WARNING. General
     problems are printed to the log with level ERROR."""
     p, f = check_folder(path)
     return len(f) == 0 and len(p) != 0
+
 
 def check_df_bool(path):
     """Validates the raw/objects folder in the Dwarf Fortress folder located at

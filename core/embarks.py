@@ -14,6 +14,7 @@ def read_embarks():
         os.path.basename(o) for o in helpers.get_text_files(
             paths.get('embarks'))]))
 
+
 def install_embarks(files):
     """
     Installs a list of embark profiles.
@@ -26,6 +27,7 @@ def install_embarks(files):
         for f in files:
             embark = DFRaw.read(paths.get('embarks', f))
             out.write(embark + "\n\n")
+
 
 def get_installed_files():
     """Returns the names of the currently installed embark profiles."""

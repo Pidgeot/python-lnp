@@ -70,10 +70,12 @@ class CaptureStream(object):
         """Restores the original stream object."""
         setattr(sys, self.name, self.stream)
 
+
 def start():
     """Starts redirection of stdout and stderr."""
     out.hook()
     err.hook()
+
 
 def stop():
     """Stops redirection of stdout and stderr."""

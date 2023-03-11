@@ -14,6 +14,7 @@ INFO = 2
 WARNING = 3
 ERROR = 4
 
+
 class Log(object):
     """Logging class."""
     def __init__(self):
@@ -127,6 +128,7 @@ class Log(object):
 def get():
     """Returns the default Log instance."""
     return _log
+
 
 # prepare the default instance
 _log = Log()

@@ -19,6 +19,7 @@ def updates_configured():
     """Returns True if update checking have been configured."""
     return prepare_updater() is not None
 
+
 def check_update():
     """Checks for updates using the URL specified in PyLNP.json."""
     if not updates_configured():
@@ -36,12 +37,14 @@ def check_update():
         t.daemon = True
         t.start()
 
+
 def perform_update_check():
     """Performs the actual update check. Runs in a thread."""
     prepare_updater()
     if lnp.updater.update_needed():
         lnp.new_version = lnp.updater.get_version()
         lnp.ui.on_update_available()
+
 
 def prepare_updater():
     """Returns an Updater object for the configured updater."""
@@ -75,15 +78,18 @@ def prepare_updater():
     lnp.updater = updaters[updater_id]()
     return lnp.updater
 
+
 def next_update(days):
     """Sets the next update check to occur in <days> days."""
     lnp.userconfig['nextUpdate'] = (time.time() + days * 24 * 60 * 60)
     lnp.userconfig['updateDays'] = days
     lnp.save_config()
 
+
 def start_update():
     """Launches a web browser to the specified update URL."""
     launcher.open_url(lnp.updater.get_download_url())
+
 
 def download_df_baseline(immediate=False):
     """Download the current version of DF from Bay12 Games to serve as a
@@ -94,6 +100,7 @@ def download_df_baseline(immediate=False):
     queue_name = 'immediate' if immediate else 'baselines'
     download.download(queue_name, url, target)
 
+
 def direct_download_pack():
     """Directly download a new version of the pack to the current BASEDIR"""
     url = lnp.updater.get_direct_url()
@@ -102,6 +109,7 @@ def direct_download_pack():
     download.download('updates', url, target,
                       end_callback=extract_new_pack)
 
+
 def extract_new_pack(_, fname, bool_val):
     """Extract a downloaded new pack to a sibling dir of the current pack."""
     exts = ('.zip', '.bz2', '.gz', '.7z', '.xz')
@@ -109,6 +117,7 @@ def extract_new_pack(_, fname, bool_val):
         return None
     archive = os.path.join(lnp.BASEDIR, os.path.basename(fname))
     return extract_archive(archive, os.path.join(lnp.BASEDIR, '..'))
+
 
 def extract_archive(fname, target):
     """Extract the archive fname to dir target, avoiding explosions."""
@@ -174,6 +183,7 @@ class Updater(object):
         url_fragments = urlparse(self.get_direct_url())
         return os.path.basename(unquote(url_fragments.path))
 
+
 class RegexUpdater(Updater):
     """Updater class which uses regular expressions to locate the version (and
     optionally also the download URLs)."""
@@ -200,6 +210,7 @@ class RegexUpdater(Updater):
         if result:
             return result
         return super().get_direct_url()
+
 
 class JSONUpdater(Updater):
     """Updater class which uses a JSON object to locate the version (and
@@ -237,6 +248,7 @@ class JSONUpdater(Updater):
         if result:
             return result
         return super().get_direct_filename()
+
 
 class DFFDUpdater(Updater):
     """Updater class for DFFD-hosted downloads."""
