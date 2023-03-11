@@ -96,7 +96,7 @@ def check_folder(path):
     passed = []
     failed = []
     if not files:
-        log.e('Could not find any files in '+path)
+        log.e('Could not find any files in ' + path)
     for f in files:
         f_parts = f.split(os.sep)
         if (f.endswith('.txt') and 'notes' not in f_parts and

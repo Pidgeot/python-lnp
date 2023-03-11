@@ -16,7 +16,7 @@ if sys.platform == 'win32':
       # Make sure we only modify our own manifest
       if 'name="lnp"' in s:
         d = indent + '<asmv3:application xmlns:asmv3="urn:schemas-microsoft-com:asm.v3"><windowsSettings xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings"><dpiAware>false</dpiAware></windowsSettings></asmv3:application>' + newl
-        s = s.replace('</assembly>',d+'</assembly>')
+        s = s.replace('</assembly>', d + '</assembly>')
       return s
     Manifest.toprettyxml = new_toprettyxml
 
@@ -33,17 +33,17 @@ except ImportError: # Some PIL installations live outside of the PIL package
 from tkinter import *
 
 if has_PIL or TkVersion >= 8.6:
-    logo='LNPSMALL.png'
-    icon='LNP.png'
+    logo = 'LNPSMALL.png'
+    icon = 'LNP.png'
 else:
-    logo='LNPSMALL.gif'
-    icon='LNP.gif'
+    logo = 'LNPSMALL.gif'
+    icon = 'LNP.gif'
 
-extension=''
-script='launch.py'
+extension = ''
+script = 'launch.py'
 if sys.platform == 'win32':
-    icon='LNP.ico'
-    extension='.exe'
+    icon = 'LNP.ico'
+    extension = '.exe'
 
 hiddenimports = []
 if sys.platform.startswith('linux'):
@@ -74,7 +74,7 @@ if sys.platform == 'darwin' and sys.hexversion >= 0x3070000:
 
 a = Analysis(
   [script], pathex=['.'], hiddenimports=hiddenimports, hookspath=None, runtime_hooks=None)
-a.datas+=[(logo,logo,'DATA'),(icon,icon,'DATA')]
+a.datas += [(logo,logo,'DATA'),(icon,icon,'DATA')]
 if sys.platform == 'win32':
     # Importing pkg_resources fails with Pillow on Windows due to
     # un-normalized case; this works around the problem
@@ -82,12 +82,12 @@ if sys.platform == 'win32':
 pyz = PYZ(a.pure)
 if sys.platform != 'darwin':
     exe = EXE(
-        pyz, a.scripts, a.binaries, a.zipfiles, a.datas, name='PyLNP'+extension,
+        pyz, a.scripts, a.binaries, a.zipfiles, a.datas, name='PyLNP' + extension,
         debug=False, strip=None, upx=False, console=False, icon='LNP.ico')
 else:
     info = {'NSHighResolutionCapable': 'True'}
     exe = EXE(
-        pyz, a.scripts, exclude_binaries=True, name='PyLNP'+extension,
+        pyz, a.scripts, exclude_binaries=True, name='PyLNP' + extension,
         debug=False, strip=None, upx=True, console=False)
     coll = COLLECT(exe, a.binaries, a.zipfiles, a.datas, strip=None, upx=True, name='PyLNP')
     app = BUNDLE(coll,name='PyLNP.app',icon='LNP.icns', info_plist=info)

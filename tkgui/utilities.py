@@ -49,8 +49,8 @@ class UtilitiesTab(Tab):
         self.configure_proglist()
 
         open_readme = controls.create_trigger_button(
-            progs, 'Open Readme', 'Open the readme file associated with the '+
-            'selected utilities.', self.open_readmes)
+            progs, 'Open Readme', 'Open the readme file associated with the ' +
+                                  'selected utilities.', self.open_readmes)
         open_readme.grid(column=0, row=4, columnspan=2, sticky="nsew")
 
         refresh = controls.create_trigger_button(

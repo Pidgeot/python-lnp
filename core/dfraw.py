@@ -60,8 +60,8 @@ def tokenize_raw(text):
         curr_string = ''
         if text[0] == '[':
             if ']' not in text:
-                raise Exception('Found non-terminated tag: '+text[0:100])
-            curr_string = text[:text.find(']')+1]
+                raise Exception('Found non-terminated tag: ' + text[0:100])
+            curr_string = text[:text.find(']') + 1]
             node_type = 'Tag'
         if text[0] == '!':
             match = re.match('!\\w+!', text)
@@ -114,8 +114,8 @@ def parse_raw(parent, text):
         elif kind == 'Comment':
             DFRawComment(parent_stack[-1], token)
         else:
-            log.e('Unknown raw token while parsing: '+kind)
-            raise Exception('Unknown raw token kind: '+kind)
+            log.e('Unknown raw token while parsing: ' + kind)
+            raise Exception('Unknown raw token kind: ' + kind)
 
 class DFRawNode(object):
     """Class representing a node in a raw file."""

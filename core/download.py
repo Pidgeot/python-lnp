@@ -28,14 +28,14 @@ def download_str(url, **kwargs):
         The contents of the downloaded file as text, or None.
     """
     try:
-        req = Request(url, headers={'User-Agent':'PyLNP/'+VERSION})
+        req = Request(url, headers={'User-Agent': 'PyLNP/' + VERSION})
         return urlopen(
             req, timeout=kwargs.get('timeout', 3)).read().decode(
                 kwargs.get('encoding', 'utf-8'))
     except URLError as ex:
-        log.e('Error downloading '+url+': '+ex.reason)
+        log.e('Error downloading ' + url + ': ' + ex.reason)
     except Exception:
-        log.e('Error downloading '+url)
+        log.e('Error downloading ' + url)
     return None
 
 def download(queue, url, destination, end_callback=None, **kwargs):
@@ -88,11 +88,11 @@ class DownloadQueue(object):
         with self.lock:
             if url not in [q[0] for q in self.queue]:
                 self.queue.append((url, target, end_callback))
-                log.d(self.name+': queueing '+url+' for download to '+target)
+                log.d(self.name + ': queueing ' + url + ' for download to ' + target)
             else:
-                log.d(self.name+': skipping add of '+url+', already in queue')
+                log.d(self.name + ': skipping add of ' + url + ', already in queue')
             if not self.thread and self.name != 'immediate':
-                log.d('Download queue '+self.name+' not running, starting it')
+                log.d('Download queue ' + self.name + ' not running, starting it')
                 self.thread = t = Thread(target=self.__process_queue)
                 t.daemon = True
                 t.start()
@@ -179,7 +179,7 @@ class DownloadQueue(object):
                     self.thread = None
                     break
             url, target, end_callback = self.queue[0]
-            log.d(self.name+': About to download '+url+' to '+target)
+            log.d(self.name + ': About to download ' + url + ' to ' + target)
             self.__process_callbacks(self.on_begin_download, url, target)
             dirname = os.path.dirname(target)
             if not os.path.isdir(dirname):
@@ -187,7 +187,7 @@ class DownloadQueue(object):
             outhandle, outpath = tempfile.mkstemp(dir=dirname)
             outfile = os.fdopen(outhandle, 'wb')
             try:
-                req = Request(url, headers={'User-Agent':'PyLNP/'+VERSION})
+                req = Request(url, headers={'User-Agent': 'PyLNP/' + VERSION})
                 with urlopen(req, timeout=5) as response:
                     data = 0
                     while True:
@@ -202,7 +202,7 @@ class DownloadQueue(object):
             except Exception:
                 outfile.close()
                 os.remove(outpath)
-                log.e(self.name+': Error downloading ' + url, stack=True)
+                log.e(self.name + ': Error downloading ' + url, stack=True)
                 self.__process_callbacks(
                     self.on_end_download, url, target, False)
                 if end_callback:
@@ -210,7 +210,7 @@ class DownloadQueue(object):
             else:
                 outfile.close()
                 shutil.move(outpath, target)
-                log.d(self.name+': Finished downloading '+url)
+                log.d(self.name + ': Finished downloading ' + url)
                 self.__process_callbacks(
                     self.on_end_download, url, target, True)
                 if end_callback:

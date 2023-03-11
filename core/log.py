@@ -59,7 +59,7 @@ class Log(object):
         """Returns a string containing the prefixes for this log message."""
         if not self.prefixes:
             return ''
-        return ': '.join(self.prefixes+[''])
+        return ': '.join(self.prefixes + [''])
 
     def log(self, log_level, message, *args, **kwargs):
         """Logs a message if the current logging level includes messages at

@@ -158,8 +158,8 @@ def merge_all_mods(list_of_mods, gfx=None):
         if status == 3:
             log.i('Mod {}, in {}, could not be merged.'.format(
                 mod, str(list_of_mods)))
-            merged = merge_all_mods(list_of_mods[:i-1], gfx)
-            return merged + [-1]*len(list_of_mods[i:])
+            merged = merge_all_mods(list_of_mods[:i - 1], gfx)
+            return merged + [-1] * len(list_of_mods[i:])
     return ret_list
 
 def merge_a_mod(mod):

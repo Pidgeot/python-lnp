@@ -228,7 +228,7 @@ class PyLNP(object):
         """Responsible for the actual parsing of command line options."""
         import argparse
         parser = argparse.ArgumentParser(
-            description="PyLNP " +VERSION)
+            description="PyLNP " + VERSION)
         parser.add_argument(
             '-d', '--debug', action='count',
             help='Turn on debugging output (use twice for extra verbosity)')
@@ -239,7 +239,7 @@ class PyLNP(object):
             'df_folder', nargs='?',
             help='Dwarf Fortress folder to use (if it exists)')
         parser.add_argument(
-            '--version', action='version', version="PyLNP "+VERSION)
+            '--version', action='version', version="PyLNP " + VERSION)
         parser.add_argument(
             '--df-executable', action='store',
             help='Override DF/DFHack executable name')

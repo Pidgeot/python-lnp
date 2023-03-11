@@ -746,7 +746,7 @@ class DFConfiguration(object):
         """
         try:
             match = re.search(
-                r'\['+str(field)+r'(:.+?)]', DFRaw.read(filename))
+                r'\[' + str(field) + r'(:.+?)]', DFRaw.read(filename))
             if match is None:
                 return False
             params = match.group(1)
@@ -816,7 +816,7 @@ class DFConfiguration(object):
                         text = "!{0}!"
                     else:
                         text = "[{0}]"
-                    newfile.write(text.format(self.field_names[field])+'\n')
+                    newfile.write(text.format(self.field_names[field]) + '\n')
                 else:
                     value = self.settings[field]
                     if self.options[field] is _negated_bool:

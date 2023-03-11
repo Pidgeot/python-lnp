@@ -56,7 +56,7 @@ class GridLayouter(object):
 
             if ((i == max_index and col != self.cols - 1) or (
                     i < max_index and
-                    col + c[1] + self.controls[i+1][1] > self.cols)):
+                    col + c[1] + self.controls[i + 1][1] > self.cols)):
                 # Pad colspan if last control, or next control won't fit
                 colspan = self.cols - col
                 for n in range(col + 1, self.cols):
@@ -69,6 +69,6 @@ class GridLayouter(object):
                 row=row, column=col, sticky="nsew", columnspan=c[1], padx=padx,
                 pady=pady, **c[2])
             if 'rowspan' in c[2]:
-                for n in range(1, c[2]['rowspan']+1):
-                    self.used.append((row+n, col))
+                for n in range(1, c[2]['rowspan'] + 1):
+                    self.used.append((row + n, col))
             cells_used += c[1]

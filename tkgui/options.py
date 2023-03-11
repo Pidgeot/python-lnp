@@ -173,7 +173,7 @@ class OptionsTab(Tab):
                 "(lowest of the two values will be used as the cap)",
                 initialvalue=child_split[1])
             if v2 is not None:
-                df.set_option('childcap', str(v)+':'+str(v2))
+                df.set_option('childcap', str(v) + ':' + str(v2))
                 binding.update()
 
     @staticmethod
@@ -189,7 +189,7 @@ class OptionsTab(Tab):
                 "Settings", "Min number of worshippers for a grand temple:",
                 initialvalue=split[1])
             if v2 is not None:
-                df.set_option('templeCount', str(v1)+':'+str(v2))
+                df.set_option('templeCount', str(v1) + ':' + str(v2))
                 binding.update()
 
     @staticmethod
@@ -205,7 +205,7 @@ class OptionsTab(Tab):
                 "Settings", "Min number of guild members requesting a grand guildhall:",
                 initialvalue=split[1])
             if v2 is not None:
-                df.set_option('guildCount', str(v1)+':'+str(v2))
+                df.set_option('guildCount', str(v1) + ':' + str(v2))
                 binding.update()
 
     @staticmethod

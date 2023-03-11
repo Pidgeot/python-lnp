@@ -40,7 +40,7 @@ def get_colors(colorscheme=None):
                 f = paths.get('init', 'init.txt')
             else:
                 f = paths.get('init', 'colors.txt')
-        color_fields = [(c+'_R', c+'_G', c+'_B') for c in _df_colors]
+        color_fields = [(c + '_R', c + '_G', c + '_B') for c in _df_colors]
         result = DFRaw(f).get_values(*color_fields)
         return [tuple(int(x) for x in t) for t in result]
     except Exception:
@@ -64,8 +64,8 @@ def load_colors(filename):
     if os.path.dirname(filename) == '':
         filename = paths.get('colors', filename)
     if lnp.df_info.version <= '0.31.03':
-        colors = ([c+'_R' for c in _df_colors] + [c+'_G' for c in _df_colors] +
-                  [c+'_B' for c in _df_colors])
+        colors = ([c + '_R' for c in _df_colors] + [c + '_G' for c in _df_colors] +
+                  [c + '_B' for c in _df_colors])
         lnp.settings.read_file(filename, colors, False)
         lnp.settings.write_settings()
     else:
@@ -83,8 +83,8 @@ def save_colors(filename):
         filename = filename + '.txt'
     filename = paths.get('colors', filename)
     if lnp.df_info.version <= '0.31.03':
-        colors = ([c+'_R' for c in _df_colors] + [c+'_G' for c in _df_colors] +
-                  [c+'_B' for c in _df_colors])
+        colors = ([c + '_R' for c in _df_colors] + [c + '_G' for c in _df_colors] +
+                  [c + '_B' for c in _df_colors])
         lnp.settings.create_file(filename, colors)
     else:
         shutil.copyfile(paths.get('init', 'colors.txt'), filename)

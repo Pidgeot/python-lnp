@@ -54,7 +54,7 @@ def current_pack():
             return p[0]
     result = str(lnp.settings.FONT)
     if lnp.settings.version_has_option('GRAPHICS_FONT'):
-        result += '/'+str(lnp.settings.GRAPHICS_FONT)
+        result += '/' + str(lnp.settings.GRAPHICS_FONT)
     log.w('Could not determine installed graphics, tileset is ' + result)
     return result
 
@@ -164,7 +164,7 @@ def install_graphics(pack):
         # TwbT file replacements
         if 'TWBT' in lnp.settings.printmode:
             for folder in ['graphics', 'objects']:
-                twbt_folder = paths.get('graphics', pack, 'raw', 'twbt_'+folder)
+                twbt_folder = paths.get('graphics', pack, 'raw', 'twbt_' + folder)
                 target_folder = paths.get('df', 'raw', folder)
 
                 for path, _, files in os.walk(twbt_folder):

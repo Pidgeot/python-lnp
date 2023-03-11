@@ -70,7 +70,7 @@ def prepare_updater():
     elif updater_id == '' or not lnp.config.get('updates'):
         return None
     if updater_id not in updaters:
-        log.e('Unknown update method: '+updater_id)
+        log.e('Unknown update method: ' + updater_id)
         return None
     lnp.updater = updaters[updater_id]()
     return lnp.updater
@@ -252,7 +252,7 @@ class DFFDUpdater(Updater):
         return self.json.get_string('version')
 
     def get_download_url(self):
-        return 'https://dffd.bay12games.com/file.php?id='+self.dffd_id
+        return 'https://dffd.bay12games.com/file.php?id=' + self.dffd_id
 
     def get_direct_url(self):
         result = 'https://dffd.bay12games.com/download.php?id={0}&f={1}'

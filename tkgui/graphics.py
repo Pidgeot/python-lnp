@@ -242,7 +242,7 @@ class GraphicsTab(Tab):
                         title='Error occurred',
                         message='Nothing was installed.\n'
                         'Folder does not exist or does not have required files '
-                        'or folders:\n'+str(gfx_dir))
+                        'or folders:\n' + str(gfx_dir))
             if result:
                 self.graphicpacks.selection_clear(
                     self.graphicpacks.curselection())
@@ -272,12 +272,12 @@ class GraphicsTab(Tab):
             result = graphics.simplify_pack(pack)
             if result is None:
                 messagebox.showinfo(
-                    title='Error occurred', message='No files in: '+str(pack))
+                    title='Error occurred', message='No files in: ' + str(pack))
             elif result is False:
                 messagebox.showerror(
                     title='Error occurred',
                     message='Error simplifying graphics folder. '
-                    'It may not have the required files.\n'+str(pack)+'\n'
+                    'It may not have the required files.\n' + str(pack) + '\n'
                     'See the output log for error details.')
             elif result != 0:
                 messagebox.showinfo(
@@ -371,7 +371,7 @@ class GraphicsTab(Tab):
                 row = i // 8
                 col = i % 8
                 self.color_preview.create_rectangle(
-                    col*16, row*16, (col+1)*16, (row+1)*16,
+                    col * 16, row * 16, (col + 1) * 16, (row + 1) * 16,
                     fill="#%02x%02x%02x" % tuple(int(v % 256) for v in c),
                     width=0)
 

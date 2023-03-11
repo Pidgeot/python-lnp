@@ -276,10 +276,10 @@ class TkGui(object):
         elif interval == 1:
             days = 'day'
         else:
-            days = str(interval)+' days'
+            days = str(interval) + ' days'
         result = messagebox.askyesno(
             message='This pack can automatically check for updates. The author '
-            'of this pack suggests checking every '+days+'.\n\nAllow automatic '
+            'of this pack suggests checking every ' + days + '.\n\nAllow automatic '
             'update checks? You can change this behavior at any time from '
             'Options > Check for Updates.', title='Update checks',
             icon='question', default='yes')
@@ -554,7 +554,7 @@ class TkGui(object):
     def show_help():
         """Shows help for the program."""
         if lnp.bundle:
-            launcher.open_url('https://pylnp.birdiesoft.dk/docs/'+VERSION+'/')
+            launcher.open_url('https://pylnp.birdiesoft.dk/docs/' + VERSION + '/')
         else:
             launcher.open_url('https://pylnp.birdiesoft.dk/docs/dev/')
 
@@ -562,11 +562,12 @@ class TkGui(object):
     def show_about():
         """Shows about dialog for the program."""
         messagebox.showinfo(
-            title='About', message="PyLNP "+VERSION +" - Lazy Newb Pack Python "
-            "Edition\n\nPort by Pidgeot\nContributions by PeridexisErrant, "
-            "rx80, dricus, James Morgensen, jecowa, carterscottm, McArcady, "
-            "fournm, rgov, cryzed, pjf, TV4Fun\n\n"
-            "Original program: LucasUP, TolyK/aTolyK")
+            title='About',
+            message="PyLNP " + VERSION + " - Lazy Newb Pack Python "
+                                         "Edition\n\nPort by Pidgeot\nContributions by PeridexisErrant, "
+                                         "rx80, dricus, James Morgensen, jecowa, carterscottm, McArcady, "
+                                         "fournm, rgov, cryzed, pjf, TV4Fun\n\n"
+                                         "Original program: LucasUP, TolyK/aTolyK")
 
     @staticmethod
     def cycle_option(field):
