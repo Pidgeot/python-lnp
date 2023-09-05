@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,attribute-defined-outside-init
+# pylint:disable=unused-wildcard-import,wildcard-import,attribute-defined-outside-init
 """Utilities tab for the TKinter GUI."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import sys
+from tkinter import *  # noqa: F403
+from tkinter import messagebox
+from tkinter.ttk import *  # noqa: F403
 
 from core import launcher, paths, utilities
 from core.lnp import lnp
@@ -12,18 +14,7 @@ from core.lnp import lnp
 from . import controls
 from .tab import Tab
 
-if sys.version_info[0] == 3:  # Alternate import names
-    # pylint:disable=import-error
-    from tkinter import *
-    from tkinter.ttk import *
-    import tkinter.messagebox as messagebox
-else:
-    # pylint:disable=import-error
-    from Tkinter import *
-    from ttk import *
-    import tkMessageBox as messagebox
 
-#pylint: disable=too-many-public-methods
 class UtilitiesTab(Tab):
     """Utilities tab for the TKinter GUI."""
     def read_data(self):
@@ -58,8 +49,8 @@ class UtilitiesTab(Tab):
         self.configure_proglist()
 
         open_readme = controls.create_trigger_button(
-            progs, 'Open Readme', 'Open the readme file associated with the '+
-            'selected utilities.', self.open_readmes)
+            progs, 'Open Readme', 'Open the readme file associated with the '
+                                  'selected utilities.', self.open_readmes)
         open_readme.grid(column=0, row=4, columnspan=2, sticky="nsew")
 
         refresh = controls.create_trigger_button(
@@ -90,7 +81,7 @@ class UtilitiesTab(Tab):
         proglist.bind("<1>", self.proglist_click)
 
     def proglist_click(self, event):
-        """Deselect everything if event occured in blank area area"""
+        """Deselect everything if event occurred in blank area"""
         region = self.proglist.identify_region(event.x, event.y)
         if region == 'nothing':
             self.proglist.selection_set('')
@@ -106,7 +97,8 @@ class UtilitiesTab(Tab):
         proglist = self.proglist
         item = proglist.identify_row(event.y)
 
-        def show(): # pylint:disable=missing-docstring
+        def show():
+            """Sets and shows a tooltip"""
             tooltip.settext(proglist.set(item, 'tooltip'))
             tooltip.showtip()
 
@@ -116,6 +108,7 @@ class UtilitiesTab(Tab):
         if proglist.set(item, 'tooltip') != tooltip.text:
             tooltip.hidetip()
         if item:
+            # pylint: disable=protected-access
             tooltip.event = proglist.after(controls._TOOLTIP_DELAY, show)
 
     def read_utilities(self):
@@ -143,17 +136,21 @@ class UtilitiesTab(Tab):
 
         if item:
             utilities.toggle_autorun(item)
+            # pylint: disable=not-callable
             self.proglist.tag_set('autorun', item, item in lnp.autorun)
+            # pylint: enable=not-callable
 
     def update_autorun_list(self):
         """Updates the autorun list."""
         for item in self.proglist.get_children():
+            # pylint: disable=not-callable
             self.proglist.tag_set('autorun', item, item in lnp.autorun)
+            # pylint: enable=not-callable
 
     def run_selected_utilities(self):
         """Runs selected utilities."""
         for item in self.proglist.selection():
-            #utility_path = self.proglist.item(item, 'text')
+            # utility_path = self.proglist.item(item, 'text')
             launcher.run_program(paths.get('utilities', item))
 
     def open_readmes(self):

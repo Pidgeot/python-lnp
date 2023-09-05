@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,attribute-defined-outside-init
+# pylint:disable=unused-wildcard-import,wildcard-import,attribute-defined-outside-init
 """Advanced tab for the TKinter GUI."""
-from __future__ import print_function, unicode_literals, absolute_import
 
-import sys
+from tkinter import *  # noqa: F403
+from tkinter import messagebox
+from tkinter.ttk import *  # noqa: F403
 
 from core import launcher, legends_processor
 from core.lnp import lnp
@@ -13,18 +14,7 @@ from . import controls
 from .layout import GridLayouter
 from .tab import Tab
 
-if sys.version_info[0] == 3:  # Alternate import names
-    # pylint:disable=import-error
-    from tkinter import *
-    from tkinter.ttk import *
-    import tkinter.messagebox as messagebox
-else:
-    # pylint:disable=import-error
-    from Tkinter import *
-    from ttk import *
-    import tkMessageBox as messagebox
 
-#pylint: disable=too-many-public-methods,too-many-statements
 class AdvancedTab(Tab):
     """Advanced tab for the TKinter GUI."""
     def create_variables(self):
@@ -37,6 +27,7 @@ class AdvancedTab(Tab):
         self.fullY_var = StringVar()
 
     def create_controls(self):
+        # pylint: disable=too-many-statements
         Grid.columnconfigure(self, 0, weight=1)
         Grid.columnconfigure(self, 1, weight=1)
 
@@ -78,7 +69,7 @@ class AdvancedTab(Tab):
                 controls.create_numeric_entry(
                     caps, self.gps_var, 'gpsCap', 'How fast the game visually '
                     'updates.\nLower value may give small boost to FPS but '
-                    'will be less reponsive.').grid(
+                    'will be less responsive.').grid(
                         row=2, column=2, pady=(3, 0))
                 Label(caps, text='FPS').grid(row=2, column=3, sticky='w')
             if caps.children:
@@ -200,5 +191,5 @@ class AdvancedTab(Tab):
             if i > 1:
                 string += 's'
             messagebox.showinfo(string + ' processed',
-                                'Legends exported from ' + string +
-                                ' were found and processed')
+                                'Legends exported from ' + string
+                                + ' were found and processed')

@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Manages content manifests for graphics, mods, and utilities."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import os
 
-from . import paths, json_config
+from . import json_config, paths
 from .lnp import lnp
+
 
 def get_cfg(content_type, item):
     """Returns a JSONConfiguration object for the given item.
@@ -59,7 +59,7 @@ def get_cfg(content_type, item):
         'title': '',
         'folder_prefix': '',
         'tooltip': ''
-        }
+    }
     if content_type == 'utilities':
         default_config.update({
             'win_exe': '',
@@ -67,14 +67,16 @@ def get_cfg(content_type, item):
             'linux_exe': '',
             'launch_with_terminal': False,
             'readme': '',
-            })
+        })
     manifest = paths.get(content_type, item, 'manifest.json')
     return json_config.JSONConfiguration(manifest, default_config, warn=False)
+
 
 def exists(content_type, item):
     """Returns a bool, that the given item has a manifest.
     Used before calling get_cfg if logging a warning isn't required."""
     return os.path.isfile(paths.get(content_type, item, 'manifest.json'))
+
 
 def is_compatible(content_type, item, ver=''):
     """Boolean compatibility rating; True unless explicitly incompatible."""
@@ -90,4 +92,4 @@ def is_compatible(content_type, item, ver=''):
         (ver > df_max_version and df_max_version),
         ver in cfg.get_list('incompatible_df_versions'),
         cfg.get_bool('needs_dfhack') and 'dfhack' not in lnp.df_info.variations
-        ])
+    ])

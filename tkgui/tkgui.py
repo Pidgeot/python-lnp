@@ -1,59 +1,43 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,too-many-instance-attributes,too-many-public-methods,too-many-statements
+# pylint:disable=unused-wildcard-import,wildcard-import
 """TKinter-based GUI for PyLNP."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import os
+import queue as Queue
 import sys
+import tkinter.font as tkFont
 from threading import Semaphore
+from tkinter import *  # noqa: F403
+from tkinter import filedialog, messagebox
+from tkinter.ttk import *  # noqa: F403
 
+from core import (baselines, df, download, importer, launcher, log, mods,
+                  paths, terminal, update)
 from core.helpers import get_resource
-from core.lnp import lnp, VERSION
-from core import df, launcher, log, paths, update, mods, download, baselines
-from core import terminal, importer
+from core.lnp import VERSION, lnp
 
-from . import controls, binding
-from .child_windows import LogWindow, InitEditor, SelectDF, UpdateWindow
-from .child_windows import ConfirmRun, TerminalSelector
-
-from .options import OptionsTab
-from .graphics import GraphicsTab
-from .utilities import UtilitiesTab
+from . import binding, controls
 from .advanced import AdvancedTab
+from .child_windows import (ConfirmRun, InitEditor, LogWindow, SelectDF,
+                            TerminalSelector, UpdateWindow)
 from .dfhack import DFHackTab
+from .graphics import GraphicsTab
 from .mods import ModsTab
-
-if sys.version_info[0] == 3:  # Alternate import names
-    # pylint:disable=import-error
-    import queue as Queue
-    from tkinter import *
-    from tkinter.ttk import *
-    import tkinter.messagebox as messagebox
-    import tkinter.filedialog as filedialog
-    import tkinter.font as tkFont
-    #pylint:disable=redefined-builtin
-    basestring = str
-else:
-    # pylint:disable=import-error
-    import Queue
-    from Tkinter import *
-    from ttk import *
-    import tkMessageBox as messagebox
-    import tkFileDialog as filedialog
-    import tkFont
+from .options import OptionsTab
+from .utilities import UtilitiesTab
 
 # Workaround to use Pillow in PyInstaller
-if False: # pylint:disable=using-constant-test
+if False:  # pylint:disable=using-constant-test
     # pylint:disable=unused-import
-    import pkg_resources
+    import pkg_resources  # noqa: F401
 
 try:  # PIL-compatible library (e.g. Pillow); used to load PNG images (optional)
-    # pylint:disable=import-error,no-name-in-module
+    # pylint:disable=import-error
     from PIL import Image, ImageTk
     has_PIL = True
-except ImportError:  # Some PIL installations live outside of the PIL package
-    # pylint:disable=import-error,no-name-in-module
+except ImportError:  # Some PIL installations live outside the PIL package
+    # pylint:disable=import-error
     try:
         import Image
         import ImageTk
@@ -87,16 +71,16 @@ def get_image(filename):
         filename = filename + '.gif'
     try:
         if has_PIL:
-            # pylint:disable=maybe-no-member
             return ImageTk.PhotoImage(Image.open(filename))
-        else:
-            return PhotoImage(file=filename)
-    except: # pylint:disable=bare-except
+        return PhotoImage(file=filename)
+    except Exception:
         log.w('Unable to load image: ' + filename)
+        return None
+
 
 def validate_number(value_if_allowed):
     """
-    Validation method used by Tkinter. Accepts empty and float-coercable
+    Validation method used by Tkinter. Accepts empty and float-coercible
     strings.
 
     Args:
@@ -113,7 +97,9 @@ def validate_number(value_if_allowed):
     except ValueError:
         return False
 
+
 def fixed_map(option):
+    """Sets text colour for Tkinter 8.6.9"""
     # Fix for setting text colour for Tkinter 8.6.9
     # From: https://core.tcl.tk/tk/info/509cafafae
     #
@@ -125,8 +111,10 @@ def fixed_map(option):
     return [elm for elm in Style().map('Treeview', query_opt=option) if
             elm[:2] != ('!disabled', '!selected')]
 
+
 class TkGui(object):
     """Main GUI window."""
+    # pylint: disable=too-many-instance-attributes,too-many-public-methods
     def __init__(self):
         """
         Constructor for TkGui.
@@ -134,6 +122,7 @@ class TkGui(object):
         Args:
             lnp: A PyLNP instance to perform actual work.
         """
+        # pylint: disable=too-many-statements
         self.root = root = Tk()
         self.updateDays = IntVar()
         self.downloadBaselines = BooleanVar()
@@ -290,10 +279,10 @@ class TkGui(object):
         elif interval == 1:
             days = 'day'
         else:
-            days = str(interval)+' days'
+            days = str(interval) + ' days'
         result = messagebox.askyesno(
             message='This pack can automatically check for updates. The author '
-            'of this pack suggests checking every '+days+'.\n\nAllow automatic '
+            'of this pack suggests checking every ' + days + '.\n\nAllow automatic '
             'update checks? You can change this behavior at any time from '
             'Options > Check for Updates.', title='Update checks',
             icon='question', default='yes')
@@ -325,13 +314,12 @@ class TkGui(object):
                         'No Dwarf Fortress install was selected, quitting.')
                     self.root.destroy()
                     return False
-                else:
-                    try:
-                        df.set_df_folder(selector.result)
-                    except IOError as e:
-                        messagebox.showerror(self.root.title(), str(e))
-                        self.exit_program()
-                        return False
+                try:
+                    df.set_df_folder(selector.result)
+                except IOError as e:
+                    messagebox.showerror(self.root.title(), str(e))
+                    self.exit_program()
+                    return False
             else:
                 messagebox.showerror(
                     'PyLNP',
@@ -348,6 +336,7 @@ class TkGui(object):
         Args:
             root: Root window for the menu bar.
         """
+        # pylint: disable=too-many-statements
         menubar = Menu(root, type='menubar')
         root['menu'] = menubar
 
@@ -357,14 +346,14 @@ class TkGui(object):
         menu_folders = Menu(menubar)
         menu_links = Menu(menubar)
         menu_help = Menu(menubar)
-        #menu_beta = Menu(menubar)
+        # menu_beta = Menu(menubar)
         menubar.add_cascade(menu=menu_file, label='File')
         menubar.add_cascade(menu=menu_options, label='Options')
         menubar.add_cascade(menu=menu_run, label='Run')
         menubar.add_cascade(menu=menu_folders, label='Folders')
         menubar.add_cascade(menu=menu_links, label='Links')
         menubar.add_cascade(menu=menu_help, label='Help')
-        #menubar.add_cascade(menu=menu_beta, label='Testing')
+        # menubar.add_cascade(menu=menu_beta, label='Testing')
 
         menu_file.add_command(
             label='Re-load param set', command=self.load_params,
@@ -496,7 +485,6 @@ class TkGui(object):
             menu: The menu to create the items under.
             method: The method to be called when the menu item is selected.
         """
-        #pylint:disable=unused-variable
         for i, f in enumerate(collection):
             if f[0] == '-':
                 menu.add_separator()
@@ -512,7 +500,7 @@ class TkGui(object):
             key: The key for the control that changed.
             var: The variable bound to the control.
         """
-        if not isinstance(key, basestring):
+        if not isinstance(key, str):
             for k in key:
                 TkGui.change_entry(k, var)
             return
@@ -555,7 +543,7 @@ class TkGui(object):
         """Launches Dwarf Fortress, reporting any errors when launching."""
         try:
             launcher.run_df()
-        except: #pylint: disable=bare-except
+        except Exception:
             exc_info = sys.exc_info()
             messagebox.showerror(
                 title='Error launching Dwarf Fortress',
@@ -569,19 +557,21 @@ class TkGui(object):
     def show_help():
         """Shows help for the program."""
         if lnp.bundle:
-            launcher.open_url('http://pylnp.birdiesoft.dk/docs/'+VERSION+'/')
+            launcher.open_url('https://pylnp.birdiesoft.dk/docs/' + VERSION + '/')
         else:
-            launcher.open_url('http://pylnp.birdiesoft.dk/docs/dev/')
+            launcher.open_url('https://pylnp.birdiesoft.dk/docs/dev/')
 
     @staticmethod
     def show_about():
         """Shows about dialog for the program."""
         messagebox.showinfo(
-            title='About', message="PyLNP "+VERSION +" - Lazy Newb Pack Python "
-            "Edition\n\nPort by Pidgeot\nContributions by PeridexisErrant, "
-            "rx80, dricus, James Morgensen, jecowa, carterscottm, McArcady, "
-            "fournm, rgov, cryzed, pjf, TV4Fun\n\n"
-            "Original program: LucasUP, TolyK/aTolyK")
+            title='About',
+            message="PyLNP " + VERSION
+                    + " - Lazy Newb Pack Python "
+                      "Edition\n\nPort by Pidgeot\nContributions by PeridexisErrant, "
+                      "rx80, dricus, James Morgensen, jecowa, carterscottm, McArcady, "
+                      "fournm, rgov, cryzed, pjf, TV4Fun\n\n"
+                      "Original program: LucasUP, TolyK/aTolyK")
 
     @staticmethod
     def cycle_option(field):
@@ -591,7 +581,7 @@ class TkGui(object):
         Args:
             field: The option to cycle.
         """
-        if not isinstance(field, basestring):
+        if not isinstance(field, str):
             for f in field:
                 TkGui.cycle_option(f)
             return
@@ -607,7 +597,7 @@ class TkGui(object):
             field: The field name to change. The corresponding value is
                 automatically read.
         """
-        if not isinstance(field, basestring):
+        if not isinstance(field, str):
             for f in field:
                 df.set_option(f, binding.get(field))
         else:
@@ -646,7 +636,9 @@ class TkGui(object):
             if not lnp.userconfig.get_bool('downloadBaselines'):
                 self.cross_thread_data = queue
                 self.queue.put('<<ConfirmDownloads>>')
+                # pylint: disable=consider-using-with
                 self.reply_semaphore.acquire()
+                # pylint: enable=consider-using-with
                 result = self.cross_thread_data
         elif queue == 'updates':
             result = True
@@ -657,10 +649,12 @@ class TkGui(object):
 
     def send_update_event(self, force=False):
         """Schedules an update for the download text, if not already pending."""
+        # pylint: disable=consider-using-with
         if self.update_pending.acquire(force):
+            # pylint: enable=consider-using-with
             self.queue.put('<<ForceUpdate>>')
 
-    #pylint: disable=unused-argument
+    # pylint: disable=unused-argument
     def start_download(self, queue, url, target):
         """Event handler for the start of a download."""
         self.download_text_string = "Downloading %s..." % os.path.basename(url)
@@ -698,13 +692,14 @@ class TkGui(object):
             '<<HideDLPanel>>', when='tail'))
         self.send_update_event()
 
+    # pylint: enable=unused-argument
+
     def check_cross_thread(self):
         """Used to raise cross-thread events in the UI thread."""
         while True:
-            # pylint:disable=bare-except
             try:
                 v = self.queue.get(False)
-            except:
+            except Exception:
                 break
             self.root.event_generate(v, when='tail')
         self.cross_thread_timer = self.root.after(100, self.check_cross_thread)

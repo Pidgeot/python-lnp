@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Framework for logging errors."""
-from __future__ import print_function, unicode_literals, absolute_import
-import sys, locale
-# pylint:disable=redefined-builtin
-from io import open
+
+import sys
 
 from . import paths
+
 
 class CaptureStream(object):
     """ Redirects output to a file-like object to an internal list as well as a
@@ -42,21 +41,21 @@ class CaptureStream(object):
         """
         self.lines.append(string)
         if not self.outfile:
+            # TODO: See if it's possible to use a with statment here
+            # pylint: disable=consider-using-with
             self.outfile = open(
-                paths.get('root', self.name+'.txt'), 'w', encoding='utf-8')
+                paths.get('root', self.name + '.txt'), 'w', encoding='utf-8')
+            # pylint: enable=consider-using-with
             if self.add_header:
-                from  .lnp import VERSION, lnp
+                from .lnp import VERSION, lnp
                 self.outfile.write(
                     "Running PyLNP {} (OS: {}, Compiled: {})\n".format(
                         VERSION, lnp.os, lnp.os == lnp.bundle))
-        # For Python3: pylint:disable=undefined-variable
-        if sys.version_info[0] == 2 and not isinstance(string, unicode):
-            self.outfile.write(unicode(string, locale.getpreferredencoding()))
-        else:
-            self.outfile.write(string)
+        self.outfile.write(string)
         self.flush()
         if self.tee:
             return self.stream.write(string)
+        return None
 
     def flush(self):
         """Flushes the output file."""
@@ -71,10 +70,12 @@ class CaptureStream(object):
         """Restores the original stream object."""
         setattr(sys, self.name, self.stream)
 
+
 def start():
     """Starts redirection of stdout and stderr."""
     out.hook()
     err.hook()
+
 
 def stop():
     """Stops redirection of stdout and stderr."""

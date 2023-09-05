@@ -2,12 +2,11 @@
 # -*- coding: utf-8 -*-
 """Linter for raw files. Ported from Lethosor's Lua script:
 https://github.com/lethosor/dfhack-scripts/blob/master/raw-lint.lua"""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import os
 
-from .dfraw import DFRaw
 from . import log
+from .dfraw import DFRaw
 
 # TODO: Handle older versions correctly
 # For example, 40d and earlier use object names MATGLOSS and DESCRIPTOR
@@ -35,6 +34,7 @@ objname_overrides = {
     'b_detail_plan': 'BODY_DETAIL_PLAN',
     'c_variation': 'CREATURE_VARIATION',
 }
+
 
 def check_file(path):
     """Validates the raw file located at <path>. Error details are printed to
@@ -81,6 +81,7 @@ def check_file(path):
         file_ok = False
     return file_ok
 
+
 def check_folder(path):
     """Validates all raw files in <path> and its subfolders. Problems with
     individual files are printed to the log with level WARNING. General problems
@@ -97,11 +98,11 @@ def check_folder(path):
     passed = []
     failed = []
     if not files:
-        log.e('Could not find any files in '+path)
+        log.e('Could not find any files in ' + path)
     for f in files:
         f_parts = f.split(os.sep)
-        if (f.endswith('.txt') and 'notes' not in f_parts and
-                'examples and notes' not in f_parts and 'text' not in f_parts):
+        if (f.endswith('.txt') and 'notes' not in f_parts
+                and 'examples and notes' not in f_parts and 'text' not in f_parts):
             log.push_prefix(f)
             has_passed = check_file(f)
             log.pop_prefix()
@@ -111,6 +112,7 @@ def check_folder(path):
                 failed.append(f)
     log.pop_prefix()
     return (passed, failed)
+
 
 def check_df(path):
     """Validates the raw/objects folder in the Dwarf Fortress folder located at
@@ -123,12 +125,14 @@ def check_df(path):
     """
     return check_folder(os.path.join(path, 'raw', 'objects'))
 
+
 def check_folder_bool(path):
     """Returns True if all raw files in <path> pass validation. Problems with
     individual files are printed to the log with level WARNING. General
     problems are printed to the log with level ERROR."""
     p, f = check_folder(path)
     return len(f) == 0 and len(p) != 0
+
 
 def check_df_bool(path):
     """Validates the raw/objects folder in the Dwarf Fortress folder located at

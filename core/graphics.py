@@ -1,17 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Graphics pack management."""
-from __future__ import print_function, unicode_literals, absolute_import
 
-import os, shutil, glob
+import glob
+import os
+import shutil
+
+from . import baselines, colors, df, log, manifest, mods, paths
+from .dfraw import DFRaw
 from .launcher import open_file
 from .lnp import lnp
-from . import colors, df, paths, baselines, mods, log, manifest
-from .dfraw import DFRaw
+
 
 def open_graphics():
     """Opens the graphics pack folder."""
     open_file(paths.get('graphics'))
+
 
 def get_title(pack):
     """Returns the pack title; either per manifest or from dirname."""
@@ -19,6 +23,7 @@ def get_title(pack):
     if title:
         return title
     return pack
+
 
 def get_folder_prefix(pack):
     """Returns the pack folder_prefix; either per manifest or from dirname."""
@@ -28,9 +33,11 @@ def get_folder_prefix(pack):
         return folder_prefix
     return pack
 
+
 def get_tooltip(pack):
     """Returns the tooltip for the given graphics pack."""
     return manifest.get_cfg('graphics', pack).get_string('tooltip')
+
 
 def current_pack():
     """Returns the currently installed graphics pack.
@@ -44,25 +51,27 @@ def current_pack():
             return p
     packs = read_graphics()
     for p in packs:
-        if (lnp.settings.FONT == p[1] and
-                (not lnp.settings.version_has_option('GRAPHICS_FONT') or
-                    lnp.settings.GRAPHICS_FONT == p[2])):
+        if (lnp.settings.FONT == p[1]
+                and (not lnp.settings.version_has_option('GRAPHICS_FONT')
+                     or lnp.settings.GRAPHICS_FONT == p[2])):
             log.i('Installed graphics is {} by checking tilesets'.format(p[0]))
             return p[0]
     result = str(lnp.settings.FONT)
     if lnp.settings.version_has_option('GRAPHICS_FONT'):
-        result += '/'+str(lnp.settings.GRAPHICS_FONT)
+        result += '/' + str(lnp.settings.GRAPHICS_FONT)
     log.w('Could not determine installed graphics, tileset is ' + result)
     return result
+
 
 def logged_graphics(logfile, start='graphics/'):
     """Returns the graphics pack from an 'installed_raws.txt' file"""
     if os.path.isfile(logfile):
-        with open(logfile) as f:
-            for l in f.readlines():
-                if l.startswith(start):
-                    return l.strip().replace(start, '')
+        with open(logfile, encoding="utf-8") as f:
+            for line in f.readlines():
+                if line.startswith(start):
+                    return line.strip().replace(start, '')
     return ''
+
 
 def read_graphics():
     """Returns a list of tuples of (graphics dir, FONT, GRAPHICS_FONT)."""
@@ -74,10 +83,11 @@ def read_graphics():
         if not validate_pack(p):
             continue
         init_path = paths.get('graphics', p, 'data', 'init', 'init.txt')
-        #pylint: disable=unbalanced-tuple-unpacking
-        font, graphics = DFRaw(init_path).get_values('FONT', 'GRAPHICS_FONT')
+        font = DFRaw(init_path).get_value('FONT')
+        graphics = DFRaw(init_path).get_value('GRAPHICS_FONT')
         result.append((p, font, graphics))
     return tuple(sorted(result))
+
 
 def add_tilesets():
     """Copies missing tilesets from LNP/Tilesets to the data/art folder."""
@@ -88,6 +98,7 @@ def add_tilesets():
             else:
                 shutil.copytree(item, paths.get('data', 'art'))
 
+
 def install_graphics(pack):
     """Installs the graphics pack located in LNP/Graphics/<pack>.
 
@@ -96,7 +107,7 @@ def install_graphics(pack):
 
     Returns:
         True if successful,
-        False if an exception occured
+        False if an exception occurred
         None if baseline vanilla raws are missing
     """
     # pylint:disable=too-many-branches
@@ -147,22 +158,21 @@ def install_graphics(pack):
                 os.remove(paths.get('colors', '_Current graphics pack.txt'))
 
         # TwbT overrides
-        #pylint: disable=bare-except
         try:
             os.remove(paths.get('init', 'overrides.txt'))
-        except:
+        except Exception:
             pass
         try:
             shutil.copyfile(
                 paths.get('graphics', pack, 'data', 'init', 'overrides.txt'),
                 paths.get('init', 'overrides.txt'))
-        except:
+        except Exception:
             pass
 
         # TwbT file replacements
         if 'TWBT' in lnp.settings.printmode:
             for folder in ['graphics', 'objects']:
-                twbt_folder = paths.get('graphics', pack, 'raw', 'twbt_'+folder)
+                twbt_folder = paths.get('graphics', pack, 'raw', 'twbt_' + folder)
                 target_folder = paths.get('df', 'raw', folder)
 
                 for path, _, files in os.walk(twbt_folder):
@@ -172,12 +182,13 @@ def install_graphics(pack):
                             twbt_f, twbt_folder))
                         shutil.copyfile(twbt_f, target_f)
 
-    except:
+    except Exception:
         log.e('Something went wrong while installing graphics', stack=True)
         df.load_params()
         return False
     df.load_params()
     return True
+
 
 def validate_pack(pack, df_version=None):
     """Checks for presence of all required files for a pack install."""
@@ -196,6 +207,7 @@ def validate_pack(pack, df_version=None):
         result &= os.path.isfile(os.path.join(
             gfx_dir, 'data', 'init', 'colors.txt'))
     return result
+
 
 def patch_inits(gfx_dir):
     """Installs init files from a graphics pack by selectively changing
@@ -274,10 +286,12 @@ def patch_inits(gfx_dir):
     lnp.settings.read_file(d_init, d_init_fields, False)
     df.save_params()
 
+
 def simplify_graphics():
     """Removes unnecessary files from all graphics packs."""
     for pack in read_graphics():
         simplify_pack(pack[0])
+
 
 def simplify_pack(pack):
     """Removes unnecessary files from one graphics pack."""
@@ -288,10 +302,12 @@ def simplify_pack(pack):
         return False
     return a + b + c
 
+
 def savegames_to_update():
     """Returns a list of savegames that will be updated."""
     return [o for o in glob.glob(paths.get('save', '*'))
             if os.path.isdir(o) and not o.endswith('current')]
+
 
 def update_graphics_raws(raw_dir, pack):
     """Updates raws in place for a new graphics pack.
@@ -318,6 +334,7 @@ def update_graphics_raws(raw_dir, pack):
     log.i('Aborted while updating raws ' + raw_dir + ' to ' + pack)
     return False
 
+
 def update_savegames():
     """Update save games with current raws."""
     count, skipped, saves = 0, 0, savegames_to_update()
@@ -328,6 +345,7 @@ def update_savegames():
         else:
             skipped += 1
     return count, skipped
+
 
 def can_rebuild(log_file, strict=True):
     """Test if user can exactly rebuild a raw folder, returning a bool."""
@@ -340,13 +358,15 @@ def can_rebuild(log_file, strict=True):
     graphic_ok = any(logged_graphics(log_file) in n for n in names)
     if graphic_ok and mods.can_rebuild(log_file, strict=strict):
         return True
-    log.i('Components unavailable to rebuild raws in ' +
-          os.path.dirname(log_file))
+    log.i('Components unavailable to rebuild raws in '
+          + os.path.dirname(log_file))
     return False
+
 
 def open_tilesets():
     """Opens the tilesets folder."""
     open_file(paths.get('tilesets'))
+
 
 def read_tilesets():
     """Returns a tuple of available tileset files. Also copies missing tilesets
@@ -362,7 +382,7 @@ def read_tilesets():
                 '_']))
 
     i = 0
-    while i < len(files): # Manual loop to allow modification during iteration
+    while i < len(files):  # Manual loop to allow modification during iteration
         filename = os.path.splitext(files[i])
         bgname = filename[0] + '-bg.png'
         topname = filename[0] + '-top.png'
@@ -374,11 +394,13 @@ def read_tilesets():
 
     return tuple(files)
 
+
 def current_tilesets():
     """Returns the current tilesets as a tuple (FONT, GRAPHICS_FONT)."""
     if lnp.settings.version_has_option('GRAPHICS_FONT'):
         return (lnp.settings.FONT, lnp.settings.GRAPHICS_FONT)
     return (lnp.settings.FONT, None)
+
 
 def install_tilesets(font, graphicsfont):
     """Installs the provided tilesets as [FULL]FONT and GRAPHICS_[FULL]FONT.
@@ -387,8 +409,8 @@ def install_tilesets(font, graphicsfont):
     if font is not None and os.path.isfile(paths.get('data', 'art', font)):
         df.set_option('FONT', font)
         df.set_option('FULLFONT', font)
-    if (lnp.settings.version_has_option('GRAPHICS_FONT') and
-            graphicsfont is not None and os.path.isfile(
+    if (lnp.settings.version_has_option('GRAPHICS_FONT')
+            and graphicsfont is not None and os.path.isfile(
                 paths.get('data', 'art', graphicsfont))):
         df.set_option('GRAPHICS_FONT', graphicsfont)
         df.set_option('GRAPHICS_FULLFONT', graphicsfont)

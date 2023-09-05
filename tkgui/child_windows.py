@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint:disable=unused-wildcard-import,wildcard-import, invalid-name
+# pylint:disable=unused-wildcard-import,wildcard-import
 """Contains base class used for child windows."""
-from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, os
+import os
+from tkinter import *  # noqa: F403
+from tkinter import messagebox
+from tkinter.ttk import *  # noqa: F403
 
 from core import errorlog, launcher, paths, terminal, update
 from core.dfraw import DFRaw
@@ -12,16 +14,6 @@ from core.lnp import lnp
 
 from . import controls
 
-if sys.version_info[0] == 3:  # Alternate import names
-    # pylint:disable=import-error
-    from tkinter import *
-    from tkinter.ttk import *
-    import tkinter.messagebox as messagebox
-else:
-    # pylint:disable=import-error
-    from Tkinter import *
-    from ttk import *
-    import tkMessageBox as messagebox
 
 class ChildWindow(object):
     """Base class for child windows."""
@@ -47,7 +39,6 @@ class ChildWindow(object):
         Args:
             container: the frame the controls are to be created in.
         """
-        pass
 
     def make_modal(self, on_cancel):
         """
@@ -68,6 +59,7 @@ class ChildWindow(object):
         """Called when the window is closed."""
         self.top.destroy()
 
+
 class DualTextWindow(ChildWindow):
     """Window containing a row of buttons and two scrollable text fields."""
     def __init__(self, parent, title):
@@ -76,7 +68,7 @@ class DualTextWindow(ChildWindow):
         self.left_scroll = None
         self.right = None
         self.right_scroll = None
-        super(DualTextWindow, self).__init__(parent, title)
+        super().__init__(parent, title)
 
     def create_controls(self, container):
         self.create_buttons(container)
@@ -102,7 +94,7 @@ class DualTextWindow(ChildWindow):
         Args:
             container: the frame the controls are to be created in.
         """
-        pass
+
 
 class LogWindow(DualTextWindow):
     """Window used for displaying an error log."""
@@ -113,7 +105,7 @@ class LogWindow(DualTextWindow):
         Args:
             parent: parent widget for the window.
         """
-        super(LogWindow, self).__init__(parent, 'Output log')
+        super().__init__(parent, 'Output log')
         self.load()
 
     def create_buttons(self, container):
@@ -128,10 +120,11 @@ class LogWindow(DualTextWindow):
         self.left.insert('1.0', '\n'.join(errorlog.out.lines))
         self.right.insert('1.0', '\n'.join(errorlog.err.lines))
 
+
 class InitEditor(DualTextWindow):
     """Basic editor for d_init.txt and init.txt."""
     def __init__(self, parent, gui):
-        super(InitEditor, self).__init__(parent, 'Init Editor')
+        super().__init__(parent, 'Init Editor')
         self.gui = gui
         self.load()
 
@@ -164,6 +157,7 @@ class InitEditor(DualTextWindow):
                 paths.get('init', 'd_init.txt'), self.right.get('1.0', 'end'))
         self.gui.load_params()
 
+
 class SelectDF(ChildWindow):
     """Window to select an instance of Dwarf Fortress to operate on."""
     def __init__(self, parent, folders):
@@ -177,7 +171,7 @@ class SelectDF(ChildWindow):
         self.parent = parent
         self.listvar = Variable(parent)
         self.folderlist = None
-        super(SelectDF, self).__init__(parent, 'Select DF instance')
+        super().__init__(parent, 'Select DF instance')
         self.result = ''
         self.listvar.set(folders)
         self.make_modal(self.cancel)
@@ -211,6 +205,7 @@ class SelectDF(ChildWindow):
         """Called when the Cancel button is clicked."""
         self.top.destroy()
 
+
 class UpdateWindow(ChildWindow):
     """Notification of a new update."""
     def __init__(self, parent):
@@ -222,14 +217,14 @@ class UpdateWindow(ChildWindow):
             lnp: reference to the PyLNP object.
         """
         self.parent = parent
-        super(UpdateWindow, self).__init__(parent, 'Update available')
+        super().__init__(parent, 'Update available')
         self.make_modal(self.close)
 
     def create_controls(self, container):
         f = Frame(container)
         Label(
-            f, text='An update is available (version ' +
-            str(lnp.new_version) + '). Download now?').grid(
+            f, text='An update is available (version '
+            + str(lnp.new_version) + '). Download now?').grid(
                 column=0, row=0)
         Label(f, text='You can control the frequency of update checks from the '
               'menu Options > Check for Updates.').grid(column=0, row=1)
@@ -240,14 +235,14 @@ class UpdateWindow(ChildWindow):
         if lnp.updater.get_direct_url():
             Button(
                 buttons, text='Direct Download', command=self.download
-                ).pack(side=LEFT)
+            ).pack(side=LEFT)
         if lnp.updater.get_download_url():
             Button(
                 buttons, text='Open in Browser', command=self.browser
-                ).pack(side=LEFT)
+            ).pack(side=LEFT)
         Button(
             buttons, text='Not now', command=self.close
-            ).pack(side=LEFT)
+        ).pack(side=LEFT)
         buttons.pack(side=BOTTOM)
 
     def browser(self):
@@ -280,7 +275,7 @@ class ConfirmRun(ChildWindow):
         self.parent = parent
         self.path = path
         self.is_df = is_df
-        super(ConfirmRun, self).__init__(parent, 'Program already running')
+        super().__init__(parent, 'Program already running')
         self.make_modal(self.close)
 
     def create_controls(self, container):
@@ -306,11 +301,12 @@ class ConfirmRun(ChildWindow):
             launcher.run_program(self.path)
         self.close()
 
+
 class TerminalSelector(ChildWindow):
-    """Used to select a terminal for launcing child programs on Linux."""
+    """Used to select a terminal for launching child programs on Linux."""
     def __init__(self, parent, first_run):
         self.first_run = first_run
-        super(TerminalSelector, self).__init__(parent, 'Configure terminal')
+        super().__init__(parent, 'Configure terminal')
         self.running_test = False
         self.running_status = ''
         self.make_modal(self.top.destroy)
@@ -355,7 +351,7 @@ class TerminalSelector(ChildWindow):
         terminal.configure_custom_terminal(self.cmd.get())
         del self.term
         del self.cmd
-        super(TerminalSelector, self).close()
+        super().close()
 
     def run_test(self):
         """Tests the custom terminal provided to see if it works correctly."""
@@ -367,8 +363,8 @@ class TerminalSelector(ChildWindow):
                 "the terminal is not being launched correctly."
                 "\n\nThe test may take anywhere from a few seconds to about a "
                 "minute to execute. PyLNP will not respond until the test is "
-                "complete.\n\nPress OK to start the test, or Cancel to abort."
-                , title="PyLNP"):
+                "complete.\n\nPress OK to start the test, or Cancel to abort.",
+                title="PyLNP"):
             return
         try:
             terminal.configure_custom_terminal(self.cmd.get())
@@ -378,7 +374,6 @@ class TerminalSelector(ChildWindow):
             else:
                 messagebox.showerror(
                     message="Test failed: %s" % r[1], title="PyLNP")
-        except: #pylint:disable=bare-except
+        except Exception:
             messagebox.showerror(
                 message="Test failed, see the log for details.", title="PyLNP")
-

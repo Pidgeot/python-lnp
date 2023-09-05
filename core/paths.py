@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Path management."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import os
+
 from . import log
 
 __paths = {}
+
 
 def _identify_folder_name(base, name):
     """

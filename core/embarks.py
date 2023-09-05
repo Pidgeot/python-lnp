@@ -1,17 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Embark profile management."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import os
-from . import helpers, paths, log
+
+from . import helpers, log, paths
 from .dfraw import DFRaw
+
 
 def read_embarks():
     """Returns a list of embark profiles."""
     return tuple(sorted([
         os.path.basename(o) for o in helpers.get_text_files(
             paths.get('embarks'))]))
+
 
 def install_embarks(files):
     """
@@ -25,6 +27,7 @@ def install_embarks(files):
         for f in files:
             embark = DFRaw.read(paths.get('embarks', f))
             out.write(embark + "\n\n")
+
 
 def get_installed_files():
     """Returns the names of the currently installed embark profiles."""

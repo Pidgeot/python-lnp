@@ -12,7 +12,7 @@ Two import strategies are currently supported:
     prepend imported file content (for logfiles)
 
 
-These strategies support the 'low hanging fruit' of imports.  Other content
+These strategies support the 'low-hanging fruit' of imports.  Other content
 or more advanced strategies have been identified, but are difficult to
 implement without risking a 'bad import' scenario:
 
@@ -28,11 +28,10 @@ implement without risking a 'bad import' scenario:
     Importing world gen and embark profiles may be supported eventually.
     No obvious downsides beyond tricky implementation.
 :other:
-    Custom settings importer - eg which graphics pack, are aquifers
+    Custom settings importer - e.g. which graphics pack, are aquifers
     disabled, other PyLNP settings...  May be added later but no plans.
 
 """
-from __future__ import print_function, unicode_literals, absolute_import
 
 import os
 import shutil
@@ -44,7 +43,7 @@ from .lnp import lnp
 def strat_fallback(strat):
     """Log error if an unknown strategy is attempted."""
     def __fallback(src, dest):
-        #pylint:disable=unused-argument
+        # pylint:disable=unused-argument
         log.w('Attempted to use unknown strategy ' + strat)
         return False
     return __fallback
@@ -58,7 +57,7 @@ def strat_copy_add(src, dest):
     # handle the simple case, one file
     if os.path.isfile(src):
         if os.path.isfile(dest):
-            with open(dest) as f:
+            with open(dest, encoding="utf-8") as f:
                 if f.read().strip():
                     log.i('Skipping import of {} to {}; dest is non-empty file'
                           .format(src, dest))
@@ -107,7 +106,7 @@ def do_imports(from_df_dir):
     """Import content (defined in PyLNP.json) from the given previous df_dir,
     and associated LNP install if any.
     """
-    # pylint:disable=too-many-locals,too-many-branches
+    # pylint:disable=too-many-branches
     # validate that from_df_dir is, in fact, a DF dir
     if not all(os.path.exists(os.path.join(from_df_dir, *p)) for p in
                [('data', 'init', 'init.txt'), ('raw', 'objects')]):
@@ -159,7 +158,7 @@ def do_imports(from_df_dir):
     strat_funcs = {
         'copy_add': strat_copy_add,
         'text_prepend': strat_text_prepend,
-        }
+    }
     imported = []
     for strat, src, dest in path_pairs:
         if not os.path.exists(src):

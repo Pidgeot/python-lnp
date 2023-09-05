@@ -1,35 +1,36 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Configuration and raw manipulation for Dwarf Fortress."""
-from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, os, re
+import os
+import re
+import sys
+
+from . import hacks, log
 from .dfraw import DFRaw
-from . import log, hacks
 
-if sys.version_info[0] == 3:
-    #pylint:disable=redefined-builtin
-    basestring = str
 
 # Markers to read certain settings correctly
-# pylint:disable=too-few-public-methods,too-many-instance-attributes,too-many-statements,too-many-arguments
+# pylint:disable=too-few-public-methods
 class _DisableValues(object):
     """Marker class for DFConfiguration. Value is disabled by replacing [ and ]
     with !."""
-    pass
+
 
 _disabled = _DisableValues()
 
+
 class _NegatedBool(object):
     """Marker class for DFConfiguration. Swaps YES and NO."""
-    pass
+
 
 _negated_bool = _NegatedBool()
+
 
 class _AnnouncementFocus(object):
     """Marker class for DFConfiguration. Value controls presence of P and R
     flags in ``announcements.txt``."""
-    pass
+
 
 _announcement_focus = _AnnouncementFocus()
 
@@ -90,16 +91,16 @@ _option_version_data = {
     'YELLOW_B': ['0.21.93.19a', '0.31.04'],
     'YELLOW_G': ['0.21.93.19a', '0.31.04'],
     'YELLOW_R': ['0.21.93.19a', '0.31.04'],
-    'DISPLAY_LENGTH': ['0.21.93.19a','0.47.05'],
-    'MORE': ['0.21.93.19a','0.47.05'],
-    'VARIED_GROUND_TILES': ['0.21.93.19a','0.47.05'],
+    'DISPLAY_LENGTH': ['0.21.93.19a', '0.47.05'],
+    'MORE': ['0.21.93.19a', '0.47.05'],
+    'VARIED_GROUND_TILES': ['0.21.93.19a', '0.47.05'],
     'FONT': ['0.21.93.19a'],
     'FULLFONT': ['0.21.93.19a'],
     'FULLSCREENX': ['0.21.93.19a'],
     'FULLSCREENY': ['0.21.93.19a'],
     'WINDOWEDX': ['0.21.93.19a'],
     'WINDOWEDY': ['0.21.93.19a'],
-    'INTRO': ['0.21.100.19a','0.47.05'],
+    'INTRO': ['0.21.100.19a', '0.47.05'],
     'SOUND': ['0.21.100.19a'],
     'KEY_HOLD_MS': ['0.21.101.19a'],
     'NICKNAME_ADVENTURE': ['0.21.102.19a'],
@@ -107,35 +108,35 @@ _option_version_data = {
     'NICKNAME_LEGENDS': ['0.21.102.19a'],
     'WINDOWED': ['0.21.102.19a'],
     'ENGRAVINGS_START_OBSCURED': ['0.21.104.19d'],
-    'MOUSE': ['0.21.104.21a','0.47.05'],
-    'MOUSE_PICTURE': ['0.21.104.21a','0.47.05'],
-    'ADVENTURER_TRAPS': ['0.22.110.23a','0.47.05'],
-    'BLACK_SPACE': ['0.22.120.23a','0.47.05'],
-    'GRAPHICS': ['0.22.120.23a','0.47.05'],
-    'GRAPHICS_BLACK_SPACE': ['0.22.120.23a','0.47.05'],
-    'GRAPHICS_FONT': ['0.22.120.23a','0.47.05'],
-    'GRAPHICS_FULLFONT': ['0.22.120.23a','0.47.05'],
-    'GRAPHICS_FULLSCREENX': ['0.22.120.23a','0.47.05'],
-    'GRAPHICS_FULLSCREENY': ['0.22.120.23a','0.47.05'],
-    'GRAPHICS_WINDOWEDX': ['0.22.120.23a','0.47.05'],
-    'GRAPHICS_WINDOWEDY': ['0.22.120.23a','0.47.05'],
+    'MOUSE': ['0.21.104.21a', '0.47.05'],
+    'MOUSE_PICTURE': ['0.21.104.21a', '0.47.05'],
+    'ADVENTURER_TRAPS': ['0.22.110.23a', '0.47.05'],
+    'BLACK_SPACE': ['0.22.120.23a', '0.47.05'],
+    'GRAPHICS': ['0.22.120.23a', '0.47.05'],
+    'GRAPHICS_BLACK_SPACE': ['0.22.120.23a', '0.47.05'],
+    'GRAPHICS_FONT': ['0.22.120.23a', '0.47.05'],
+    'GRAPHICS_FULLFONT': ['0.22.120.23a', '0.47.05'],
+    'GRAPHICS_FULLSCREENX': ['0.22.120.23a', '0.47.05'],
+    'GRAPHICS_FULLSCREENY': ['0.22.120.23a', '0.47.05'],
+    'GRAPHICS_WINDOWEDX': ['0.22.120.23a', '0.47.05'],
+    'GRAPHICS_WINDOWEDY': ['0.22.120.23a', '0.47.05'],
     'FPS': ['0.22.121.23b'],
     'TEMPERATURE': ['0.22.121.23b'],
     'WEATHER': ['0.22.121.23b'],
     'FPS_CAP': ['0.23.130.23a'],
     'POPULATION_CAP': ['0.23.130.23a'],
-    'ADVENTURER_ALWAYS_CENTER': ['0.27.169.32a','0.47.05'],
-    'ADVENTURER_Z_VIEWS': ['0.27.169.32a','0.47.05'],
-    'AUTOBACKUP': ['0.27.169.32a','0.47.05'],
-    'CHASM': ['0.27.169.32a','0.47.05'],
-    'COFFIN_NO_PETS_DEFAULT': ['0.27.169.32a','0.47.05'],
-    'ECONOMY': ['0.27.169.32a','0.47.05'],
-    'INVADERS': ['0.27.169.32a','0.47.05'],
-    'SKY': ['0.27.169.32a','0.47.05'],
-    'TEXTURE_PARAM': ['0.27.169.32a','0.47.05'],
-    'TOPMOST': ['0.27.169.32a','0.47.05'],
-    'VOLUME': ['0.27.169.32a','0.47.05'],
-    'VSYNC': ['0.27.169.32a','0.47.05'],
+    'ADVENTURER_ALWAYS_CENTER': ['0.27.169.32a', '0.47.05'],
+    'ADVENTURER_Z_VIEWS': ['0.27.169.32a', '0.47.05'],
+    'AUTOBACKUP': ['0.27.169.32a', '0.47.05'],
+    'CHASM': ['0.27.169.32a', '0.47.05'],
+    'COFFIN_NO_PETS_DEFAULT': ['0.27.169.32a', '0.47.05'],
+    'ECONOMY': ['0.27.169.32a', '0.47.05'],
+    'INVADERS': ['0.27.169.32a', '0.47.05'],
+    'SKY': ['0.27.169.32a', '0.47.05'],
+    'TEXTURE_PARAM': ['0.27.169.32a', '0.47.05'],
+    'TOPMOST': ['0.27.169.32a', '0.47.05'],
+    'VOLUME': ['0.27.169.32a', '0.47.05'],
+    'VSYNC': ['0.27.169.32a', '0.47.05'],
     'AQUIFER': ['0.27.169.32a'],
     'ARTIFACTS': ['0.27.169.32a'],
     'AUTOSAVE': ['0.27.169.32a'],
@@ -147,14 +148,14 @@ _option_version_data = {
     'RECENTER_INTERFACE_SHUTDOWN_MS': ['0.27.169.32a'],
     'SHOW_FLOW_AMOUNTS': ['0.27.169.32a'],
     'SHOW_IMP_QUALITY': ['0.27.169.32a'],
-    'PRIORITY': ['0.27.169.33c','0.47.05'],
+    'PRIORITY': ['0.27.169.33c', '0.47.05'],
     'EMBARK_RECTANGLE': ['0.27.169.33g'],
     'PAUSE_ON_LOAD': ['0.27.169.33g'],
-    'ZERO_RENT': ['0.27.176.38a','0.47.05'],
+    'ZERO_RENT': ['0.27.176.38a', '0.47.05'],
     'BABY_CHILD_CAP': ['0.27.176.38a'],
     'AUTOSAVE_PAUSE': ['0.27.176.38b'],
     'EMBARK_WARNING_ALWAYS': ['0.27.176.38b'],
-    'IDLERS': ['0.28.181.39a','0.47.05'],
+    'IDLERS': ['0.28.181.39a', '0.47.05'],
     'SHOW_ALL_HISTORY_IN_DWARF_MODE': ['0.28.181.39a'],
     'SHOW_EMBARK_CHASM': ['0.28.181.39d', '0.31.01'],
     'SHOW_EMBARK_M_PIPE': ['0.28.181.39d', '0.31.01'],
@@ -172,22 +173,22 @@ _option_version_data = {
     'STORE_DIST_SEED_COMBINE': ['0.28.181.40a'],
     'FULLGRID': ['0.28.181.40b'],
     'PARTIAL_PRINT': ['0.28.181.40b'],
-    'WOUND_COLOR_BROKEN': ['0.31.01','0.47.05'],
-    'WOUND_COLOR_FUNCTION_LOSS': ['0.31.01','0.47.05'],
-    'WOUND_COLOR_INHIBITED': ['0.31.01','0.47.05'],
-    'WOUND_COLOR_MINOR': ['0.31.01','0.47.05'],
-    'WOUND_COLOR_MISSING': ['0.31.01','0.47.05'],
-    'WOUND_COLOR_NONE': ['0.31.01','0.47.05'],
+    'WOUND_COLOR_BROKEN': ['0.31.01', '0.47.05'],
+    'WOUND_COLOR_FUNCTION_LOSS': ['0.31.01', '0.47.05'],
+    'WOUND_COLOR_INHIBITED': ['0.31.01', '0.47.05'],
+    'WOUND_COLOR_MINOR': ['0.31.01', '0.47.05'],
+    'WOUND_COLOR_MISSING': ['0.31.01', '0.47.05'],
+    'WOUND_COLOR_NONE': ['0.31.01', '0.47.05'],
     'COMPRESSED_SAVES': ['0.31.01'],
     'DIG_CANCEL_DAMP': ['0.31.01'],
     'DIG_CANCEL_WARM': ['0.31.01'],
     'TESTING_ARENA': ['0.31.01'],
-    'PILLAR_TILE': ['0.31.08','0.47.05'],
-    'ZOOM_SPEED': ['0.31.13','0.47.05'],
-    'ARB_SYNC': ['0.31.13','0.47.05'],
-    'PRINT_MODE': ['0.31.13','0.47.05'],
-    'SINGLE_BUFFER': ['0.31.13','0.47.05'],
-    'TRUETYPE': ['0.31.13','0.47.05'],
+    'PILLAR_TILE': ['0.31.08', '0.47.05'],
+    'ZOOM_SPEED': ['0.31.13', '0.47.05'],
+    'ARB_SYNC': ['0.31.13', '0.47.05'],
+    'PRINT_MODE': ['0.31.13', '0.47.05'],
+    'SINGLE_BUFFER': ['0.31.13', '0.47.05'],
+    'TRUETYPE': ['0.31.13', '0.47.05'],
     'KEY_REPEAT_ACCEL_LIMIT': ['0.31.13'],
     'KEY_REPEAT_ACCEL_START': ['0.31.13'],
     'KEY_REPEAT_MS': ['0.31.13'],
@@ -195,153 +196,153 @@ _option_version_data = {
     'RESIZABLE': ['0.31.13'],
     'WALKING_SPREADS_SPATTER_ADV': ['0.31.16'],
     'WALKING_SPREADS_SPATTER_DWF': ['0.31.16'],
-    'SET_LABOR_LISTS': ['0.34.03','0.47.05'],
-    'TRACK_E': ['0.34.08','0.47.05'],
-    'TRACK_EW': ['0.34.08','0.47.05'],
-    'TRACK_N': ['0.34.08','0.47.05'],
-    'TRACK_NE': ['0.34.08','0.47.05'],
-    'TRACK_NEW': ['0.34.08','0.47.05'],
-    'TRACK_NS': ['0.34.08','0.47.05'],
-    'TRACK_NSE': ['0.34.08','0.47.05'],
-    'TRACK_NSEW': ['0.34.08','0.47.05'],
-    'TRACK_NSW': ['0.34.08','0.47.05'],
-    'TRACK_NW': ['0.34.08','0.47.05'],
-    'TRACK_RAMP_E': ['0.34.08','0.47.05'],
-    'TRACK_RAMP_EW': ['0.34.08','0.47.05'],
-    'TRACK_RAMP_N': ['0.34.08','0.47.05'],
-    'TRACK_RAMP_NE': ['0.34.08','0.47.05'],
-    'TRACK_RAMP_NEW': ['0.34.08','0.47.05'],
-    'TRACK_RAMP_NS': ['0.34.08','0.47.05'],
-    'TRACK_RAMP_NSE': ['0.34.08','0.47.05'],
-    'TRACK_RAMP_NSEW': ['0.34.08','0.47.05'],
-    'TRACK_RAMP_NSW': ['0.34.08','0.47.05'],
-    'TRACK_RAMP_NW': ['0.34.08','0.47.05'],
-    'TRACK_RAMP_S': ['0.34.08','0.47.05'],
-    'TRACK_RAMP_SE': ['0.34.08','0.47.05'],
-    'TRACK_RAMP_SEW': ['0.34.08','0.47.05'],
-    'TRACK_RAMP_SW': ['0.34.08','0.47.05'],
-    'TRACK_RAMP_W': ['0.34.08','0.47.05'],
-    'TRACK_S': ['0.34.08','0.47.05'],
-    'TRACK_SE': ['0.34.08','0.47.05'],
-    'TRACK_SEW': ['0.34.08','0.47.05'],
-    'TRACK_SW': ['0.34.08','0.47.05'],
-    'TRACK_W': ['0.34.08','0.47.05'],
-    'TREE_BRANCH_EW': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_EW_DEAD': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_NE': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_NE_DEAD': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_NEW': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_NEW_DEAD': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_NS': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_NS_DEAD': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_NSE': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_NSE_DEAD': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_NSEW': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_NSEW_DEAD': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_NSW': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_NSW_DEAD': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_NW': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_NW_DEAD': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_SE': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_SE_DEAD': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_SEW': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_SEW_DEAD': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_SW': ['0.40.01','0.47.05'],
-    'TREE_BRANCH_SW_DEAD': ['0.40.01','0.47.05'],
-    'TREE_BRANCHES': ['0.40.01','0.47.05'],
-    'TREE_BRANCHES_DEAD': ['0.40.01','0.47.05'],
-    'TREE_CAP_FLOOR1': ['0.40.01','0.47.05'],
-    'TREE_CAP_FLOOR1_DEAD': ['0.40.01','0.47.05'],
-    'TREE_CAP_FLOOR2': ['0.40.01','0.47.05'],
-    'TREE_CAP_FLOOR2_DEAD': ['0.40.01','0.47.05'],
-    'TREE_CAP_FLOOR3': ['0.40.01','0.47.05'],
-    'TREE_CAP_FLOOR3_DEAD': ['0.40.01','0.47.05'],
-    'TREE_CAP_FLOOR4': ['0.40.01','0.47.05'],
-    'TREE_CAP_FLOOR4_DEAD': ['0.40.01','0.47.05'],
-    'TREE_CAP_PILLAR': ['0.40.01','0.47.05'],
-    'TREE_CAP_PILLAR_DEAD': ['0.40.01','0.47.05'],
-    'TREE_CAP_RAMP': ['0.40.01','0.47.05'],
-    'TREE_CAP_RAMP_DEAD': ['0.40.01','0.47.05'],
-    'TREE_CAP_WALL_E': ['0.40.01','0.47.05'],
-    'TREE_CAP_WALL_E_DEAD': ['0.40.01','0.47.05'],
-    'TREE_CAP_WALL_N': ['0.40.01','0.47.05'],
-    'TREE_CAP_WALL_N_DEAD': ['0.40.01','0.47.05'],
-    'TREE_CAP_WALL_NE': ['0.40.01','0.47.05'],
-    'TREE_CAP_WALL_NE_DEAD': ['0.40.01','0.47.05'],
-    'TREE_CAP_WALL_NW': ['0.40.01','0.47.05'],
-    'TREE_CAP_WALL_NW_DEAD': ['0.40.01','0.47.05'],
-    'TREE_CAP_WALL_S': ['0.40.01','0.47.05'],
-    'TREE_CAP_WALL_S_DEAD': ['0.40.01','0.47.05'],
-    'TREE_CAP_WALL_SE': ['0.40.01','0.47.05'],
-    'TREE_CAP_WALL_SE_DEAD': ['0.40.01','0.47.05'],
-    'TREE_CAP_WALL_SW': ['0.40.01','0.47.05'],
-    'TREE_CAP_WALL_SW_DEAD': ['0.40.01','0.47.05'],
-    'TREE_CAP_WALL_W': ['0.40.01','0.47.05'],
-    'TREE_CAP_WALL_W_DEAD': ['0.40.01','0.47.05'],
-    'TREE_ROOT_SLOPING': ['0.40.01','0.47.05'],
-    'TREE_ROOT_SLOPING_DEAD': ['0.40.01','0.47.05'],
-    'TREE_ROOTS': ['0.40.01','0.47.05'],
-    'TREE_ROOTS_DEAD': ['0.40.01','0.47.05'],
-    'TREE_SMOOTH_BRANCHES': ['0.40.01','0.47.05'],
-    'TREE_SMOOTH_BRANCHES_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_BRANCH_E': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_BRANCH_E_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_BRANCH_N': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_BRANCH_N_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_BRANCH_S': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_BRANCH_S_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_BRANCH_W': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_BRANCH_W_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_E': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_E_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_EW': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_EW_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_INTERIOR': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_INTERIOR_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_N': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_N_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_NE': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_NE_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_NEW': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_NEW_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_NS': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_NS_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_NSE': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_NSE_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_NSEW': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_NSEW_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_NSW': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_NSW_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_NW': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_NW_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_PILLAR': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_PILLAR_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_S': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_S_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_SE': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_SE_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_SEW': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_SEW_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_SLOPING': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_SLOPING_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_SW': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_SW_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_W': ['0.40.01','0.47.05'],
-    'TREE_TRUNK_W_DEAD': ['0.40.01','0.47.05'],
-    'TREE_TWIGS': ['0.40.01','0.47.05'],
-    'TREE_TWIGS_DEAD': ['0.40.01','0.47.05'],
+    'SET_LABOR_LISTS': ['0.34.03', '0.47.05'],
+    'TRACK_E': ['0.34.08', '0.47.05'],
+    'TRACK_EW': ['0.34.08', '0.47.05'],
+    'TRACK_N': ['0.34.08', '0.47.05'],
+    'TRACK_NE': ['0.34.08', '0.47.05'],
+    'TRACK_NEW': ['0.34.08', '0.47.05'],
+    'TRACK_NS': ['0.34.08', '0.47.05'],
+    'TRACK_NSE': ['0.34.08', '0.47.05'],
+    'TRACK_NSEW': ['0.34.08', '0.47.05'],
+    'TRACK_NSW': ['0.34.08', '0.47.05'],
+    'TRACK_NW': ['0.34.08', '0.47.05'],
+    'TRACK_RAMP_E': ['0.34.08', '0.47.05'],
+    'TRACK_RAMP_EW': ['0.34.08', '0.47.05'],
+    'TRACK_RAMP_N': ['0.34.08', '0.47.05'],
+    'TRACK_RAMP_NE': ['0.34.08', '0.47.05'],
+    'TRACK_RAMP_NEW': ['0.34.08', '0.47.05'],
+    'TRACK_RAMP_NS': ['0.34.08', '0.47.05'],
+    'TRACK_RAMP_NSE': ['0.34.08', '0.47.05'],
+    'TRACK_RAMP_NSEW': ['0.34.08', '0.47.05'],
+    'TRACK_RAMP_NSW': ['0.34.08', '0.47.05'],
+    'TRACK_RAMP_NW': ['0.34.08', '0.47.05'],
+    'TRACK_RAMP_S': ['0.34.08', '0.47.05'],
+    'TRACK_RAMP_SE': ['0.34.08', '0.47.05'],
+    'TRACK_RAMP_SEW': ['0.34.08', '0.47.05'],
+    'TRACK_RAMP_SW': ['0.34.08', '0.47.05'],
+    'TRACK_RAMP_W': ['0.34.08', '0.47.05'],
+    'TRACK_S': ['0.34.08', '0.47.05'],
+    'TRACK_SE': ['0.34.08', '0.47.05'],
+    'TRACK_SEW': ['0.34.08', '0.47.05'],
+    'TRACK_SW': ['0.34.08', '0.47.05'],
+    'TRACK_W': ['0.34.08', '0.47.05'],
+    'TREE_BRANCH_EW': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_EW_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_NE': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_NE_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_NEW': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_NEW_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_NS': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_NS_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_NSE': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_NSE_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_NSEW': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_NSEW_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_NSW': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_NSW_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_NW': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_NW_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_SE': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_SE_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_SEW': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_SEW_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_SW': ['0.40.01', '0.47.05'],
+    'TREE_BRANCH_SW_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_BRANCHES': ['0.40.01', '0.47.05'],
+    'TREE_BRANCHES_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_CAP_FLOOR1': ['0.40.01', '0.47.05'],
+    'TREE_CAP_FLOOR1_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_CAP_FLOOR2': ['0.40.01', '0.47.05'],
+    'TREE_CAP_FLOOR2_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_CAP_FLOOR3': ['0.40.01', '0.47.05'],
+    'TREE_CAP_FLOOR3_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_CAP_FLOOR4': ['0.40.01', '0.47.05'],
+    'TREE_CAP_FLOOR4_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_CAP_PILLAR': ['0.40.01', '0.47.05'],
+    'TREE_CAP_PILLAR_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_CAP_RAMP': ['0.40.01', '0.47.05'],
+    'TREE_CAP_RAMP_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_CAP_WALL_E': ['0.40.01', '0.47.05'],
+    'TREE_CAP_WALL_E_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_CAP_WALL_N': ['0.40.01', '0.47.05'],
+    'TREE_CAP_WALL_N_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_CAP_WALL_NE': ['0.40.01', '0.47.05'],
+    'TREE_CAP_WALL_NE_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_CAP_WALL_NW': ['0.40.01', '0.47.05'],
+    'TREE_CAP_WALL_NW_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_CAP_WALL_S': ['0.40.01', '0.47.05'],
+    'TREE_CAP_WALL_S_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_CAP_WALL_SE': ['0.40.01', '0.47.05'],
+    'TREE_CAP_WALL_SE_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_CAP_WALL_SW': ['0.40.01', '0.47.05'],
+    'TREE_CAP_WALL_SW_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_CAP_WALL_W': ['0.40.01', '0.47.05'],
+    'TREE_CAP_WALL_W_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_ROOT_SLOPING': ['0.40.01', '0.47.05'],
+    'TREE_ROOT_SLOPING_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_ROOTS': ['0.40.01', '0.47.05'],
+    'TREE_ROOTS_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_SMOOTH_BRANCHES': ['0.40.01', '0.47.05'],
+    'TREE_SMOOTH_BRANCHES_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_BRANCH_E': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_BRANCH_E_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_BRANCH_N': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_BRANCH_N_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_BRANCH_S': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_BRANCH_S_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_BRANCH_W': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_BRANCH_W_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_E': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_E_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_EW': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_EW_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_INTERIOR': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_INTERIOR_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_N': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_N_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_NE': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_NE_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_NEW': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_NEW_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_NS': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_NS_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_NSE': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_NSE_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_NSEW': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_NSEW_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_NSW': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_NSW_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_NW': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_NW_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_PILLAR': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_PILLAR_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_S': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_S_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_SE': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_SE_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_SEW': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_SEW_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_SLOPING': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_SLOPING_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_SW': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_SW_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_W': ['0.40.01', '0.47.05'],
+    'TREE_TRUNK_W_DEAD': ['0.40.01', '0.47.05'],
+    'TREE_TWIGS': ['0.40.01', '0.47.05'],
+    'TREE_TWIGS_DEAD': ['0.40.01', '0.47.05'],
     'FORTRESS_SEED_CAP': ['0.40.01'],
     'SPECIFIC_SEED_CAP': ['0.40.01'],
     'STRICT_POPULATION_CAP': ['0.40.05'],
     'POST_PREPARE_EMBARK_CONFIRMATION': ['0.40.09'],
     'GRAZE_COEFFICIENT': ['0.40.13'],
-    'INVASION_SOLDIER_CAP': ['0.42.01','0.47.05'],
-    'INVASION_MONSTER_CAP': ['0.42.01','0.47.05'],
+    'INVASION_SOLDIER_CAP': ['0.42.01', '0.47.05'],
+    'INVASION_MONSTER_CAP': ['0.42.01', '0.47.05'],
     'VISITOR_CAP': ['0.42.01'],
-    'PRIESTHOOD_UNIT_COUNTS': ['0.47.01','0.47.05'],
-    'TEMPLE_VALUE_LEVELS': ['0.47.01','0.47.05'],
-    'GUILD_UNIT_COUNTS': ['0.47.01','0.47.05'],
-    'GUILDHALL_VALUE_LEVELS': ['0.47.01','0.47.05'],
+    'PRIESTHOOD_UNIT_COUNTS': ['0.47.01', '0.47.05'],
+    'TEMPLE_VALUE_LEVELS': ['0.47.01', '0.47.05'],
+    'GUILD_UNIT_COUNTS': ['0.47.01', '0.47.05'],
+    'GUILDHALL_VALUE_LEVELS': ['0.47.01', '0.47.05'],
     'MAXIMUM_INTERFACE_PIXEL_WIDTH': ['50.01', '50.01'],
     'AMBIENCE_VOLUME': ['50.01'],
     'BASIC_FONT': ['50.01'],
@@ -362,14 +363,17 @@ _option_version_data = {
     'CULL_DEAD_UNITS_AT': ['50.06'],
 }
 
+
 def _option_item_to_value(item):
     """Removes any validation expression from <item>."""
-    if not isinstance(item, basestring):
+    if not isinstance(item, str):
         return item[0]
     return item
 
+
 class DFConfiguration(object):
     """Reads and modifies Dwarf Fortress configuration textfiles."""
+    # pylint: disable=too-many-instance-attributes,too-many-statements
     def __init__(self, base_dir, df_info):
         """
         Constructor for DFConfiguration.
@@ -378,22 +382,23 @@ class DFConfiguration(object):
             base_dir: Path containing the Dwarf Fortress instance to operate on
         """
         self.base_dir = base_dir
-        self.settings = dict()
-        self.options = dict()
-        self.field_names = dict()
-        self.inverse_field_names = dict()
-        self.files = dict()
-        self.in_files = dict()
+        self.settings = {}
+        self.options = {}
+        self.field_names = {}
+        self.inverse_field_names = {}
+        self.files = {}
+        self.in_files = {}
         self.missing_fields = []
-        self.validate = dict()
+        self.validate = {}
 
         self.df_info = df_info
         # init.txt
         boolvals = ("YES", "NO")
         if df_info.version >= '50.01':
             init = (os.path.join(base_dir, 'data', 'init',
-                'init_default.txt'),os.path.join(base_dir, 'prefs',
-                    'init.txt'))
+                                 'init_default.txt'),
+                    os.path.join(base_dir, 'prefs',
+                                 'init.txt'))
         else:
             init = (os.path.join(base_dir, 'data', 'init', 'init.txt'),)
         self.create_option(
@@ -426,8 +431,9 @@ class DFConfiguration(object):
         # d_init.txt
         if df_info.version >= '50.01':
             dinit = (os.path.join(base_dir, 'data', 'init',
-                'd_init_default.txt'),os.path.join(base_dir, 'prefs',
-                    'd_init.txt'))
+                                  'd_init_default.txt'),
+                     os.path.join(base_dir, 'prefs',
+                                  'd_init.txt'))
         elif df_info.version > '0.31.03':
             dinit = (os.path.join(base_dir, 'data', 'init', 'd_init.txt'),)
         else:
@@ -508,6 +514,7 @@ class DFConfiguration(object):
             "focusWarm", "DIG_CANCEL_WARM", "YES", _announcement_focus,
             announcements)
 
+    # pylint: disable=too-many-arguments
     def create_option(
             self, name, field_name, default, values, files, cond=True,
             validate=None):
@@ -603,17 +610,17 @@ class DFConfiguration(object):
             items = ("YES", "NO")
         if current not in items:
             for i in items:
-                if not isinstance(i, basestring) and i[0] == current:
+                if not isinstance(i, str) and i[0] == current:
                     current = i
                     break
-            else: #item not found
+            else:  # item not found
                 result = items[0]
                 return _option_item_to_value(result)
 
         i = 1
         while i < len(items):
             result = items[(items.index(current) + i) % len(items)]
-            if isinstance(result, basestring):
+            if isinstance(result, str):
                 break
             if result[1]():
                 break
@@ -638,9 +645,8 @@ class DFConfiguration(object):
         Returns a list of strings with error messages.
         """
         errors = []
-        for f in self.settings:
+        for f, current in self.settings.items():
             fn = self.field_names[f]
-            current = self.settings[f]
             if self.validate[f]:
                 ok, error = self.validate[f](current)
                 if not ok:
@@ -655,7 +661,7 @@ class DFConfiguration(object):
                 items = ("YES", "NO")
             if current not in items:
                 for i in items:
-                    if not isinstance(i, basestring) and i[0] == current:
+                    if not isinstance(i, str) and i[0] == current:
                         current = i
                         break
                 else:
@@ -663,7 +669,7 @@ class DFConfiguration(object):
                         "Invalid value %s for option %s: Unknown value" % (
                             current, fn))
                     continue
-            if isinstance(current, basestring):
+            if isinstance(current, str):
                 continue
             if not current[1]():
                 errors.append(
@@ -675,10 +681,10 @@ class DFConfiguration(object):
         """Read settings from known filesets. If fileset only contains one
         file ending with "init.txt", all options will be registered
         automatically."""
-        for files in self.in_files:
+        for files, fields in self.in_files.items():
             for filename in files:
                 self.read_file(
-                    filename, self.in_files[files],
+                    filename, fields,
                     any((f.endswith('init.txt') for f in files)), files)
 
     def read_file(self, filename, fields, auto_add, auto_add_key=None):
@@ -692,13 +698,13 @@ class DFConfiguration(object):
               changes.
           auto_add_key: key to register the fields under (if auto_add is True).
         """
-        #pylint:disable=too-many-branches
+        # pylint:disable=too-many-branches
         if not os.path.exists(filename):
             log.w('File ' + str(filename) + ' does not exist', file=sys.stderr)
             return
         text = DFRaw.read(filename)
         if auto_add:
-            for match in re.findall(r'\[(.+?):(.+?)\]', text):
+            for match in re.findall(r'\[(.+?):(.+?)]', text):
                 self.create_option(
                     match[0], match[0], match[1], None, auto_add_key)
         for field in fields:
@@ -709,7 +715,7 @@ class DFConfiguration(object):
                 if "[{0}]".format(self.field_names[field]) in text:
                     self.settings[field] = "YES"
             else:
-                match = re.search(r'\[{0}:(.+?)\]'.format(
+                match = re.search(r'\[{0}:(.+?)]'.format(
                     self.field_names[field]), text)
                 if match:
                     value = match.group(1)
@@ -725,9 +731,9 @@ class DFConfiguration(object):
                 else:
                     self.missing_fields.append(self.field_names[field])
                     log.w(
-                        'Field ' + str(self.field_names[field]) +
-                        ' seems to be missing from file ' + str(filename) +
-                        '!', file=sys.stderr)
+                        'Field ' + str(self.field_names[field])
+                        + ' seems to be missing from file ' + str(filename)
+                        + '!', file=sys.stderr)
 
     @staticmethod
     def has_field(filename, field, num_params=-1, min_params=-1, max_params=-1):
@@ -747,12 +753,12 @@ class DFConfiguration(object):
         """
         try:
             match = re.search(
-                r'\['+str(field)+r'(:.+?)\]', DFRaw.read(filename))
+                r'\[' + str(field) + r'(:.+?)]', DFRaw.read(filename))
             if match is None:
                 return False
             params = match.group(1)
             param_count = params.count(":")
-            if num_params != -1 and param_count != num_params:
+            if num_params not in (-1, param_count):
                 return False
             if min_params != -1 and param_count < min_params:
                 return False
@@ -764,13 +770,13 @@ class DFConfiguration(object):
 
     def write_settings(self):
         """Write all settings to their respective files."""
-        for files in self.in_files:
+        for files, fields in self.in_files.items():
             if any((f for f in files if f.endswith('init.txt'))):
                 filename = [f for f in files if f.endswith('init.txt')][0]
-                self.update_file(filename, self.in_files[files])
+                self.update_file(filename, fields)
             else:
                 for filename in files:
-                    self.update_file(filename, self.in_files[files])
+                    self.update_file(filename, fields)
 
     def update_file(self, filename, fields):
         """
@@ -817,7 +823,7 @@ class DFConfiguration(object):
                         text = "!{0}!"
                     else:
                         text = "[{0}]"
-                    newfile.write(text.format(self.field_names[field])+'\n')
+                    newfile.write(text.format(self.field_names[field]) + '\n')
                 else:
                     value = self.settings[field]
                     if self.options[field] is _negated_bool:
@@ -843,8 +849,7 @@ class DFConfiguration(object):
         option = _option_version_data[option_name]
         if len(option) == 2:
             return option[0] <= self.df_info.version < option[1]
-        else:
-            return option[0] <= self.df_info.version
+        return option[0] <= self.df_info.version
 
     def __str__(self):
         return (

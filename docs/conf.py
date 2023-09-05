@@ -1,5 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""Sphinx docs configuration for PyLNP"""
 #
 # PyLNP documentation build configuration file, created by
 # sphinx-quickstart on Tue Oct 11 18:59:22 2016.
@@ -16,17 +17,20 @@
 import datetime
 import glob
 import os
+import re
 import shutil
 import subprocess
 import sys
-import re
 
-import shlex
+from core import lnp
 
 
 # Before we get started, let's generate fresh API documentation from the code
+# pylint: disable=missing-function-docstring
 def ages(dname):
     return [os.stat(f).st_mtime for f in glob.glob(os.path.join(dname, '*'))]
+
+
 for mod in ('core', 'tkgui'):
     code_dir = os.path.join('..', mod)
     if not os.path.isdir(mod) or min(ages(mod)) <= max(ages(code_dir)):
@@ -34,6 +38,7 @@ for mod in ('core', 'tkgui'):
         shutil.rmtree(mod, ignore_errors=True)
         subprocess.check_output(['sphinx-apidoc', '--separate', '--force',
                                  '--no-toc', '-o', mod, code_dir])
+# pylint: enable=missing-function-docstring
 
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -56,15 +61,15 @@ extensions = [
 ]
 
 # Napoleon settings
-#napoleon_google_docstring = True
-#napoleon_numpy_docstring = True
-#napoleon_include_private_with_doc = False
-#napoleon_include_special_with_doc = True
-#napoleon_use_admonition_for_examples = False
-#napoleon_use_admonition_for_notes = False
-#napoleon_use_admonition_for_references = False
-#napoleon_use_ivar = False
-#napoleon_use_param = True
+# napoleon_google_docstring = True
+# napoleon_numpy_docstring = True
+# napoleon_include_private_with_doc = False
+# napoleon_include_special_with_doc = True
+# napoleon_use_admonition_for_examples = False
+# napoleon_use_admonition_for_notes = False
+# napoleon_use_admonition_for_references = False
+# napoleon_use_ivar = False
+# napoleon_use_param = True
 napoleon_use_rtype = False
 
 # Add any paths that contain templates here, relative to this directory.
@@ -79,14 +84,15 @@ master_doc = 'index'
 # General information about the project.
 project = 'PyLNP'
 author = 'Michael Madsen (Pidgeot) and collaborators'
+# pylint: disable=redefined-builtin
 copyright = '{}, {}'.format(datetime.datetime.now().year, author)
+# pylint: enable=redefined-builtin
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The full version, including alpha/beta/rc tags.
-from core import lnp
 release = lnp.VERSION
 # The short X.Y version.
 try:
@@ -106,15 +112,15 @@ exclude_patterns = ['_build']
 default_role = 'any'
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
-#add_function_parentheses = True
+# add_function_parentheses = True
 
 # If true, the current module name will be prepended to all description
 # unit titles (such as .. function::).
-#add_module_names = True
+# add_module_names = True
 
 # If true, sectionauthor and moduleauthor directives will be shown in the
 # output. They are ignored by default.
-#show_authors = False
+# show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -129,26 +135,26 @@ html_theme = 'classic'
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+# html_theme_options = {}
 
 # Add any paths that contain custom themes here, relative to this directory.
-#html_theme_path = []
+# html_theme_path = []
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-#html_title = None
+# html_title = None
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-#html_short_title = None
+# html_short_title = None
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-#html_logo = None
+# html_logo = None
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-#html_favicon = None
+# html_favicon = None
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -158,14 +164,14 @@ html_static_path = ['static']
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
 # directly to the root of the documentation.
-#html_extra_path = []
+# html_extra_path = []
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
 html_last_updated_fmt = today_fmt
 
 # If false, no index is generated.
-#html_use_index = True
+# html_use_index = True
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
 html_show_sphinx = False
@@ -179,46 +185,46 @@ htmlhelp_basename = 'PyLNPdoc'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-# The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+    # The paper size ('letterpaper' or 'a4paper').
+    # 'papersize': 'letterpaper',
 
-# The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+    # The font size ('10pt', '11pt' or '12pt').
+    # 'pointsize': '10pt',
 
-# Additional stuff for the LaTeX preamble.
-#'preamble': '',
+    # Additional stuff for the LaTeX preamble.
+    # 'preamble': '',
 
-# Latex figure (float) alignment
-#'figure_align': 'htbp',
+    # Latex figure (float) alignment
+    # 'figure_align': 'htbp',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'PyLNP.tex', 'PyLNP Documentation',
-   'Michael Madsen (Pidgeot) and collaborators', 'manual'),
+    (master_doc, 'PyLNP.tex', 'PyLNP Documentation',
+     'Michael Madsen (Pidgeot) and collaborators', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
-#latex_logo = None
+# latex_logo = None
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
-#latex_use_parts = False
+# latex_use_parts = False
 
 # If true, show page references after internal links.
-#latex_show_pagerefs = False
+# latex_show_pagerefs = False
 
 # If true, show URL addresses after external links.
-#latex_show_urls = False
+# latex_show_urls = False
 
 # Documents to append as an appendix to all manuals.
-#latex_appendices = []
+# latex_appendices = []
 
 # If false, no module index is generated.
-#latex_domain_indices = True
+# latex_domain_indices = True
 
 
 # -- Options for manual page output ---------------------------------------
@@ -231,7 +237,7 @@ man_pages = [
 ]
 
 # If true, show URL addresses after external links.
-#man_show_urls = False
+# man_show_urls = False
 
 
 # -- Options for Texinfo output -------------------------------------------
@@ -240,19 +246,19 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'PyLNP', 'PyLNP Documentation',
-   author, 'PyLNP', 'One line description of project.',
-   'Miscellaneous'),
+    (master_doc, 'PyLNP', 'PyLNP Documentation',
+     author, 'PyLNP', 'One line description of project.',
+     'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.
-#texinfo_appendices = []
+# texinfo_appendices = []
 
 # If false, no module index is generated.
-#texinfo_domain_indices = True
+# texinfo_domain_indices = True
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
-#texinfo_show_urls = 'footnote'
+# texinfo_show_urls = 'footnote'
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
-#texinfo_no_detailmenu = False
+# texinfo_no_detailmenu = False

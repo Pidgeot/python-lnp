@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Helper functions."""
-from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, os, glob, platform
+import glob
+import os
+import platform
+import sys
 
-from .dfraw import DFRaw
 from . import log
+from .dfraw import DFRaw
+
 
 def get_text_files(directory):
     """
@@ -23,6 +26,7 @@ def get_text_files(directory):
             result.append(f)
     return result
 
+
 def detect_installed_file(current_file, test_files):
     """Returns the file in <test_files> which is contained in
     <current_file>, or "Unknown"."""
@@ -37,6 +41,7 @@ def detect_installed_file(current_file, test_files):
     except IOError:
         pass
     return "Unknown"
+
 
 def detect_installed_files(current_file, test_files):
     """Returns a list of files in <test_files> that are contained in
@@ -60,6 +65,7 @@ def detect_installed_files(current_file, test_files):
         log.e('Cannot check installs in {}; read failed'.format(current_file))
     return installed
 
+
 def get_resource(filename):
     """
     If running in a bundle, this will point to the place internal
@@ -76,16 +82,17 @@ def get_resource(filename):
     if lnp.bundle == 'osx':
         # file is inside application bundle on OS X
         return os.path.join(os.path.dirname(sys.executable), filename)
-    elif lnp.bundle in ['win', 'linux']:
+    if lnp.bundle in ['win', 'linux']:
         # file is inside executable on Linux and Windows
-        # pylint: disable=protected-access, no-member, maybe-no-member
+        # pylint: disable=protected-access, no-member
         return os.path.join(sys._MEIPASS, filename)
-    else:
-        return os.path.abspath(filename)
+    return os.path.abspath(filename)
+
 
 def os_is_64bit():
     """Returns true if running on a 64-bit OS."""
     return platform.machine().endswith('64')
+
 
 def key_from_underscore_prefixed_string(s):
     """Converts a string to a key such that strings prefixed with an underscore

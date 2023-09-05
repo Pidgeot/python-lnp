@@ -9,16 +9,15 @@
   content folder if this folder exists.
 """
 
-from __future__ import print_function, unicode_literals, absolute_import
-
 import glob
 import os
 import re
 import subprocess
 import zipfile
 
-from . import paths, log
+from . import log, paths
 from .lnp import lnp
+
 
 def get_region_info():
     """Returns a tuple of strings for an available region and date.
@@ -29,13 +28,15 @@ def get_region_info():
     if files:
         fname = os.path.basename(files[0])
         region = re.search(
-            r'^.*(?=(-\d\d\d\d\d\d*-\d\d\-\d\d))', fname).group()
-        date = re.search(r'\d+-\d\d\-\d\d', fname).group()
+            r'^.*(?=(-\d{5,}-\d{2}-\d{2}))', fname).group()
+        date = re.search(r'\d{5,}-\d{2}-\d{2}', fname).group()
         return region, date
+    return None
+
 
 def compress_bitmaps():
     """Compresses all bitmap maps."""
-    #pylint: disable=import-error, no-name-in-module
+    # pylint: disable=import-error
     try:
         from PIL import Image
     except ImportError:
@@ -50,6 +51,7 @@ def compress_bitmaps():
             f = Image.open(fname)
             f.save(fname[:-3] + 'png', format='PNG', optimize=True)
             os.remove(fname)
+
 
 def call_optipng():
     """Calling optipng can work well, but isn't very portable."""
@@ -66,8 +68,9 @@ def call_optipng():
     else:
         log.e('A PIL-compatible library is required to compress bitmaps.')
 
+
 def choose_region_map():
-    """Returns the most-prefered region map available, or fallback."""
+    """Returns the most-preferred region map available, or fallback."""
     pattern = paths.get('df', '-'.join(get_region_info()) + '-')
     for name in ('detailed', 'world_map'):
         for ext in ('.png', '.bmp'):
@@ -75,18 +78,19 @@ def choose_region_map():
                 return pattern + name + ext
     return pattern + 'world_map.bmp'
 
+
 def create_archive():
     """Creates a legends archive, or zips the xml if files are missing."""
     pattern = paths.get('df', '-'.join(get_region_info()) + '-')
     worldgen = paths.get('df', get_region_info()[0] + '-world_gen_param.txt')
-    l = [pattern + 'legends.xml', pattern + 'world_history.txt', worldgen,
-         choose_region_map(), pattern + 'world_sites_and_pops.txt']
+    filepaths = [pattern + 'legends.xml', pattern + 'world_history.txt', worldgen,
+                 choose_region_map(), pattern + 'world_sites_and_pops.txt']
     if os.path.isfile(pattern + 'legends_plus.xml'):
-        l.append(pattern + 'legends_plus.xml')
-    if all([os.path.isfile(f) for f in l]):
+        filepaths.append(pattern + 'legends_plus.xml')
+    if all(os.path.isfile(f) for f in filepaths):
         with zipfile.ZipFile(pattern + 'legends_archive.zip',
                              'w', zipfile.ZIP_DEFLATED, allowZip64=True) as zipped:
-            for f in l:
+            for f in filepaths:
                 zipped.write(f, os.path.basename(f))
                 os.remove(f)
     elif os.path.isfile(pattern + 'legends.xml'):
@@ -95,6 +99,7 @@ def create_archive():
             zipped.write(pattern + 'legends.xml',
                          os.path.basename(pattern + 'legends.xml'))
             os.remove(pattern + 'legends.xml')
+
 
 def move_files():
     """Moves files to a subdir, and subdir to ../User Generated Content if
@@ -138,6 +143,7 @@ def move_files():
     for f in glob.glob(paths.get('df', '*_color_key.txt')):
         os.remove(f)
 
+
 def process_legends():
     """Process all legends exports in sets."""
     if lnp.df_info.version >= '0.40.09':
@@ -149,3 +155,4 @@ def process_legends():
             move_files()
             i += 1
         return i
+    return None

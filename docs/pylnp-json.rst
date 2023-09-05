@@ -45,8 +45,8 @@ Example::
     ["Init folder","<df>/data/init"]
   ],
   links: [
-    ["DF Homepage","http://www.bay12games.com/dwarves/"],
-    ["DF Wiki","http://dwarffortresswiki.org/"],
+    ["DF Homepage","https://www.bay12games.com/dwarves/"],
+    ["DF Wiki","https://dwarffortresswiki.org/"],
     ["DF Forums","http://www.bay12forums.com/smf/"]
   ]
 
@@ -113,7 +113,7 @@ prompted.
 
 ``dffd``
 ~~~~~~~~
-For files hosted on http://dffd.bay12games.com/, simply add a field ``dffdID``
+For files hosted on https://dffd.bay12games.com/, simply add a field ``dffdID``
 which contains the ID of your hosted file. No other configuration is necessary.
 Example::
 
@@ -152,7 +152,7 @@ This method uses five extra values:
 provided (or their regular expression counterparts).
 
 When doing direct downloads, the URL's file name will be used as the target file
-name (e.g. ``http://example.com/downloads/my_pack.zip`` gets downloaded as
+name (e.g. ``https://example.com/downloads/my_pack.zip`` gets downloaded as
 ``my_pack.zip``) if neither ``directFilename`` or ``directFilenameRegex`` is
 set.
 
@@ -161,8 +161,8 @@ Example::
   "updates": {
     "updateMethod": "regex",
     "packVersion": "x.yy.zz r2",
-    "checkURL": "http://example.com/my_df_pack.html",
-    "downloadURL": "http://example.com/my_df_pack.html",
+    "checkURL": "https://example.com/my_df_pack.html",
+    "downloadURL": "https://example.com/my_df_pack.html",
     "versionRegex": "Version: (.+)"
   }
 
@@ -205,7 +205,7 @@ This method requires four extra values:
 provided (or their JSON path counterparts).
 
 When doing direct downloads, the URL's file name will be used as the target file
-name (e.g. ``http://example.com/downloads/my_pack.zip`` gets downloaded as
+name (e.g. ``https://example.com/downloads/my_pack.zip`` gets downloaded as
 ``my_pack.zip``) if neither ``directFilename`` or ``directFilenameJsonPath`` is
 set.
 
@@ -214,8 +214,8 @@ Example::
   "updates": {
     "updateMethod": "json",
     "packVersion": "x.yy.zz r2",
-    "checkURL": "http://example.com/my_df_pack_version.json",
-    "downloadURL": "http://example.com/my_df_pack.html",
+    "checkURL": "https://example.com/my_df_pack_version.json",
+    "downloadURL": "https://example.com/my_df_pack.html",
     "versionJsonPath": "version"
   }
 

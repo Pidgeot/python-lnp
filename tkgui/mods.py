@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,attribute-defined-outside-init
+# pylint:disable=unused-wildcard-import,wildcard-import,attribute-defined-outside-init
 """Mods tab for the TKinter GUI."""
-from __future__ import print_function, unicode_literals, absolute_import
 
-import sys
+from tkinter import *  # noqa: F403
+from tkinter import messagebox, simpledialog
+from tkinter.ttk import *  # noqa: F403
 
 from core import mods
 
@@ -12,20 +13,7 @@ from . import controls, tkhelpers
 from .layout import GridLayouter
 from .tab import Tab
 
-if sys.version_info[0] == 3:  # Alternate import names
-    # pylint:disable=import-error
-    from tkinter import *
-    from tkinter.ttk import *
-    import tkinter.messagebox as messagebox
-    import tkinter.simpledialog as simpledialog
-else:
-    # pylint:disable=import-error
-    from Tkinter import *
-    from ttk import *
-    import tkMessageBox as messagebox
-    import tkSimpleDialog as simpledialog
 
-# pylint:disable=too-many-public-methods
 class ModsTab(Tab):
     """Mods tab for the TKinter GUI."""
     def create_variables(self):
@@ -83,7 +71,7 @@ class ModsTab(Tab):
             self, 'Install Mods', 'Copy merged mods to DF folder.',
             self.install_mods))
         main_grid.add(controls.create_trigger_option_button(
-            self, 'Premerge Graphics',
+            self, 'Pre-merge Graphics',
             'Whether to start with the current graphics pack, or '
             'vanilla (ASCII) raws', self.toggle_preload, 'premerge_graphics',
             lambda v: ('NO', 'YES')[mods.will_premerge_gfx()]))
@@ -98,10 +86,8 @@ class ModsTab(Tab):
     def update_lists(self):
         """Updates the lists."""
         self.available.sort(key=mods.get_title)
-        self.available_var.set(tuple(
-            [mods.get_title(m) for m in self.available]))
-        self.installed_var.set(tuple(
-            [mods.get_title(m) for m in self.installed]))
+        self.available_var.set(tuple(mods.get_title(m) for m in self.available))
+        self.installed_var.set(tuple(mods.get_title(m) for m in self.installed))
 
     @staticmethod
     def toggle_preload():
@@ -116,8 +102,8 @@ class ModsTab(Tab):
         lst = self.installed
         for i in range(1, len(lst)):
             j = i
-            while j in selection and i-1 not in selection and j < len(lst):
-                lst[j-1], lst[j] = lst[j], lst[j-1]
+            while j in selection and i - 1 not in selection and j < len(lst):
+                lst[j - 1], lst[j] = lst[j], lst[j - 1]
                 j += 1
         self.update_lists()
         first_missed = False
@@ -137,8 +123,8 @@ class ModsTab(Tab):
         lst = self.installed
         for i in range(len(lst) - 1, 0, -1):
             j = i
-            while i not in selection and j-1 in selection and j > 0:
-                lst[j-1], lst[j] = lst[j], lst[j-1]
+            while i not in selection and j - 1 in selection and j > 0:
+                lst[j - 1], lst[j] = lst[j], lst[j - 1]
                 j -= 1
         self.update_lists()
         first_missed = False
@@ -220,7 +206,7 @@ class ModsTab(Tab):
             else:
                 messagebox.showinfo(
                     'Mods not ready',
-                    'The selected mods have merge confilcts and should not be '
+                    'The selected mods have merge conflicts and should not be '
                     'installed.\n\nResolve merge issues and try again.')
 
     @staticmethod

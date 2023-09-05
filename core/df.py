@@ -1,30 +1,31 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Code relating to a specific Dwarf Fortress installation."""
-from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, os, shutil, re
+import os
+import re
+import shutil
 import struct
+import sys
 import zlib
 from datetime import datetime
-from distutils import dir_util
-from glob import glob
 from functools import total_ordering
-# pylint:disable=redefined-builtin
-from io import open
+from glob import glob
 
+from . import hacks, log, paths
+from .lnp import VERSION, lnp
 from .settings import DFConfiguration
-from . import hacks, paths, log
-from .lnp import lnp, VERSION
+
 
 def find_df_folders():
-    """Locates all suitable Dwairf Fortress installations (folders starting
+    """Locates all suitable Dwarf Fortress installations (folders starting
     with "Dwarf Fortress" or "df")"""
-    lnp.folders = tuple([
+    lnp.folders = tuple(
         os.path.basename(o) for o in glob(os.path.join(lnp.BASEDIR, '*')) if
         os.path.isdir(o) and (os.path.exists(os.path.join(
             o, 'data', 'init', 'init.txt')) or os.path.exists(os.path.join(
-            o, 'data', 'init', 'init_default.txt')))])
+                o, 'data', 'init', 'init_default.txt'))))
+
 
 def find_df_folder():
     """Tries to select a Dwarf Fortress folder. The set of valid folders is
@@ -36,6 +37,7 @@ def find_df_folder():
         set_df_folder(lnp.folders[0])
     if lnp.args.df_folder and lnp.args.df_folder in lnp.folders:
         set_df_folder(lnp.args.df_folder)
+
 
 def set_df_folder(path):
     """
@@ -63,6 +65,7 @@ def set_df_folder(path):
     load_params()
     hacks.read_hacks()
 
+
 def perform_checks():
     """Performs various automated tasks and quits the program.
     Return code is 0 if all went well."""
@@ -77,12 +80,13 @@ def perform_checks():
         if found_baseline is None:
             log.e('DF version not detected accurately, aborting')
             sys.exit(4)
-        if found_baseline == False: #pylint:disable=singleton-comparison
+        if found_baseline is False:
             update.download_df_baseline(True)
         baselines.prepare_baselines()
         graphics.simplify_graphics()
         mods.simplify_mods()
     sys.exit(0)
+
 
 def do_rawlint(path):
     """Runs the raw linter on the specified directory.
@@ -95,6 +99,7 @@ def do_rawlint(path):
     log.i("%d files passed, %d files failed check" % (len(p), len(f)))
     return len(f) == 0
 
+
 def install_extras():
     """
     Installs extra utilities to the Dwarf Fortress folder, if this has not
@@ -106,12 +111,20 @@ def install_extras():
     install_file = paths.get('df', 'PyLNP{0}.txt'.format(VERSION))
     if not os.access(install_file, os.F_OK):
         log.i('Installing extras content for first time')
-        dir_util.copy_tree(extras_dir, paths.get('df'))
-        textfile = open(install_file, 'w', encoding='utf-8')
-        textfile.write(
-            'PyLNP V{0} extras installed!\nTime: {1}'.format(
-                VERSION, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
-        textfile.close()
+        # distutils deprecated in Python 3.10
+        # dirs_exist_ok in shutil.copytree introduced in Python 3.8
+        if sys.version_info.major == 3 and sys.version_info.minor < 8:
+            # pylint: disable=deprecated-module
+            from distutils import dir_util
+            # pylint: enable=deprecated-module
+            dir_util.copy_tree(extras_dir, paths.get('df'))
+        else:
+            shutil.copytree(extras_dir, paths.get('df'), dirs_exist_ok=True)
+        with open(install_file, 'w', encoding='utf-8') as textfile:
+            textfile.write(
+                'PyLNP V{0} extras installed!\nTime: {1}'.format(
+                    VERSION, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+
 
 def cycle_option(field):
     """
@@ -122,6 +135,7 @@ def cycle_option(field):
     """
     lnp.settings.cycle_item(field)
     save_params()
+
 
 def set_option(field, value):
     """
@@ -134,26 +148,29 @@ def set_option(field, value):
     lnp.settings.set_value(field, value)
     save_params()
 
+
 def load_params():
     """Loads settings from the selected Dwarf Fortress instance."""
     try:
         lnp.settings.read_settings()
-    except IOError:
+    except IOError as exc:
         msg = 'Failed to read settings, {} not really a DF dir?'.format(
             paths.get('df'))
         log.e(msg, stack=True)
-        raise IOError(msg)
+        raise IOError(msg) from exc
+
 
 def save_params():
     """Saves settings to the selected Dwarf Fortress instance."""
     lnp.settings.write_settings()
 
+
 def restore_defaults():
     """Copy default settings into the selected Dwarf Fortress instance."""
     log.i('Restoring to default settings')
     if lnp.df_info.version >= '50.01':
-        os.remove(paths.get('df','d_init.txt'))
-        os.remove(paths.get('df','init.txt'))
+        os.remove(paths.get('df', 'd_init.txt'))
+        os.remove(paths.get('df', 'init.txt'))
     else:
         shutil.copy(paths.get('defaults', 'init.txt'),
                     paths.get('init', 'init.txt'))
@@ -161,6 +178,7 @@ def restore_defaults():
             shutil.copy(paths.get('defaults', 'd_init.txt'),
                         paths.get('init', 'd_init.txt'))
     load_params()
+
 
 class DFInstall(object):
     """Contains properties and paths for a given Dwarf Fortress installation."""
@@ -187,16 +205,13 @@ class DFInstall(object):
         """
         def convert(func, string):
             """Convert between string and bytes on Py3."""
-            if sys.version_info[0] == 2:
-                return string
             return func(string, encoding='cp437')
 
         def index_scramble(text):
             """Unscrambles data from the index file."""
             text = list(text)
             for i, ch in enumerate(text):
-                ord_ch = (ord(ch) if sys.version_info[0] == 2 else ch)
-                text[i] = chr(255 - (i % 5) - ord_ch)
+                text[i] = chr(255 - (i % 5) - ch)
             return convert(bytes, ''.join(text))
 
         with open(paths.get('df', 'data', 'index'), 'rb') as f:
@@ -213,7 +228,7 @@ class DFInstall(object):
         decompressed = decompressed[4:]
         for _ in range(record_count):
             record_length, record_length_2 = \
-                    struct.unpack(str('<LH'), decompressed[:6])
+                struct.unpack(str('<LH'), decompressed[:6])
             decompressed = decompressed[6:]
             if record_length != record_length_2:
                 raise ValueError('Record lengths do not match')
@@ -254,7 +269,7 @@ class DFInstall(object):
             (d_init, 'PILLAR_TILE', '0.31.08', {}),
             (d_init, 'AUTOSAVE', '0.31.04', {}),
             (init, 'COMPRESSED_SAVES', '0.31.01', {}),
-            (init, 'PARTIAL_PRINT', '0.28.181.40c', {'num_params':2}),
+            (init, 'PARTIAL_PRINT', '0.28.181.40c', {'num_params': 2}),
             (init, 'FULLGRID', '0.28.181.40b', {}),
             (init, 'STORE_DIST_ITEM_DECREASE', '0.28.181.40a', {}),
             (init, 'GRID', '0.28.181.39f', {}),
@@ -278,6 +293,7 @@ class DFInstall(object):
             if DFConfiguration.has_field(v[0], v[1], **v[3]):
                 log.w('DF version detected based on init analysis; unreliable')
                 return (Version(v[2]), 'init detection')
+        return None
 
     def detect_version(self):
         """
@@ -291,7 +307,7 @@ class DFInstall(object):
                 ver = func()
                 if ver is not None:
                     return ver
-            except: # pylint:disable=bare-except
+            except Exception:
                 pass
         log.w('DF version could not be detected, assuming 0.21.93.19a')
         return (Version('0.21.93.19a'), 'fallback')
@@ -302,9 +318,9 @@ class DFInstall(object):
         Currently supports DFHack, TWBT, and legacy builds.
         """
         result = []
-        if (os.path.exists(os.path.join(self.df_dir, 'dfhack')) or
-                os.path.exists(os.path.join(self.df_dir, 'SDLreal.dll')) or
-                os.path.exists(os.path.join(self.df_dir, 'SDLhack.dll'))):
+        if (os.path.exists(os.path.join(self.df_dir, 'dfhack'))
+                or os.path.exists(os.path.join(self.df_dir, 'SDLreal.dll'))
+                or os.path.exists(os.path.join(self.df_dir, 'SDLhack.dll'))):
             result.append('dfhack')
             if glob(os.path.join(
                     self.df_dir, 'hack', 'plugins', 'twbt.plug.*')):
@@ -337,12 +353,13 @@ class DFInstall(object):
             return base + '_s.zip'
         return base + '.zip'
 
+
 # pylint:disable=too-few-public-methods
 @total_ordering
 class Version(object):
     """Container for a version number for easy comparisons."""
     def __init__(self, version):
-        #Known errors in release notes
+        # Known errors in release notes
         if version == "0.23.125.23a":
             version = "0.23.130.23a"
         self.version_str = version

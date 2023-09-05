@@ -1,27 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint:disable=unused-wildcard-import,wildcard-import,invalid-name
+# pylint:disable=unused-wildcard-import,wildcard-import
 """Controls used by the TKinter GUI."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import sys
+import tkinter.font as tkFont
 import types
+from tkinter import *  # noqa: F403
+from tkinter import simpledialog
+from tkinter.ttk import *  # noqa: F403
 
 from core.lnp import lnp
-from . import binding
 
-if sys.version_info[0] == 3:  # Alternate import names
-    # pylint:disable=import-error
-    from tkinter import *
-    from tkinter.ttk import *
-    import tkinter.simpledialog as simpledialog
-    import tkinter.font as tkFont
-else:
-    # pylint:disable=import-error
-    from Tkinter import *
-    from ttk import *
-    import tkSimpleDialog as simpledialog
-    import tkFont
+from . import binding
 
 # Monkeypatch simpledialog to use themed dialogs from ttk
 if sys.platform != 'darwin':  # OS X looks better without patch
@@ -32,27 +23,29 @@ if sys.platform != 'darwin':  # OS X looks better without patch
 
 # Make Enter on button with focus activate it
 TtkButton = Button
-#pylint: disable=too-many-public-methods
-class Button(TtkButton):  # pylint:disable=function-redefined,missing-docstring
+
+
+class Button(TtkButton):  # pylint:disable=function-redefined,missing-class-docstring
     def __init__(self, master=None, **kw):
         TtkButton.__init__(self, master, **kw)
         if 'command' in kw:
             self.bind('<Return>', lambda e: kw['command']())
 
+
 # http://effbot.org/zone/tkinter-autoscrollbar.htm
 class _AutoScrollbar(Scrollbar):
     """A scrollbar that hides itself if it's not needed."""
-    # pylint:disable=arguments-differ
-    def set(self, lo, hi):
+    def set(self, first, last):
         """Only show scrollbar when there's more content than will fit."""
-        #pylint:disable=no-member
+        # pylint:disable=no-member
         if not lnp.userconfig.get_bool('tkgui_show_scroll'):
-            if (float(lo) <= 0.0 and float(hi) >= 1.0) or (
+            if (float(first) <= 0.0 and float(last) >= 1.0) or (
                     hasattr(self, 'hidden') and self.hidden):
                 self.grid_remove()
             else:
                 self.grid()
-        Scrollbar.set(self, lo, hi)
+        Scrollbar.set(self, first, last)
+
 
 # http://www.voidspace.org.uk/python/weblog/arch_d7_2006_07_01.shtml#e387
 class _ToolTip(object):
@@ -110,9 +103,10 @@ class _ToolTip(object):
             self.hidetip()
             self.showtip()
 
-_TOOLTIP_DELAY = 500
 
+_TOOLTIP_DELAY = 500
 __ui = None
+
 
 # pylint:disable=too-few-public-methods
 class _FakeControl(object):
@@ -120,17 +114,20 @@ class _FakeControl(object):
     # pylint:disable=unused-argument
     @staticmethod
     def grid(*args, **kwargs):
-        """Prevents breaking for code that tries to layout the control."""
+        """Prevents breaking for code that tries to lay out the control."""
         return
     pack = grid
 
+
 fake_control = _FakeControl()
+
 
 def init(ui):
     """Connect to a TkGui instance."""
     # pylint:disable=global-statement
     global __ui
     __ui = ui
+
 
 def create_tooltip(widget, text):
     """
@@ -141,6 +138,7 @@ def create_tooltip(widget, text):
         text: the tooltip text.
     """
     tooltip = _ToolTip(widget, text)
+
     # pylint:disable=unused-argument
     def enter(event):
         """
@@ -167,6 +165,7 @@ def create_tooltip(widget, text):
     widget.bind('<Leave>', leave)
     return tooltip
 
+
 def create_control_group(parent, text, dual_column=False):
     """
     Creates and returns a Frame or Labelframe to group controls.
@@ -176,7 +175,6 @@ def create_control_group(parent, text, dual_column=False):
         dual_column: configure the frame for a dual-column grid layout if True.
     """
     f = None
-    # pylint:disable=redefined-variable-type
     if text is not None:
         f = Labelframe(parent, text=text)
     else:
@@ -185,6 +183,7 @@ def create_control_group(parent, text, dual_column=False):
     if dual_column:
         f.columnconfigure((0, 1), weight=1, uniform=1)
     return f
+
 
 def create_option_button(
         parent, text, tooltip, option, update_func=None):
@@ -202,6 +201,7 @@ def create_option_button(
     return create_trigger_option_button(
         parent, text, tooltip, lambda: __ui.cycle_option(option), option,
         update_func)
+
 
 def create_trigger_button(parent, text, tooltip, command):
     """
@@ -221,7 +221,8 @@ def create_trigger_button(parent, text, tooltip, command):
     create_tooltip(b, tooltip)
     return b
 
-#pylint: disable=too-many-arguments
+
+# pylint: disable=too-many-arguments
 def create_trigger_option_button(
         parent, text, tooltip, command, option, update_func=None):
     """
@@ -243,6 +244,7 @@ def create_trigger_option_button(
     binding.bind(b, option, update_func)
     return b
 
+
 def create_scrollbar(parent, control, **gridargs):
     """
     Creates and layouts a vertical scrollbar associated to <control>.
@@ -259,6 +261,7 @@ def create_scrollbar(parent, control, **gridargs):
         s.grid_remove()
     return s
 
+
 def listbox_identify(listbox, y):
     """Returns the index of the listbox item at the supplied (relative) y
     coordinate"""
@@ -266,6 +269,7 @@ def listbox_identify(listbox, y):
     if item != -1 and listbox.bbox(item)[1] + listbox.bbox(item)[3] > y:
         return item
     return None
+
 
 def listbox_dyn_tooltip(listbox, item_get, tooltip_get):
     """Attaches a dynamic tooltip to a listbox.
@@ -278,6 +282,7 @@ def listbox_dyn_tooltip(listbox, item_get, tooltip_get):
             its tooltip (or the empty string for no tooltip).
     """
     tooltip = create_tooltip(listbox, '')
+
     def motion_handler(event):
         """
         Event handler for mouse motion over items in a listbox.
@@ -289,7 +294,8 @@ def listbox_dyn_tooltip(listbox, item_get, tooltip_get):
         if item is not None:
             item = item_get(item)
 
-        def show(): # pylint:disable=missing-docstring
+        def show():
+            """Sets and shows a tooltip"""
             tooltip.settext(tooltip_get(item))
             tooltip.showtip()
 
@@ -302,6 +308,7 @@ def listbox_dyn_tooltip(listbox, item_get, tooltip_get):
             tooltip.event = listbox.after(_TOOLTIP_DELAY, show)
 
     listbox.bind('<Motion>', motion_handler)
+
 
 def treeview_tag_set(tree, tag, item, state=True, toggle=False):
     """
@@ -329,6 +336,7 @@ def treeview_tag_set(tree, tag, item, state=True, toggle=False):
     tree.item(item, tags=tags)
     return state
 
+
 def create_file_list(parent, title, listvar, **args):
     """
     Creates a file list with a scrollbar. Returns a tuple (frame, listbox).
@@ -355,6 +363,7 @@ def create_file_list(parent, title, listvar, **args):
     lb.grid(column=0, row=0, rowspan=2, sticky="nsew")
     create_scrollbar(lf, lb, column=1, row=0, rowspan=2)
     return (lf, lb)
+
 
 def create_readonly_file_list_buttons(
         parent, title, listvar, load_fn, refresh_fn, **args):
@@ -385,7 +394,8 @@ def create_readonly_file_list_buttons(
     buttons.grid(column=2, row=0, sticky="n")
     return (lf, lb, buttons)
 
-#pylint: disable=too-many-arguments
+
+# pylint: disable=too-many-arguments
 def create_file_list_buttons(
         parent, title, listvar, load_fn, refresh_fn, save_fn,
         delete_fn, **args):
@@ -419,6 +429,7 @@ def create_file_list_buttons(
     delete.pack(side=TOP)
     return (lf, lb, buttons)
 
+
 def add_default_to_entry(entry, default_text):
     """Adds bindings to entry such that when there is no user text in the
     entry, the entry will display default_text in grey and italics."""
@@ -427,13 +438,15 @@ def add_default_to_entry(entry, default_text):
     default_font.config(slant=tkFont.ITALIC)
     entry.default_showing = True
 
-    def focus_out(_): # pylint:disable=missing-docstring
+    def focus_out(_):
+        """Insert text and focus"""
         if len(entry.get()) == 0:
             entry.insert(0, default_text)
             entry.configure(font=default_font, foreground='grey')
             entry.default_showing = True
 
-    def focus_in(_): # pylint:disable=missing-docstring
+    def focus_in(_):
+        """Insert text but don't focus"""
         if entry.default_showing:
             entry.delete(0, END)
             entry.configure(font=normal_font, foreground='black')
@@ -443,6 +456,7 @@ def add_default_to_entry(entry, default_text):
     entry.bind('<FocusOut>', focus_out)
 
     focus_out(0)
+
 
 def create_list_with_entry(parent, title, listvar, buttonspec, **kwargs):
     """
@@ -468,10 +482,10 @@ def create_list_with_entry(parent, title, listvar, buttonspec, **kwargs):
     kf.columnconfigure(0, weight=1)
     kf.rowconfigure(2, weight=1)
 
-    ke = Entry(kf) # text box
+    ke = Entry(kf)  # text box
     ke.grid(row=1, column=0, sticky='ewn', pady=(1, 4))
 
-    lf = Frame(kf) # Listbox and scrollbar
+    lf = Frame(kf)  # Listbox and scrollbar
     kb = Listbox(lf, listvariable=listvar, activestyle='dotbox',
                  exportselection=0, **kwargs)
     lf.configure(borderwidth=kb['borderwidth'], relief=kb['relief'])
@@ -482,7 +496,7 @@ def create_list_with_entry(parent, title, listvar, buttonspec, **kwargs):
     lf.columnconfigure(0, weight=1)
     lf.grid(row=2, column=0, rowspan=1, sticky='nsew')
 
-    bf = Frame(kf) # buttons
+    bf = Frame(kf)  # buttons
     for i, bn in enumerate(buttonspec):
         pad = 0 if i == 0 else (5, 0)
         create_trigger_button(bf, *bn).grid(row=i, pady=pad)
@@ -493,7 +507,8 @@ def create_list_with_entry(parent, title, listvar, buttonspec, **kwargs):
 
     return (kf, ke, kb)
 
-def create_toggle_list(parent, columns, framegridopts, listopts={}):
+
+def create_toggle_list(parent, columns, framegridopts, listopts=None):
     """
     Creates and returns a two-column Treeview in a frame to show toggleable
     items in a list.
@@ -504,7 +519,8 @@ def create_toggle_list(parent, columns, framegridopts, listopts={}):
         framegridopts: Additional options for grid layout of the frame.
         listopts: Additional options for the Treeview.
     """
-    # pylint:disable=dangerous-default-value
+    if listopts is None:
+        listopts = {}
     lf = Frame(parent)
     lf.grid(**framegridopts)
     Grid.rowconfigure(lf, 0, weight=1)
@@ -514,6 +530,7 @@ def create_toggle_list(parent, columns, framegridopts, listopts={}):
     lst.grid(column=0, row=0, sticky="nsew")
     create_scrollbar(lf, lst, column=1, row=0)
     return lst
+
 
 def create_numeric_entry(parent, variable, option, tooltip):
     """

@@ -1,18 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Modification of Dwarf Fortress raw files."""
-from __future__ import print_function, unicode_literals, absolute_import
+
 import io
-import re
-import sys
 import os
+import re
 from fnmatch import fnmatch
 
 from . import log
-
-if sys.version_info[0] == 3:
-    #pylint: disable=redefined-builtin
-    basestring = str
 
 NODE_COMMENT = 1 << 1
 NODE_TAG = 1 << 2
@@ -25,7 +20,7 @@ object_parents = {
     'BODY_DETAIL_PLAN': ['BODY_DETAIL_PLAN'],
     'CREATURE': ['CREATURE'],
     'CREATURE_VARIATION': ['CREATURE_VARIATION'],
-    'DESCRIPTOR': ['COLOR', 'SHAPE'], #40d and earlier
+    'DESCRIPTOR': ['COLOR', 'SHAPE'],  # 40d and earlier
     'DESCRIPTOR_COLOR': ['COLOR'],
     'DESCRIPTOR_PATTERN': ['PATTERN'],
     'DESCRIPTOR_SHAPE': ['SHAPE'],
@@ -34,9 +29,9 @@ object_parents = {
     'INORGANIC': ['INORGANIC'],
     'INTERACTION': ['INTERACTION'],
     'ITEM': ['ITEM_*'],
-    'LANGUAGE': ['TRANSLATION', 'SYMBOL', 'WORD'], # TODO: Maybe add NOUN, etc?
+    'LANGUAGE': ['TRANSLATION', 'SYMBOL', 'WORD'],  # TODO: Maybe add NOUN, etc?
     'MATERIAL_TEMPLATE': ['MATERIAL_TEMPLATE'],
-    'MATGLOSS': ['MATGLOSS_*'], #40d and earlier
+    'MATGLOSS': ['MATGLOSS_*'],  # 40d and earlier
     'PLANT': ['PLANT'],
     'REACTION': ['REACTION'],
     'TISSUE_TEMPLATE': ['TISSUE_TEMPLATE'],
@@ -44,12 +39,13 @@ object_parents = {
 
 init_filename_parents = {
     'embark_profiles.txt': ['PROFILE'],
-    'interface.txt': ['BIND'], #Legacy doesn't use BIND, will be flat
+    'interface.txt': ['BIND'],  # Legacy doesn't use BIND, will be flat
     'world_gen.txt': ['WORLD_GEN'],
 }
 
 # Do not allow parent tags to go under these tags
 final_level_tags = ['TILE_PAGE']
+
 
 def tokenize_raw(text):
     """Generator which returns nodes from a raw file.
@@ -65,8 +61,8 @@ def tokenize_raw(text):
         curr_string = ''
         if text[0] == '[':
             if ']' not in text:
-                raise Exception('Found non-terminated tag: '+text[0:100])
-            curr_string = text[:text.find(']')+1]
+                raise Exception('Found non-terminated tag: ' + text[0:100])
+            curr_string = text[:text.find(']') + 1]
             node_type = 'Tag'
         if text[0] == '!':
             match = re.match('!\\w+!', text)
@@ -78,7 +74,7 @@ def tokenize_raw(text):
                 curr_string = text[:text.find('[')]
             else:
                 curr_string = text
-            #check for
+            # check for
             match = re.search('!\\w+!', text)
             if match:
                 curr_string = curr_string[:match.start()]
@@ -108,8 +104,8 @@ def parse_raw(parent, text):
             for g in parent_tags:
                 if fnmatch(name, g):
                     is_parent = True
-                    while (parent_stack[-1].name in final_level_tags or
-                           any([fnmatch(p.name, g) for p in parent_stack])):
+                    while (parent_stack[-1].name in final_level_tags
+                           or any(fnmatch(p.name, g) for p in parent_stack)):
                         parent_stack.pop()
             node = DFRawTag(parent_stack[-1], name, value)
             if is_parent:
@@ -119,8 +115,9 @@ def parse_raw(parent, text):
         elif kind == 'Comment':
             DFRawComment(parent_stack[-1], token)
         else:
-            log.e('Unknown raw token while parsing: '+kind)
-            raise Exception('Unknown raw token kind: '+kind)
+            log.e('Unknown raw token while parsing: ' + kind)
+            raise Exception('Unknown raw token kind: ' + kind)
+
 
 class DFRawNode(object):
     """Class representing a node in a raw file."""
@@ -187,7 +184,7 @@ class DFRawNode(object):
         self.children.append(child)
         if child.parent is not self and child.parent is not None:
             child.parent.remove_child(child)
-        # pylint: disable=protected-access
+        # pylint: disable=protected-access,unused-private-member
         child.__parent = self
 
     def remove_child(self, child):
@@ -195,7 +192,7 @@ class DFRawNode(object):
         if self.is_root:
             return
         self.children.remove(child)
-        # pylint: disable=protected-access
+        # pylint: disable=protected-access,unused-private-member
         child.__parent = None
 
     @property
@@ -257,7 +254,7 @@ class DFRawNode(object):
         if value == self.__value:
             return
         self.__value = value
-        #pylint: disable=protected-access
+        # pylint: disable=protected-access
         self.root._modified = True
 
     @property
@@ -272,15 +269,13 @@ class DFRawNode(object):
         """Returns the text for this node."""
         if self.is_root:
             return ''
-        elif self.is_comment:
+        if self.is_comment:
             return self.__value
-        elif self.is_flag:
+        if self.is_flag:
             if self.__value:
                 return '[{0}]'.format(self.name)
-            else:
-                return '!{0}!'.format(self.name)
-        else:
-            return '[{0}:{1}]'.format(self.name, self.value)
+            return '!{0}!'.format(self.name)
+        return '[{0}:{1}]'.format(self.name, self.value)
 
     @property
     def fulltext(self):
@@ -322,6 +317,7 @@ class DFRawNode(object):
             result += c.find_all(field)
         return result
 
+
 class DFRaw(DFRawNode):
     """Represents a Dwarf Fortress raw file."""
     def __init__(self, path):
@@ -330,7 +326,7 @@ class DFRaw(DFRawNode):
         Params:
             path
                 Path to the raw file that should be parsed."""
-        super(DFRaw, self).__init__(None, '*ROOT*', path, NODE_ROOT)
+        super().__init__(None, '*ROOT*', path, NODE_ROOT)
         self._modified = False
         self.__parse()
 
@@ -410,13 +406,14 @@ class DFRaw(DFRawNode):
         Equivalent to calling get_value for each field."""
         result = []
         for field in fields:
-            if isinstance(field, (str, basestring)):
+            if isinstance(field, (str, str)):
                 result.append(self.get_value(field))
             elif isinstance(field, (tuple, list)):
                 result.append(self.get_values(*field))
             else:
                 result.append(None)
         return result
+
 
 class DFRawTag(DFRawNode):
     """Represents a tag in a raw file."""
@@ -430,7 +427,8 @@ class DFRawTag(DFRawNode):
                 Name of the tag.
             value
                 Value for this tag (True/False for flags)"""
-        super(DFRawTag, self).__init__(parent, tag, value, NODE_TAG)
+        super().__init__(parent, tag, value, NODE_TAG)
+
 
 class DFRawComment(DFRawNode):
     """Represents a comment (non-tag) in a raw file."""
@@ -442,5 +440,4 @@ class DFRawComment(DFRawNode):
                 Parent node.
             text
                 Text for this comment."""
-        super(DFRawComment, self).__init__(
-            parent, '**COMMENT**', text, NODE_COMMENT)
+        super().__init__(parent, '**COMMENT**', text, NODE_COMMENT)

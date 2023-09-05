@@ -1,11 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Handles terminal detection on Linux and terminal command lines."""
-from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, os, subprocess, tempfile, time, shlex, shutil
-from .lnp import lnp
+import os
+import shlex
+import shutil
+import subprocess
+import sys
+import tempfile
+import time
+
 from . import log
+from .lnp import lnp
+
 
 def get_terminal_command(cmd, force_custom=False):
     """
@@ -17,7 +24,7 @@ def get_terminal_command(cmd, force_custom=False):
         cmd = [cmd, ]
     if sys.platform == 'darwin':
         return ['open', '-a', 'Terminal.app'] + cmd
-    elif sys.platform.startswith('linux'):
+    if sys.platform.startswith('linux'):
         if force_custom:
             term = CustomTerminal.get_command_line()
             log.d("Using custom terminal: %s", term)
@@ -37,9 +44,9 @@ def get_terminal_command(cmd, force_custom=False):
                 else:
                     c.append(s)
             return c
-        else:
-            return term + cmd
-        raise Exception('No terminal launcher for platform: ' + sys.platform)
+        return term + cmd
+    raise Exception('No terminal launcher for platform: ' + sys.platform)
+
 
 def get_configured_terminal():
     """Retrieves the configured terminal command."""
@@ -50,13 +57,16 @@ def get_configured_terminal():
             return t
     return CustomTerminal
 
+
 def terminal_configured():
     """Returns True if a terminal has been set up."""
     return lnp.userconfig.get('terminal_type') is not None
 
+
 def get_custom_terminal_cmd():
     """Returns the command used by the custom terminal."""
     return lnp.userconfig.get_string('terminal')
+
 
 def get_valid_terminals():
     """Gets the terminals that are available on this system."""
@@ -69,19 +79,22 @@ def get_valid_terminals():
             result.append(t)
     return result
 
+
 def _get_terminals():
-    # pylint: disable=no-member
     return LinuxTerminal.__subclasses__()
+
 
 def configure_terminal(termname):
     """Configures the terminal class used to launch a terminal on Linux."""
     lnp.userconfig['terminal_type'] = termname
     lnp.userconfig.save_data()
 
+
 def configure_custom_terminal(new_path):
     """Configures the custom command used to launch a terminal on Linux."""
     lnp.userconfig['terminal'] = new_path
     lnp.userconfig.save_data()
+
 
 class LinuxTerminal(object):
     """
@@ -94,7 +107,6 @@ class LinuxTerminal(object):
     @staticmethod
     def detect():
         """Detects if this terminal is available."""
-        pass
 
     @staticmethod
     def get_command_line():
@@ -104,9 +116,7 @@ class LinuxTerminal(object):
         If the command to be launched should go somewhere other than the end
         of the command line, use $ to indicate the correct place.
         """
-        pass
 
-# pylint: disable=bare-except
 
 # Desktop environment-specific terminals
 class KDETerminal(LinuxTerminal):
@@ -126,6 +136,7 @@ class KDETerminal(LinuxTerminal):
             universal_newlines=True).replace('\n', '')
         return ['nohup', s, '-e']
 
+
 class GNOMETerminal(LinuxTerminal):
     """Handles terminals on GNOME and Cinnamon (e.g. gnome-terminal)."""
     name = "GNOME/Cinnamon"
@@ -136,27 +147,27 @@ class GNOMETerminal(LinuxTerminal):
             return True
         if os.environ.get('CINNAMON_VERSION', ''):
             return True
-        FNULL = open(os.devnull, 'w')
-        try:
-            return subprocess.call(
-                [
-                    'dbus-send', '--print-reply', '--dest=org.freedesktop.DBus',
-                    '/org/freedesktop/DBus org.freedesktop.DBus.GetNameOwner',
-                    'string:org.gnome.SessionManager'
-                ], stdout=FNULL, stderr=FNULL) == 0
-        except:
-            return False
-        finally:
-            FNULL.close()
-        try:
-            GNOMETerminal.get_command_line() # Attempt to get the command line
-            return True
-        except:
-            return False
+        with open(os.devnull, 'w', encoding="utf-8") as FNULL:
+            try:
+                return subprocess.call(
+                    [
+                        'dbus-send', '--print-reply',
+                        '--dest=org.freedesktop.DBus',
+                        '/org/freedesktop/DBus',
+                        'org.freedesktop.DBus.GetNameOwner',
+                        'string:org.gnome.SessionManager'
+                    ], stdout=FNULL, stderr=FNULL) == 0
+            except Exception:
+                return False
+            try:
+                GNOMETerminal.get_command_line()  # Attempt to get the command line
+                return True
+            except Exception:
+                return False
 
     @staticmethod
     def get_command_line():
-        try: # Try gsettings first (e.g. Ubuntu 17.04)
+        try:  # Try gsettings first (e.g. Ubuntu 17.04)
             term = subprocess.check_output([
                 'gsettings', 'get',
                 'org.gnome.desktop.default-applications.terminal', 'exec'
@@ -166,7 +177,7 @@ class GNOMETerminal(LinuxTerminal):
                 'org.gnome.desktop.default-applications.terminal', 'exec-arg'
             ], universal_newlines=True).replace('\n', '').replace("'", '')
             return ['nohup', term, term_arg]
-        except: #fallback to older gconf
+        except Exception:  # fallback to older gconf
             pass
         try:
             term = subprocess.check_output([
@@ -178,8 +189,9 @@ class GNOMETerminal(LinuxTerminal):
                 '/desktop/gnome/applications/terminal/exec_arg'
             ], universal_newlines=True).replace('\n', '')
             return ['nohup', term, term_arg]
-        except:
-            raise Exception("Unable to determine terminal command.")
+        except Exception as exc:
+            raise Exception("Unable to determine terminal command.") from exc
+
 
 class XfceTerminal(LinuxTerminal):
     """Handles terminals in the Xfce desktop environment."""
@@ -192,12 +204,13 @@ class XfceTerminal(LinuxTerminal):
                 ['ps', '-eo', 'comm='], stderr=subprocess.STDOUT,
                 universal_newlines=True)
             return 'xfce' in s
-        except:
+        except Exception:
             return False
 
     @staticmethod
     def get_command_line():
         return ['nohup', 'exo-open', '--launch', 'TerminalEmulator']
+
 
 class LXDETerminal(LinuxTerminal):
     """Handles terminals in LXDE."""
@@ -205,21 +218,20 @@ class LXDETerminal(LinuxTerminal):
 
     @staticmethod
     def detect():
-        if not os.environ.get('DESKTOP_SESSION', '') == 'LXDE':
+        if os.environ.get('DESKTOP_SESSION', '') != 'LXDE':
             return False
-        FNULL = open(os.devnull, 'w')
-        try:
-            return subprocess.call(
-                ['which', 'lxterminal'], stdout=FNULL, stderr=FNULL,
-                close_fds=True) == 0
-        except:
-            return False
-        finally:
-            FNULL.close()
+        with open(os.devnull, 'w', encoding="utf-8") as FNULL:
+            try:
+                return subprocess.call(
+                    ['which', 'lxterminal'], stdout=FNULL, stderr=FNULL,
+                    close_fds=True) == 0
+            except Exception:
+                return False
 
     @staticmethod
     def get_command_line():
         return ['nohup', 'lxterminal', '-e']
+
 
 class MateTerminal(LinuxTerminal):
     """Handles the Mate desktop environment using mate-terminal."""
@@ -229,21 +241,23 @@ class MateTerminal(LinuxTerminal):
     def detect():
         if os.environ.get('MATE_DESKTOP_SESSION_ID', ''):
             return True
-        FNULL = open(os.devnull, 'w')
-        try:
-            return subprocess.call(
-                [
-                    'dbus-send', '--print-reply', '--dest=org.freedesktop.DBus',
-                    '/org/freedesktop/DBus org.freedesktop.DBus.GetNameOwner',
-                    'string:org.mate.SessionManager'
-                ], stdout=FNULL, stderr=FNULL) == 0
-        except:
-            return False
-        finally:
-            FNULL.close()
+        with open(os.devnull, 'w', encoding="utf-8") as FNULL:
+            try:
+                return subprocess.call(
+                    [
+                        'dbus-send', '--print-reply',
+                        '--dest=org.freedesktop.DBus',
+                        '/org/freedesktop/DBus',
+                        'org.freedesktop.DBus.GetNameOwner',
+                        'string:org.mate.SessionManager'
+                    ], stdout=FNULL, stderr=FNULL) == 0
+            except Exception:
+                return False
+
     @staticmethod
     def get_command_line():
         return ['nohup', 'mate-terminal', '-x']
+
 
 class i3Terminal(LinuxTerminal):
     """Handles terminals in the i3 desktop environment."""
@@ -257,6 +271,7 @@ class i3Terminal(LinuxTerminal):
     def get_command_line():
         return ['nohup', 'i3-sensible-terminal', '-e']
 
+
 # Generic terminals (rxvt, xterm, etc.)
 class rxvtTerminal(LinuxTerminal):
     """Handles rxvt and urxvt terminals. urxvt is used if both are available."""
@@ -264,24 +279,24 @@ class rxvtTerminal(LinuxTerminal):
 
     @staticmethod
     def detect():
-        FNULL = open(os.devnull, 'w')
-        try:
-            if subprocess.call(
-                    ['which', 'urxvt'], stdout=FNULL, stderr=FNULL) == 0:
-                rxvtTerminal.exe = 'urxvt'
-                return True
-            if subprocess.call(
-                    ['which', 'rxvt'], stdout=FNULL, stderr=FNULL) == 0:
-                rxvtTerminal.exe = 'rxvt'
-                return True
-        except:
-            return False
-        finally:
-            FNULL.close()
+        with open(os.devnull, 'w', encoding="utf-8") as FNULL:
+            try:
+                if subprocess.call(
+                        ['which', 'urxvt'], stdout=FNULL, stderr=FNULL) == 0:
+                    rxvtTerminal.exe = 'urxvt'
+                    return True
+                if subprocess.call(
+                        ['which', 'rxvt'], stdout=FNULL, stderr=FNULL) == 0:
+                    rxvtTerminal.exe = 'rxvt'
+                    return True
+            except Exception:
+                return False
+        return None
 
     @staticmethod
     def get_command_line():
         return ['nohup', rxvtTerminal.exe, '-e']
+
 
 class xtermTerminal(LinuxTerminal):
     """Handles the xterm terminal."""
@@ -289,19 +304,18 @@ class xtermTerminal(LinuxTerminal):
 
     @staticmethod
     def detect():
-        FNULL = open(os.devnull, 'w')
-        try:
-            return subprocess.call(
-                ['which', 'xterm'], stdout=FNULL, stderr=FNULL,
-                close_fds=True) == 0
-        except:
-            return False
-        finally:
-            FNULL.close()
+        with open(os.devnull, 'w', encoding="utf-8") as FNULL:
+            try:
+                return subprocess.call(
+                    ['which', 'xterm'], stdout=FNULL, stderr=FNULL,
+                    close_fds=True) == 0
+            except Exception:
+                return False
 
     @staticmethod
     def get_command_line():
         return ['nohup', 'xterm', '-e']
+
 
 class CustomTerminal(LinuxTerminal):
     """Allows custom terminal commands to handle missing cases."""
@@ -319,28 +333,29 @@ class CustomTerminal(LinuxTerminal):
             return shlex.split(cmd)
         return []
 
-#Terminal testing algorithm:
-#    Main app, in thread:
-#        Generate temporary file name for synchronization.
-#        Write 0 to file.
-#        Start parent w/ file name.
-#        Wait for parent to terminate.
-#        Report success if file contains 4 within 10 seconds, else report error.
-#        Delete temporary file.
+# Terminal testing algorithm:
+#     Main app, in thread:
+#         Generate temporary file name for synchronization.
+#         Write 0 to file.
+#         Start parent w/ file name.
+#         Wait for parent to terminate.
+#         Report success if file contains 4 within 10 seconds, else report error.
+#         Delete temporary file.
 #
-#    Parent:
-#        If child process stops running, terminate.
-#        Start child process.
-#        Write 1 to file.
-#        Ensure file contains 2 within 10 seconds.
-#        Write 3 to file. Terminate self.
+#     Parent:
+#         If child process stops running, terminate.
+#         Start child process.
+#         Write 1 to file.
+#         Ensure file contains 2 within 10 seconds.
+#         Write 3 to file. Terminate self.
 #
-#    Child:
-#        Ensure file contains 1 within 10 seconds.
-#        Write 2 to file.
-#        Ensure file contains 3 within 10 seconds.
-#        Wait 3 seconds for parent to terminate.
-#        Write 4 to file. Terminate self.
+#     Child:
+#         Ensure file contains 1 within 10 seconds.
+#         Write 2 to file.
+#         Ensure file contains 3 within 10 seconds.
+#         Wait 3 seconds for parent to terminate.
+#         Write 4 to file. Terminate self.
+
 
 def _terminal_test_wait(fn, value):
     """
@@ -353,13 +368,14 @@ def _terminal_test_wait(fn, value):
     while timer < 10:
         time.sleep(interval)
         try:
-            with open(fn, 'r') as f:
+            with open(fn, 'r', encoding="utf-8") as f:
                 if value == f.read().strip():
                     return True
-        except:
+        except Exception:
             pass
         timer += interval
     return False
+
 
 def _terminal_test_report(fn, value):
     """Writes a status value <value> to file named <fn>."""
@@ -370,6 +386,7 @@ def _terminal_test_report(fn, value):
             return
         except IOError:
             pass
+
 
 def terminal_test_run(status_callback=None):
     """
@@ -394,61 +411,63 @@ def terminal_test_run(status_callback=None):
     }
 
     log.d("Starting terminal test.")
-    f = tempfile.NamedTemporaryFile(delete=False)
-    t = f.name
-    f.close()
+    with tempfile.NamedTemporaryFile(delete=False) as f:
+        t = f.name
     cmd = sys.argv[:] + ['--terminal-test-parent', t]
     if sys.executable not in cmd:
         cmd.insert(0, sys.executable)
     cmd = get_terminal_command(cmd, True)
-    p = subprocess.Popen(cmd)
-    while p.poll() is None:
-        with open(t, 'r') as f:
-            value = f.read()
-        try:
-            log.d("Test status: %s" % progress[value])
-            status_callback(progress[value])
-        except:
-            pass
+    with subprocess.Popen(cmd) as p:
+        while p.poll() is None:
+            with open(t, 'r', encoding="utf-8") as f:
+                value = f.read()
+            try:
+                log.d("Test status: %s" % progress[value])
+                status_callback(progress[value])
+            except Exception:
+                pass
     timer = 0
     interval = 0.5
     while timer < 10:
         time.sleep(interval)
         try:
-            with open(t, 'r') as f:
+            with open(t, 'r', encoding="utf-8") as f:
                 value = f.read().strip()
                 log.d("Test status: %s" % progress[value])
                 if value == '4':
                     break
-        except:
+        except Exception:
             pass
         timer += interval
     os.remove(t)
     log.d("Test complete: %s" % endmsg.get(value, 'Unknown error.'))
     return (value == '4', endmsg.get(value, 'Unknown error.'))
 
+
 def terminal_test_parent(t):
     """Tests the parent side of terminal launching."""
-    print("Terminal succesfully started! Test will begin in 3 seconds.")
+    print("Terminal successfully started! Test will begin in 3 seconds.")
     time.sleep(3)
     cmd = sys.argv[:-2] + ['--terminal-test-child', t]
     if sys.executable not in cmd:
         cmd.insert(0, sys.executable)
     cmd = get_terminal_command(cmd, True)
     print("Launching child process...")
-    p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    _terminal_test_report(t, 1)
-    if p.poll():
-        return 1
-    print("Waiting for child process to start...")
-    if not _terminal_test_wait(t, 2):
-        p.kill()
-        return 2
-    if p.poll():
-        return 1
+    with subprocess.Popen(cmd, stdin=subprocess.PIPE,
+                          stdout=subprocess.PIPE) as p:
+        _terminal_test_report(t, 1)
+        if p.poll():
+            return 1
+        print("Waiting for child process to start...")
+        if not _terminal_test_wait(t, 2):
+            p.kill()
+            return 2
+        if p.poll():
+            return 1
     print("Terminating parent process...")
     _terminal_test_report(t, 3)
     return 0
+
 
 def terminal_test_child(t):
     """Tests the child side of terminal launching."""

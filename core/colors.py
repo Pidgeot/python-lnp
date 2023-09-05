@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Color scheme management."""
-from __future__ import print_function, unicode_literals, absolute_import
 
-import os, shutil
-from . import helpers, paths, log
-from .lnp import lnp
+import os
+import shutil
+
+from . import helpers, log, paths
 from .dfraw import DFRaw
+from .lnp import lnp
 
 _df_colors = (
     'BLACK', 'BLUE', 'GREEN', 'CYAN',
@@ -15,6 +16,7 @@ _df_colors = (
     'LRED', 'LMAGENTA', 'YELLOW', 'WHITE'
 )
 
+
 def read_colors():
     """Returns a sorted tuple of color scheme basenames, in LNP/Colors."""
     return tuple(sorted(
@@ -22,12 +24,12 @@ def read_colors():
          helpers.get_text_files(paths.get('colors'))],
         key=helpers.key_from_underscore_prefixed_string))
 
+
 def get_colors(colorscheme=None):
     """
     Returns RGB tuples for all 16 colors in <colorscheme>.txt, or
     data/init/colors.txt if no scheme is provided. On errors, returns an empty
     list."""
-    # pylint:disable=bare-except
     try:
         if colorscheme is not None:
             f = colorscheme
@@ -40,15 +42,16 @@ def get_colors(colorscheme=None):
                 f = paths.get('init', 'init.txt')
             else:
                 f = paths.get('init', 'colors.txt')
-        color_fields = [(c+'_R', c+'_G', c+'_B') for c in _df_colors]
+        color_fields = [(c + '_R', c + '_G', c + '_B') for c in _df_colors]
         result = DFRaw(f).get_values(*color_fields)
         return [tuple(int(x) for x in t) for t in result]
-    except:
+    except Exception:
         if colorscheme:
             log.e('Unable to read colorscheme %s', colorscheme, stack=True)
         else:
             log.e('Unable to read current colors', stack=True)
         return []
+
 
 def load_colors(filename):
     """
@@ -64,12 +67,13 @@ def load_colors(filename):
     if os.path.dirname(filename) == '':
         filename = paths.get('colors', filename)
     if lnp.df_info.version <= '0.31.03':
-        colors = ([c+'_R' for c in _df_colors] + [c+'_G' for c in _df_colors] +
-                  [c+'_B' for c in _df_colors])
+        colors = ([c + '_R' for c in _df_colors] + [c + '_G' for c in _df_colors]
+                  + [c + '_B' for c in _df_colors])
         lnp.settings.read_file(filename, colors, False)
         lnp.settings.write_settings()
     else:
         shutil.copyfile(filename, paths.get('init', 'colors.txt'))
+
 
 def save_colors(filename):
     """
@@ -83,15 +87,16 @@ def save_colors(filename):
         filename = filename + '.txt'
     filename = paths.get('colors', filename)
     if lnp.df_info.version <= '0.31.03':
-        colors = ([c+'_R' for c in _df_colors] + [c+'_G' for c in _df_colors] +
-                  [c+'_B' for c in _df_colors])
+        colors = ([c + '_R' for c in _df_colors] + [c + '_G' for c in _df_colors]
+                  + [c + '_B' for c in _df_colors])
         lnp.settings.create_file(filename, colors)
     else:
         shutil.copyfile(paths.get('init', 'colors.txt'), filename)
 
+
 def color_exists(filename):
     """
-    Returns whether or not a color scheme already exists.
+    Returns whether a color scheme already exists.
 
     Args:
         filename: the filename to check.
@@ -99,6 +104,7 @@ def color_exists(filename):
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
     return os.access(paths.get('colors', filename), os.F_OK)
+
 
 def delete_colors(filename):
     """
@@ -111,6 +117,7 @@ def delete_colors(filename):
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
     os.remove(paths.get('colors', filename))
+
 
 def get_installed_file():
     """Returns the name of the currently installed color scheme, or None."""

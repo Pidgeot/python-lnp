@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Keybinding management."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import collections
-# pylint:disable=redefined-builtin
-from io import open
 import os
 import shutil
 
-from . import baselines, helpers, paths, log
+from . import baselines, helpers, log, paths
 from .lnp import lnp
 
 
@@ -19,6 +16,7 @@ def _keybind_fname(filename):
     if not filename.endswith('.txt'):
         filename = filename + '.txt'
     return paths.get('keybinds', filename)
+
 
 def read_keybinds():
     """Returns a list of keybinding files."""
@@ -30,18 +28,19 @@ def read_keybinds():
                 files.append(fname)
     return tuple(sorted(os.path.basename(o) for o in files))
 
+
 def _sdl_get_binds(filename, compressed=True):
     """Return serialised keybindings for the given file.
     Returns a compressed version, without vanilla entries, unless disabled.
 
     Allows keybindings to be stored as files with only the non-vanilla
     bindings, improving readability and compatibility across DF versions.
-    Only compatible with SDL versions however.
+    Only compatible with SDL versions, however.
     """
     with open(filename, encoding='cp437') as f:
         lines = f.readlines()
     od, lastkey = collections.OrderedDict(), None
-    for line in (l.strip() for l in lines if l.strip()):
+    for line in (line.strip() for line in lines if line.strip()):
         if line.startswith('[BIND:'):
             od[line], lastkey = [], line
         elif lastkey is not None:
@@ -54,6 +53,8 @@ def _sdl_get_binds(filename, compressed=True):
             (k, v) for k, v in od.items()
             # only keep items with a vanilla counterpart, which is different
             if van.get(k) and set(van.get(k)) != set(v))
+    return None
+
 
 def _sdl_write_binds(filename, binds_od, expanded=False):
     """Write keybindings to the given file, optionally expanding them."""
@@ -72,6 +73,8 @@ def _sdl_write_binds(filename, binds_od, expanded=False):
         return text
     with open(filename, 'w', encoding='cp437') as f:
         f.write(text)
+    return None
+
 
 def _get_vanilla_binds():
     """Return the vanilla keybindings for use in compression or expansion."""
@@ -81,6 +84,8 @@ def _get_vanilla_binds():
         return _sdl_get_binds(vanfile, compressed=False)
     except TypeError:
         log.w("Can't load or change keybinds with missing baseline!")
+        return None
+
 
 def load_keybinds(filename):
     """
@@ -98,14 +103,16 @@ def load_keybinds(filename):
     else:
         _sdl_write_binds(target, _sdl_get_binds(filename), expanded=True)
 
+
 def keybind_exists(filename):
     """
-    Returns whether or not a keybindings file already exists.
+    Returns whether a keybindings file already exists.
 
     Args:
         filename: the filename to check.
     """
     return os.access(_keybind_fname(filename), os.F_OK)
+
 
 def save_keybinds(filename):
     """
@@ -122,6 +129,7 @@ def save_keybinds(filename):
     else:
         _sdl_write_binds(filename, _sdl_get_binds(installed))
 
+
 def delete_keybinds(filename):
     """
     Deletes a keybindings file.
@@ -131,6 +139,7 @@ def delete_keybinds(filename):
     """
     log.i('Deleting ' + filename + 'keybinds')
     os.remove(_keybind_fname(filename))
+
 
 def get_installed_file():
     """Returns the name of the currently installed keybindings."""
@@ -143,9 +152,9 @@ def get_installed_file():
         for fname in helpers.get_text_files(paths.get('keybinds')):
             if installed == unordered(fname):
                 return os.path.basename(fname)
-    except: #pylint: disable=bare-except
+    except Exception:
         # Baseline missing, or interface.txt is missing from baseline - use
-        # plain file comparsion
+        # plain file comparison
         pass
 
     files = helpers.get_text_files(paths.get('keybinds'))

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Logging module."""
-from __future__ import print_function, unicode_literals, absolute_import
 
-import sys, traceback
+import sys
+import traceback
 
 _log = None
 
@@ -13,6 +13,7 @@ DEBUG = 1
 INFO = 2
 WARNING = 3
 ERROR = 4
+
 
 class Log(object):
     """Logging class."""
@@ -59,7 +60,7 @@ class Log(object):
         """Returns a string containing the prefixes for this log message."""
         if not self.prefixes:
             return ''
-        return ': '.join(self.prefixes+[''])
+        return ': '.join(self.prefixes + [''])
 
     def log(self, log_level, message, *args, **kwargs):
         """Logs a message if the current logging level includes messages at
@@ -80,11 +81,11 @@ class Log(object):
         if kwargs.get('stack', False):
             ex = sys.exc_info()
             if ex[2]:
-                for l in traceback.format_exception(*ex):
-                    self.__write(l)
+                for line in traceback.format_exception(*ex):
+                    self.__write(line)
             else:
-                for l in traceback.format_stack():
-                    self.__write(l)
+                for line in traceback.format_stack():
+                    self.__write(line)
 
     @staticmethod
     def __get_level_string(level):
@@ -127,6 +128,7 @@ class Log(object):
 def get():
     """Returns the default Log instance."""
     return _log
+
 
 # prepare the default instance
 _log = Log()

@@ -1,32 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,attribute-defined-outside-init
+# pylint:disable=unused-wildcard-import,wildcard-import,attribute-defined-outside-init
 """Graphics tab for the TKinter GUI."""
-from __future__ import print_function, unicode_literals, absolute_import
 
-import sys
+from tkinter import *  # noqa: F403
+from tkinter import messagebox
+from tkinter.ttk import *  # noqa: F403
 
 from core import colors, graphics, paths
 from core.lnp import lnp
 
-from . import controls, binding, tkhelpers
+from . import binding, controls, tkhelpers
 from .layout import GridLayouter
 from .tab import Tab
 
-if sys.version_info[0] == 3:  # Alternate import names
-    # pylint:disable=import-error
-    from tkinter import *
-    from tkinter.ttk import *
-    import tkinter.messagebox as messagebox
-else:
-    # pylint:disable=import-error
-    from Tkinter import *
-    from ttk import *
-    import tkMessageBox as messagebox
 
-# pylint:disable=too-many-public-methods,too-many-instance-attributes
 class GraphicsTab(Tab):
     """Graphics tab for the TKinter GUI."""
+    # pylint: disable=too-many-instance-attributes
     def create_variables(self):
         self.graphics = Variable()
         self.colors = Variable()
@@ -251,7 +242,7 @@ class GraphicsTab(Tab):
                         title='Error occurred',
                         message='Nothing was installed.\n'
                         'Folder does not exist or does not have required files '
-                        'or folders:\n'+str(gfx_dir))
+                        'or folders:\n' + str(gfx_dir))
             if result:
                 self.graphicpacks.selection_clear(
                     self.graphicpacks.curselection())
@@ -281,12 +272,12 @@ class GraphicsTab(Tab):
             result = graphics.simplify_pack(pack)
             if result is None:
                 messagebox.showinfo(
-                    title='Error occurrred', message='No files in: '+str(pack))
+                    title='Error occurred', message='No files in: ' + str(pack))
             elif result is False:
                 messagebox.showerror(
                     title='Error occurred',
                     message='Error simplifying graphics folder. '
-                    'It may not have the required files.\n'+str(pack)+'\n'
+                    'It may not have the required files.\n' + str(pack) + '\n'
                     'See the output log for error details.')
             elif result != 0:
                 messagebox.showinfo(
@@ -380,8 +371,8 @@ class GraphicsTab(Tab):
                 row = i // 8
                 col = i % 8
                 self.color_preview.create_rectangle(
-                    col*16, row*16, (col+1)*16, (row+1)*16,
-                    fill="#%02x%02x%02x" % tuple([int(v % 256) for v in c]),
+                    col * 16, row * 16, (col + 1) * 16, (row + 1) * 16,
+                    fill="#%02x%02x%02x" % tuple(int(v % 256) for v in c),
                     width=0)
 
     def read_tilesets(self):

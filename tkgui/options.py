@@ -1,32 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,attribute-defined-outside-init
+# pylint:disable=unused-wildcard-import,wildcard-import,attribute-defined-outside-init
 """Options tab for the TKinter GUI."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import sys
+from tkinter import *  # noqa: F403
+from tkinter import messagebox, simpledialog
+from tkinter.ttk import *  # noqa: F403
 
-from core import df, keybinds, embarks
+from core import df, embarks, keybinds
 from core.lnp import lnp
 
-from . import controls, binding, tkhelpers
+from . import binding, controls, tkhelpers
 from .layout import GridLayouter
 from .tab import Tab
 
-if sys.version_info[0] == 3:  # Alternate import names
-    # pylint:disable=import-error
-    from tkinter import *
-    from tkinter.ttk import *
-    import tkinter.messagebox as messagebox
-    import tkinter.simpledialog as simpledialog
-else:
-    # pylint:disable=import-error
-    from Tkinter import *
-    from ttk import *
-    import tkMessageBox as messagebox
-    import tkSimpleDialog as simpledialog
 
-# pylint: disable=too-many-public-methods
 class OptionsTab(Tab):
     """Options tab for the TKinter GUI."""
     def create_variables(self):
@@ -184,7 +173,7 @@ class OptionsTab(Tab):
                 "(lowest of the two values will be used as the cap)",
                 initialvalue=child_split[1])
             if v2 is not None:
-                df.set_option('childcap', str(v)+':'+str(v2))
+                df.set_option('childcap', str(v) + ':' + str(v2))
                 binding.update()
 
     @staticmethod
@@ -200,7 +189,7 @@ class OptionsTab(Tab):
                 "Settings", "Min number of worshippers for a grand temple:",
                 initialvalue=split[1])
             if v2 is not None:
-                df.set_option('templeCount', str(v1)+':'+str(v2))
+                df.set_option('templeCount', str(v1) + ':' + str(v2))
                 binding.update()
 
     @staticmethod
@@ -216,9 +205,9 @@ class OptionsTab(Tab):
                 "Settings", "Min number of guild members requesting a grand guildhall:",
                 initialvalue=split[1])
             if v2 is not None:
-                df.set_option('guildCount', str(v1)+':'+str(v2))
+                df.set_option('guildCount', str(v1) + ':' + str(v2))
                 binding.update()
-    
+
     @staticmethod
     def set_graze_coef():
         """Requests new graze coefficient from the user."""
@@ -258,7 +247,6 @@ class OptionsTab(Tab):
         if v is not None:
             df.set_option('invMonsterCap', str(v))
             binding.update()
-
 
     def read_keybinds(self):
         """Reads list of keybinding files."""
@@ -338,7 +326,9 @@ class OptionsTab(Tab):
         """Toggles selected embark profile."""
         item = self.embark_files.index('active')
         if event.keysym == '??':
+            # pylint: disable=not-callable
             item = self.embark_files.identify(event.y)
+            # pylint: enable=not-callable
 
         if item is not None:
             embark_file = self.embark_files.get(item)

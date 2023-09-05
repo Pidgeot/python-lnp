@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint:disable=unused-wildcard-import,wildcard-import,invalid-name,attribute-defined-outside-init
+# pylint:disable=unused-wildcard-import,wildcard-import,attribute-defined-outside-init
 """DFHack tab for the TKinter GUI."""
-from __future__ import print_function, unicode_literals, absolute_import
 
 import sys
+from tkinter import *  # noqa: F403
+from tkinter.ttk import *  # noqa: F403
 
 from core import hacks
 
@@ -12,16 +13,7 @@ from . import binding, controls
 from .layout import GridLayouter
 from .tab import Tab
 
-if sys.version_info[0] == 3:  # Alternate import names
-    # pylint:disable=import-error
-    from tkinter import *
-    from tkinter.ttk import *
-else:
-    # pylint:disable=import-error
-    from Tkinter import *
-    from ttk import *
 
-# pylint:disable=too-many-public-methods
 class DFHackTab(Tab):
     """DFHack tab for the TKinter GUI."""
     def read_data(self):
@@ -88,7 +80,8 @@ class DFHackTab(Tab):
         hacklist = self.hacklist
         item = hacklist.identify_row(event.y)
 
-        def show(): # pylint:disable=missing-docstring
+        def show():
+            """Sets and shows a tooltip"""
             tooltip.settext(hacklist.set(item, 'tooltip'))
             tooltip.showtip()
 
@@ -98,6 +91,7 @@ class DFHackTab(Tab):
         if hacklist.set(item, 'tooltip') != tooltip.text:
             tooltip.hidetip()
         if item:
+            # pylint: disable=protected-access
             tooltip.event = hacklist.after(controls._TOOLTIP_DELAY, show)
 
     def update_hack_list(self):
@@ -121,7 +115,9 @@ class DFHackTab(Tab):
         if item:
             title = self.hacklist.item(item, 'text')
             is_enabled = hacks.toggle_hack(title)
+            # pylint: disable=not-callable
             self.hacklist.tag_set('enabled', item, is_enabled)
+            # pylint: enable=not-callable
 
     @staticmethod
     def toggle_dfhack():

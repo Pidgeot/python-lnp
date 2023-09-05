@@ -1,17 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """PyLNP main library."""
-from __future__ import print_function, unicode_literals, absolute_import
-import sys
 
 import os
-from . import log
+import sys
 
+from . import log
 from .json_config import JSONConfiguration
 
 VERSION = '0.14e-pre1'
 
-# pylint:disable=too-many-instance-attributes
 
 class UI(object):
     """
@@ -20,14 +18,12 @@ class UI(object):
     """
     def start(self):
         """Notifies the UI to start. On return, PyLNP will terminate."""
-        pass
 
     def on_update_available(self):
         """
         Called when an update is available. Use this to show a notification
         and prompt the user for further action.
         """
-        pass
 
     def on_program_running(self, path, is_df):
         """
@@ -36,7 +32,6 @@ class UI(object):
         can request a forced launch.
         <is_df> specifies if the program is DF (True) or a utility (False).
         """
-        pass
 
     def on_invalid_config(self, errors):
         """
@@ -45,7 +40,6 @@ class UI(object):
         to the user.
         A true return value will launch DF anyway; a false return value cancels.
         """
-        pass
 
     def on_request_update_permission(self, interval):
         """
@@ -55,7 +49,6 @@ class UI(object):
         A true return value will change the configuration to use the specified
         interval. A false return value will turn off automatic update checks.
         """
-        pass
 
     def on_query_migration(self):
         """
@@ -63,9 +56,11 @@ class UI(object):
         This should provide the user with an option to import a previous
         DF install or starter pack into the newly selected DF version.
         """
-        pass
+
 
 lnp = None
+
+
 class PyLNP(object):
     """
     PyLNP library class.
@@ -73,6 +68,7 @@ class PyLNP(object):
     Acts as an abstraction layer between the UI and the Dwarf Fortress
     instance.
     """
+    # pylint: disable=too-many-instance-attributes
     def __init__(self):
         """Constructor for the PyLNP library."""
         # pylint:disable=global-statement
@@ -127,7 +123,7 @@ class PyLNP(object):
 
     def initialize_program(self):
         """Initializes the main program (errorlog, path registration, etc.)."""
-        from . import paths, utilities, errorlog
+        from . import errorlog, paths, utilities
         self.BASEDIR = '.'
         self.detect_basedir()
         paths.clear()
@@ -162,8 +158,8 @@ class PyLNP(object):
                 ["Init folder", "<df>/data/init"]
             ],
             "links": [
-                ["DF Homepage", "http://www.bay12games.com/dwarves/"],
-                ["DF Wiki", "http://dwarffortresswiki.org/"],
+                ["DF Homepage", "https://www.bay12games.com/dwarves/"],
+                ["DF Wiki", "https://dwarffortresswiki.org/"],
                 ["DF Forums", "http://www.bay12forums.com/smf/"]
             ],
             "to_import": [
@@ -236,7 +232,7 @@ class PyLNP(object):
         """Responsible for the actual parsing of command line options."""
         import argparse
         parser = argparse.ArgumentParser(
-            description="PyLNP " +VERSION)
+            description="PyLNP " + VERSION)
         parser.add_argument(
             '-d', '--debug', action='count',
             help='Turn on debugging output (use twice for extra verbosity)')
@@ -247,7 +243,7 @@ class PyLNP(object):
             'df_folder', nargs='?',
             help='Dwarf Fortress folder to use (if it exists)')
         parser.add_argument(
-            '--version', action='version', version="PyLNP "+VERSION)
+            '--version', action='version', version="PyLNP " + VERSION)
         parser.add_argument(
             '--df-executable', action='store',
             help='Override DF/DFHack executable name')
@@ -271,7 +267,7 @@ class PyLNP(object):
         assert self.os == 'osx'
         if '/AppTranslocation/' in sys.executable:
             try:
-                import tkinter.messagebox as messagebox
+                from tkinter import messagebox
             except ImportError:
                 import tkMessageBox as messagebox
             messagebox.showinfo(
@@ -291,7 +287,6 @@ class PyLNP(object):
                 df.find_df_folders()
                 if len(self.folders) != 0:
                     return
-                # pylint:disable=redefined-variable-type
                 prev_path = os.path.abspath(self.BASEDIR)
                 self.BASEDIR = os.path.join(self.BASEDIR, '..')
         except UnicodeDecodeError:

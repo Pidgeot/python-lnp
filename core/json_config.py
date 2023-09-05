@@ -2,15 +2,12 @@
 # -*- coding: utf-8 -*-
 """Proxy to abstract access to JSON configuration and gracefully handle missing
 keys."""
-from __future__ import print_function, unicode_literals, absolute_import
-import sys, os, json
+
+import json
+import os
 
 from . import log
 
-if sys.version_info[0] == 3:  # Alternate import names
-    enc_dict = {}
-else:
-    enc_dict = {'encoding': 'utf-8'}
 
 class JSONConfiguration(object):
     """Proxy for JSON-based configuration files."""
@@ -34,11 +31,11 @@ class JSONConfiguration(object):
                 log.w("JSONConfiguration: File " + filename + " does not exist")
             return
         try:
-            #pylint: disable=bare-except
-            self.data = json.load(open(filename), **enc_dict)
-        except:
-            log.e('Note: Failed to read JSON from ' + filename +
-                  ', ignoring data - details follow', stack=True)
+            with open(filename, encoding="utf-8") as file:
+                self.data = json.load(file)
+        except Exception:
+            log.e('Note: Failed to read JSON from ' + filename
+                  + ', ignoring data - details follow', stack=True)
 
     @staticmethod
     def from_text(text):
@@ -49,8 +46,8 @@ class JSONConfiguration(object):
         """Saves the data to the original JSON file. Has no effect if no
         filename was given during construction."""
         if self.filename:
-            json.dump(
-                self.data, open(self.filename, 'w'), indent=2, **enc_dict)
+            with open(self.filename, 'w', encoding="utf-8") as file:
+                json.dump(self.data, file, indent=2)
 
     def get(self, path, default=None):
         """
@@ -144,7 +141,7 @@ class JSONConfiguration(object):
             key: the key to save the value under.
             value: the value to save.
         """
-        self.__setitem__(key, value)
+        self.__setitem__(key, value)  # pylint: disable=unnecessary-dunder-call
 
     def __getitem__(self, key):
         """Accessor for indexing directly into the configuration."""
