@@ -17,9 +17,9 @@ if sys.platform == 'win32':
         # Make sure we only modify our own manifest
         if 'name="lnp"' in s:
             d = (indent
-                 + '<asmv3:application xmlns:asmv3="urn:schemas-microsoft-com:asm.v3"><windowsSetti'
-                   'ngs xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings"><dpiAware>fal'
-                   'se</dpiAware></windowsSettings></asmv3:application>'
+                 + '<asmv3:application xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">'
+                   '<windowsSettings xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">'
+                   '<dpiAware>false</dpiAware></windowsSettings></asmv3:application>'
                  + newl)
             s = s.replace('</assembly>', d + '</assembly>')
         return s
