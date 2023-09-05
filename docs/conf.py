@@ -22,9 +22,6 @@ import shutil
 import subprocess
 import sys
 
-from core import lnp
-
-
 # Before we get started, let's generate fresh API documentation from the code
 # pylint: disable=missing-function-docstring
 def ages(dname):
@@ -45,6 +42,8 @@ for mod in ('core', 'tkgui'):
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
+
+from core import lnp
 
 # -- General configuration ------------------------------------------------
 
