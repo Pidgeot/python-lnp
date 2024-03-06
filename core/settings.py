@@ -133,7 +133,7 @@ _option_version_data = {
     'ECONOMY': ['0.27.169.32a', '0.47.05'],
     'INVADERS': ['0.27.169.32a', '0.47.05'],
     'SKY': ['0.27.169.32a', '0.47.05'],
-    'TEXTURE_PARAM': ['0.27.169.32a', '0.47.05'],
+    'TEXTURE_PARAM': ['0.27.169.32a', '0.47.05', '50.12'],
     'TOPMOST': ['0.27.169.32a', '0.47.05'],
     'VOLUME': ['0.27.169.32a', '0.47.05'],
     'VSYNC': ['0.27.169.32a', '0.47.05'],
@@ -186,7 +186,7 @@ _option_version_data = {
     'PILLAR_TILE': ['0.31.08', '0.47.05'],
     'ZOOM_SPEED': ['0.31.13', '0.47.05'],
     'ARB_SYNC': ['0.31.13', '0.47.05'],
-    'PRINT_MODE': ['0.31.13', '0.47.05'],
+    'PRINT_MODE': ['0.31.13', '0.47.05', '50.12'],
     'SINGLE_BUFFER': ['0.31.13', '0.47.05'],
     'TRUETYPE': ['0.31.13', '0.47.05'],
     'KEY_REPEAT_ACCEL_LIMIT': ['0.31.13'],
@@ -361,6 +361,7 @@ _option_version_data = {
     'AVERAGE_TIME_BETWEEN_SONGS': ['50.04'],
     'USE_CLASSIC_ASCII': ['50.04'],
     'CULL_DEAD_UNITS_AT': ['50.06'],
+    'MULTITHREADING': ['50.12'],
 }
 
 
